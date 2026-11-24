@@ -1,4 +1,4 @@
-"""new-case: R3 railing members and quad meshes from a level parapet polyline.
+"""new-case: R3 railing meshes from a level polyline or measured sections.
 
 Stdlib only; coordinates and dimensions are metres. Host adapters own publication,
 material authoring and mesh storage. Role IDs are not approved library finishes.
@@ -116,13 +116,14 @@ def _mesh(role, vertices, faces, **details):
 
 
 def _rings(role, rings, closed=False):
+    sides = len(rings[0])
     vertices = [p for ring in rings for p in ring]
     faces = []
     for i in range(len(rings) if closed else len(rings) - 1):
-        a, b = 4*i, 4*((i+1) % len(rings))
-        faces.extend((a+j, a+(j+1)%4, b+(j+1)%4, b+j) for j in range(4))
+        a, b = sides*i, sides*((i+1) % len(rings))
+        faces.extend((a+j, a+(j+1)%sides, b+(j+1)%sides, b+j) for j in range(sides))
     if not closed:
-        faces += [(3, 2, 1, 0), tuple(range(len(vertices)-4, len(vertices)))]
+        faces += [tuple(reversed(range(sides))), tuple(range(len(vertices)-sides, len(vertices)))]
     return _mesh(role, vertices, faces)
 
 
@@ -171,12 +172,92 @@ def _opacity(path, a, b, d, rail, panel, post_top, trim):
     return result
 
 
+def _xyz(value, label, limit):
+    if not isinstance(value, (list, tuple)) or len(value) != 3:
+        raise ValueError(f'{label}: expected XYZ triple')
+    return tuple(_number(v, label, -limit, limit, inclusive=True) for v in value)
+
+
+def _delta(a, b):
+    return tuple(x-y for x, y in zip(a, b))
+
+
+def _dot3(a, b):
+    return sum(x*y for x, y in zip(a, b))
+
+
+def _cross3(a, b):
+    return tuple(a[i-2]*b[i-1] - a[i-1]*b[i-2] for i in range(3))
+
+
+def _section_normal(rim):
+    # Check the entire convex rim (not only consecutive turns: a star can have
+    # consistently signed local turns). Offsets are expressed in the model frame.
+    edges = [_delta(b, a) for a, b in zip(rim, rim[1:] + rim[:1])]
+    normal = _cross3(edges[0], edges[1])
+    length = hypot(*normal)
+    if length <= MIN_M**2 or any(hypot(*e) <= MIN_M for e in edges):
+        raise ValueError('measured section has a collapsed edge or corner')
+    n = tuple(x/length for x in normal)
+    if any(abs(_dot3(_delta(p, rim[0]), n)) > MIN_M for p in rim):
+        raise ValueError('measured section is not planar within 0.01 mm')
+    if abs(_dot3(rim[0], n)) > MIN_M:
+        raise ValueError('measured axis must lie in the section plane')
+    for i, (a, e) in enumerate(zip(rim, edges)):
+        if (_dot3(_cross3(e, tuple(-x for x in a)), n) <= 0
+                or any(_dot3(_cross3(e, _delta(p, a)), n) <= 0
+                       for j, p in enumerate(rim) if j not in (i, (i+1) % len(rim)))):
+            raise ValueError('measured section must be strictly convex around its axis')
+    return n
+
+
+def _measured(document, kind, profile, representation):
+    _keys(document, ('measured_members',))
+    if representation != 'geometry' or kind != 'posts_handrail':
+        raise ValueError('measured members require posts_handrail with geometry representation')
+    members = document['measured_members']
+    if not isinstance(members, list) or not 1 <= len(members) <= MAX_BAYS:
+        raise ValueError('invalid measured member count')
+    meshes, ledger = [], []
+    for member in members:
+        _keys(member, ('role', 'sections'))
+        role, sections = member['role'], member['sections']
+        if role not in ('post', 'top_rail') or not isinstance(sections, list) or not 2 <= len(sections) <= 2048:
+            raise ValueError('expected a post or top_rail with 2–2048 measured sections')
+        axis, rings, normals = [], [], []
+        for section in sections:
+            _keys(section, ('center', 'offsets'))
+            p = _xyz(section['center'], 'section center', 100_000)
+            offsets = section['offsets']
+            if not isinstance(offsets, list) or not 3 <= len(offsets) <= 64 or (rings and len(offsets) != len(rings[0])):
+                raise ValueError('measured sections require equal rim sizes of 3–64 vertices')
+            rim = [_xyz(v, 'section offset', 10) for v in offsets]
+            normals.append(_section_normal(rim))
+            axis.append(p)
+            rings.append([tuple(x+y for x, y in zip(p, v)) for v in rim])
+        for i, (a, b) in enumerate(zip(rings, rings[1:])):
+            for step in [_delta(axis[i+1], axis[i]), *(_delta(q, p) for p, q in zip(a, b))]:
+                if min(_dot3(step, n) for n in normals[i:i+2]) <= MIN_M:
+                    raise ValueError('measured sections must progress forward along the axis without folding')
+            for j in range(len(a)):
+                k = (j+1) % len(a)
+                if _dot3(_delta(a[k], a[j]), _delta(b[k], b[j])) <= 0:
+                    raise ValueError('measured section profile correspondence reverses or turns by 90 degrees')
+        meshes.append(_rings(role, rings))
+        ledger.append(dict(role=role, axis_m=axis, profile_vertices=len(rings[0])))
+    return dict(type=kind, profile=profile, representation=representation, measured_members=ledger,
+                triangle_count=sum(len(f)-2 for m in meshes for f in m['faces']),
+                materials={m['material_id']: m['role'] for m in meshes}, meshes=meshes)
+
+
 def build_railing(document, kind, profile='vpm', representation='geometry'):
     """Build independent inset meshes plus a station/readback ledger; no DCC imports."""
     for field, value, allowed in (('type', kind, TYPES), ('profile', profile, PROFILES),
                                   ('representation', representation, REPRESENTATIONS)):
         if value not in allowed:
             raise ValueError(f'unsupported {field}: {value!r}')
+    if isinstance(document, dict) and 'measured_members' in document:
+        return _measured(document, kind, profile, representation)
     if representation == 'opacity' and profile != 'npm':
         raise ValueError('opacity representation is NPM-only')
     _keys(document, ('points', 'closed', 'dimensions'), ('corners',))
