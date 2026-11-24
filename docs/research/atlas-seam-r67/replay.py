@@ -68,16 +68,20 @@ def _sample(img, origin, uv_a, uv_b, centroid, t):
     return img[row, col].astype(float)
 
 
-def measure(rb, images, targets):
-    """images: tile -> uint8 HxWx3 (non-target tiles may be any array); original readback stays untouched."""
+def measure(rb, images, targets, witness="seam_first"):
+    """images: tile -> uint8 HxWx3 (non-target tiles may be any array); original readback stays untouched.
+
+    witness: "plus_x" = R1 (+X-facing target faces), "seam_first" = R2 (smaller polygon index of each seam pair).
+    """
+    if witness not in ("plus_x", "seam_first"):
+        raise ValueError(f"unknown witness: {witness}")
     if not rb.get("meshes"):
         raise ValueError("no meshes in native readback")
     before = json.dumps(rb, sort_keys=True)
     edges = Counter()
     diffs = {s: defaultdict(list) for s in STATES}
     seam_edges = Counter()
-    changed = Counter()
-    non_target_changed = Counter()
+    n_shifted = n_non_target = 0
     for mesh in rb["meshes"]:
         name = mesh["name"]
         if name.upper().startswith("UCX_") or name.endswith(("MainGlass", "GroundGlass", "GroundElGlass")):
@@ -92,14 +96,13 @@ def measure(rb, images, targets):
             faces[index] = (tile, origin, centroid, uv, plus_x, {vi: k for k, vi in enumerate(polys[index])})
             for vi, vj in zip(polys[index], polys[index][1:] + polys[index][:1], strict=True):
                 owners[(min(vi, vj), max(vi, vj))].append(index)
-            for state, px in STATES.items():
-                if px and plus_x:
-                    changed[state] += 1
         verts = mesh["face_geometry"]["vertices"]
+        seams = []  # (tile, length, [(face index, uv ends)] x 2), first side = smaller polygon index
         for (vi, vj), fs in owners.items():
             if len(fs) != 2:
                 edges["boundary" if len(fs) == 1 else "non_manifold"] += 1
                 continue
+            fs = sorted(fs)
             f1, f2 = (faces[f] for f in fs)
             if f1[0] != f2[0] or f1[0] not in targets:
                 edges["border" if f1[0] != f2[0] else "non_target"] += 1
@@ -110,23 +113,31 @@ def measure(rb, images, targets):
                 continue
             edges["seam"] += 1
             seam_edges[f1[0]] += 1
-            length = math.dist(verts[vi], verts[vj])
+            seams.append((f1[0], math.dist(verts[vi], verts[vj]), list(zip(fs, ends, strict=True))))
+        if witness == "plus_x":
+            shifted = {i for i, f in faces.items() if f[4]}
+        else:
+            shifted = {s[2][0][0] for s in seams}
+        n_shifted += len(shifted)
+        n_non_target += sum(faces[i][0] not in targets for i in shifted)
+        for tile, length, sides in seams:
             k = max(2, math.ceil(length * 1000))
             t = (np.arange(k) + 0.5) / k
-            img = images[f1[0]]
+            img = images[tile]
             for state, px in STATES.items():
                 rgb = []
-                for f, (ua, ub) in zip((f1, f2), ends, strict=True):
-                    dv = px / img.shape[0] if (px and f[4]) else 0.0
+                for i, (ua, ub) in sides:
+                    f = faces[i]
+                    dv = px / img.shape[0] if (px and i in shifted) else 0.0
                     sh = [[ua[0], ua[1] + dv], [ub[0], ub[1] + dv]]
                     rgb.append(_sample(img, f[1], sh[0], sh[1], (f[2][0], f[2][1] + dv), t))
-                diffs[state][f1[0]].extend((np.abs(rgb[0] - rgb[1]).mean(axis=1) / 255).tolist())
+                diffs[state][tile].extend((np.abs(rgb[0] - rgb[1]).mean(axis=1) / 255).tolist())
     if json.dumps(rb, sort_keys=True) != before:
         raise ValueError("original readback changed")
     if not any(diffs["clean"].values()):
         raise ValueError("not_exercised: no seam samples on target tiles")
     states = {}
-    for state in STATES:
+    for state, px in STATES.items():
         rows = {}
         for tile in sorted(targets):
             s = diffs[state].get(tile, [])
@@ -135,9 +146,10 @@ def measure(rb, images, targets):
                           "p95": float(np.percentile(s, 95)) if s else None,
                           "visible_fraction": sum(x > VISIBLE for x in s) / len(s) if s else None}
         pooled = [x for tile in targets for x in diffs[state].get(tile, [])]
-        states[state] = {"tiles": rows, "score": statistics.fmean(pooled), "changed_faces": changed[state],
-                         "non_target_changed_faces": non_target_changed[state]}
-    return {"states": states, "edges": dict(edges)}
+        states[state] = {"tiles": rows, "score": statistics.fmean(pooled),
+                         "changed_faces": n_shifted if px else 0,
+                         "non_target_changed_faces": n_non_target if px else 0}
+    return {"states": states, "edges": dict(edges), "witness": witness}
 
 
 def fixture(v):

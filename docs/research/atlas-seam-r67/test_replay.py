@@ -49,13 +49,22 @@ def test_phase_break_scores_positive():
 def test_witness_shifts_only_plus_x_faces_and_raises_score():
     rb = _rb()
     before = copy.deepcopy(rb)
-    out = measure(rb, {1001: _image()}, {1001})
+    out = measure(rb, {1001: _image()}, {1001}, witness="plus_x")
     assert rb == before
     for state in ("+2px", "+5px"):
         s = out["states"][state]
         assert s["changed_faces"] == 2 and s["non_target_changed_faces"] == 0  # faces A and C point to +X
         assert s["score"] > out["states"]["clean"]["score"]
     assert out["states"]["clean"]["changed_faces"] == 0
+
+
+def test_r2_witness_shifts_first_side_of_each_seam_only():
+    rb = _rb(c_uv=[[0.1, 0.2], [0.15, 0.2], [0.15, 0.6], [0.1, 0.6]])  # seams A-B (0,3) and A-C (1,2)
+    out = measure(rb, {1001: _image()}, {1001})
+    assert out["witness"] == "seam_first"
+    assert out["states"]["+5px"]["changed_faces"] == 1  # face A is the first side of both seams
+    assert out["states"]["+5px"]["score"] > out["states"]["clean"]["score"]
+    assert out["states"]["clean"] == measure(rb, {1001: _image()}, {1001}, witness="plus_x")["states"]["clean"]
 
 
 def test_cross_tile_edge_is_border_not_seam():
