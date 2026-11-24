@@ -1,0 +1,177 @@
+{
+ "schema": "trainer-etalons/1",
+ "decision": "D385",
+ "note": "Paths only (rule 57): sources, keys and rejected versions live on Google Drive / C:/x with SHA-256. The key and rejected versions are HIDDEN from a practice agent (trainer.secret_tokens). split: tuning = may motivate a repo change; held_out = only re-checks a change made on another etalon (#1803 lesson).",
+ "etalons": [
+  {
+   "id": "kpp1-v004",
+   "object": "KPP1 (КПП-1), OKS",
+   "scenario": "oks-npm",
+   "status": "complete",
+   "practice_ready": true,
+   "split": "tuning",
+   "target": "package",
+   "profile": "vpm",
+   "task": "Object KPP1 (checkpoint building, OKS). Build the VPM delivery of this building per the Moscow regulation (docs/domain/, routes/npm-oks.md, scenario oks-vpm) from the three customer DWG sheets below (L01 facades/openings, L02 finishes, L03 plan contour). Deliverable: the quad master FBX of the building and the VPM ZIP package (agr package-vpm) that agr validate reads.",
+   "deliverable": "one master FBX (body + openings + insets) and one VPM ZIP",
+   "built_fbx_glob": "*.fbx",
+   "sources": [
+    {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L01_без подписей.dwg", "sha256": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648", "role": "facades, openings"},
+    {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L02_без подписей.dwg", "sha256": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2", "role": "finishes"},
+    {"path": "G:/Мой диск/AGR-assets/KPP1/source/22Е56-АР2-1002-АС.03-R1_L03_без подписей.dwg", "sha256": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469", "role": "plan contour"}
+   ],
+   "key": {"path": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx", "sha256": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8", "package_vpm": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25-r1/vpm/SM_Kpp_1.zip", "package_vpm_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9", "package_npm": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25-r1/npm/0000_Kpp_1.zip", "package_npm_sha256": "0ee309e7a6c5e51b297a38a1b9be255e4e73e986ca353b2b39a1bb6d7e228bfe", "accepted": "Artem 2026-11-24 «Принимаю рекомендации» (#1817, [D382]); master v004 [D379], posts/top belt [D376]"},
+   "rejected": [
+    {"version": "v004 step 3 (pre-fix lattice master)", "path": "G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx", "date": "2026-11-22", "reason": "step 3 rejected: 110 mm step at the NW corner (SHEET v003, t_933a30b6); Artem «А, прямой угол» [D380]"}
+   ],
+   "dcc_only_steps": ["review-scene (Max 2026 QUAD copy, manual)", "V015-V017 manual gates on the package sheets"],
+   "hidden_repo_paths": ["jobs/KPP1"],
+   "evidence": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/ (SHA256SUMS.txt per draft)"
+  },
+  {
+   "id": "g22-k2-stage1",
+   "object": "G22 (Гарибальди 22) корпус 2, OKS body + openings",
+   "scenario": "oks-vpm",
+   "status": "complete",
+   "practice_ready": true,
+   "split": "tuning",
+   "target": "body",
+   "form_check_pair": "G22 k2",
+   "task": "Object G22 korpus 2 (OKS). Build stage 1 of the VPM body: the outer facade envelope with the window/door openings (no windows, glass, capsules or roof equipment), quad grid per the body rules (docs/research/body-modelling.md BM rules, [D336], [D341], [D344]), world metres in the source coordinates. Source: the Revit FBX triangle crop of this building saved as NPZ (arrays of the source mesh; inspect it first). Deliverable: one body FBX.",
+   "deliverable": "one body FBX (stage 1: body with openings)",
+   "sources": [
+    {"path": "C:/x/ev_1619/g22_k2_src.npz", "sha256": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622", "role": "Revit FBX triangle crop of korpus 2"}
+   ],
+   "key": {"path": "C:/x/review-k2/k2_v002r1_body_quad.fbx", "sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200", "accepted": "Artem 2026-11-18 «все норм кроме b корпуса» (#1619)"},
+   "rejected": [
+    {"version": "v001", "path": "C:/x/review-k2/k2_v001_body_quad.fbx", "sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519", "date": "2026-11-18", "reason": "v001 rejected for stage 1 (#1619, form check #41 A vs R; tools/qa/form_check/pairs_v1.json)"}
+   ],
+   "superseded": [{"version": "v002", "path": "C:/x/review-k2/k2_v002_body_quad.fbx", "sha256": "620bdaec5f2eccc099c23d786d50ca3b9c07d1cb9e624c00bbf785f9e944a6c8", "note": "replaced by v002r1 the same day; no separate verdict cited"}],
+   "dcc_only_steps": [],
+   "hidden_repo_paths": ["jobs/garibaldi22", "jobs/G22"],
+   "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/round4-k2-stage1-r1/ (SHA256SUMS.txt)"
+  },
+  {
+   "id": "63a-stage1",
+   "object": "Site 63 tower A (A101 STLB-04), OKS body + openings",
+   "scenario": "oks-vpm",
+   "status": "complete",
+   "practice_ready": true,
+   "split": "tuning",
+   "target": "body",
+   "task": "Object: site 63, tower A (OKS). Build stage 1 of the VPM body for the typical floors (+10.15 .. +47.95 m, 12 floors x 3.15 m): the outer facade envelope with the openings only (no windows, glass, capsules or AC boxes), quad grid per the body rules (docs/research/body-modelling.md BM rules, [D336], [D337], [D341], [D344]), world metres of the source. Source: the customer's Revit FBX export of the whole site (towers A, B, C); tower A is the one to build. Deliverable: one body FBX of tower A.",
+   "deliverable": "one body FBX of tower A (stage 1)",
+   "sources": [
+    {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
+   ],
+   "key": {"path": "C:/x/review-63A/63A_Stage1_v005.fbx", "sha256": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a", "accepted": "ACCEPTED in Blender (63A v005, 2026-11-18), jobs/POLY63-A/stage2-1619/README.md; stage 2 v001 built on it"},
+   "rejected": [],
+   "superseded": [{"version": "v004", "path": "C:/x/review-63A/63A_Stage1_v004.fbx", "sha256": "d51480d5916d17c0001739808a1e3edc2a44bb5454852acd9ee0f64a481ec7a8", "note": "rebuilt as v005 with the fixed module_build.py (#1660); no rejection quote found"}],
+   "stage2_key": {"path": "C:/x/review-63A/63A_Stage2_v001.fbx", "sha256": "3f9d89f3b7bc00c84a66df94d63046b1f6701cf3f294eed47ce2667c7fce774c"},
+   "dcc_only_steps": ["Revit read-only intake (Revit was not running; FBX type names used instead)"],
+   "hidden_repo_paths": ["jobs/POLY63-A", "jobs/POLY63-B", "jobs/POLY63-C", "jobs/garibaldi22"],
+   "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/tower-A/v005/ and stage2-63A/ (SHA256SUMS.txt)"
+  },
+  {
+   "id": "63b-stage1",
+   "object": "Site 63 tower B, OKS body + openings",
+   "scenario": "oks-vpm",
+   "status": "complete",
+   "practice_ready": false,
+   "missing": "practice not scheduled in v0; held-out for changes made on 63A/G22",
+   "split": "held_out",
+   "target": "body",
+   "form_check_pair": "63B",
+   "task": "Object: site 63, tower B (OKS). Build stage 1 of the VPM body (outer envelope with openings) from the site Revit FBX.",
+   "sources": [
+    {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
+   ],
+   "key": {"path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v007.fbx", "sha256": null, "accepted": "Artem 2026-11-20, 63B stage 1 v007 accepted (form check #51 labels)"},
+   "rejected": [
+    {"version": "v004", "path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v004.fbx", "date": "2026-11-17", "reason": "rejected by Artem 2026-11-17 (form check #51 labels; quote not in git)"},
+    {"version": "v005", "path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v005.fbx", "date": "2026-11-18", "reason": "rejected by Artem 2026-11-18 (form check #51 labels; quote not in git)"},
+    {"version": "v006", "path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v006.fbx", "date": "2026-11-18", "reason": "rejected by Artem 2026-11-18 (form check #51 labels; quote not in git)"}
+   ],
+   "dcc_only_steps": [],
+   "hidden_repo_paths": ["jobs/POLY63-A", "jobs/POLY63-B", "jobs/POLY63-C", "jobs/garibaldi22"],
+   "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/tower-B/ (SHA256SUMS.txt)"
+  },
+  {
+   "id": "63c-stage1-2",
+   "object": "Site 63 tower C, OKS body (stage 1) + windows/frames (stage 2)",
+   "scenario": "oks-vpm",
+   "status": "incomplete",
+   "practice_ready": false,
+   "missing": "accepted body v002 / stage 2 v001 paths not located in this run; verdicts in [D355], [D356]",
+   "split": "held_out",
+   "task": "Object: site 63, tower C (OKS). Stage 1 body with openings, then stage 2 frames on the accepted body.",
+   "sources": [
+    {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
+   ],
+   "key": {"path": null, "sha256": null, "accepted": "Artem 2026-11-19 «принимаю» [D355]/[D356] (#1619, 63C stage 2 v001 on the accepted body v002)"},
+   "rejected": [],
+   "dcc_only_steps": [],
+   "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/tower-C/, stage2-63C/; jobs/POLY63-C/stage2_v001_SHA256SUMS.txt"
+  },
+  {
+   "id": "elv-delivered",
+   "object": "ELV (elv-tc-vpm), OKS VPM delivered",
+   "scenario": "oks-vpm",
+   "status": "incomplete",
+   "practice_ready": false,
+   "missing": "delivered package path/hash and source list not bound in this run (see jobs/elv-tc-vpm/sources.json, AGR-evidence/1104-elv-delivered, 1746-elv-agent-vs-delivered)",
+   "split": "held_out",
+   "task": "Object ELV (OKS). Build the VPM delivery from the customer sources.",
+   "sources": [],
+   "key": {"path": null, "sha256": null, "accepted": "delivered to the customer (jobs/elv-tc-vpm/PASSPORT.md); empty s_podz accepted exception [D377]"},
+   "rejected": [],
+   "dcc_only_steps": ["3ds Max delivery scene"],
+   "evidence": "G:/Мой диск/AGR-evidence/1104-elv-delivered/"
+  },
+  {
+   "id": "sokolniki-body-v005",
+   "object": "Sokolniki UVK 1000, OKS body",
+   "scenario": "oks-vpm",
+   "status": "incomplete",
+   "practice_ready": false,
+   "missing": "source set (DWG/PDF) not hashed in this run; key and earlier versions are in tools/qa/form_check/pairs_v1.json; v006/v007 open in PR #1833",
+   "split": "held_out",
+   "task": "Object Sokolniki UVK 1000 (OKS). Build the body steps 1-2 per the accepted sheets.",
+   "sources": [],
+   "key": {"path": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v005/body_quad.fbx", "sha256": null, "accepted": "[D378], Artem 2026-11-24 «принимаю рекомендации»; step-1 sheet v002 [D375]"},
+   "rejected": [],
+   "dcc_only_steps": [],
+   "evidence": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/"
+  },
+  {
+   "id": "vatutino-ground-v015",
+   "object": "Vatutino site, Ground v015",
+   "scenario": "ground-vpm",
+   "status": "incomplete",
+   "practice_ready": false,
+   "missing": "ground scenario has 6 gap stages (SKELETONS.md); key FBX/hash not bound in this run",
+   "split": "held_out",
+   "task": "Object Vatutino (Ground). Build Ground from the SPOZU sources.",
+   "sources": [{"path": "jobs/VATUTINO-SITE/sources.json", "sha256": null, "role": "source registry"}],
+   "key": {"path": null, "sha256": null, "accepted": "Ground v015 delivered (jobs/VATUTINO-SITE/ground-v015-*.md)"},
+   "rejected": [],
+   "dcc_only_steps": [],
+   "evidence": "jobs/VATUTINO-SITE/ (registry); G:/Мой диск/AGR-evidence/"
+  },
+  {
+   "id": "tec26-ac08",
+   "object": "TEC26 AC08, OKS VPM",
+   "scenario": "oks-vpm",
+   "status": "incomplete",
+   "practice_ready": false,
+   "missing": "v007/v010 package paths and Artem's verdict quotes not bound in this run (AGR-evidence/559-tec26-oks-ac08-pilot-v007, -v010)",
+   "split": "held_out",
+   "task": "Object TEC26 AC08 (OKS). Build the VPM delivery from the album and drawings.",
+   "sources": [{"path": "G:/Мой диск/AGR-assets/tec26/album/TEC26_na_RR_1.pptx", "sha256": "74e50277df5e2dfde3ba7ab945eb6bab45a8fa8c0207d7aca3a136d9656b78ac", "role": "finish bands, cassette module, RAL"}],
+   "key": {"path": null, "sha256": null, "accepted": "AC08 v010 recolour route (SKELETONS.md oks-vpm step 12)"},
+   "rejected": [],
+   "dcc_only_steps": ["3ds Max AGR Tools stages"],
+   "evidence": "G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v007/, -v010/"
+  }
+ ]
+}
