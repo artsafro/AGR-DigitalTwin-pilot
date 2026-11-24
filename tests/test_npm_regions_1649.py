@@ -348,16 +348,16 @@ def _shared_edge_pair(rng, overlap):
     if q[1] == p[1]:
         q = (q[0], q[1] + .5)
     up, down = (rng.uniform(.5, length - .5), rng.uniform(2.5, 4.)), (rng.uniform(.5, length - .5), rng.uniform(-4., -2.5))
+    second = [q, p, down]
     if overlap:
-        slope = (q[1] - p[1]) / length
         step = rng.uniform(1e-6, .05)
-        down = (down[0], p[1] + slope * down[0] + step)
-    return [[p, q, up], [q, p, down]]
+        second = [(u, v + step) for u, v in second]
+    return [[p, q, up], second]
 
 
 def _seam_points(result, src, axis, at):
     return {tuple(xyz) for piece in result['pieces'] if piece['source_triangle'] == src
-            for xyz in piece['xyz'] if xyz[axis] == at}
+            for xyz in piece['xyz'] if abs(xyz[axis] - at) <= 1e-9}
 
 
 @pytest.mark.parametrize('reverse', [False, True])
@@ -392,14 +392,16 @@ def test_metric_seam_shared_edge_sweep_issue_1849(seed):
         oracle = Polygon(charts[0]).intersection(Polygon(charts[1])).area
         assert (oracle > 0) == overlap
         xyz = [[(u, v, 0.) for u, v in tri] for tri in charts]
-        seam = rng.uniform(1., charts[0][0][0] + charts[0][1][0] - 1.) if not case % 2 else rng.uniform(1., 7.5)
+        seam = rng.uniform(1., max(u for tri in charts for u, _ in tri) - 1.)
         result = fit_metric_region(1, xyz, charts, preferred_seams=[(0, seam)])
         if overlap:
             assert result['status'] == 'blocked' and result['reason'] == 'uv_overlap', (seed, case)
             assert result['pieces'] == result['cuts'] == []
         else:
             assert result['status'] == 'ok', (seed, case, result.get('reason'))
-            for cut in result['cuts']:
-                pts = [_seam_points(result, src, cut['axis'], cut['at_m']) for src in (0, 1)]
-                on_edge = [p for p in pts[0] | pts[1] if p in pts[0] and p in pts[1]]
-                assert pts[0] and pts[1] and on_edge, (seed, case, cut)
+            # The top-level preferred seam crosses the shared edge: both
+            # triangles must carry the very same seam vertex there.
+            top = result['cuts'][0]
+            assert (top['axis'], top['at_m']) == (0, seam)
+            pts = [_seam_points(result, src, 0, seam) for src in (0, 1)]
+            assert len(pts[0] & pts[1]) == 1, (seed, case, pts)
