@@ -452,6 +452,8 @@
 /docs/evidence/issue-1541/after.txt
 /docs/evidence/issue-1541/before.txt
 /docs/evidence/issue-1541/two-blenders.txt
+/docs/evidence/maxbatch-130/README.md
+/docs/evidence/maxbatch-130/SHA256SUMS.txt
 /docs/experiments/2026-11-02-dreamsim-ac08.md
 /docs/experiments/2026-11-02-dreamsim-ac08/requirements.txt
 /docs/experiments/atlas.groundel.md
@@ -484,6 +486,7 @@
 /docs/experiments/export.ground_fbx.md
 /docs/experiments/export.pivot_place.md
 /docs/experiments/export.zip.md
+/docs/experiments/fbxmaps-1760.md
 /docs/experiments/flora-texture-diagnosis.md
 /docs/experiments/hyp-83.md
 /docs/experiments/issue-769-slide-overlay.md
