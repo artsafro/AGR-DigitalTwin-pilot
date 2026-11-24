@@ -8,6 +8,102 @@ import pytest
 
 from tools.qa.form_check import detector as D
 from tools.qa.form_check import rules as R
+from tools.qa.form_check import pairs
+
+
+def test_63b_refuses_v1_builder_key_even_with_a_source_only_claim(tmp_path):
+    key = tmp_path / "builder.json"
+    key.write_text(json.dumps({"basis": "SOURCE ONLY", "accepted_bytes": None}), encoding="utf-8")
+    sections = tmp_path / "sections.json"
+    sections.write_text("{}", encoding="utf-8")
+    pair = {"id": "63B", "key": str(key), "key_sha": pairs.sha256(key),
+            "sections": str(sections), "sections_sha": pairs.sha256(sections)}
+    with pytest.raises(ValueError, match="63B requires a source-derived key"):
+        pairs.load_key(pair)
+
+
+def test_63b_refuses_repurposed_triangle_dump_even_when_repinned(tmp_path):
+    import numpy as np
+
+    dump = tmp_path / "claimed_source.npz"
+    np.savez(dump, tri=[[[0., 0., 0.], [2., 0., 0.], [0., 0., 2.]]], obj=[0], names=["builder"])
+    spec = {"path": str(dump), "sha256": pairs.sha256(dump), "kind": "revit_fbx_triangle_readback"}
+    with pytest.raises(ValueError, match="not the registered 63B source readback"):
+        pairs.load_key({"id": "63B", "source_key": spec})
+
+
+def test_source_key_uses_native_vertex_coordinates_and_source_opening_extents(tmp_path):
+    import numpy as np
+
+    from tools.qa.form_check import source
+
+    dump = tmp_path / "synthetic_source.npz"
+    np.savez(dump, tri=[[[0., 0., 0.], [4., 0., 0.], [0., 0., 4.]],
+                       [[1., .1, 1.], [2., .1, 1.], [1., .1, 2.]]],
+             obj=[0, 1], names=["wall", "window"])
+    spec = {"reference_z": 1, "vertices": [[0, .002, 0], [0, 3.003, 0]], "box": [0, -1, 4, 1],
+            "label_shift_m": 2, "profile": {"contour_z": ["3"]}, "basis": "synthetic",
+            "openings": [{"id": "W", "source_object": "window", "contour_segment": [0, 1]}]}
+    key, sections = source.build_key(source.SourceReadback(dump), spec)
+    assert sections == {"3": [([0., 0.], [3., 0.])]}
+    assert key["openings"][0]["edge_s_m"] == [1., 2.]
+    assert key["openings"][0]["sill_head_z_m"] == [3., 4.]
+    assert key["source_vertices"][0]["object_name"] == "wall"
+
+
+def test_corner_reference_angle_comes_from_source_flanks_not_station_hints(tmp_path):
+    import numpy as np
+
+    from tools.qa.form_check import source
+
+    dump = tmp_path / "synthetic_corner.npz"
+    np.savez(dump, tri=[[[0., 0., 0.], [-2., 0., 2.], [0., 0., 2.]],
+                       [[0., 0., 0.], [0., 2., 2.], [0., 0., 2.]]],
+             obj=[0, 0], names=["source wall"])
+    spec = {"stations": [[-1.5, -.02], [.01, .015], [.04, 1.5]], "wall_name_contains": "wall",
+            "levels": {"lower": 1.}, "corner_ids": ["NW"]}
+    refs = source.corners_from_readback(source.SourceReadback(dump), spec)
+    [corner] = pairs.corner_findings({"interior_side": 1}, refs,
+                                    {"lower": [[[-1., 0.], [0., 0.]], [[0., 0.], [0., 1.]]]})
+    assert corner["id"] == "NW"
+    assert corner["source_xy"] == (0., 0.)
+    assert corner["source_angle_deg"] == pytest.approx(90.)
+    assert corner["delta_deg"] == pytest.approx(0.)
+    assert corner["status"] == "observed"  # deliberately not a detector pass/fail item
+
+
+@pytest.mark.parametrize("trace, shape, depth", [
+    ([[-1, 0], [0, 0], [0, 1]], "direct", 0),
+    ([[-1, 0], [-.1, 0], [0, .1], [0, 1]], "chamfer", .05),
+    ([[-1, 0], [-.1, 0], [-.1, .1], [0, .1], [0, 1]], "extra_recess", .1),
+    ([[-1, 0], [-.1, 0], [-.2, .1], [0, .1], [0, 1]], "extra_recess", .1),
+    ([[-1, 0], [0, 0], [-.11, .11], [-.11, 1]], "extra_recess", .11),
+])
+def test_corner_readback_keeps_small_connected_features(trace, shape, depth):
+    segments = list(zip(trace, trace[1:]))
+    for readback in (segments, [(b, a) for a, b in reversed(segments)]):
+        result = D.observe_corner([[-1, 0], [0, 0], [0, 1]], readback, interior_side=1)
+        assert result["shape"] == shape
+        assert result["source_angle_deg"] == pytest.approx(90)
+        assert result["candidate_flank_angle_deg"] == pytest.approx(90)
+        assert result["inward_depth_m"] == pytest.approx(depth)
+        if shape == "chamfer":
+            assert result["corner_offset_m"] == pytest.approx(.1 / 2**.5)
+
+
+def test_corner_does_not_join_disconnected_or_unrelated_geometry():
+    result = D.observe_corner([[-1, 0], [0, 0], [0, 1]],
+                              [[[-1, 0], [-.1, 0]], [[0, .1], [0, 1]], [[-.05, 0], [0, .05]]],
+                              interior_side=1)
+    assert result["status"] == "not_measured"
+
+
+def test_earlier_accepted_base_is_not_a_rejection():
+    from tools.qa.form_check import report
+
+    label = "earlier accepted base"
+    assert report.agree("defect", label) == "no"
+    assert report.RU[label] == "ранее принятая база"
 
 
 def _edges_item(observed, key=(1.0, 3.0)):
