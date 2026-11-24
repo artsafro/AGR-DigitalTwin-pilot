@@ -1,0 +1,403 @@
+{
+  "status": "inconclusive",
+  "calibration_pairs_required": 3,
+  "pair": {
+    "A": {
+      "variant": "k2_v002r1_body_quad",
+      "fbx_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+      "repetitions": [
+        {
+          "points": 100.0,
+          "unmeasured_pct": 0.0,
+          "weights_A": {
+            "pass": 66,
+            "fail": 0,
+            "not_measured": 0,
+            "not_applicable": 0
+          },
+          "counts_A": {
+            "pass": 29,
+            "fail": 0,
+            "not_measured": 0,
+            "not_applicable": 0
+          },
+          "counts_B": {
+            "pass": 1,
+            "fail": 0,
+            "not_measured": 0
+          },
+          "openings": {
+            "TP": 6,
+            "FN": 0,
+            "FP_extra": 0,
+            "key_total": 6
+          },
+          "contours_m": {
+            "contour@16.85": 0.0,
+            "contour@19.8": 0.0
+          },
+          "reveal_depth_basis": [
+            "depth 0.150 vs key 0.150",
+            "depth 0.100 vs key 0.100",
+            "depth 0.130 vs key 0.130",
+            "depth 0.100 vs key 0.100",
+            "depth 0.150 vs key 0.150",
+            "depth 0.130 vs key 0.130"
+          ]
+        },
+        {
+          "points": 100.0,
+          "unmeasured_pct": 0.0,
+          "weights_A": {
+            "pass": 66,
+            "fail": 0,
+            "not_measured": 0,
+            "not_applicable": 0
+          },
+          "counts_A": {
+            "pass": 29,
+            "fail": 0,
+            "not_measured": 0,
+            "not_applicable": 0
+          },
+          "counts_B": {
+            "pass": 1,
+            "fail": 0,
+            "not_measured": 0
+          },
+          "openings": {
+            "TP": 6,
+            "FN": 0,
+            "FP_extra": 0,
+            "key_total": 6
+          },
+          "contours_m": {
+            "contour@16.85": 0.0,
+            "contour@19.8": 0.0
+          },
+          "reveal_depth_basis": [
+            "depth 0.150 vs key 0.150",
+            "depth 0.100 vs key 0.100",
+            "depth 0.130 vs key 0.130",
+            "depth 0.100 vs key 0.100",
+            "depth 0.150 vs key 0.150",
+            "depth 0.130 vs key 0.130"
+          ]
+        },
+        {
+          "points": 100.0,
+          "unmeasured_pct": 0.0,
+          "weights_A": {
+            "pass": 66,
+            "fail": 0,
+            "not_measured": 0,
+            "not_applicable": 0
+          },
+          "counts_A": {
+            "pass": 29,
+            "fail": 0,
+            "not_measured": 0,
+            "not_applicable": 0
+          },
+          "counts_B": {
+            "pass": 1,
+            "fail": 0,
+            "not_measured": 0
+          },
+          "openings": {
+            "TP": 6,
+            "FN": 0,
+            "FP_extra": 0,
+            "key_total": 6
+          },
+          "contours_m": {
+            "contour@16.85": 0.0,
+            "contour@19.8": 0.0
+          },
+          "reveal_depth_basis": [
+            "depth 0.150 vs key 0.150",
+            "depth 0.100 vs key 0.100",
+            "depth 0.130 vs key 0.130",
+            "depth 0.100 vs key 0.100",
+            "depth 0.150 vs key 0.150",
+            "depth 0.130 vs key 0.130"
+          ]
+        }
+      ]
+    },
+    "R": {
+      "variant": "k2_v001_body_quad",
+      "fbx_sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+      "repetitions": [
+        {
+          "points": 4.545454545454546,
+          "unmeasured_pct": 54.54545454545455,
+          "weights_A": {
+            "pass": 3,
+            "fail": 27,
+            "not_measured": 36,
+            "not_applicable": 0
+          },
+          "counts_A": {
+            "pass": 1,
+            "fail": 10,
+            "not_measured": 18,
+            "not_applicable": 0
+          },
+          "counts_B": {
+            "pass": 1,
+            "fail": 0,
+            "not_measured": 0
+          },
+          "openings": {
+            "TP": 0,
+            "FN": 6,
+            "FP_extra": 0,
+            "key_total": 6
+          },
+          "contours_m": {
+            "contour@16.85": 0.61,
+            "contour@19.8": 0.61
+          },
+          "reveal_depth_basis": [
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing"
+          ]
+        },
+        {
+          "points": 4.545454545454546,
+          "unmeasured_pct": 54.54545454545455,
+          "weights_A": {
+            "pass": 3,
+            "fail": 27,
+            "not_measured": 36,
+            "not_applicable": 0
+          },
+          "counts_A": {
+            "pass": 1,
+            "fail": 10,
+            "not_measured": 18,
+            "not_applicable": 0
+          },
+          "counts_B": {
+            "pass": 1,
+            "fail": 0,
+            "not_measured": 0
+          },
+          "openings": {
+            "TP": 0,
+            "FN": 6,
+            "FP_extra": 0,
+            "key_total": 6
+          },
+          "contours_m": {
+            "contour@16.85": 0.61,
+            "contour@19.8": 0.61
+          },
+          "reveal_depth_basis": [
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing"
+          ]
+        },
+        {
+          "points": 4.545454545454546,
+          "unmeasured_pct": 54.54545454545455,
+          "weights_A": {
+            "pass": 3,
+            "fail": 27,
+            "not_measured": 36,
+            "not_applicable": 0
+          },
+          "counts_A": {
+            "pass": 1,
+            "fail": 10,
+            "not_measured": 18,
+            "not_applicable": 0
+          },
+          "counts_B": {
+            "pass": 1,
+            "fail": 0,
+            "not_measured": 0
+          },
+          "openings": {
+            "TP": 0,
+            "FN": 6,
+            "FP_extra": 0,
+            "key_total": 6
+          },
+          "contours_m": {
+            "contour@16.85": 0.61,
+            "contour@19.8": 0.61
+          },
+          "reveal_depth_basis": [
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing",
+            "opening missing"
+          ]
+        }
+      ]
+    }
+  },
+  "paired_median_pp": 95.45454545454545,
+  "paired_spread_pp": 0.0,
+  "g22_coverage_gate_pass": false,
+  "min_margin_pp": null,
+  "controls": {
+    "C_none": {
+      "summary_groupA": {
+        "pass": 29,
+        "fail": 0,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "openings": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    },
+    "C_shift_opening": {
+      "summary_groupA": {
+        "pass": 28,
+        "fail": 1,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "openings": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    },
+    "C_shift_wall": {
+      "summary_groupA": {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "openings": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    },
+    "J1_missing_4259581": {
+      "summary_groupA": {
+        "pass": 25,
+        "fail": 1,
+        "not_measured": 3,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "openings": {
+        "TP": 5,
+        "FN": 1,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    },
+    "J2_extra_endwall": {
+      "summary_groupA": {
+        "pass": 28,
+        "fail": 1,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 1,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "openings": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 1,
+        "key_total": 6
+      }
+    },
+    "J3_stair_cut_basket": {
+      "summary_groupA": {
+        "pass": 27,
+        "fail": 2,
+        "not_measured": 0,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 0,
+        "fail": 1,
+        "not_measured": 0
+      },
+      "openings": {
+        "TP": 6,
+        "FN": 0,
+        "FP_extra": 0,
+        "key_total": 6
+      }
+    },
+    "J4_stale_key": {
+      "summary_groupA": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 28,
+        "not_applicable": 0
+      },
+      "summary_groupB": {
+        "pass": 0,
+        "fail": 0,
+        "not_measured": 0
+      },
+      "openings": "not_measured"
+    }
+  },
+  "verdict_labels": {
+    "accepted": 1,
+    "rejected": 1
+  },
+  "historical_mesh_proxy": {
+    "k2_v002r1": 83.693,
+    "k2_v001": 90.83
+  },
+  "full_study_unmeasured": [
+    "KPP1 same-stage Artem accepted model",
+    "Sokolniki same-stage Artem accepted model",
+    "KPP1 inner reveals and post seating",
+    "G22 per-facade outline distances",
+    "VLM false Yes rate",
+    "Claude/Codex pairwise agreement"
+  ],
+  "external_protocol_sha256": "867ee607a4f054c70ba05e1466fad639b4579756882d4f443b142a8df79e6488"
+}

@@ -28,7 +28,7 @@ if os.path.abspath(out) == os.path.abspath(os.path.dirname(body_blend)):
 os.makedirs(out, exist_ok=True)
 COLOURS = {'WIN_Frame': (0.85, 0.85, 0.83, 1), 'WIN_Frame_Back': (0.6, 0.6, 0.6, 1),
            'WIN_Infill': (0.3, 0.3, 0.32, 1), 'WIN_Glass': (0.35, 0.55, 0.75, 0.35),
-           'LIB_Interior_Stub': (0.45, 0.3, 0.2, 1)}
+           'LIB_Interior_Stub': (0.45, 0.3, 0.2, 1), 'AC_Basket': (0.25, 0.25, 0.27, 1)}
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 scene = bpy.context.scene
@@ -83,6 +83,8 @@ def group(n):
         return 'Body_Stage1'
     if n.startswith('CAPSULE_'):
         return 'Stage2_Capsules'
+    if n.startswith('SM_ACBasket_'):
+        return 'Stage2_Baskets'
     return 'Stage2_Glass' if n.endswith('_Glass') else 'Stage2_Windows'
 
 
