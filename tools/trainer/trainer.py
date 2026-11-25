@@ -411,9 +411,9 @@ def _blender():
 
 
 def _bl(script, args, log):
-    p = subprocess.run([_blender(), "--background", "--factory-startup", "--python-exit-code", "1", "--python",
-                        str(script), "--", *map(str, args)], capture_output=True, text=True, encoding="utf-8",
-                       errors="replace")
+    from dt_ai.core.blender_runner import blender_command
+    p = subprocess.run(blender_command(script, args, executable=_blender()), capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
     Path(log).write_text(p.stdout[-20000:] + p.stderr[-5000:], encoding="utf-8")
     return p.returncode
 
