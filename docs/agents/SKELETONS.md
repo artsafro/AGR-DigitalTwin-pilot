@@ -334,6 +334,16 @@ Once a week a separate orchestrator task collects hook scripts repeated in 2–3
 a summary; promotion into a skeleton stage happens only there (outside this repo change).
 Reports, one file per week in `docs/agents/skeleton-harvest/`: [2026-11-23](skeleton-harvest/2026-11-23.md) (no promotion, #1804).
 
+## Job lessons form [D411]
+
+A job lesson in `jobs/<ID>/LESSONS.md` is one `## L<n> <title>` block: situation / lesson / evidence, where the
+evidence is the contrast or before/after that proves it (an `agr trainer ab` report, two readbacks, numbers).
+Lessons stay job-local (no D-row promotion; only the weekly harvest above may propose one). Template:
+`jobs/_template/LESSONS.md`. `tools/qa/lessons_check.py --staged` runs in pre-commit and warns (never blocks) on a
+new lesson without evidence or a new free-form line. A harness edit drawn from lessons is tagged INVARIANT (entry,
+context, tools) or DOMAIN (OKS / Ground / MAF / Flora) and probed by a separate A/B run per tag
+(`docs/trainer/ETALONS.md`, "A/B probe").
+
 ## Historical delivered-job scripts [D327]
 
 Scripts of the delivered jobs (`finished_jobs` in `docs/architecture/contexts.yaml`) that no live command reaches are

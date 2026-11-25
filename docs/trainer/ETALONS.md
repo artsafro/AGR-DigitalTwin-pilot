@@ -16,7 +16,30 @@ uv run agr trainer run ETALON --lane codex --out NEW_DIR [--timeout-s 1800] [--d
 uv run agr trainer score ETALON --built NEW_DIR/built --out NEW.json --png NEW.png [--vlm]
 uv run agr trainer calibrate --out NEW_DIR
 uv run agr trainer ledger --add NEW.json --lane codex --run NEW_DIR --date YYYY-MM-DD
+uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR [--lane codex] [--dry-run]
 ```
+
+### A/B probe of a harness edit [D411]
+
+- `ab` (#1924, Harness2 arXiv 2610.14224) runs the SAME etalon twice, one arm after the other, on the same lane,
+  model and `origin/main` commit. `OLD_DIR` / `NEW_DIR` are harness variants: folders of repo-relative files
+  (rule, skill or doc text) laid over the practice tree after the scrub and committed as a second commit, so the
+  agent's own diff stays separate. An empty folder is the unchanged baseline. Both arms are scored with `score`
+  (Blender / Core Console only, never Max). Default: 1-2 etalons (cost).
+- One contrast report `OUT/ab.json` + `OUT/ab.md`: per score step and per skeleton stage old / new / verdict,
+  first-command tokens (first 4 tokens of the first command, shell wrapper removed), wrong-turns (commands with a
+  non-zero exit), commands and input tokens with deltas, deliverable diff (added / removed / changed / same by
+  sha256). Verdict of the edit: `fixed` (non-pass -> pass, or bypassed -> used, and nothing regresses),
+  `regressed` (any pass -> non-pass or used -> bypassed; a mixed result is `regressed`), `unchanged`,
+  `inconclusive` (an arm timed out, exited non-zero, failed before recording or was not scored; never `unchanged`).
+- Refused with exit 2 and nothing written: identical or empty variants, OLD and NEW the same folder, an `--out`
+  that exists or sits inside a variant, a variant file under `docs/trainer/`, `pairs_v1.json`, the etalon's
+  `hidden_repo_paths` or `.git`, a symlink, a file that names the key, an unknown `--scope` or lane.
+- Scope tag: `--scope INVARIANT` (entry, context, tools: AGENTS.md, SKELETONS, routes, CLI help) or
+  `--scope DOMAIN` (OKS / Ground / MAF / Flora rules and scenarios). The two are probed in separate A/B runs, never
+  mixed in one variant; an edited path that looks like the other scope is listed in `scope_warnings`.
+- The verdict is the evidence of a job lesson (`jobs/<ID>/LESSONS.md`, form situation / lesson / evidence,
+  `jobs/_template/LESSONS.md`; `tools/qa/lessons_check.py` warns on a new lesson without evidence).
 
 - `run` использует план записи #1608. Свежая сессия `codex exec --ephemeral --ignore-user-config` работает
   в отдельной папке: `git archive origin/main` распаковывается в новую папку, чистится, затем `git init` и

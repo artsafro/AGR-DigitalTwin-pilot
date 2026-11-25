@@ -7,6 +7,7 @@ Pattern: n/a | new-case: trainer v0 - practice-run recorder and step scorer over
     uv run agr trainer score ETALON --built FILE.fbx|DIR --out NEW.json [--png NEW.png] [--vlm] [--date D]
     uv run agr trainer calibrate --out NEW_DIR    # accepted vs rejected of every scorable etalon
     uv run agr trainer ledger [--add SCORE.json --lane L --run RUN_DIR]   # headline: share passed first try
+    uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR   # [D411] A/B probe
 
 A practice run gets ONLY the task text and the source copies (never the key, rejected versions or the job's
 history: the practice dir is `git archive` + scrub + `git init` with one commit, no origin). Score steps run the existing checkers in
@@ -334,6 +335,39 @@ def new_code_lines(wt):
     return total, files
 
 
+def apply_overlay(wt, variant_dir, e):
+    """[D411] Lay a harness variant (repo-relative files) over the practice tree and commit it as a second
+    commit, so the agent's own diff (new_code_lines) stays separate. Refused (TrainerError) when a file names the
+    key or a rejected version. Empty variant = baseline, no commit. -> {rel: sha256}."""
+    from trainer_ab import AbError, variant_files
+    try:
+        files = variant_files(variant_dir)
+    except AbError as exc:
+        raise TrainerError(str(exc)) from exc
+    if not files:
+        return {}
+    tokens = scan_tokens(e)
+    for rel in files:
+        low = (Path(variant_dir) / rel).read_bytes().decode("utf-8", errors="replace").lower()
+        found = [t for t in tokens if t in low]
+        if found:
+            raise TrainerError(f"harness variant names the key: {rel} contains {found[0]!r}")
+    for rel in files:
+        dst = Path(wt) / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(Path(variant_dir) / rel, dst)
+    env = {**os.environ, "GIT_AUTHOR_NAME": "trainer", "GIT_AUTHOR_EMAIL": "trainer@local",
+           "GIT_COMMITTER_NAME": "trainer", "GIT_COMMITTER_EMAIL": "trainer@local"}
+    for args in (["add", "-A", "-f"], ["commit", "-q", "--no-verify", "--allow-empty", "-m", "harness variant"]):
+        subprocess.run(["git", "-C", str(wt), *args], check=True, capture_output=True, env=env)
+    return files
+
+
+def origin_main_head():
+    return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
 def cmd_run(a, bank):
     e = etalon(bank, a.etalon)
     if not e["practice_ready"]:
@@ -358,10 +392,10 @@ def cmd_run(a, bank):
         shutil.copyfile(s["path"], dst)
         if sha256(dst) != s["sha256"]:
             raise TrainerError(f"source hash mismatch: {s['path']}")
-    head = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main"], capture_output=True, text=True,
-                          check=True).stdout.strip()
+    head = getattr(a, "head", None) or origin_main_head()
     # archive -> scrub -> git init + one commit: no shared index/history/refs with ROOT, no origin
     scrubbed = practice_tree(ROOT, head, wt, e)
+    overlay = apply_overlay(wt, a.overlay, e) if getattr(a, "overlay", None) else None
     (out / "prompt.txt").write_text(text, encoding="utf-8")
     cmd = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--disable", "memories", "-m",
            LANES[a.lane]["model"], "-c", "model_reasoning_effort=high", "--dangerously-bypass-approvals-and-sandbox",
@@ -388,6 +422,7 @@ def cmd_run(a, bank):
            "new_code_lines_outside_hooks": code, "new_code_files": code_files,
            "built_files": sorted(p.name for p in built.iterdir()), "hidden_repo_paths": e.get("hidden_repo_paths", []),
            "scrubbed_files": scrubbed,
+           "harness_variant": None if overlay is None else {"dir": str(a.overlay).replace("\\", "/"), "files": overlay},
            "last_message": (out / "last.txt").read_text(encoding="utf-8", errors="replace")[-2000:]
            if (out / "last.txt").exists() else ""}
     (out / "run.json").write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -755,6 +790,14 @@ def main(argv=None):
     lg.add_argument("--lane")
     lg.add_argument("--run")
     lg.add_argument("--date", default=dt.date.today().isoformat())
+    ab = sub.add_parser("ab", help="[D411] A/B probe of one harness edit on one etalon")
+    ab.add_argument("etalon")
+    ab.add_argument("--ab", nargs=2, metavar=("OLD_DIR", "NEW_DIR"), required=True)
+    ab.add_argument("--scope", required=True, help="INVARIANT (entry, context, tools) or DOMAIN (OKS/Ground/...)")
+    ab.add_argument("--lane", default="codex")
+    ab.add_argument("--out", required=True)
+    ab.add_argument("--timeout-s", type=int, default=1800)
+    ab.add_argument("--dry-run", action="store_true")
     ap.add_argument("--bank", default=str(BANK))
     a = ap.parse_args(argv)
     try:
@@ -765,6 +808,13 @@ def main(argv=None):
             return 0
         if a.cmd == "run":
             return cmd_run(a, bank)
+        if a.cmd == "ab":
+            import trainer_ab
+            if a.lane not in LANES:
+                raise TrainerError(f"unknown lane {a.lane!r}; known: {sorted(LANES)}")
+            a.old, a.new = a.ab
+            return trainer_ab.cmd_ab(a, bank, run_fn=cmd_run, score_fn=lambda e, b, w: score(e, b, w),
+                                     head_fn=origin_main_head)
         if a.cmd == "score":
             e = etalon(bank, a.etalon)
             out = Path(a.out).resolve()
@@ -802,7 +852,7 @@ def main(argv=None):
                 LEDGER.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
             print(json.dumps(headline(data["rows"])))
             return 0
-    except TrainerError as exc:
+    except ValueError as exc:  # TrainerError, trainer_ab.AbError
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     return 2

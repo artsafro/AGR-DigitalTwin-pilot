@@ -135,7 +135,7 @@ def _ev(cmd, code):
                                                          "exit_code": code, "status": "completed"}})
 
 
-def _arm(tmp_path, name, cmds, used, bypassed, built=None, exit_=0, tokens=100):
+def _arm(tmp_path, name, cmds, used, bypassed, built=None, exit_=0, tokens=100, head="abc"):
     d = tmp_path / name
     (d / "built").mkdir(parents=True)
     for fn, text in (built or {}).items():
@@ -144,7 +144,7 @@ def _arm(tmp_path, name, cmds, used, bypassed, built=None, exit_=0, tokens=100):
     lines.append(json.dumps({"type": "turn.completed", "usage": {"input_tokens": tokens, "output_tokens": 5}}))
     _w(d / "events.jsonl", "\n".join(lines) + "\n")
     _w(d / "run.json", json.dumps({"schema": "trainer-run/1", "etalon": E["id"], "lane": "codex",
-                                   "model": "m", "origin_main": "abc", "exit": exit_, "stages_used": used,
+                                   "model": "m", "origin_main": head, "exit": exit_, "stages_used": used,
                                    "stages_bypassed": bypassed, "tokens": {"input_tokens": tokens},
                                    "questions": 0}))
     return d
@@ -259,7 +259,7 @@ def test_cmd_ab_runs_both_arms_on_one_head_and_writes_one_report(tmp_path):
 
     def run_fn(a, bank):
         calls.append((a.etalon, a.lane, a.head, Path(a.overlay).name, Path(a.out).name))
-        _arm(Path(a.out).parent, Path(a.out).name, [("agr inspect", 0)], ["inspect"], ["body"])
+        _arm(Path(a.out).parent, Path(a.out).name, [("agr inspect", 0)], ["inspect"], ["body"], head=a.head)
         return 0
 
     def score_fn(e, built, work):
@@ -283,6 +283,42 @@ def test_cmd_ab_refusal_writes_nothing(tmp_path):
     with pytest.raises(AB.AbError):
         AB.cmd_ab(a, {"etalons": [dict(E, practice_ready=True)]}, run_fn=None, score_fn=None, head_fn=None)
     assert not (tmp_path / "ab").exists()
+
+
+def test_variant_naming_the_key_is_refused_before_any_run(tmp_path):
+    o, n = _variants(tmp_path, {}, {"docs/hint.md": "see k2_v002r1_body_quad.fbx"})
+    with pytest.raises(AB.AbError, match="names the key"):
+        AB.check_variants(o, n, tmp_path / "out", "INVARIANT", E)
+
+
+def test_cmd_ab_arm_failure_is_inconclusive_exit_1(tmp_path):
+    o, n = _variants(tmp_path, {}, {"AGENTS.md": "edited\n"})
+
+    def run_fn(a, bank):
+        if Path(a.out).name == "new":
+            raise T.TrainerError("source missing: X.dwg")
+        _arm(Path(a.out).parent, Path(a.out).name, [], [], [], head=a.head)
+
+    a = Namespace(etalon="g22-k2-stage1", lane="codex", old=str(o), new=str(n), out=str(tmp_path / "ab"),
+                  scope="INVARIANT", timeout_s=10, dry_run=False)
+    rc = AB.cmd_ab(a, {"etalons": [dict(E, practice_ready=True)]}, run_fn=run_fn,
+                   score_fn=lambda e, b, w: _score(), head_fn=lambda: "h")
+    rep = json.loads((tmp_path / "ab" / "ab.json").read_text(encoding="utf-8"))
+    assert rc == 1 and rep["verdict"] == "inconclusive" and "X.dwg" in rep["inconclusive_reason"]
+
+
+def test_cmd_ab_head_drift_is_inconclusive(tmp_path):
+    o, n = _variants(tmp_path, {}, {"AGENTS.md": "edited\n"})
+
+    def run_fn(a, bank):
+        _arm(Path(a.out).parent, Path(a.out).name, [], [], [], head="other" if a.out.endswith("new") else a.head)
+
+    a = Namespace(etalon="g22-k2-stage1", lane="codex", old=str(o), new=str(n), out=str(tmp_path / "ab"),
+                  scope="INVARIANT", timeout_s=10, dry_run=False)
+    AB.cmd_ab(a, {"etalons": [dict(E, practice_ready=True)]}, run_fn=run_fn, score_fn=lambda e, b, w: _score(),
+              head_fn=lambda: "h")
+    rep = json.loads((tmp_path / "ab" / "ab.json").read_text(encoding="utf-8"))
+    assert rep["verdict"] == "inconclusive" and "other" in rep["inconclusive_reason"]
 
 
 def test_cli_ab_fresh_process_refusal(tmp_path):
