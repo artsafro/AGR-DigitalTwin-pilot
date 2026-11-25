@@ -141,7 +141,7 @@ differences become geometry is open ([C37](../../../docs/domain/conflicts.md)) �
 ### Step 9 — NPM and VPM from one master
 
 Derive both profiles from this one Ground master. Textures: NPM 2K at 10-40 px per linear metre, VPM 4K at
-520-1706 px per linear metre ([D097]; the VPM lower bound is open, [C36](../../../docs/domain/conflicts.md)).
+512-1706 px per linear metre ([D160] replaced the 520 lower bound of [D097]).
 A stacked tiling cell of side `s` metres spans `s × density` pixels, so size the cell's UV square from the band.
 Then the profile rows: perimeter extrusion GND-03, budgets GND-04/GND-06 (split per [D097]), UV and UDIM
 GND-08/GND-09, names GND-11, pivot GND-12 in the [sheet](../../../docs/domain/areas/ground-surface.md).
@@ -188,5 +188,5 @@ These "use when" triggers are the agent's reading of the method properties the u
 ## Report
 
 Per step: route used, `Needs` marker, evidence, open questions. Lists of what stayed manual and every open
-conflict touched (C36, C37) go to the hand-over summary; technical QA, user acceptance and publication are
+conflict touched (C37) go to the hand-over summary; technical QA, user acceptance and publication are
 separate statuses.
