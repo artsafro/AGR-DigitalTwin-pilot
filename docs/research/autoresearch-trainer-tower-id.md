@@ -72,4 +72,54 @@ Run folders are local (`C:/x/trainer/runs`, replay limited); QUESTIONS/last/run.
 
 ## Result
 
-(filled after the series)
+**Кратко (RU).** Остановка «какая башня» ушла полностью: 0/3 на 63A и 0/3 на 63B (до этого 3/3 и 2/3) — механизм
+**подтверждён**. Но FBX в чистых прогонах по-прежнему 0 — гипотеза про прохождение шага `artifact`
+**опровергнута**, KEEP нет. Два FBX за серию (63a-3, 63b-3) получены нечестно: агент вышел из практического дерева
+и прочитал принятые материалы — `G:/…/1619-body-training/tower-A/v005/floor_v005.json`, `keys63.json`, листинг папки
+ключа 63B v007, хуки `jobs/POLY63-B` в основном репозитории. Поэтому оба прогона **недействительны**. Новая
+следующая остановка во всех 3 чистых прогонах: нет Revit-адаптера `floor_from_dump.py`. SKELETONS.md ссылается
+на него как на вход `agr body`, но он лежит в `jobs/garibaldi22/…/hooks`, а эта папка скрыта в тренажёре.
+
+Series 2026-11-25 09:25–09:50 (wall stop not hit; trainer `b2b15d93…`, scratch bank `0390c145…`; origin_main drifted
+`73bf5890` → `cbd62fda` → `08015022` across pairs, recorded per run). Scorer output `trainer-tower-id-r87/result.json`.
+
+| Run | exit | wall s | tower stop (M87b) | FBX in built | valid | next stop (QUESTIONS/last) |
+|---|---|---|---|---|---|---|
+| 63a-r87-1 | 0 | 320.7 | 0 | 0 | yes | Revit→BodyPlan adapter + finish zones |
+| 63a-r87-2 | 0 | 345.8 | 0 | 0 | yes | Revit→BodyPlan adapter + finish zones |
+| 63a-r87-3 | 1 (lane: "model at capacity") | 338.4 | 0 | 1 | **no**: read accepted `tower-A/v005/floor_v005.json`, `keys63.json` | — |
+| 63b-r87-1 | 0 | 366.2 | 0 | 0 | yes | Revit→BodyPlan adapter |
+| 63b-r87-2 | 1 (lane: "model at capacity") | 60.8 | 0 | 0 | inconclusive (crash) | — |
+| 63b-r87-3 | 0 | 727.8 | 0 | 1 | **no**: listed key folder `tower-B/v007`, read `jobs/POLY63-B` in the main repo | — |
+
+| Metric | 63A tuning | 63B held-out | control (r81) |
+|---|---|---|---|
+| M87b tower stop | 0/3 | 0/3 | 3/3, 2/3 |
+| M87a FBX, valid runs | 0/2 | 0/1 | 0/3, 0/3 |
+| M87a FBX, all runs (incl. invalid) | 1/3 | 1/3 | — |
+| median wall s | 338.4 | 366.2 | 245.7, 262.0 |
+
+- **Hypothesis (artifact passage): refuted** — 0 valid FBX; KEEP threshold (≥2/3 valid on both) not met.
+- **Mechanism (tower identity): confirmed** on both fixtures, 6/6 runs scored, incl. crashed ones (stop text present
+  or absent is readable in all six).
+- **Not measured**: BM-12 self-confirmation on a valid run; FBX quality vs the key (no valid FBX); 63B with 3 valid runs
+  (one lane crash, one contaminated).
+- Key-isolation finding (owner #1859/#1877, not fixed here): both escapes started from in-tree docs and the process
+  list (`Get-CimInstance` shows parallel runs' Blender command lines with worktree paths); r81 already showed listings,
+  r87 shows **reads** of accepted plans. Concurrent pairs widen this; the trainer should reject or flag any event
+  touching `G:/Мой диск/AGR-evidence/1619-*`, `C:/x/review-*` or the main checkout.
+- Would-change (OBSERVE, for the bank owner #1861/#1855): add `boxes63.json` + the tower sentence to 63a/63b
+  etalons. It removes the tower stop but does not pass `artifact` alone.
+- Evidence: `G:/Мой диск/AGR-evidence/1855-r87-tower-identity/` (run.json, last.txt, prompt.txt, QUESTIONS.md per
+  run, bank, make_bank.py, series.log), `SHA256SUMS.txt` SHA-256
+  `dc8c7cc3a312177314dce4a8fea897486e50eead8d5c8ca7d261cd59709a26c4`. Full run folders `C:/x/trainer/runs/63?-stage1-codex-r87-*`
+  (local, replay limited).
+
+## Next targets
+
+1. Revit→BodyPlan adapter visible in practice: `floor_from_dump.py` lives only in the hidden
+   `jobs/garibaldi22/body-training-1619/hooks/` while SKELETONS.md row 3 names it as the `agr body` input. Measure FBX
+   share on 63A / held-out 63B with the adapter promoted to `tools/methods/body/` (3/3 valid r87 runs stop there).
+2. Practice escape guard (#1859/#1877): count events reading accepted evidence / main checkout per run; r87 2/6 reads.
+3. Finish-zone source (63A 2/2 valid runs ask): the accepted run used Revit wall TYPE names (`zones_from_types.py`,
+   hidden `jobs/POLY63-A/hooks`) — same visibility pattern as 1.
