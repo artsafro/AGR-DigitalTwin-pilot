@@ -162,7 +162,20 @@ def light_export(ctx, mode, nodes, preview):
     before = emax.snapshot(export_nodes)
     writer = ctx.agr._load_core('deliver_max.py', 'agr_tools_deliver_max')  # FBX writer of branch S
     with emax.session(core.EXPORT_TOOL):
-        writer.write_new_fbx(export_nodes, plan['target'], core.LIGHT_FBX_PARAMS)
+        renamed = []
+        try:
+            for row in [plan['root']] + plan['lights']:
+                node = by_handle[row['handle']]
+                original = str(node.name)
+                if original != row['name']:
+                    renamed.append((node, original))
+                    node.name = row['name']
+                    if str(node.name) != row['name']:
+                        raise ValueError('cannot set Light FBX node name: ' + row['name'])
+            writer.write_new_fbx(export_nodes, plan['target'], core.LIGHT_FBX_PARAMS)
+        finally:
+            for node, original in reversed(renamed):
+                node.name = original
     if emax.snapshot(export_nodes) != before:
         raise RuntimeError('light.export: the scene changed during export')
     with open(plan['target'], 'rb') as f:

@@ -1,0 +1,151 @@
+{
+ "note": "#1784 Revit-FBX openings config for СОКОЛЬНИКИ_УВК1000_АР_R23_вар1.fbx (sha feaae527...). Rule = [name prefix, class(, reason)], first match wins.",
+ "rules": [
+  [
+   "WB_Окно_",
+   "surrounds"
+  ],
+  [
+   "WB_ДверьВитражная",
+   "doors"
+  ],
+  [
+   "AC_ДверьВитражная",
+   "doors"
+  ],
+  [
+   "WB_Дв_2Пл",
+   "doors"
+  ],
+  [
+   "AC_Дверь_Однопольная_Стальная",
+   "doors"
+  ],
+  [
+   "Системная панель",
+   "curtain"
+  ],
+  [
+   "Прямоугольный импост",
+   "drop",
+   "curtain-wall mullion: texture (D336)"
+  ],
+  [
+   "Базовая стена ADSK_Наружная",
+   "wall"
+  ],
+  [
+   "Базовая стена ВС_Кладка",
+   "wall"
+  ],
+  [
+   "Базовая стена Базовая - 50",
+   "wall"
+  ],
+  [
+   "Базовая стена ADSK_Отделка",
+   "features"
+  ],
+  [
+   "Панель фасадная 1 Фигурная",
+   "inset",
+   "accent fin RAL 8023: separate inset (D336, intake P7)"
+  ],
+  [
+   "Панель фасадная 2 Фигурная",
+   "drop",
+   "folded cassette RAL 9003: texture (intake Q2 default, D336)"
+  ],
+  [
+   "Панель фасадная",
+   "features"
+  ],
+  [
+   "Базовая стена ADSK_Внутренняя",
+   "drop",
+   "interior wall"
+  ],
+  [
+   "Базовая стена ADSK_Перегородка",
+   "drop",
+   "interior partition"
+  ],
+  [
+   "Базовая стена ADSK_Сетка_кровля",
+   "inset",
+   "rooftop mesh fence: separate inset (D336)"
+  ],
+  [
+   "ADSK_КаркасНесущий",
+   "inset",
+   "rooftop steel cage: separate inset (D336)"
+  ],
+  [
+   "ADSK_КолоннаНесущая_Труба",
+   "inset",
+   "rooftop steel cage: separate inset (D336)"
+  ],
+  [
+   "ASML_АР_Козырьки",
+   "inset",
+   "glass canopy: separate inset (D336)"
+  ],
+  [
+   "Базовая крыша",
+   "inset",
+   "roof: separate inset roof plane (D336)"
+  ],
+  [
+   "ADSK_КолоннаЖБ",
+   "drop",
+   "RC column: structure, not envelope"
+  ],
+  [
+   "(BM)_ADSK_Брус",
+   "drop",
+   "beam: structure, not envelope"
+  ],
+  [
+   "Монолитная лестница",
+   "drop",
+   "stair: not envelope"
+  ],
+  [
+   "Лестницы",
+   "drop",
+   "stair: not envelope"
+  ],
+  [
+   "Ограждение",
+   "drop",
+   "railing: stage 2 / MAF, not body"
+  ],
+  [
+   "В2В_Подоконник",
+   "drop",
+   "window sill: texture"
+  ],
+  [
+   "B2B_Отлив",
+   "drop",
+   "window flashing: texture"
+  ],
+  [
+   "Люк выхода",
+   "drop",
+   "roof hatch: not envelope"
+  ],
+  [
+   "Перекрытие",
+   "drop",
+   "slab: floor/roof caps come from the plan, not facade lines"
+  ]
+ ],
+ "interior": [
+  "Базовая стена ADSK_Внутренняя",
+  "Базовая стена ADSK_Перегородка",
+  "ADSK_КолоннаЖБ",
+  "Монолитная лестница",
+  "(BM)_ADSK_Брус"
+ ]
+}

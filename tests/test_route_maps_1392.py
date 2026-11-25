@@ -22,7 +22,7 @@ DCC_ACTOR = "Агент: Blender / Max / AGR Tools"
 VPM_V2 = ["sources", "parts", "gate1", "body", "openings", "roof", "decor", "uv", "ucx", "master-topology", "npm", "package",
           "readback", "validate", "sintez", "delivered"]
 GROUND_V2 = ["sources", "zero", "surfaces", "quads", "textures", "relief", "skirt", "ucx", "placement", "npm",
-             "package", "validate", "sintez"]
+             "export", "package", "validate", "sintez"]
 RESOLVED = {"vpm-route": {"revit-intake", "body-master-choice", "sintez-runner",  # sintez-runner: #1379 (PR #1431)
                            "parapet-seam",  # #1381: one roof/parapet seam check
                            "ucx-copies"},  # ucx: #1404 D330
@@ -516,14 +516,15 @@ def test_ground_flat_steps_name_ids_seams_insets_tiles_udim():
 
 # ---------------------------------------------------------------- 5. NPM step before export
 @pytest.mark.parametrize("name", sorted(ROUTES))
-def test_npm_stage_sits_right_before_package_with_convert_and_parallel(name):
+def test_npm_stage_precedes_export_with_convert_and_parallel(name):
     events = _routes()[name]
     ids = [s["id"] for s in events["stages"]]
-    assert ids.index("npm") + 1 == ids.index("package")
+    expected = ["npm", "export", "package"] if name == "ground-route" else ["npm", "package"]
+    assert ids[ids.index("npm"):ids.index("package") + 1] == expected
     npm = _stage(events, "npm")
     branches = {b["id"]: b for b in npm["branches"]}
     assert {"convert", "parallel"} <= set(branches)
-    assert "agr vpm-to-npm" in branches["convert"].get("commands", [])
+    assert ("agr vpm-to-npm" in branches["convert"].get("commands", [])) == (name != "ground-route")
     assert "D293" in branches["convert"]["rules"] and "D293" in branches["parallel"]["rules"]
     assert "агент" in json.dumps(npm, ensure_ascii=False).lower() or npm["actor"].startswith("agent")
 
@@ -539,10 +540,48 @@ def test_ground_npm_has_maf_flora_ground_on_atlas_and_same_geometry():
     assert "вместе" in parallel
 
 
-def test_both_packagers_on_the_export_stage():
+def test_both_packagers_on_the_package_stage():
     for name in ROUTES:
         cmds = _stage(_routes()[name], "package")["commands"]
         assert {"agr package-vpm", "agr package-npm"} <= set(cmds), name
+
+
+@pytest.mark.parametrize("stage,fragments", [
+    ("sources", ("читает манифест", "не заменяет сверку с легендой")),
+    ("zero", ("проверяет OBJ", "не определяет ноль")),
+    ("quads", ("треугольники", "не рабочий FBX с квадами")),
+    ("textures", ("ground_site", "до проекции", "без файлов текстур и атласа")),
+    ("skirt", ("UV юбки", "ground-flat.obj", "SM_<site>_Ground.obj", "ground-report.json")),
+    ("ucx", ("FBX или Blend", "не подключён")),
+    ("placement", ("master JSON", "offset или readback", "FBX или mesh", "не подключён")),
+    ("npm", ("не конвертирует Ground", "не доказывают совпадение поверхности")),
+    ("export", ("JSON-мастер, не OBJ", "D366")),
+    ("package", ("готовые файлы", "не экспортирует FBX")),
+])
+def test_1820_command_limits_are_visible_on_event_board(stage, fragments):
+    events, maps = _routes()["ground-route"], _maps()
+    board = route_map.route_board(events, maps["contexts"])
+    visible = {" ".join(el["text"].split()) for el in board.elements if el["type"] == "text"}
+    notes = [" ".join(h["ru"].split()) for h in events["hotspots"] if h["stage"] == stage]
+    for fragment in fragments:
+        assert any(fragment in note for note in notes), (stage, fragment)
+        assert any(fragment in text for text in visible), (stage, fragment)
+
+
+def test_1820_ground_owns_flat_and_skirt_uv_but_not_npm_atlas():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    contexts = {c["id"]: c for c in cmap["contexts"]}
+    for stage in ("textures", "skirt"):
+        assert contexts[_stage(events, stage)["context"]]["owner"] == "src/dt_ai/geometry/ground_site.py"
+    npm = _stage(events, "npm")
+    assert not npm.get("commands") and not any(b.get("commands") for b in npm["branches"])
+    assert "tools/source/inspect_ground_dxf.py" in _stage(events, "sources")["evidence"]
+    assert "D366" in _stage(events, "export")["rules"]
+    assert not (_stage(events, "export").get("commands"))
+    assert not ({("ground", target) for target in ("placement", "ucx", "ground-export")} &
+                {(r["from"], r["to"]) for r in cmap["relations"]})
+    assert route_map.route_coverage(events, maps["contexts"], cmap) == []
 
 
 # ---------------------------------------------------------------- red boxes: resolved or explained

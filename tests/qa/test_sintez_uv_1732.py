@@ -7,6 +7,7 @@ checks passed. Every mesh below is a SYNTHETIC fixture, not data of a real objec
 """
 import math
 import random
+from copy import deepcopy
 
 import pytest
 
@@ -20,6 +21,84 @@ from twinqa.uv import edge_densities
 
 SIDE = 4096
 UV_PER_M = 0.2  # 0.2 x 4096 = 819.2 px/m, inside 512..1706
+
+
+def test_indexed_drift_repeat_reset_and_order():
+    from twinqa.sintez_uv import indexed_uv_drift
+
+    before = [_strip(1), _strip(2, name="second")]
+    for _ in range(2):
+        assert indexed_uv_drift(before, deepcopy(before[::-1])) == {
+            "meshes": 2, "corners": 18, "max_uv": 0.0, "max_world_m": 0.0,
+        }
+
+
+def test_indexed_drift_probes_every_loop():
+    from twinqa.sintez_uv import indexed_uv_drift
+
+    before = [_strip(1)]
+    for face in range(2):
+        for loop in range(3):
+            for axis in range(2):
+                after = deepcopy(before)
+                pair = after[0]["face_geometry"]["polygon_uv"][face][loop]
+                pair[axis] = math.nextafter(pair[axis], math.inf)
+                report = indexed_uv_drift(before, after)
+                assert report["max_uv"] > 0 and report["max_world_m"] == 0
+
+
+def test_indexed_drift_world_registration():
+    from twinqa.sintez_uv import indexed_uv_drift
+
+    before = [_strip(1)]
+    after = deepcopy(before)
+    after[0]["face_geometry"]["vertices"][0][2] = 0.001
+    report = indexed_uv_drift(before, after)
+    assert report["max_uv"] == 0 and report["max_world_m"] == 0.001
+
+
+@pytest.mark.parametrize("case", ["empty", "duplicate", "name", "missing", "nan", "inf", "negative-index",
+                                  "connectivity", "material", "quad", "unsupported"])
+def test_indexed_drift_refuses_unproved_correspondence(case):
+    from twinqa.sintez_uv import indexed_uv_drift
+
+    before = [_strip(1)]
+    after = deepcopy(before)
+    g = after[0]["face_geometry"]
+    if case == "empty":
+        after.clear()
+    elif case == "duplicate":
+        after.append(deepcopy(after[0]))
+    elif case == "name":
+        after[0]["name"] = "alien"
+    elif case == "missing":
+        g["polygon_uv"].pop()
+    elif case in {"nan", "inf"}:
+        g["polygon_uv"][1][1][0] = float(case)
+    elif case == "negative-index":
+        g["polygons"][1][1] = -1
+    elif case == "connectivity":
+        g["polygons"][1].reverse()
+    elif case == "material":
+        g["polygon_material"][1] = "other"
+    elif case == "quad":
+        g["polygons"][1].append(1)
+        g["polygon_uv"][1].append([0.25, 0.05])
+    else:
+        g["polygon_uv"][1][1] = {0.0: None, 1.0: None}
+    with pytest.raises(ValueError):
+        indexed_uv_drift(before, after)
+
+
+@pytest.mark.parametrize("bad_xyz", [{0: None, 1: None, 2: None}, (0, 1, 2), [0, 1, 2**53 + 1]])
+def test_indexed_drift_refuses_noncanonical_xyz_with_valid_sibling(bad_xyz):
+    from twinqa.sintez_uv import indexed_uv_drift
+
+    before = [_strip(1), _strip(1, name="second")]
+    after = deepcopy(before)
+    after[1]["face_geometry"]["vertices"][0] = bad_xyz
+    with pytest.raises(ValueError, match="second.*XYZ"):
+        indexed_uv_drift(before, after)
 
 
 def _strip(n=4, name="SM_Test_K_1_Main", material="M_Test_K_1_Main_1"):

@@ -313,6 +313,11 @@ class AgrPanel(QtWidgets.QDockWidget):
         self.nodes = {}
         self._build_stage_rail(holder, hl)
         self._build_form(holder, hl)
+        self.fbx_maps_button = grey_button(holder, 'agr_fbx_maps', 'Проверить карты после импорта FBX…',
+                                           'Выделите импортированные объекты и укажите исходный FBX.')
+        self.fbx_maps_button.setEnabled(True)
+        self.fbx_maps_button.clicked.connect(self.check_fbx_maps)
+        hl.addWidget(self.fbx_maps_button)
         for i, n in enumerate(roadmap.flow(self.suite, model.VERSION)):
             if i:
                 arrow = QtWidgets.QLabel('↓', holder)
@@ -691,6 +696,7 @@ class AgrPanel(QtWidgets.QDockWidget):
     # ---- running ------------------------------------------------------------------------
     def set_busy(self, busy):
         self._running = busy
+        self.fbx_maps_button.setEnabled(not busy)
         for b in self.buttons.values():
             b.setEnabled(not busy)
         for aid, b in self.stage_buttons.items():  # a wip stage button stays disabled after a run too
@@ -785,6 +791,54 @@ class AgrPanel(QtWidgets.QDockWidget):
         self.show_report(report, error)
         self.refresh_path()
         return report
+
+    def check_fbx_maps(self):
+        if self._running:
+            return
+        self.set_busy(True)
+        try:
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, 'Исходный FBX выделенных объектов', '', 'FBX (*.fbx)')
+            if path:
+                result = self.backend.check_fbx_maps(path, self._confirm_fbx_maps)
+                self.show_report(self._fbx_maps_report(result['after'] or result['before'], result['failures']))
+        except Exception as exc:
+            self.show_report(None, '{}: {}'.format(type(exc).__name__, exc))
+        finally:
+            self.set_busy(False)
+
+    @staticmethod
+    def _fbx_maps_report(readback, failures):
+        objects = []
+
+        def finding(name, code, detail):
+            objects.append({'name': name, 'findings': [{'code': code, 'detail': detail}]})
+
+        for row in readback['unconnected']:
+            finding(row['file'], 'Не подключена', ', '.join('{} / {}'.format(m, c) for m, c, _ in row['materials']))
+        for conflict in readback['conflicts']:
+            finding('FBX', 'Конфликт', conflict)
+        for failure in failures:
+            finding(failure['file'], 'Не восстановлена', failure['reason'])
+        if readback['status'] == 'no_embedded_maps':
+            finding('FBX', 'Нет встроенных карт', 'Подключение не проверено')
+        if not objects:
+            objects.append({'name': 'FBX: {} / {} карт'.format(readback['connected'], readback['embedded']), 'findings': []})
+        return {'tool': 'Карты FBX', 'status': 'pass' if readback['status'] == 'pass' and not failures else 'fail',
+                'objects': objects}
+
+    def _confirm_fbx_maps(self, before, plan):
+        self.show_report(self._fbx_maps_report(before, plan['failures']))
+        box = QtWidgets.QMessageBox(self)
+        box.setWindowTitle('Карты FBX')
+        box.setText('Не подключено карт: {}. Восстановить доступные подключения?'.format(len(before['unconnected'])))
+        details = ['Не подключена: ' + row['file'] for row in before['unconnected']]
+        details += ['{file} → {material}.{slot}'.format(**row) for row in plan['connect']]
+        details += ['{file}: {reason}'.format(**row) for row in plan['failures']]
+        box.setDetailedText('\n'.join(details))
+        buttons = QtWidgets.QMessageBox.StandardButton
+        box.setStandardButtons(buttons.Yes | buttons.No)
+        box.setDefaultButton(buttons.No)
+        return box.exec() == buttons.Yes
 
     # ---- results ------------------------------------------------------------------------
     def show_report(self, report, error=None):

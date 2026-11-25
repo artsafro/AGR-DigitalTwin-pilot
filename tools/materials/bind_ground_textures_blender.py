@@ -164,7 +164,7 @@ def bind(fbx, spec_path, out_fbx):
         apply_scale_options="FBX_SCALE_UNITS",
         axis_forward="Y",
         axis_up="Z",
-        mesh_smooth_type="FACE",
+        mesh_smooth_type="SMOOTH_GROUP",
         use_mesh_modifiers=False,
         bake_space_transform=False,
         add_leaf_bones=False,

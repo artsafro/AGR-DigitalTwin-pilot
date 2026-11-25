@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "BodyPlan.schema.json",
+  "title": "BodyPlan - contour + levels + openings of one floor band (shared body core #1736)",
+  "description": "Input of tools/methods/body/body_lattice.py (the core reads nothing else). One band = one typical-floor module replicated `floors` times by `step` from `z0`. Revit route: jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py; DWG route: tools/methods/body/plan_adapter_dwg.py. Extra provenance keys are allowed. body_lattice.validate_plan adds the checks JSON Schema cannot express (CCW rings, loops rising inside the step, zone/window bounds, known materials).",
+  "type": "object",
+  "required": ["step", "z0", "floors", "loops", "rings", "materials"],
+  "properties": {
+    "step": {"type": "number", "exclusiveMinimum": 0, "description": "floor-to-floor height of the module, m"},
+    "z0": {"type": "number", "description": "world z of the module base (loop 0), m"},
+    "floors": {"type": "integer", "minimum": 1},
+    "loops": {"type": "array", "minItems": 1, "items": {"type": "number"},
+              "description": "module-relative z of the horizontal lines, first 0, strictly rising, < step (BM-02)"},
+    "rings": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "required": ["xy"],
+      "properties": {
+        "xy": {"type": "array", "minItems": 3, "items": {"type": "array", "minItems": 2, "maxItems": 2,
+               "items": {"type": "number"}}, "description": "outer envelope, CCW, m (BM-01, D341)"},
+        "cuts": {"type": "array", "items": {"type": "number"},
+                 "description": "perimeter positions s of full-height stations (jambs, zone joints), m"},
+        "zones": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 3,
+                  "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "string"}]},
+                  "description": "[s0, s1, material] finish zones along the perimeter (BM-11)"}
+      }}},
+    "windows": {"type": "array", "items": {"type": "array", "minItems": 3, "maxItems": 6, "items": {"type": "number"}},
+                "description": "[ring, s0, s1, wl, wh, r]: opening between stations s0..s1 and loop indices wl..wh; r > 0 = reveal depth (cell removed, reveal tube), r = 0 = cell kept with WINDOW material"},
+    "insets": {"type": "array", "items": {"type": "object", "required": ["box"],
+               "properties": {"box": {"type": "array", "minItems": 7, "maxItems": 7, "items": {"type": "number"}}}},
+               "description": "separate closed boxes [cx, cy, z0, w, d, h, rot] (BM-04, D336)"},
+    "materials": {"type": "object", "minProperties": 1,
+                  "additionalProperties": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}},
+    "wall_tile_m": {"type": "number", "exclusiveMinimum": 0},
+    "max_side_m": {"type": "number", "minimum": 0, "description": "BM-11 split of long sides (0 = off)"},
+    "zone_overlap": {"enum": ["error", "first_listed"], "description": "overlapping zones: error (default) or the first listed wins"}
+  }
+}

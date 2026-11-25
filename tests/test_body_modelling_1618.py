@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOC = ROOT / "docs/research/body-modelling.md"
 SUMMARY = ROOT / "docs/research/body-modelling-summary-ru.md"
 SCRIPTS = ROOT / "docs/research/body-modelling-1618"
-RULES = [f"BM-{i:02d}" for i in range(1, 15)]
+RULES = [f"BM-{i:02d}" for i in range(0, 15)]  # BM-00 lattice-only rule [D373] (#1736)
 
 
 def _load(name):

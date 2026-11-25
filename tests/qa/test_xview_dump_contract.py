@@ -49,6 +49,38 @@ def test_ms_loads_max_never_saves_and_decodes_millimetres():
     assert text.find("deleteFile doneP") < text.find("for j in jobs do")
 
 
+def test_ms_version_preflight_is_first_and_fails_without_receipts():
+    """Static MAXScript contract: no jobs, stages or receipts touched on refusal."""
+    text = MS.read_text(encoding="utf-8")
+    entry = text[text.index("  local failed = false\n"):]
+    guard = re.search(
+        r'  try \(\n  local maxRelease = \(maxVersion\(\)\)\[1\]\n'
+        r'  if maxRelease >= \d+ do throw \("XVIEW_UNSUPPORTED_MAX_VERSION: unsupported Max version.*\n',
+        entry,
+    )
+    assert guard is not None
+    assert guard.end() < entry.index("xv_read_jobs jobsP") < entry.index("xv_compile_file_id()")
+    assert entry.index("xv_preflight idType") < entry.index("ready = true") < entry.index("xv_stage idType")
+    assert "  local ready = false\n" in entry[:guard.start()]
+    failure = entry[entry.rindex("  ) catch (\n"):]
+    assert re.search(r'failed = true\s+local msg = getCurrentException\(\)\s+format "XVIEW_ERROR', failure)
+    assert failure.index("if ready and") < failure.index("xv_write_failed")
+    assert "if failed then xv_exit 1 else xv_exit 0" in failure
+    assert '(dotNetClass "System.Environment").Exit code' in text
+
+
+def test_ms_version_preflight_release_boundary():
+    # Evaluate the simple source predicate offline, not the native host. Probe every integer
+    # around the boundary as well as the actual release codes, then repeat/reset.
+    text = MS.read_text(encoding="utf-8")
+    match = re.search(r'^  if maxRelease >= (\d+) do throw', text, re.MULTILINE)
+    assert match is not None
+    cutoff = int(match[1])
+    releases = [28000, 26000, *range(26990, 27011), 29000, 28000, 26000]
+    expected = [True, False, *([False] * 10), *([True] * 11), True, True, False]
+    assert [release >= cutoff for release in releases] == expected
+
+
 def test_review_header_points_at_shared_runner():
     text = REVIEW.read_text(encoding="utf-8")
     assert "tools/qa/xview_dump.ms" in text.splitlines()[0] or "tools/qa/xview_dump.ms" in text[:500]

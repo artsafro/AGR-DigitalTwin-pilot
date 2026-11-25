@@ -57,6 +57,17 @@ def _hook(script="hooks/fix.py", stage="master-qa", point="after"):
 
 # --- skeleton inventory --------------------------------------------------------------------------------------------
 
+def test_sintez_fix_is_not_a_delivery_route():
+    spec = SK["cells"]["sintez-fix"]
+    assert spec["activation"] == "artem-request-only"
+    assert spec["stages"] == ["checker", "sintez-classify", "sintez-recipe", "sintez-uv-drift",
+                              "sintez-recheck", "sintez-sheet"]
+    private = set(spec["stages"]) - {"checker"}
+    for name, cell in SK["cells"].items():
+        if name != "sintez-fix":
+            assert private.isdisjoint(cell["stages"]), name
+
+
 def test_skeleton_every_scenario_cell_has_a_skeleton():
     cells = {c["id"] for c in json.loads((ROOT / "docs/scenarios/scenarios.json").read_text(encoding="utf-8"))["cells"]}
     assert cells and cells == set(SK["cells"])

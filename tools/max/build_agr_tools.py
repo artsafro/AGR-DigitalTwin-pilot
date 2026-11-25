@@ -22,6 +22,7 @@ HYGIENE_NAMES = {'ORIGIN', 'UV_NAME', 'CA_OWNERS', 'OBJECT_KEYS', 'MAX_MAP_CHANN
 FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'runtime.py', 'bootstrap.py',
          'README.md', 'CHANGELOG.md', 'atlas_core.py', 'ucx_core.py', 'texel_core.py', 'export_core.py', 'export_meta.py',
          'master_topology_core.py',
+         'fbxmaps_core.py', 'fbxmaps_max.py',
          'checks_core.py', 'checks_max.py', 'ui_model.py', 'ui_qt.py', 'ui_panel.py', 'ui_max.py',
          'suite_core.py', 'suite_max.py', 'roadmap.py',
          # 0.8 (#908): edit contract + stub modules of branches A-D (this list does not change in A-D)
@@ -59,6 +60,8 @@ FILES = ('mzp.run', 'install.ms', 'startup.ms', 'agr_tools.mcr', 'menu.ms', 'run
 # procedural_classes.json, streets/). At most one sub-folder level: install.ms copies data/ and data/<dir>/.
 DATA_DIR = 'data'
 SUITE_JSON = ROOT / 'docs/plans/agr-tools-suite.json'  # «Путь» source of truth, shipped as agr-tools-suite.json
+# #1757: publish catalogue [D371], shipped as published-catalogue.json (the installed assets browser reads it)
+PUBLISHED_CATALOGUE = ROOT / 'library/published/catalogue.json'
 BUNDLE = 'AGR-Tools.bundle'
 ICONS = ROOT / 'tools/max/agr_icons.py'
 
@@ -235,6 +238,8 @@ def _collect():
     inputs[UCX_AUDIT] = UCX_AUDIT.read_bytes()
     inputs[SUITE_JSON] = SUITE_JSON.read_bytes()
     entries['agr-tools-suite.json'] = inputs[SUITE_JSON].replace(b'\r\n', b'\n')
+    inputs[PUBLISHED_CATALOGUE] = PUBLISHED_CATALOGUE.read_bytes()
+    entries['published-catalogue.json'] = inputs[PUBLISHED_CATALOGUE].replace(b'\r\n', b'\n')
     entries['hygiene_core.py'] = hygiene_slice(inputs[HYGIENE].decode('utf-8').replace('\r\n', '\n'))
     entries['uv_nudge_core.py'] = nudge_slice(
         inputs[NUDGE].decode('utf-8').replace('\r\n', '\n'),

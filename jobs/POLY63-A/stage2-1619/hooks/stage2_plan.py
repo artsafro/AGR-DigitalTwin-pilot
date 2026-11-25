@@ -67,12 +67,15 @@ def crop_objects(path, prefixes, band):
     return out
 
 
-def revit_window(tri):
-    """Local frame and glass rectangles [u0, z0, u1, z1] (from the bottom-left of the window) of one Revit window."""
+def revit_window(tri, u=None):
+    """Local frame and glass rectangles [u0, z0, u1, z1] (from the bottom-left of the window) of one Revit window.
+    `u` (unit wall direction) overrides the PCA axis; None keeps the 63A behaviour."""
     p = tri.reshape(-1, 3)
     xy = p[:, :2] - p[:, :2].mean(0)
-    _, vec = np.linalg.eigh(xy.T @ xy)
-    u = vec[:, 1]
+    if u is None:
+        _, vec = np.linalg.eigh(xy.T @ xy)
+        u = vec[:, 1]
+    u = np.asarray(u, dtype=float)
     nrm = np.array([-u[1], u[0]])
     lu, ln = xy @ u, xy @ nrm
     lu, ln, lz = lu - lu.min(), ln - ln.min(), p[:, 2] - p[:, 2].min()

@@ -1,0 +1,87 @@
+{
+ "schema": "form-check-pairs/1",
+ "card": "t_73d7ece4",
+ "note": "Fixtures live outside git (C:/x, Google Drive); every file is pinned by its SHA-256 prefix. Artem verdicts are cited per variant.",
+ "pairs": [
+  {
+   "id": "G22 k2",
+   "kind": "scene",
+   "key": "C:/x/t_563a40f7/key/heldout-key-v001.json", "key_sha": "843197137db10cdc",
+   "sections": "C:/x/t_563a40f7/key/heldout-sections-v001.json", "sections_sha": "270e83dedbbae380",
+   "zmap": "16.85=16.85,17.8=17.8,18.2=18.2,19.8=19.8",
+   "variants": [
+    {"name": "v002r1", "fbx": "C:/x/review-k2/k2_v002r1_body_quad.fbx", "sha": "5b1e8d76c81de07d", "artem": "accepted",
+     "cite": "Artem 2026-11-18 'все норм кроме b корпуса' (#1619; key accepted_bytes)"},
+    {"name": "v001", "fbx": "C:/x/review-k2/k2_v001_body_quad.fbx", "sha": "8e97a80af2de0a22", "artem": "rejected",
+     "cite": "v001 rejected for stage 1 (#41 A vs R, #1619)"}
+   ],
+   "reference": "v002r1",
+   "judge_png": {"v002r1": "C:/x/autoresearch-body-form-r41/comp/A.png", "v001": "C:/x/autoresearch-body-form-r41/comp/R.png"},
+   "judge_png_note": "frozen #41 rig composites (same views as #41/#45/#49), not re-rendered"
+  },
+  {
+   "id": "63B",
+   "kind": "scene",
+   "key": "C:/x/t_fb3a0b98-r51/key/heldout-key-v001.json", "key_sha": "67a1ae5b88beec6e",
+   "sections": "C:/x/t_fb3a0b98-r51/key/heldout-sections-v001.json", "sections_sha": "07ce9a5bff8a9e4e",
+   "zmap": "16.85=8.03,17.8=8.98,18.2=9.38,19.8=10.98",
+   "amend": {
+    "source_wall_gaps": [{"id": "src-fd517ed-185b002", "ring_seg": [18, 19], "span_m": [3.414374, 4.717635],
+                          "basis": "#52: source outer walls fd517ed/185b002 leave this gap; the key ring (v002 builder) bridges it"}],
+    "reveal_depth_reference": {"status": "open",
+                               "basis": "#53 question to Artem: 0.50 m (source wall faces, as built in accepted v007) or 0.71 m (opening attribute)"}
+   },
+   "accepted_deviations": [
+    {"variant": "v007", "item": "opening:рт О_194b464:edges", "rule": "D341",
+     "basis": "D341 step-corner clip: the opening narrows to 1.224..3.369 m in floor_A.json (vertex 44, step 0.249 m moved out; #57 true narrowing), v007 accepted by Artem"}
+   ],
+   "variants": [
+    {"name": "v007", "fbx": "C:/x/t_fb3a0b98-r51/run1/fixtures/v007.fbx", "sha": "53189b830418a328", "artem": "accepted",
+     "cite": "Artem 2026-11-20, 63B stage 1 v007 accepted (#51 labels)"},
+    {"name": "v002", "fbx": "C:/x/t_fb3a0b98-r51/run1/fixtures/v002.fbx", "sha": "a57cb3fb66e628e6", "artem": "rejected", "cite": "#51 labels"},
+    {"name": "v003", "fbx": "C:/x/t_fb3a0b98-r51/run1/fixtures/v003.fbx", "sha": "83f3289c70a2bf87", "artem": "rejected", "cite": "#51 labels"},
+    {"name": "v004", "fbx": "C:/x/t_fb3a0b98-r51/run1/fixtures/v004.fbx", "sha": "6d22c572ab18d972", "artem": "rejected", "cite": "Artem 2026-11-17 (#51 labels)"},
+    {"name": "v005", "fbx": "C:/x/t_fb3a0b98-r51/run1/fixtures/v005.fbx", "sha": "a387a459a7d2be6c", "artem": "rejected", "cite": "Artem 2026-11-18 (#51 labels)"},
+    {"name": "v006", "fbx": "C:/x/t_fb3a0b98-r51/run1/fixtures/v006.fbx", "sha": "b2b26d4448798b11", "artem": "rejected", "cite": "Artem 2026-11-18 (#51 labels)"}
+   ],
+   "reference": "v007",
+   "render": {"crop": [80.684, 13.215, 8.03, 94.588, 25.707, 10.98], "panels": "auto4"}
+  },
+  {
+   "id": "KPP1 NW",
+   "kind": "scene",
+   "key_from_contour": {"path": "G:/Мой диск/AGR-evidence/1609-kpp1-contour-pilot/v003/KPP1-NW-A-v001.json", "sha": "d4c18c361b2d5953",
+                        "ring": [[5.2, 0.0], [0.0, 0.0], [0.0, -6.15]], "box": [-0.05, -6.10, 5.15, 0.05],
+                        "contour_z": ["0.55", "3.175"], "opening_z": ["1.75"], "rim_z0": [1.0, 1.2],
+                        "openings": [{"id": "NW-N-O1615731", "seg": [0, 1], "axis": "x", "lo": 1.255, "hi": 4.635},
+                                     {"id": "NW-W-O1615704", "seg": [1, 2], "axis": "y", "lo": -5.955, "hi": -1.925}],
+                        "basis": "contour A (t_933a30b6, Artem chose 'A, прямой угол'); back reveals not encoded in A"},
+   "zmap": "0.55=0.55,1.75=1.75,3.175=3.175",
+   "variants": [
+    {"name": "A-proto", "fbx": "C:/x/kpp1-nw-a-t_aadee92c/v002/green-measured/proto.fbx", "sha": "7e5a3f5bcdcef591",
+     "artem": "n/a", "cite": "contour A accepted as a drawing (t_933a30b6); this crop mesh (t_88979f3b, fix 49326e15) was not reviewed by Artem"},
+    {"name": "pre-fix master", "fbx": "G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx",
+     "sha": "9fac38468f43fcc9", "artem": "rejected", "name_re": "^SM_Kpp_1_Main$", "offset": "14.985,-5.975,0",
+     "cite": "step 3 rejected (110 mm step at the NW corner, SHEET v003 t_933a30b6)"}
+   ],
+   "reference": "A-proto",
+   "render": {"crop": [-0.2, -6.15, 0.0, 5.2, 0.2, 3.3], "panels": [{"name": "V1", "caption": "V1: elevation of facade N (seen from north)", "dir": [0, -1, 0]},
+              {"name": "V2", "caption": "V2: elevation of facade W (seen from west)", "dir": [1, 0, 0]}, {"name": "V3", "caption": "V3: NW corner, oblique from outside", "dir": [1, -1, -0.8]},
+              {"name": "V4", "caption": "V4: NW corner, steep oblique from above", "dir": [0.6, -0.6, -1.4]}]}
+  },
+  {
+   "id": "Sokolniki",
+   "kind": "ledger",
+   "ledger": {"v004": {"path": "C:/x/t_57b332a4/compare-package/compare.json", "sha": "fab991cd028ebe94"},
+              "v005": {"path": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v005/compare_v005.json", "sha": "1955507887a42480"}},
+   "variants": [
+    {"name": "v005", "fbx": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v005/body_quad.fbx", "sha": "8cdb6d3d4035be8a",
+     "artem": "accepted", "cite": "D378, Artem 2026-11-24 «принимаю рекомендации» (sheet step2-compare-v004; README step2-body-v005; branch job/sokolniki-lattice-1784, PR #1786)"},
+    {"name": "v004", "fbx": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v004/body_quad.fbx", "sha": "722469da1d29b419",
+     "artem": "rejected", "cite": "superseded by v005 per D378; t_57b332a4 compare.json questions 1-4 are its known defects"}
+   ],
+   "reference": "v005",
+   "render": {"crop": "bbox", "panels": "auto4"}
+  }
+ ]
+}

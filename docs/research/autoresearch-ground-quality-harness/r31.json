@@ -1,0 +1,821 @@
+{
+ "contract": "docs/research/autoresearch-ground-quality.md",
+ "modes": [
+  "clean",
+  "rigid",
+  "inject"
+ ],
+ "inputs": {
+  "A1": {
+   "dump": "A1_Vatutino_v015_NPM.npz",
+   "dump_sha256": "58dacd6edf346d2e90f37b76a3e696cc69924d167f601383ac089adf0dc76523",
+   "clean": {
+    "Q": 71.86041007766948,
+    "V": 0,
+    "F": 0,
+    "C": 334,
+    "T": 46479,
+    "open_edges": 8447,
+    "vertex_pairs": 0,
+    "face_pairs": 0,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_Vatutino_Ground",
+      "V": 0,
+      "F": 0,
+      "C": 334,
+      "T": 46479,
+      "open_edges": 8447
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    71.86041007766948,
+    71.86041007766948,
+    71.86041007766948
+   ],
+   "clean_Q_median": 71.86041007766948,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 71.86041007766948,
+    "V": 0,
+    "F": 0,
+    "C": 334,
+    "T": 46479,
+    "open_edges": 8447,
+    "vertex_pairs": 0,
+    "face_pairs": 0,
+    "parts": 1
+   },
+   "rigid": {
+    "Q": 71.86041007766948,
+    "V": 0,
+    "F": 0,
+    "C": 334,
+    "T": 46479,
+    "open_edges": 8447,
+    "vertex_pairs": 0,
+    "face_pairs": 2,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 116.61180317993072,
+    "V": 100,
+    "F": 104,
+    "C": 338,
+    "T": 46479,
+    "open_edges": 8647,
+    "vertex_pairs": 50,
+    "face_pairs": 72,
+    "parts": 1
+   },
+   "seconds": 57.2
+  },
+  "A2": {
+   "dump": "A2_Skolkovo_NPM.npz",
+   "dump_sha256": "3cc015f237244077084274e7afc2a53a019f04ec72a4b9c72cb014d815f3a715",
+   "clean": {
+    "Q": 27.908599337170767,
+    "V": 0,
+    "F": 16,
+    "C": 0,
+    "T": 5733,
+    "open_edges": 299,
+    "vertex_pairs": 0,
+    "face_pairs": 15,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_BolshoyBulvar_64_Ground",
+      "V": 0,
+      "F": 16,
+      "C": 0,
+      "T": 5733,
+      "open_edges": 299
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    27.908599337170767,
+    27.908599337170767,
+    27.908599337170767
+   ],
+   "clean_Q_median": 27.908599337170767,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 10.3862382343395,
+    "V": 0,
+    "F": 16,
+    "C": 0,
+    "T": 15405,
+    "open_edges": 1971,
+    "vertex_pairs": 0,
+    "face_pairs": 229,
+    "parts": 2
+   },
+   "rigid": {
+    "Q": 27.908599337170767,
+    "V": 0,
+    "F": 16,
+    "C": 0,
+    "T": 5733,
+    "open_edges": 299,
+    "vertex_pairs": 0,
+    "face_pairs": 15,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 383.743240886098,
+    "V": 100,
+    "F": 119,
+    "C": 1,
+    "T": 5733,
+    "open_edges": 499,
+    "vertex_pairs": 50,
+    "face_pairs": 91,
+    "parts": 1
+   },
+   "seconds": 9.5
+  },
+  "A3": {
+   "dump": "A3_COD_NPM.npz",
+   "dump_sha256": "4424863c981f2779b5dc23a778e1ccdd9812759003a5ca1c37e1ebeef427c4c6",
+   "clean": {
+    "Q": 596.2156372724027,
+    "V": 0,
+    "F": 86,
+    "C": 81,
+    "T": 2801,
+    "open_edges": 215,
+    "vertex_pairs": 0,
+    "face_pairs": 186,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_Tup_Skladochnyj_ZU_5_1_Ground",
+      "V": 0,
+      "F": 86,
+      "C": 81,
+      "T": 2801,
+      "open_edges": 215
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    596.2156372724027,
+    596.2156372724027,
+    596.2156372724027
+   ],
+   "clean_Q_median": 596.2156372724027,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 66.42103416296965,
+    "V": 0,
+    "F": 144,
+    "C": 121,
+    "T": 39897,
+    "open_edges": 28183,
+    "vertex_pairs": 0,
+    "face_pairs": 268,
+    "parts": 3
+   },
+   "rigid": {
+    "Q": 596.2156372724027,
+    "V": 0,
+    "F": 86,
+    "C": 81,
+    "T": 2801,
+    "open_edges": 215,
+    "vertex_pairs": 0,
+    "face_pairs": 186,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 1399.5001785076759,
+    "V": 100,
+    "F": 210,
+    "C": 82,
+    "T": 2801,
+    "open_edges": 415,
+    "vertex_pairs": 50,
+    "face_pairs": 283,
+    "parts": 1
+   },
+   "seconds": 9.2
+  },
+  "A4": {
+   "dump": "A4_Donskoy_NPM.npz",
+   "dump_sha256": "98a8592309bc55e3ba3dafaa4f5e9a9c6667938a563aeffa13053d155f30c3b5",
+   "clean": {
+    "Q": 286.25954198473283,
+    "V": 0,
+    "F": 328,
+    "C": 2,
+    "T": 11528,
+    "open_edges": 1984,
+    "vertex_pairs": 0,
+    "face_pairs": 411,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_5jDonskoyProezd_Vl_15_Ground",
+      "V": 0,
+      "F": 328,
+      "C": 2,
+      "T": 11528,
+      "open_edges": 1984
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    286.25954198473283,
+    286.25954198473283,
+    286.25954198473283
+   ],
+   "clean_Q_median": 286.25954198473283,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 4397.070378927369,
+    "V": 0,
+    "F": 1275,
+    "C": 73710,
+    "T": 170534,
+    "open_edges": 157259,
+    "vertex_pairs": 0,
+    "face_pairs": 1626,
+    "parts": 4
+   },
+   "rigid": {
+    "Q": 286.25954198473283,
+    "V": 0,
+    "F": 328,
+    "C": 2,
+    "T": 11528,
+    "open_edges": 1984,
+    "vertex_pairs": 0,
+    "face_pairs": 411,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 398.16099930603747,
+    "V": 100,
+    "F": 357,
+    "C": 2,
+    "T": 11528,
+    "open_edges": 2183,
+    "vertex_pairs": 50,
+    "face_pairs": 434,
+    "parts": 1
+   },
+   "seconds": 66.8
+  },
+  "A5": {
+   "dump": "A5_Ostrov_NPM.npz",
+   "dump_sha256": "5c3fd2f73d10fa366eb7423e411a616e671b341caedfdbbb16c86ef18624be9a",
+   "clean": {
+    "Q": 27.217741935483872,
+    "V": 0,
+    "F": 81,
+    "C": 0,
+    "T": 29760,
+    "open_edges": 554,
+    "vertex_pairs": 0,
+    "face_pairs": 244,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_NizhnieMnevniki_ZU_66_Ground",
+      "V": 0,
+      "F": 81,
+      "C": 0,
+      "T": 29760,
+      "open_edges": 554
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    27.217741935483872,
+    27.217741935483872,
+    27.217741935483872
+   ],
+   "clean_Q_median": 27.217741935483872,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 675.6968062233689,
+    "V": 0,
+    "F": 1528,
+    "C": 8843,
+    "T": 153486,
+    "open_edges": 29142,
+    "vertex_pairs": 0,
+    "face_pairs": 2920,
+    "parts": 3
+   },
+   "rigid": {
+    "Q": 27.217741935483872,
+    "V": 0,
+    "F": 81,
+    "C": 0,
+    "T": 29760,
+    "open_edges": 554,
+    "vertex_pairs": 0,
+    "face_pairs": 241,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 108.1989247311828,
+    "V": 100,
+    "F": 220,
+    "C": 2,
+    "T": 29760,
+    "open_edges": 754,
+    "vertex_pairs": 50,
+    "face_pairs": 347,
+    "parts": 1
+   },
+   "seconds": 56.1
+  },
+  "A6": {
+   "dump": "A6_Kasatkino_NPM.npz",
+   "dump_sha256": "3020f77108bb208b03a39b7a1df36765e6288fd78666dc28cdc2f7a265b9cbf9",
+   "clean": {
+    "Q": 78.5967279473773,
+    "V": 0,
+    "F": 465,
+    "C": 1,
+    "T": 59290,
+    "open_edges": 2299,
+    "vertex_pairs": 0,
+    "face_pairs": 913,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_Kasatkina_Vl_11_Ground",
+      "V": 0,
+      "F": 465,
+      "C": 1,
+      "T": 59290,
+      "open_edges": 2299
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    78.5967279473773,
+    78.5967279473773,
+    78.5967279473773
+   ],
+   "clean_Q_median": 78.5967279473773,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 330.8577841102523,
+    "V": 0,
+    "F": 1915,
+    "C": 3333,
+    "T": 158618,
+    "open_edges": 12659,
+    "vertex_pairs": 0,
+    "face_pairs": 2661,
+    "parts": 3
+   },
+   "rigid": {
+    "Q": 78.5967279473773,
+    "V": 0,
+    "F": 465,
+    "C": 1,
+    "T": 59290,
+    "open_edges": 2299,
+    "vertex_pairs": 0,
+    "face_pairs": 913,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 107.43801652892562,
+    "V": 100,
+    "F": 534,
+    "C": 3,
+    "T": 59290,
+    "open_edges": 2499,
+    "vertex_pairs": 50,
+    "face_pairs": 970,
+    "parts": 1
+   },
+   "seconds": 93.1
+  },
+  "A7": {
+   "dump": "A7_Volokolamskoe_NPM.npz",
+   "dump_sha256": "c3fef038731551fab80f64018ccf14dd1b864d62718657214dcc7309aeecbfad",
+   "clean": {
+    "Q": 105.2682642864073,
+    "V": 0,
+    "F": 217,
+    "C": 0,
+    "T": 20614,
+    "open_edges": 470,
+    "vertex_pairs": 0,
+    "face_pairs": 343,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_VolokolamskoeShosse_Vl_71_22_Ground",
+      "V": 0,
+      "F": 217,
+      "C": 0,
+      "T": 20614,
+      "open_edges": 470
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    105.2682642864073,
+    105.2682642864073,
+    105.2682642864073
+   ],
+   "clean_Q_median": 105.2682642864073,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 1195.7914908973257,
+    "V": 0,
+    "F": 12063,
+    "C": 7156,
+    "T": 160722,
+    "open_edges": 22601,
+    "vertex_pairs": 0,
+    "face_pairs": 20242,
+    "parts": 3
+   },
+   "rigid": {
+    "Q": 105.2682642864073,
+    "V": 0,
+    "F": 217,
+    "C": 0,
+    "T": 20614,
+    "open_edges": 470,
+    "vertex_pairs": 0,
+    "face_pairs": 343,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 202.28970602503153,
+    "V": 100,
+    "F": 317,
+    "C": 0,
+    "T": 20614,
+    "open_edges": 670,
+    "vertex_pairs": 50,
+    "face_pairs": 423,
+    "parts": 1
+   },
+   "seconds": 182.6
+  },
+  "A8": {
+   "dump": "A8_Stolbovo_NPM.npz",
+   "dump_sha256": "94b8482a2e167d9cf4d31e9f33e19e0048bacd43639930afa5dcc8065f4c17bd",
+   "clean": {
+    "Q": 0.0,
+    "V": 0,
+    "F": 0,
+    "C": 0,
+    "T": 10930,
+    "open_edges": 74,
+    "vertex_pairs": 0,
+    "face_pairs": 0,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_DerevnyaStolbovo_Uch_23_Ground",
+      "V": 0,
+      "F": 0,
+      "C": 0,
+      "T": 10930,
+      "open_edges": 74
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "clean_Q_median": 0.0,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 0.0,
+    "V": 0,
+    "F": 0,
+    "C": 0,
+    "T": 147034,
+    "open_edges": 89790,
+    "vertex_pairs": 0,
+    "face_pairs": 108,
+    "parts": 3
+   },
+   "rigid": {
+    "Q": 0.0,
+    "V": 0,
+    "F": 0,
+    "C": 0,
+    "T": 10930,
+    "open_edges": 74,
+    "vertex_pairs": 0,
+    "face_pairs": 0,
+    "parts": 1
+   },
+   "inject": {
+    "unwelded": 50,
+    "Q": 249.7712717291857,
+    "V": 100,
+    "F": 173,
+    "C": 0,
+    "T": 10930,
+    "open_edges": 274,
+    "vertex_pairs": 50,
+    "face_pairs": 153,
+    "parts": 1
+   },
+   "seconds": 34.9
+  },
+  "F1": {
+   "dump": "F1_r1_geometry.npz",
+   "dump_sha256": "41816fc73523e630b52658941f094bdb7d29d56440f63f7b3bff74420fd1f9b3",
+   "clean": {
+    "Q": 489.7534816274043,
+    "V": 1769,
+    "F": 16,
+    "C": 5,
+    "T": 36549,
+    "open_edges": 843,
+    "vertex_pairs": 956,
+    "face_pairs": 14,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_SIL13_Ground",
+      "V": 1769,
+      "F": 16,
+      "C": 5,
+      "T": 36549,
+      "open_edges": 843
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    489.7534816274043,
+    489.7534816274043,
+    489.7534816274043
+   ],
+   "clean_Q_median": 489.7534816274043,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 489.7534816274043,
+    "V": 1769,
+    "F": 16,
+    "C": 5,
+    "T": 36549,
+    "open_edges": 843,
+    "vertex_pairs": 956,
+    "face_pairs": 14,
+    "parts": 1
+   },
+   "rigid": {
+    "Q": 489.7534816274043,
+    "V": 1769,
+    "F": 16,
+    "C": 5,
+    "T": 36549,
+    "open_edges": 843,
+    "vertex_pairs": 956,
+    "face_pairs": 13,
+    "parts": 1
+   },
+   "seconds": 29.6
+  },
+  "F2": {
+   "dump": "F2_r2.npz",
+   "dump_sha256": "b9f521c4b37acb8bf7d5a5708d776e5ebd8edb81385f5d4081ba39a96a583f4e",
+   "clean": {
+    "Q": 476.9164928047932,
+    "V": 1767,
+    "F": 16,
+    "C": 0,
+    "T": 37386,
+    "open_edges": 0,
+    "vertex_pairs": 955,
+    "face_pairs": 14,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_SIL13_Ground",
+      "V": 1767,
+      "F": 16,
+      "C": 0,
+      "T": 37386,
+      "open_edges": 0
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    476.9164928047932,
+    476.9164928047932,
+    476.9164928047932
+   ],
+   "clean_Q_median": 476.9164928047932,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 476.9164928047932,
+    "V": 1767,
+    "F": 16,
+    "C": 0,
+    "T": 37386,
+    "open_edges": 0,
+    "vertex_pairs": 955,
+    "face_pairs": 14,
+    "parts": 1
+   },
+   "rigid": {
+    "Q": 476.9164928047932,
+    "V": 1767,
+    "F": 16,
+    "C": 0,
+    "T": 37386,
+    "open_edges": 0,
+    "vertex_pairs": 955,
+    "face_pairs": 13,
+    "parts": 1
+   },
+   "seconds": 40.1
+  },
+  "F3": {
+   "dump": "F3_r3.npz",
+   "dump_sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+   "clean": {
+    "Q": 472.83917580947286,
+    "V": 1751,
+    "F": 16,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 947,
+    "face_pairs": 14,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_SIL13_Ground",
+      "V": 1751,
+      "F": 16,
+      "C": 0,
+      "T": 37370,
+      "open_edges": 0
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    472.83917580947286,
+    472.83917580947286,
+    472.83917580947286
+   ],
+   "clean_Q_median": 472.83917580947286,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 472.83917580947286,
+    "V": 1751,
+    "F": 16,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 947,
+    "face_pairs": 14,
+    "parts": 1
+   },
+   "rigid": {
+    "Q": 472.83917580947286,
+    "V": 1751,
+    "F": 16,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 947,
+    "face_pairs": 13,
+    "parts": 1
+   },
+   "seconds": 43.1
+  },
+  "F4": {
+   "dump": "F4_r4.npz",
+   "dump_sha256": "9b7d26af84d142448fe1363a816eef1e1e4fc5c8b6ff191995dcf958ca1ac922",
+   "clean": {
+    "Q": 428.95370618142897,
+    "V": 1576,
+    "F": 27,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 838,
+    "face_pairs": 43,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_SIL13_Ground",
+      "V": 1576,
+      "F": 27,
+      "C": 0,
+      "T": 37370,
+      "open_edges": 0
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    428.95370618142897,
+    428.95370618142897,
+    428.95370618142897
+   ],
+   "clean_Q_median": 428.95370618142897,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 428.95370618142897,
+    "V": 1576,
+    "F": 27,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 838,
+    "face_pairs": 43,
+    "parts": 1
+   },
+   "rigid": {
+    "Q": 428.95370618142897,
+    "V": 1576,
+    "F": 27,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 838,
+    "face_pairs": 42,
+    "parts": 1
+   },
+   "seconds": 34.1
+  },
+  "F5": {
+   "dump": "F5_r5.npz",
+   "dump_sha256": "5977b2bb051049a602b5c26718447ec3d2edcc1b5fd9f3227e17827c46fcf9a2",
+   "clean": {
+    "Q": 472.83917580947286,
+    "V": 1751,
+    "F": 16,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 947,
+    "face_pairs": 14,
+    "parts": 1,
+    "per_part": [
+     {
+      "part": "SM_SIL13_Ground",
+      "V": 1751,
+      "F": 16,
+      "C": 0,
+      "T": 37370,
+      "open_edges": 0
+     }
+    ]
+   },
+   "clean_Q_runs": [
+    472.83917580947286,
+    472.83917580947286,
+    472.83917580947286
+   ],
+   "clean_Q_median": 472.83917580947286,
+   "clean_spread": 0.0,
+   "Q_all": {
+    "Q": 472.83917580947286,
+    "V": 1751,
+    "F": 16,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 947,
+    "face_pairs": 14,
+    "parts": 1
+   },
+   "rigid": {
+    "Q": 472.83917580947286,
+    "V": 1751,
+    "F": 16,
+    "C": 0,
+    "T": 37370,
+    "open_edges": 0,
+    "vertex_pairs": 947,
+    "face_pairs": 13,
+    "parts": 1
+   },
+   "seconds": 34.8
+  }
+ }
+}

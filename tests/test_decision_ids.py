@@ -1,6 +1,7 @@
 """Decision ids cannot collide across parallel branches (#1037): tools/git-hooks/decision_ids.py and pre-commit."""
 
 import importlib.util
+import json
 import random
 import shutil
 import subprocess
@@ -140,6 +141,146 @@ def test_next_is_max_over_main_branch_and_prs(repo):
     assert code == 0 and out.splitlines()[0] == "D004"
     code, out = cli(repo, "next", "--base", "main", "--pr-rev", "PR #9=other")
     assert code == 0 and out.splitlines()[0] == "D008"
+
+
+@pytest.fixture
+def fetched_repo(repo):
+    git(repo, "remote", "add", "origin", "https://github.com/artsafro/AGR-DigitalTwin-pilot.git")
+    git(repo, "update-ref", "refs/remotes/origin/main", "main")
+    git(repo, "switch", "-qc", "pilot")
+    commit(repo, log(("D009", "pilot, no PR")))
+    git(repo, "update-ref", "refs/remotes/origin/pilot", "HEAD")
+    git(repo, "switch", "-q", "feature")
+    return repo
+
+
+def stub_pr_list(monkeypatch, payload):
+    real = subprocess.run
+
+    def fake(cmd, *args, **kwargs):
+        if cmd[0] == "gh":
+            assert cmd[-2:] == ["--repo", "artsafro/AGR-DigitalTwin-pilot"]
+            return subprocess.CompletedProcess(cmd, 0, payload, "")
+        return real(cmd, *args, **kwargs)
+
+    monkeypatch.setattr(ids.subprocess, "run", fake)
+
+
+def test_next_all_branches_scans_pilot_and_pr_heads(fetched_repo, monkeypatch, capsys):
+    repo = fetched_repo
+    git(repo, "switch", "-qc", "fork-pr")
+    commit(repo, log(("D007", "open fork PR")))
+    oid = git(repo, "rev-parse", "HEAD").stdout.strip()
+    # A fork's PR branch can have the same name as the current local branch.
+    stub_pr_list(monkeypatch, json.dumps([dict(number=9, headRefName="feature", headRefOid=oid)]))
+    git(repo, "switch", "-qc", "upstream-decoy")
+    commit(repo, log(("D099", "not a pilot head")))
+    git(repo, "update-ref", "refs/remotes/upstream/decoy", "HEAD")
+    git(repo, "switch", "-q", "feature")
+    args = ["next", "--all-branches", "--repo-dir", str(repo)]
+    assert ids.main(args) == 0
+    assert capsys.readouterr().out == "D010\n"
+    git(repo, "update-ref", "-d", "refs/remotes/origin/pilot")
+    assert ids.main(args) == 0
+    assert capsys.readouterr().out == "D008\n"
+
+
+def test_next_fetch_refreshes_all_pilot_heads(repo, tmp_path):
+    remote = tmp_path / "pilot.git"
+    git(tmp_path, "init", "-q", "--bare", str(remote))
+    # Simulate a clone whose configured fetch refspec covers only main.
+    git(repo, "remote", "add", "-t", "main", "origin", str(remote))
+    git(repo, "push", "-q", "origin", "main")
+    git(repo, "switch", "-qc", "pilot")
+    commit(repo, log(("D009", "pushed without PR")))
+    git(repo, "push", "-q", "origin", "pilot")
+    git(repo, "switch", "-q", "feature")
+    args = ("next", "--all-branches", "--fetch", "--pr-rev", "fixture=main")
+    code, out = cli(repo, *args)
+    assert code == 0 and out.splitlines()[0] == "D010", out
+    git(repo, "push", "-q", "origin", ":pilot")
+    code, out = cli(repo, *args)
+    assert code == 0 and out.splitlines()[0] == "D004", out
+
+
+def reservation(did):
+    return dict(id=did, card="t_fixture", reserved_at="2026-11-21T09:00:00Z")
+
+
+def test_next_reads_fresh_reservation_snapshot(fetched_repo, tmp_path):
+    path = tmp_path / "reservation export.json"
+    args = ("next", "--all-branches", "--pr-rev", "fixture=main", "--reservations", str(path))
+    for records, expected in [([reservation("D013")] * 2, "D014"),
+                              ([reservation("D016")], "D017"), ([], "D010")]:
+        payload = json.dumps(records).encode()
+        path.write_bytes(payload)
+        code, out = cli(fetched_repo, *args)
+        assert code == 0 and out.splitlines()[0] == expected, out
+        assert path.read_bytes() == payload
+
+
+@pytest.mark.parametrize("kind", ["missing-ref", "missing-log"])
+def test_next_refuses_unavailable_branch_source(repo, kind):
+    git(repo, "remote", "add", "origin", "https://github.com/artsafro/AGR-DigitalTwin-pilot.git")
+    if kind == "missing-log":
+        git(repo, "update-ref", "refs/remotes/origin/main", "main")
+        git(repo, "rm", "-q", ids.LOG)
+        git(repo, "commit", "-qm", "no ledger")
+        git(repo, "update-ref", "refs/remotes/origin/pilot", "HEAD")
+        git(repo, "switch", "-q", "main")
+    code, out = cli(repo, "next", "--all-branches", "--pr-rev", "fixture=main")
+    assert code == 2 and not out.startswith("D"), out
+    assert ("origin/main" if kind == "missing-ref" else "refs/remotes/origin/pilot") in out
+
+
+@pytest.mark.parametrize("payload", [None, "", "{}", "[", *(
+    f'[{json.dumps(reservation("D013"))}, {bad}]'
+    for bad in ('{"id":"D016"}', '{"id":NaN}', '{"id":Infinity}', 'null', '"D016"',
+                json.dumps(reservation("D0016")), '{"id":"D016","id":"D012","card":"x","reserved_at":"now"}')
+)])
+def test_next_refuses_invalid_reservations(fetched_repo, tmp_path, payload):
+    path = tmp_path / "reservations.json"
+    if payload is not None:
+        path.write_text(payload, encoding="utf-8")
+    code, out = cli(fetched_repo, "next", "--pr-rev", "fixture=main", "--reservations", str(path))
+    assert code == 2 and not out.startswith("D") and str(path) in out, out
+
+
+@pytest.mark.parametrize("payload", ["[", "{}", "[{}]", "missing-log"])
+def test_next_refuses_unavailable_pr_source(fetched_repo, monkeypatch, capsys, payload):
+    repo = fetched_repo
+    if payload == "missing-log":
+        git(repo, "switch", "-qc", "no-ledger")
+        git(repo, "rm", "-q", ids.LOG)
+        git(repo, "commit", "-qm", "no ledger")
+        oid = git(repo, "rev-parse", "HEAD").stdout.strip()
+        payload = json.dumps([dict(number=9, headRefName="no-ledger", headRefOid=oid)])
+        git(repo, "switch", "-q", "feature")
+    stub_pr_list(monkeypatch, payload)
+    assert ids.main(["next", "--all-branches", "--repo-dir", str(repo)]) == 2
+    result = capsys.readouterr()
+    assert result.out == "" and ("gh pr list" in result.err or "PR #9" in result.err)
+
+
+def test_probe_next_exceeds_every_source():
+    rng = random.Random(1776)
+    for _ in range(200):
+        values = rng.choices(range(1, 4000), k=8)
+        occupied, reserved = values[:4], values[4:]
+        occupied.append(max(values))  # overlap and repeated maxima are legal
+        reserved.append(max(values))
+        rng.shuffle(occupied)
+        rng.shuffle(reserved)
+        texts = [log((f"D{value:03d}", "fixture")) for value in occupied]
+        assert ids.next_free(*texts, reserved=reserved) == f"D{max(values) + 1:03d}"
+
+
+def test_decision_procedure_requires_fresh_sources():
+    workflow = (ROOT / "docs/agents/WORKFLOW.md").read_text(encoding="utf-8")
+    section = workflow.split("### Decision ids on parallel branches", 1)[1].split("\n### ", 1)[0]
+    assert "next --all-branches --fetch" in section
+    assert "--reservations" in section and "read-only" in section
+    assert "immediately before writing" in section and "before every push" in section
 
 
 # --- fail closed --------------------------------------------------------------------------------------------------

@@ -23,7 +23,8 @@ if src.lower().endswith(".blend"):
     bpy.ops.wm.open_mainfile(filepath=src, load_ui=False)
 else:
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    bpy.ops.import_scene.fbx(filepath=src)
+    # The mesh dump does not need images; avoid the importer's recursive texture search.
+    bpy.ops.import_scene.fbx(filepath=src, use_image_search=False)
 
 scene = bpy.context.scene
 dg = bpy.context.evaluated_depsgraph_get()

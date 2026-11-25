@@ -154,7 +154,7 @@ def _previews(ctx, opts, model, folder, export=None):
             if step == 'export.checked':
                 stem = _stem(opts, reports)
                 if not stem:
-                    raise ValueError('нет stem SM_<Address>: options.stem или корень света <stem>_Root')
+                    raise ValueError('нет stem SM_<Address>: options.stem или корень света <Address>_Root')
                 rnodes, kw = _export_call(export, model)
                 rep = ctx.agr.export_preview(nodes=rnodes, target=os.path.join(folder, stem + '.fbx'), **kw)
             else:
@@ -168,6 +168,7 @@ def _previews(ctx, opts, model, folder, export=None):
 
 
 def _stem(opts, reports):
+    """Use light.export's file stem (SM_ + inferred light address), not the FBX node prefix."""
     if opts.get('stem'):
         return opts['stem']
     for step, rep in reports:

@@ -27,7 +27,8 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 |---|---|---|
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
-| 3 | `body` бадик, окна, капсулы, крыша | AGR Tools этапы 1–4 (`body_core`, `windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
+| 3 | `body` бадик, окна, капсулы, крыша | Этап 1 (бадик с проёмами): `uv run agr body PLAN NEW_OUT` — общее ядро `tools/methods/body/body_lattice.py` (решётка BM-00, вход `schemas/BodyPlan.schema.json`: Revit `floor_from_dump.py`, DWG `plan_adapter_dwg.py`) [#1736]; этапы 2–4 — AGR Tools (`windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
+| 3a | `body` → вставка ограждения по измеренной оси парапета | [`agr railing`](../procedure/node-r3-fence-railing-gates.md#shared-headless-builder), отдельная геометрия, не приваривать к BODY [D336]; плоскость opacity только в лестнице бюджета НПМ |
 | 4 | `mesh-quality` качество сетки в конце `body` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
 | 5 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
 | 6 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
@@ -36,17 +37,18 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
 | 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
-| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip` |
+| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip`; STOP до ZIP без `export_meta` нового FBX и его readback. Для перекраски с выпуском ZIP указать оба владельца: R1 + рецепт job (АС.09: AC08 v010 через [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py)) и `agr package-vpm`; см. [маршрут ОКС ВПМ](../scenarios/oks-vpm.md#route-by-stage). |
 | 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
 | 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 15 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
+| 15 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved`: копия в `C:/x/review-<job>/`, новый Max 2026, Blender если Max занят [D255, D270] (#1740) |
+| 16 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
 
 ### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
 
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `inspect` | `agr inspect --manifest JOB.json` |
-| 2 | `body` | AGR Tools этапы 1–4 / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
+| 2 | `body` | Этап 1: `uv run agr body` (ядро `tools/methods/body/body_lattice.py`) [#1736]; этапы 2–4 AGR Tools / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3 | `mesh-quality` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
 | 4 | `brick-seams` кирпичные швы | пробел |
 | 5 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
@@ -56,7 +58,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 9 | `build-manifest` манифест выпуска | `agr build-manifest record` |
 | 10 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
 | 11 | `validate` | `agr validate` |
-| 12 | `review-scene` сцена для приёмки | пробел |
+| 12 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved` (`tools/open_review_scene.py`, #1740) |
 | 13 | `checker` | `agr checker` |
 
 ### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
@@ -101,10 +103,27 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | 9 | `package-npm` | `agr package-npm` → `package_core._write_zip` |
 | 10 | `validate` | `agr validate` |
 | 11 | `checker` | `agr checker` |
-| 12 | `review-scene` | пробел |
+| 12 | `review-scene` | `agr open-review FILE --open-approved` (#1740) |
 
 Бюджет по умолчанию — `standards/NPM_STANDARD.yaml` `oks_triangles_per_fbx_max` (150000); шаг лестницы, нужный
 при превышении, но не поданный хуком, — `missing`, а не «сделано».
+
+### `maf-npm-to-vpm` — МАФ, НПМ → ВПМ
+
+`uv run agr maf-npm-to-vpm --plan` reads the registry and prints the route; it does not start a DCC, convert files, or pass QA.
+
+| # | Stage | Shared owner / checkpoint |
+|---|---|---|
+| 1 | `maf-segments` | Manual: extra segments on measured circular profiles, on copies only; keep UV seams and measure silhouette and triangle delta |
+| 2 | `maf-texture-class` | Manual: classify finishes per MAF; use 256 solid only when the finish qualifies, retain Diffuse alpha on cut-outs |
+| 3 | `maf-atlas-strategy` | Try one shared 4K tile for non-uniform finishes, then grouped 4K tiles, then per-MAF UDIM; keep eligible solids in 256 tiles |
+| 4 | `maf-pack` | `atlas_maf`, `vpm_uv` and `udimtile_core`; pixel fit is not physical density or export approval |
+| 5 | `maf-stubs` | Manual: 256 RGB Normal/ERM stubs if eligible, separate from alpha in Diffuse |
+| 6–8 | `master-qa` → `readback` → `checker` | Shared QA, export readback, then `agr checker` on a separate diagnostic or delivery archive; report scope |
+| 9 | `maf-sheet` | Before/after sheet and evidence for Artem |
+
+Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
+[`jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json`](../../jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json).
 
 ### `oks-npm-lite` — ОКС, упрощённая НПМ
 
@@ -115,11 +134,11 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `sources-ground` приём СПОЗУ | `tools/source/inspect_ground_dxf.py` |
-| 2 | `surfaces` плоский Ground | пробел (кирпичики `src/dt_ai/geometry/ground_cake.py`) |
+| 2 | `surfaces` Ground из исходных границ покрытий | `agr ground site SPEC NEW_OUT`, `params.surfaces: "shared"` — одна грань на точку плана, верхнее покрытие, общий набор вершин на каждой границе (#1738) |
 | 3 | `quads` квадраты и швы | `dt ground v015` только для Ватутино; `ground_quads.py` |
 | 4 | `library` МАФ и Флора, атласы | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
 | 5 | `maf-light` лёгкий МАФ | пробел |
-| 6 | `flora-star` звёзды Флоры | пробел |
+| 6 | `flora-star` звёзды Флоры | Каталог → при отсутствии принятого куста [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py) (#1146) → расчёт НПМ-точки через `engine.place`. `agr place` → [`placement/site.py`](../../src/dt_ai/placement/site.py) вызывает то же ядро только для пары НПМ + ВПМ. Указать обе точки входа, даже если план останавливается на сверке вида, карт и точки СПОЗУ. |
 | 7 | `placement` расстановка | `uv run python -m dt_ai.placement.engine` |
 | 8 | `optimise` бюджет НПМ (без ProOptimizer) | пробел |
 | 9 | `master-qa` | `tools/qa/master_topology.py` |
@@ -135,11 +154,11 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 |---|---|---|
 | 1 | `sources-ground` | `tools/source/inspect_ground_dxf.py` |
 | 2 | `zero` граница и нуль | пробел |
-| 3 | `surfaces` | пробел (кирпичики `ground_cake.build_flat`) |
+| 3 | `surfaces` | `agr ground site` (`surfaces: "shared"`, #1738) |
 | 4 | `quads` | `dt ground v015` только для Ватутино |
 | 5 | `ground-textures` ID и текстуры | пробел |
 | 6 | `relief` проекция на рельеф | пробел (кирпичики `ground_cake.project_z`) |
-| 7 | `skirt` юбка | `agr ground` только замороженный Ватутино |
+| 7 | `skirt` юбка | `agr ground site`: `ground_cake.add_skirt` >= 1 м + `ground_site.skirt_check_export` на записанном OBJ (#1738) |
 | 8 | `ucx-ground` коллизии Ground | пробел (прецедент `tools/blender/ucx_build.py`) |
 | 9 | `library` | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
 | 10 | `placement` | `uv run python -m dt_ai.placement.engine` |
@@ -177,7 +196,8 @@ Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is t
 - Per project: `plinth` = `one_with_body` or `inset`; the final split follows the project, its textures and
   texturing convenience.
 - Job report: one line, checked by `skeleton_guard.modelling_split_problems`:
-  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why, for this project>`.
+  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why for this project: profile, sub-stage, object/version, now/later, exception link if any>`.
+  Example (synthetic): `Modelling split [D336]: plinth=one_with_body; inset=windows, stained_glass, roof, flashings, posts; texture=panels; reason=VPM, body stage 1, ExampleBuilding v001; body and windows now, roof/flashings later in stage 2; exception: none`.
 
 Master/QA checks on these parts are element-wise; no check may require welding inset elements into the body:
 
@@ -259,8 +279,33 @@ output next to each sheet, then sets a threshold from the numbers. Until then no
    (`docs/agents/job_scripts_baseline.txt`, never extended) may live outside a `skeleton.json` folder; any other
    script under `jobs/` fails, in a new or an old job folder alike. An old job opts in by adding `skeleton.json`.
 
-Example (Artem's SINTEZ error-fix case): unfold polygons / seams = `checker` → fix with the stage owners
-(`vpm-uv`, `master-qa`) through one `after` hook → `checker` again; no new analysis scripts.
+For an explicit SINTEZ repair request, use the separate [`sintez-fix`](#sintez-fix) cell, not a delivery hook.
+
+## `sintez-fix`
+
+**Только по просьбе Артёма.** Это отдельная ячейка диагностики и правки копии,
+не этап сдачи. Без ссылки `request_ref` на явное поручение и согласованного
+перечня правок не запускать ячейку. Наличие конфигурации, замечания чекера
+или очередной выпуск сами по себе не разрешают запуск. Обычный `checker`
+в маршруте сдачи ничего не исправляет.
+
+| # | Stage | Existing owner / operator action |
+|---|---|---|
+| 1 | `checker` | `agr checker COPY_DIR --output NEW_BASELINE.json`; pin source ZIP, copy hashes and checker version. |
+| 2 | `sintez-classify` | Read `rules` in the summary; route by profile + requirement + underlying message, not by exit code. Unknown/partial/ambiguous rows stop the targeted repair. |
+| 3 | `sintez-recipe` | One job hook or manual owner action on a new candidate: `vpm-uv` for local chart changes, `master-qa` for topology diagnosis, package/metadata owners for non-mesh defects. No unattended generic fix. |
+| 4 | `sintez-uv-drift` | Fresh `twinqa.scene.readback` bound to each exact FBX ZIP member; compare indexed surfaces with `twinqa.sintez_uv.indexed_uv_drift` (#1732/#1744). Independently verify all map bytes and their bindings. |
+| 5 | `sintez-recheck` | `agr checker CANDIDATE_DIR --output NEW_CANDIDATE.json`; compare targeted findings, coverage and new regressions. |
+| 6 | `sintez-sheet` | Sheet for Artem: source/candidate hashes, code and counts, operation, maximum UV/world movement, changed maps, unmatched faces, new/unmeasured findings and next decision. No delivery or publication. |
+
+For unchanged FBX and texture member bytes, byte identity proves no movement on the
+retained surfaces. For changed FBX, exact zero in both indexed metrics plus known
+unchanged bindings and maps preserves the triangle's texture registration. Do not
+round away movement: even a UV change on one loop must be reported. Changed topology,
+unresolved slots, absent/partial data or altered texture pixels are not a zero-drift
+result. List exceptions and stop for explicit review; don't repack or re-unwrap whole
+islands to clear a warning. `not_measured`, a missing finding and process exit 0 are
+not substitutes for a measured before/after pair. See [research and recipes](../research/sintez-fix-1744.md).
 
 ## Imported-library exemptions
 
@@ -282,6 +327,7 @@ A PR whose job adds its own chain of scripts instead of configuring the skeleton
 
 Once a week a separate orchestrator task collects hook scripts repeated in 2–3 jobs and the lessons, and shows Artem
 a summary; promotion into a skeleton stage happens only there (outside this repo change).
+Reports, one file per week in `docs/agents/skeleton-harvest/`: [2026-11-23](skeleton-harvest/2026-11-23.md) (no promotion, #1804).
 
 ## Historical delivered-job scripts [D327]
 
@@ -308,17 +354,20 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
 
+- `maf-segments` — ручная правка кругового профиля с замером отклонения и бюджета.
+- `maf-texture-class` — ручное подтверждение происхождения отделки и альфы.
+- `maf-atlas-strategy` — выбор по замерам плотности, отступов и швов.
+- `maf-stubs` — подготовка согласованной тройки карт и контроль применимости заглушек.
+- `maf-sheet` — парные виды и замеры для Артёма.
+- `sintez-recipe` — один согласованный хук задания или работа у владельца; автоматической правки нет.
+- `sintez-sheet` — ручной лист по отчётам и замерам, общего генератора нет.
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
-- `review-scene` — `agr open-in-max` / `agr contact-renders` недоступны: мост Max или рендеры работы.
 - `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.
 - `zero` — нет команды границы и нуля проекта; читать ПЗУ / вертикальную планировку, спрашивать [D279].
-- `surfaces` — нет общего построителя покрытий; `ground_cake` — только кирпичики.
 - `quads` — нет команды раскроя/спаривания для нового участка; `dt ground v015` повторяет только Ватутино.
 - `ground-textures` — нет общей команды ID/UV/текстур плоского Ground.
 - `relief` — нет общей команды проекции на рельеф для нового участка [D293].
-- `skirt` — юбка нового участка [D251] — работа в DCC, общей команды нет.
 - `ucx-ground` — `agr ucx` недоступен; `ucx_build.py` — прецедент, не команда для реального участка.
 - `maf-light` — нет инструмента лёгкой НПМ-версии / перекладки UV для МАФ.
-- `flora-star` — нет построителя НПМ-звёзд Флоры [D102].
 - `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём
   [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.
