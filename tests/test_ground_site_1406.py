@@ -423,6 +423,7 @@ def run(*argv):
 
 
 def test_sparse_cover_ids_publish_dense_udim_table(tmp_path):
+    import ezdxf
     from PIL import Image
 
     spec_path, spec = make_spec(tmp_path)
