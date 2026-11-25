@@ -6,7 +6,8 @@ commands, identifiers and docs in English.
 
 One door [D324-D327]: `docs/agents/SKELETONS.md` -> your cell's block
 (`uv run python tools/architecture/skeleton_guard.py --show <cell>`) -> its trail -> rule + command at the step.
-Passport first: `jobs/<ID>/passport.json` [D397]. Trails: OKS `routes/npm-oks.md`, site `routes/site.md`.
+Passport first [D397]: `jobs/<ID>/passport.json` (`schemas/ProjectPassport.schema.json`).
+Trails: OKS `routes/npm-oks.md`, site `routes/site.md`.
 For Revit-source tasks read `routes/revit-intake.md` (read-only intake first, [D237]).
 Read `docs/domain/areas/<area>.md` and the card when the step links them; `agr --help` before any script.
 
