@@ -14,3 +14,24 @@
 ## Replay
 
 `uv run --frozen python -m docs.research.trainer_ledger_r100.replay tmp/r100-NEW` from this branch (new output path). The manifest binds the code base, actual historical input inventories/receipts, selected retained body FBXs, score keys, G22 source NPZ and executable. The scorer and readback run unchanged; no live Max. Replay is limited to hosts that can read the recorded Drive/local fixtures. The candidate receipt comparison is separate from review readiness.
+
+## Result
+
+**Подтверждено для сохранённых выходов:** 0/3 → 3/3 по `artifact` + `readback` в каждой из трёх пар; отложенный 63B — 3/3. Единого следующего провала у исходных трёх эталонов нет: KPP1 останавливается на `bounds`, G22 — на `form_v2`, 63A — на `form`. На 63B следующий провал — `bounds`. Не стоит подменять историю этими результатами или объявлять `bounds` новым лидером по всему тренажёру. Следующий измерительный шаг — одинаковые холодные прогоны по трём эталонам на одном head, с отдельным срезом отложенных эталонов.
+
+| Etalon | Historical first failure (3 fresh rescorings of one output inventory) | Recovered pass (`artifact` + `readback`) | Recovered first failure | Max corner deviation (m), in index order |
+| --- | --- | ---: | --- | --- |
+| KPP1 v004 | artifact ×3 (no FBX) | 3/3 | bounds ×3 | 4.0647, 40.7395, 4.0647 |
+| G22 | artifact ×3 (no FBX) | 3/3 | form_v2 ×3 | 0, 0, 0 |
+| 63A | artifact ×3 (no FBX) | 3/3 | form ×3 | 0.0442, 0.0442, 0.0442 |
+| 63B (route hold-out; outside M100) | not measured | 3/3 | bounds ×3 | 27.67, 27.67, 27.67 |
+
+- Median paired lift +3, range [+3, +3]. Candidate variants were independently produced before this round, but both arms reuse earlier runs or builds; the three historical rescoring repetitions are not independent agent samples. No new geometry or scorer semantics were introduced. The descriptive modal stage is a three-way tie for the direct ledger replay (three scores per stage); 63B is separate from that denominator.
+- Clean calibration: accepted 63B v007 scored 0.8333 with bounds 0.0000 m, rejected 63B v004 scored 0.3333 with bounds 0.1993 m (threshold 0.10 m). Both passed native readback. v007 self-compare is calibration only; VLM is `not_run`, not a full pass.
+- Injected controls: each label's new 23-byte header file (one added path, zero source changes) passed the header step but was refused by Blender 5.1.2 (`ASCII FBX files are not supported`, `TWINQA_READBACK False`). A separately written byte-identical key copy failed `artifact`; readback was `not_run`. No claim of immunity to other artifact mutations. Pre/post input parity passed (30 hashed file paths plus 3 complete historical inventories).
+- Not measured: fresh agent adoption, active route-rule effect on a new site, changes to cold pass rates, whether the historical failure mode is still frequent on current fresh runs, other label pairs, new form experiments, VLM or package validation. `package` on these KPP1 outputs has no ZIP, which is not an archive validation run. No production KEEP or PR.
+- Run status `finished`, wall 82.113 s; pairs 21.277 / 20.319 / 22.172 s (median 21.277 s); no budget stop. Hypothesis `confirmed` as specified for stored FBXs. Review readiness: replay packet is ready for evidence review, not for product adoption. Freeze `ad979afa551d507d6d9bc509de93612ccdcb5e9c`; [native receipt](trainer_ledger_r100/receipt.json) SHA-256 `6298d751a312079c9e84a8a7db7a21ee9f216fd9774bd5b343443313797a6051` (Git LF); [input manifest](trainer_ledger_r100/inputs.json) SHA-256 `09268064af4460ad4cc73633e915417a0bea050ca1bc9ef367318bfaa8c7bb43` (Git LF). Source FBXs for replay are on the shared Drive, but the historical baseline inventories and G22 detector key files still require access to pinned `C:/x/` paths.
+
+Affected tests: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL -u PYTEST_ADDOPTS uv run --frozen pytest -q tests/tools/test_trainer.py tests/test_trainer_inspect.py tests/test_agr_cli.py --basetemp tmp/r100-affected` — 216 passed; conftest redirected the basetemp to its per-worktree external path (one warning). `PYTEST_ADDOPTS='--basetemp=C:/x/agr-r100-t_3a47203e-guards' bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 563 passed, `repo_guards: GREEN`.
+
+Full suite: deferred to merge batch (rule 68).
