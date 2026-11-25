@@ -87,9 +87,11 @@ def test_accepted_split_fresh_cli(inputs, tmp_path):
     ]
     assert data["layers"] == inputs[-2]["layers"]
     assert data["expected_triangles"] == 1000
+    assert data["sheet_sha256"] == sha(out / "modelling_plan.png")
     with Image.open(out / "modelling_plan.png") as image:
         assert image.format == "PNG" and image.width >= 1500 and image.height >= 500
-        assert image.getextrema()[0][0] != image.getextrema()[0][1]
+        lightest, darkest = image.convert("L").getextrema()
+        assert lightest != darkest
 
 
 def test_preview_requires_opt_in(inputs, tmp_path):
@@ -175,6 +177,29 @@ def test_output_collisions_and_reset(inputs, tmp_path):
     assert not (occupied / "modelling_plan.png").exists()
     assert {p: sha(p) for p in original} == original
     assert cli(inputs, tmp_path / "reset").returncode == 0
+
+
+def test_duplicate_input_and_photo_pair(inputs, tmp_path):
+    scene, split, recipe, _, _, _ = inputs
+    out = tmp_path / "sheet"
+    alias = tmp_path / "alias.json"
+    alias.hardlink_to(split)
+    result = cli(inputs, out, "--evidence", str(alias))
+    assert result.returncode == 2 and "duplicate input" in result.stderr
+    assert not out.exists()
+    a, b = tmp_path / "a.png", tmp_path / "b.png"
+    Image.new("RGB", (500, 300), "red").save(a)
+    Image.new("RGB", (500, 300), "blue").save(b)
+    result = cli(inputs, out, "--split-image", str(a))
+    assert result.returncode == 2 and "both" in result.stderr
+    assert not out.exists()
+    assert cli(inputs, out, "--split-image", str(a), "--reference-image", str(b)).returncode == 0
+    with Image.open(out / "modelling_plan.png") as image:
+        histogram = image.getcolors(maxcolors=1 << 16)
+        assert histogram is not None
+        colors = {color for _, color in histogram}
+    assert {(255, 0, 0), (0, 0, 255)} <= colors
+    assert sha(split) == inputs[-1]["split_sha256"] and sha(scene) == inputs[-2]["scene_sha256"]
 
 
 def test_rechecks_input_before_publication(inputs, tmp_path, monkeypatch):
