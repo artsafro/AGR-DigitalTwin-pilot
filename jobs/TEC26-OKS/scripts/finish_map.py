@@ -34,8 +34,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from tools.derive.finish_map import (  # noqa: F401,E402 - replay API
     DECISION_REF, HEX64, LEGEND_TEXTURES, NORMALS, check_density_contract,
     check_user_texture, contract_density, density_twin, fresh_out_dir, load,
-    validate_facades, validate_legend, validate_spec,
+    validate_facades, validate_legend,
 )
+from tools.derive import finish_map as _owner  # noqa: E402
+
+def validate_spec(spec, kpp_spec=None):
+    """Owner validate_spec with this module's validate_legend resolved at call time (job adapters patch it)."""
+    return _owner.validate_spec(spec, kpp_spec, legend_check=lambda s, k: validate_legend(s, k))
 
 DROP_MIN_M = -1.0
 

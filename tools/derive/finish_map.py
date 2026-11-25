@@ -23,7 +23,8 @@ def load(path):
         return json.load(fh)
 
 
-def validate_spec(spec, kpp_spec=None):
+def validate_spec(spec, kpp_spec=None, *, legend_check=None):
+    """legend_check: optional caller-owned legend validator (job shims route their overrides here)."""
     fin = spec.get("finishes") or {}
     if not fin:
         raise ValueError("spec has no finishes")
@@ -91,7 +92,7 @@ def validate_spec(spec, kpp_spec=None):
             raise ValueError(f"{name}: a user_vjoints finish needs a facade rib contract (spec facades: ribs per "
                              f"field from the building's colour-solution sheet); the joint period is not free")
     if spec.get("facades") is not None or "legend" in spec:
-        validate_legend(spec, kpp_spec)
+        (legend_check or validate_legend)(spec, kpp_spec)
     return True
 
 
