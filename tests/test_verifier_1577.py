@@ -65,7 +65,7 @@ def test_skeleton_verifier_stage_only_in_the_three_cells_and_is_shared():
     assert {c for c, s in SK["cells"].items() if "verifier" in s["stages"]} == set(CELLS)
     st = SK["stages"]["verifier"]
     assert st["gap"] is None and "tools/qa/verifier.py" in st["owners"]
-    doc = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    doc = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     for cell in CELLS:
         table = doc.split(f"### `{cell}`", 1)[1].split("\n### ", 1)[0]
         assert "`verifier`" in table, cell
@@ -476,7 +476,7 @@ def test_summary_invalid_verifier_and_empty_root(tmp_path):
 # ------------------------------------------------------------------ docs
 
 @pytest.mark.parametrize("rel", [".agents/skills/model-maf/SKILL.md", ".agents/skills/model-flora/SKILL.md",
-                                 ".agents/skills/scenario/SKILL.md", "docs/agents/SKELETONS.md"])
+                                 ".agents/skills/scenario/SKILL.md", "docs/agents/SKELETONS-stages.md"])
 def test_docs_crossprojection_rule_present(rel):
     text = (ROOT / rel).read_text(encoding="utf-8")
     assert "CrossProjection" in text and "VLM confirms" in text and "tools/qa/verifier.py" in text

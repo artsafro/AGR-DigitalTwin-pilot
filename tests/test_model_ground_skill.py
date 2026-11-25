@@ -41,7 +41,7 @@ STEP_TOKENS = {
     6: ("Triangulate", "delaunay_2d_cdt", "orig_verts", "source Z", "different Z", "collinear"),
     7: ("Z only", "UV", "vertical offset", "datum", "relief(x, y) + offset", "miss", "face centres", "ray_cast"),
     8: ("GND-07", "C37"),
-    9: ("2K", "10-40", "4K", "520-1706", "px per linear metre", "[D097]"),
+    9: ("2K", "10-40", "4K", "512-1706", "px per linear metre", "[D160]"),  # #1895: D160 replaced 520
     10: ("seams", "convex", "[D098]", "gaps", "open polygons", "flipped normals", "validate-delivery"),
 }
 # Review round 1 (PR #232): phrases a step must not carry. Step 5 must not end the walk on a flat project; the
