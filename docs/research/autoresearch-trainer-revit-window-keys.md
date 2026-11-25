@@ -52,6 +52,43 @@
   at the #88 path, pinned inputs present; replay limited to hosts with those assets and `C:/x/trainer/runs/*-r87-*`
   snapshots for the baseline-adapter provenance). Receipt: `trainer-revit-intake-r89/receipt.json`.
 
-## Result
+## Result — H89 refuted for the handoff, stop moved one step (no KEEP)
 
-(filled after the series)
+**Итог по-русски.** Ключи окон по именованию семейств модели (`Окн_Окн_`, `Окн_ББлок_`) снимают остановку
+`no window objects` на обеих башнях 3/3: адаптер выдаёт план (63A: 12 типовых этажей, 36 окон, откосы 0,25–0,35 м;
+63B: 6 этажей, 33 окна, откосы 0,11–0,50 м; `dropped` 0). Но ядро `build_module` отклоняет план 6/6 жёсткой
+проверкой замкнутости ринга [D373]: `ring not closed: level 0 breaks at s=44.565` (63A) / `s=17.554` (63B).
+По контракту M89 = 0/3 на обеих башнях → **гипотеза H89 опровергнута** (BodyPlan не проходит). Новая первая
+остановка детерминирована и одинакова на 63A и отложенной 63B: правый откос окна попадает на 0,1 мм раньше угла
+контура (63A: откос 44.5651, угол 44.5652; 63B: 17.5541 / 17.5542) — сегмент-щепка 0,1 мм, который `--snap 0.03`
+не сливает с вершиной контура. Изменений в продукте нет; прохождение `artifact` свежим агентом не измерялось.
+
+| Fixture | Baseline (default keys) | Candidate M89 (`keys63.json`) | Paired gain median (range) | Windows classified | Plan windows / floors | Crop+2 adapters s, median (range) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 63A tuning | 0/3 (`no window objects`) | 0/3 (`ring not closed` level 0, s=44.565) | 0 (0–0) | 0 → 730 objects | 36 / 12 | 31.284 (28.261–33.194) |
+| 63B held out | 0/3 (`no window objects`) | 0/3 (`ring not closed` level 0, s=17.554) | 0 (0–0) | 0 → 557 objects | 33 / 6 | 28.633 (25.583–28.706) |
+
+- Run status `finished`, series 177.683 s, first pair 57.529 s (budget min(480, 5×57.5) s not hit). Each of the 6
+  observations re-imported the FBX and re-cropped (crop SHA differs per iteration, triangle/object counts identical:
+  63A 1,676,862 / 9,795, 63B 1,142,968 / 5,370 — same as #88). Plan counts identical across iterations; plan bytes
+  differ (crop ordering, as in #88). Source pre/post parity passed; native cropper SHA-256 `11b64625…590d72a` equals
+  #88. Baseline here is the same crop with default keys (frozen), not the #87 snapshot provenance; the replay does
+  not need `C:/x/trainer/runs`.
+- Positive trigger witness: on 63A default keys classify 0 windows, candidate 730 (walls 3,112 and baskets 17
+  unchanged — only `windows` moved; 63B: 0 → 557, walls 2,346, baskets 34). Injected negative (synthetic empty
+  crop, candidate keys): exit 1 `no window objects: check --keys`, no JSON — clean.
+- **Not measured:** opening count vs Artem's accepted 63A/63B plans (not read), visual/finish fidelity, fresh-agent
+  `artifact` passage, other sites (G22/KPP1 inputs `not_exercised`: default `KEYS` unchanged), Blender legacy-importer
+  parity (#88).
+- Would change (OBSERVE, not applied): the trainer practice bank for 63A/63B could pass this keys file — useful only
+  together with a fix for the new stop.
+- Receipt: `trainer-revit-intake-r89/receipt.json` (per-row crop/plan SHA-256, class counts, logs, wall times).
+  Replay limited to hosts with the pinned FBX/tower map and Blender 5.1.2.
+
+Next (not run): window jamb within `--snap` of a contour corner — snap the jamb station onto the corner (or drop
+the sliver segment) in the adapter before `build_module`; freeze on 63A, run unchanged on held-out 63B, M = the
+same handoff, plus `ring_closure` counts and an accepted G22 plan as the collateral control (rule must not change it).
+
+Affected tests: `uv run -q pytest -q tests/test_body_lattice_1736.py tests/test_body_training_1619.py tests/test_body_training_1619_stage2.py` → 89 passed; `repo_guards.sh` → 555 passed, GREEN.
+
+Full suite: deferred to merge batch (rule 68).
