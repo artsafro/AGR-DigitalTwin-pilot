@@ -30,10 +30,10 @@
 <tspan x="40" dy="16">Легенда: зелёный — модуль-владелец и его функции (контракт: вход -&gt; выход); жёлтый — общее ядро; розовый — число записей вне владельца (адреса в таблице владельцев); стрелки — передача между владельцами</tspan>
 </text>
 <text x="963.0" y="120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
-<tspan x="963.0" dy="14">Общее ядро: номер тайла UDIM (UDIM = ID покрытия)</tspan>
+<tspan x="963.0" dy="14">Общее ядро: номер тайла UDIM</tspan>
 <tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/udimtile_core.py</tspan>
-<tspan x="963.0" dy="17.5">одна функция UDIM (#1337); Ground берёт номер тайла через</tspan>
-<tspan x="963.0" dy="17.5">udim_of_cell (UDIM = ID покрытия), её дубли охраняет</tspan>
+<tspan x="963.0" dy="17.5">одна функция UDIM (#1337); Ground передаёт в udim_of_cell</tspan>
+<tspan x="963.0" dy="17.5">плотный индекс покрытия [D399], дубли формулы охраняет</tspan>
 <tspan x="963.0" dy="17.5">карта НПМ (contexts.yaml)</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
 <tspan x="963.0" dy="17.5">udim_tile: u, v -&gt; номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне</tspan>
@@ -230,11 +230,12 @@
 <text x="1495.0" y="353.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">граница и ноль</tspan>
 </text>
-<rect x="1567.5" y="336.25" width="60" height="52.5" fill="#ffffff" opacity="0.9"/>
-<text x="1597.5" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1597.5" dy="14">номер тайла</tspan>
-<tspan x="1597.5" dy="17.5">(UDIM = ID</tspan>
-<tspan x="1597.5" dy="17.5">покрытия)</tspan>
+<rect x="1567.5" y="327.5" width="60" height="70.0" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="327.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1597.5" dy="14">номер тайла по</tspan>
+<tspan x="1597.5" dy="17.5">плотному</tspan>
+<tspan x="1597.5" dy="17.5">индексу</tspan>
+<tspan x="1597.5" dy="17.5">покрытия</tspan>
 </text>
 <rect x="1720.0" y="723.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
 <text x="1750.0" y="723.0" font-size="14" text-anchor="middle" fill="#1e1e1e">

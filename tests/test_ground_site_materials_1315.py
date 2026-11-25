@@ -51,8 +51,8 @@ def test_cli_binds_library_diffuse_per_cover(tmp_path):
     assert "mtllib SM_SYN_Ground.mtl" in obj
     assert "mtllib SM_SYN_Ground.mtl" in (out / "ground-flat.obj").read_text(encoding="utf-8")
     mtl = gs.read_mtl(out / "SM_SYN_Ground.mtl")
-    assert mtl == {"M_SYN_Ground_ID01_Lawn": "T_SYN_Ground_Diffuse_ID01_Lawn.png",
-                   "M_SYN_Ground_ID02_Rubber": "T_SYN_Ground_Diffuse_ID02_Rubber.png"}
+    assert mtl == {"M_SYN_Ground_ID01_Lawn": "T_SYN_Ground_Diffuse_ID01_Lawn.1001.png",
+                   "M_SYN_Ground_ID02_Rubber": "T_SYN_Ground_Diffuse_ID02_Rubber.1002.png"}
     # plain map: byte-equal pixels of the library file; recoloured map: mean = hatch background colour
     lawn = np.asarray(Image.open(out / mtl["M_SYN_Ground_ID01_Lawn"]))
     assert np.array_equal(lawn, np.asarray(Image.open(lib / "42/42_lawn_d_npm_32.png").convert("RGB")))

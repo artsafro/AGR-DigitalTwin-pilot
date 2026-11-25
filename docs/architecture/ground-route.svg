@@ -254,7 +254,7 @@
 <tspan x="1235.0" dy="21.25">текстуры по ID,</tspan>
 <tspan x="1235.0" dy="21.25">бесшовные UV-острова</tspan>
 <tspan x="1235.0" dy="21.25">до проекции, тайлы</tspan>
-<tspan x="1235.0" dy="21.25">UDIM = ID</tspan>
+<tspan x="1235.0" dy="21.25">UDIM подряд с 1001</tspan>
 </text>
 <text x="1235.0" y="495.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Команда:</tspan>
@@ -263,7 +263,7 @@
 </text>
 <text x="1235.0" y="608.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Правила: D097, D160, D210,</tspan>
-<tspan x="1235.0" dy="17.5">D293</tspan>
+<tspan x="1235.0" dy="17.5">D293, D399</tspan>
 </text>
 <text x="1235.0" y="686.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Контекст: Поверхность</tspan>
