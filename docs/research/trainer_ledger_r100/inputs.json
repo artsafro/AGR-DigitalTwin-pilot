@@ -1,0 +1,100 @@
+{
+  "base": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+  "blender": "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe",
+  "files": {
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v002r1_body_quad.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "C:/x/t_563a40f7/key/heldout-key-v001.json": "843197137db10cdc51417b73df2c7d60ca5badc38e0f45b0ea2e2cfb93832c75",
+    "C:/x/t_563a40f7/key/heldout-sections-v001.json": "270e83dedbbae38099913640b4825c823457b3abe85f62cff295de223afed78d",
+    "C:/x/ev_1619/g22_k2_src.npz": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/SHA256SUMS.txt": "7e35e3a3d6a2cd09fe89ef5cc918090392c5cd2c4e832d532ab06bcd6ad019cb",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-1-aligned/body.fbx": "6b5e5ec58f6210bba4667f215740fca654cc6ea44dc0bc3fad3baae6e025e250",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-1-aligned/body.fbx": "aa6820088d16b5d3847b2b1ecdeab65d0b9375d07b875caf9b2e4127f299fa8e",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-2-aligned/body.fbx": "9a57e3edb1f8f2e3b15353e5da157d01a054b9d5abb60e4015fb3ccba150f171",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-2-aligned/body.fbx": "7c13d4dcdbd2504ea11ead005a2d25ebfc0d1a5d23c40376ea94981144e999ec",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-3-aligned/body.fbx": "41486f7a16e8204484181ed1c22efa8e2c6ddfc393af1a37f659958d52763263",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-3-aligned/body.fbx": "7ff07661be55ea1bae5ae8911c5df9d51849762fc8b048d6cc865644f4c6b981",
+    "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/SHA256SUMS.txt": "847aeb38d84d59a3acef620d986c1a76b8b5f54d5bd1dddbddff9dc856a70cc5",
+    "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/g22-k2-stage1-codex-r97-C1/g22-k2-stage1-codex-r97-C1_built_typical_body.fbx": "d024fd1d5df6fceb69677c54e8c218843340440f2a8962231b3daa19b64a9561",
+    "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/g22-k2-stage1-codex-r97-C2/g22-k2-stage1-codex-r97-C2_built_typical_body.fbx": "223f5bf0c562775d2847ed3e1b6c7a6b0d055d33711f541543ed8f33f73ed6be",
+    "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/g22-k2-stage1-codex-r97-C3/g22-k2-stage1-codex-r97-C3_built_typical_body.fbx": "79920aaffdb3951a6208d0dd1161efb3af0861d1681312923eba9c0d24a33cda",
+    "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/SHA256SUMS.txt": "3cd239a315cc0876ba0dc4a99b0772382981003f76e9d242c3457dbe78dc1ad8",
+    "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/kpp1-v004-codex-r99-C1/built/body_v001/body.fbx": "0e71ccfec23c3d03de89879ca70960ee2f4fd111f3fc2968aa9e2340a1ab6588",
+    "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/kpp1-v004-codex-r99-C2/built/body-v001/body.fbx": "8bee99696e39d88ca96db826fbfff12f0ff1f0f92955ce9fd85a6de33395453b",
+    "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/kpp1-v004-codex-r99-C3/built/body/body.fbx": "5525efc174c10404819f5c806653f4c077826fd288c1cc14396bdeb3c035f83f",
+    "C:/x/trainer/runs/kpp1-v004-codex-20261124/run.json": "b7c8d37efb84b9779e12a840c6843d0744d1067c800054b9e7aadba5ca984b89",
+    "C:/x/trainer/runs/kpp1-v004-codex-20261124/score.json": "1fb7d6eef99b45cd33f67466eb76f3891815a55b107b31ab7ab4bc361145da14",
+    "C:/x/trainer/runs/g22-k2-stage1-codex-20261124/run.json": "cf442c5d41669c78aff0115832a24123172727a42d3d5f7ab9a987f79b074c9b",
+    "C:/x/trainer/runs/g22-k2-stage1-codex-20261124/score.json": "7bc04739bb6ac19bb2c5a3b740a52f264e0e9f7e347eafc4e4adaaf65b6f5cb1",
+    "C:/x/trainer/runs/63a-stage1-codex-20261124/run.json": "d0fc75edcad2ac4c3d24e54cd88b16ac6cb743f19aac8a30626330313e90052c",
+    "C:/x/trainer/runs/63a-stage1-codex-20261124/score.json": "bf1359a796139259067bc78a28654c595dbc9c73d2dcc7ab36b4c6054f09d4c8"
+  },
+  "historical": {
+    "C:/x/trainer/runs/kpp1-v004-codex-20261124/built": {
+      "L01.accoreconsole.log": "885dc4caed887b59162ec35e1cfe050794c807460ba2919514e720b66ed3406a",
+      "L01.census.json": "8f2a5cad2600416e7655829be9417cdf74879046e3b7b962f06b5d01d08724f5",
+      "L01.dwg": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+      "L01.dxf": "994970e1ede10846a6dd26a484c9ce0d8721e9aeff9c0e92b9cd5c98a89ba069",
+      "L01.dxfout.scr": "60712c7fad18730c49bd677b2281c25ce1e417d4c2f668127a61964e83deaba8",
+      "L01.receipt.json": "1366d0c384889c93067c77d2ceaf3a7c1d40c5b6fabd800cd402eff1b8481c14",
+      "L02.accoreconsole.log": "5e9c51a0b06e015b117d9543bf851dafc801ea576efda6153d600345bf4a0dd3",
+      "L02.census.json": "6052f3a4c150421264499b3f0e806e9d55972a6f5eff8ca0fa362871ea676d67",
+      "L02.dwg": "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+      "L02.dxf": "2c3c33ca11c7ff3037638ba38cae42d1bbb6f705c8aa8d23741e2626dbd87e15",
+      "L02.dxfout.scr": "485d7349e92d29f9e2ba22f83f9129a652a5042e0075e6a4d94773e8149c65e8",
+      "L02.receipt.json": "cf5bdf95331c5bfedd10c2fcc646b340b3d795fbf3a65edee2f7770348bf9542",
+      "L03.accoreconsole.log": "0144cabe24e2bec2b9b21e44ed906369adfcdbb528ba0cf96925cb6637a4916f",
+      "L03.census.json": "b7c63d798cb64051225c4c05aec1286ebb0add4986c1c97e7d423a0bacfd8053",
+      "L03.dwg": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469",
+      "L03.dxf": "9628107cccc35c23f77fd12bb3b2dad8e35c978641576961028e325734d1c17b",
+      "L03.dxfout.scr": "2dc140efe9c1c9700c679a0b1b9b72676488511fc1ef90ff664a3db9c95ce1bd",
+      "L03.receipt.json": "af34aaa1b3d1b81e0ef1685670882c4f306de2cfc8a84738239a355ab9c26551",
+      "layer-map-L03.txt": "91d8f8f230c6f678967c769f30d5b6726fcb95c56569355cb407096cce17d52e",
+      "plan-account.json": "72006144d5d00e44ab157705a69d178eb4c7758792637e6891d12430260e0014",
+      "plan-contours.json": "635fd79922c10e6cac1cc77e115a15d3c31c2c57e27f460db38c404505c207d6",
+      "QUESTIONS.md": "81eea996a8b0f31d263e6077d7a2d49876af991e5d5dd28850dc20dfa05c1e8b",
+      "RUN-STATE.md": "3f494b8f2b327cc960a18051b24e834b3c63004e1f7e8895671b8ef9957747d5"
+    },
+    "C:/x/trainer/runs/g22-k2-stage1-codex-20261124/built": {
+      "QUESTIONS.md": "f1f16e80ae051e95deae5bdf1ff29c7adb5ae5ed9f1ecaa995c082054b89237d",
+      "REPORT.md": "e011dba5c9c72bbbc8b563473721b397c3fd4f1a630093f446c48bba71361407"
+    },
+    "C:/x/trainer/runs/63a-stage1-codex-20261124/built": {
+      "QUESTIONS.md": "06b44e5b455bee8698d976ba80476b1c00f2605c1d317bd7d1efbb50189ca062",
+      "REPORT.md": "ea4d6bac179a045ff263b9f6f7a32c95b570bd78e0cb4275f3f1290ce2992630"
+    }
+  },
+  "baseline": {
+    "kpp1-v004": "C:/x/trainer/runs/kpp1-v004-codex-20261124/built",
+    "g22-k2-stage1": "C:/x/trainer/runs/g22-k2-stage1-codex-20261124/built",
+    "63a-stage1": "C:/x/trainer/runs/63a-stage1-codex-20261124/built"
+  },
+  "candidate": {
+    "kpp1-v004": [
+      "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/kpp1-v004-codex-r99-C1/built/body_v001/body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/kpp1-v004-codex-r99-C2/built/body-v001/body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r99-deliverable-fresh/kpp1-v004-codex-r99-C3/built/body/body.fbx"
+    ],
+    "g22-k2-stage1": [
+      "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/g22-k2-stage1-codex-r97-C1/g22-k2-stage1-codex-r97-C1_built_typical_body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/g22-k2-stage1-codex-r97-C2/g22-k2-stage1-codex-r97-C2_built_typical_body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/g22-k2-stage1-codex-r97-C3/g22-k2-stage1-codex-r97-C3_built_typical_body.fbx"
+    ],
+    "63a-stage1": [
+      "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-1-aligned/body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-2-aligned/body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-3-aligned/body.fbx"
+    ],
+    "63b-stage1": [
+      "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-1-aligned/body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-2-aligned/body.fbx",
+      "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-3-aligned/body.fbx"
+    ]
+  },
+  "accepted": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx",
+  "rejected": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx"
+}
