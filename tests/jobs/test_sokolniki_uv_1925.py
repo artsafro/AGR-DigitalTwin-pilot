@@ -1,4 +1,4 @@
-"""Sokolniki #1925 step 4 [D411]: finish zones, UV report table and the uv_config.json spec.
+"""Sokolniki #1925 step 4 [D412]: finish zones, UV report table and the uv_config.json spec.
 
 Pattern: n/a | new-case: tests of jobs/sokolniki-uvk1000/hooks/inset_build.py (body_finish, ring_relation),
 inset_sheet.py (uv_rows) and uv_config.json against the shared atlas spec validator (no DCC).
@@ -98,3 +98,16 @@ def test_uv_rows_scales_texel_to_the_atlas_region():
     assert next(r for r in rows if r['finish'] == '12_frame_RAL9003')['npm_px_per_m'] is None
     assert tot == {'tris_before': 14, 'tris_after': 18, 'overflow': 1, 'ngons_split': 1,
                    'open_len_changed': ['B'], 'nonmanifold_after': 0}
+
+
+def test_before_after_pairs_v009_vs_atlas_same_views(tmp_path):
+    # review r1 P1-3: the sheet shows «До» v009 | «После» atlas for F01, F05 and the iso from the same cameras
+    for tag in ('v009', 'atlas'):
+        for fid in ('F01', 'F05', 'iso'):
+            (tmp_path / ('%s_%s.png' % (tag, fid))).write_bytes(b'png')
+    pairs = sh.before_after_pairs(str(tmp_path))
+    assert [p[0] for p in pairs] == ['F01', 'F05', 'iso']
+    assert all(Path(b).name.startswith('v009_') and Path(a).name.startswith('atlas_') for _, _, b, a in pairs)
+    (tmp_path / 'v009_F05.png').unlink()
+    with pytest.raises(FileNotFoundError, match='v009_F05'):
+        sh.before_after_pairs(str(tmp_path))

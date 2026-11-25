@@ -222,7 +222,7 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet9 <renders9> "<re
 - **Accepted** by Artem 2026-11-25 ~14:00 («Да»): body v006 and assembly v009 ([D409]); the uncut fill stays uncut
   for the reasons on sheet 2. Next OKS stage: UV / materials / atlas on v009 (not started on this card).
 
-## Step 4 — material IDs, UV and the NPM atlas on v009 ([D411])
+## Step 4 — material IDs, UV and the NPM atlas on v009 ([D412])
 
 Artem 2026-11-25 ~19:30 («Да», #1925): IDs / UV / NPM atlas on the accepted body v006 + assembly v009 [D409]. The skeleton
 keeps 5 hooks: the work is the `uv` and `render atlas|checker` modes of `inset_write_blender.py`, `body_finish` in
@@ -235,7 +235,8 @@ uv run agr vpm-to-npm --blender blender51 jobs/sokolniki-uvk1000/uv_config.json 
 uv run dt qa xview <uv>/parts_quad.fbx --out <uv>/xview_parts_quad.json --profile NPM     (+ the exported FBX)
 blender51 -b --factory-startup --python-exit-code 1 --python tools/blender/fbx_readback.py -- <npm>/fbx/NPM_Sokolniki_UVK1000_01.fbx <npm>/readback.json
 blender51 ... hooks/inset_write_blender.py -- render <npm>/fbx/NPM_Sokolniki_UVK1000_01.fbx <views_uv.json> <renders> atlas|checker 26.1481,61.9071
-uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv> <atlas> <npm> <joined v009 xview.json> <new.pdf> --decision D411
+blender44 ... hooks/inset_write_blender.py -- render <step3>/assembly/body_v009.blend <views_uv.json> <renders> v009     («До» for the before/after pages)
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv> <atlas> <npm> <joined v009 xview.json> <new.pdf> --decision D412
 ```
 
 - IDs: 14 finishes of the PDF passport. Body by volume and the existing lattice levels: N dark brick (0-0.6 porcelain), D light
@@ -251,6 +252,7 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv>
   PASS; FBX readback ok. The single `*_Main` of `dt derive npm` fails xView (957 faces / 4 406 verts) - the same join of
   v009 WITHOUT UV fails too (738 / 3 836): inset-to-body contacts, open for Artem at the delivery stage.
 - SYNTHETIC look (shared painter joints, approximate RAL, no X folds / per-type frames / 20 mm mesh); address placeholder;
-  Max not run. Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step4-uv-atlas-v001/` (`sheet/sok-step4-uv-atlas-v001.pdf`
-  8 sheets, atlas, master, NPM FBX, xView / readback, renders; `SHA256SUMS.txt` 37 files, manifest `68f38f73…`).
+  Max not run. Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step4-uv-atlas-v001/` (`sheet-v002/sok-step4-uv-atlas-v002.pdf`
+  11 sheets incl. «До» v009 | «После» atlas for F01 / F05 / iso from the same cameras; v001 sheet kept; atlas, master,
+  NPM FBX, xView / readback, renders; `SHA256SUMS.txt` 55 files, manifest `ac7831f5…`).
   Waiting for Artem's picture approval of the atlas.

@@ -155,7 +155,7 @@ def test_no_delivery_changes():
     # The #1619 body-training hooks read their zone maps from the job (G22 palette, site-63 wall-type map; inputs).
     # The #1619 tower 63B job keeps its source receipt and its wall-type map (inputs, not deliveries).
     # The #1784 Sokolniki job keeps its openings config and its v005/v007 body configs [D378][D410] and the
-    # step-4 finish / UV / atlas spec [D411] (inputs, not deliveries).
+    # step-4 finish / UV / atlas spec [D412] (inputs, not deliveries).
     # The #1609 KPP1 lattice job keeps its inputs: finish bands and the NPM derive spec.
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',

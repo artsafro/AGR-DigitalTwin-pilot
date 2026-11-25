@@ -909,6 +909,22 @@ def uv_rows(rep, cfg, atlas):
     return sorted(rows.values(), key=lambda r: r["udim"]), tot
 
 
+BA_VIEWS = (("F01", "F01 (N, N04)"), ("F05", "F05 (D, D06/D07)"), ("iso", "изометрия"))
+
+
+def before_after_pairs(render_dir, before="v009", after="atlas"):
+    """#1925 r1 P1-3: «До» (accepted v009, no UV) | «После» (step-4 atlas) renders of the SAME views_uv.json cameras.
+    Returns [(view id, caption, before png, after png)]; a missing render is an error, never a silent gap."""
+    out, missing = [], []
+    for fid, label in BA_VIEWS:
+        pair = [os.path.join(render_dir, "%s_%s.png" % (tag, fid)) for tag in (before, after)]
+        missing += [p for p in pair if not os.path.isfile(p)]
+        out.append((fid, label, pair[0], pair[1]))
+    if missing:
+        raise FileNotFoundError("before/after renders missing: %s" % ", ".join(missing))
+    return out
+
+
 def sheet_uv(a):
     """#1925 step 4 sheet (Russian): summary + checks, atlas preview, texel table, UV checker | atlas per facade, iso."""
     from PIL import Image, ImageDraw, ImageFont
@@ -1007,6 +1023,14 @@ def sheet_uv(a):
               "ограничение — сторона квада <= 3,94 м [D320]. Плоские цвета масштабированы в свою ячейку, плотность не важна."):
         d.text((60, y), s, font=f_b, fill="black")
         y += 36
+    for fid, label, pb, pa in before_after_pairs(a.render_dir):
+        im, d = page("%s: «До» — принятая сборка v009 | «После» — атлас НПМ шаг 4 (те же камеры views_uv.json)" % label)
+        for k, (p, cap) in enumerate(((pb, "ДО: v009 (тело v006 + вставки), без UV, цвета материалов"),
+                                      (pa, "ПОСЛЕ: шаг 4, экспорт НПМ FBX с атласом"))):
+            r = Image.open(p).convert("RGB")
+            r.thumbnail((1160, 1500))
+            im.paste(r, (60 + k * 1200, 120))
+            d.text((60 + k * 1200, 120 + r.size[1] + 10), cap, font=f_b, fill="black")
     for fid, label in (("F01", "F01 (N, N04)"), ("F05", "F05 (D, D06/D07)"), ("F03", "F03 (S, S01)"), ("F04", "F04 (D, D01–D03)"),
                        ("iso", "изометрия")):
         im, d = page("%s: UV-шахматка 0,5 м | атлас" % label)
