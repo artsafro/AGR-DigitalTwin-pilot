@@ -20,8 +20,9 @@ Guarantees (each has a test in tests/methods/test_dwg_to_dxf.py):
   the return code and the console log path. ``status`` is ``pass`` only when the return code is 0,
   the DXF exists, starts with a DXF ``SECTION`` header, the copy and the source are unchanged.
   Anything else is ``fail`` with the reason and exit 3; never a pass.
-- Nothing is overwritten: the DXF, the copy, the script and the log must not exist (exit 4, nothing
-  written). No two of source, copy, script, log, DXF and receipt are the same file (exit 4).
+- The DXF, copy, script, log and receipt must not exist at preflight (exit 4, nothing written).
+  No two paths may name the same file (exit 4). If a receipt appears after preflight, it is not
+  replaced and the invocation fails even if it produced a candidate DXF.
 - A timeout is an explicit refusal, not a native exit code. The receipt records the deadline,
   elapsed console time, captured output, post-run hashes and any observed (unusable) DXF size.
   Trainer callers must also pass the DXF through ``dxf_intake.py`` before plan extraction.
@@ -47,7 +48,7 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from safe_write import Refused, guard_cli, publish_text, same_file  # noqa: E402
+from safe_write import Refused, guard_cli, same_file  # noqa: E402
 
 DEFAULT_ACCORECONSOLE = Path("C:/Program Files/Autodesk/AutoCAD 2025/accoreconsole.exe")
 DXF_VERSION = "_2018"
@@ -111,7 +112,7 @@ def plan(source: Path, dxf: Path, receipt: Path, workdir: Path, accoreconsole: P
     acc_found = accoreconsole.is_file()
     if not acc_found and not dry_run:
         raise InputError(f"accoreconsole {accoreconsole} not found")
-    for p in (copy, script, log, dxf):
+    for p in outputs:
         if p.exists():
             raise Refused(f"{p} already exists; a readback never overwrites (use a new versioned path)")
     return {"source": {"path": str(source), "sha256": _sha256(source)},
@@ -254,7 +255,17 @@ def main(argv=None, runner=None) -> int:
     except OSError as exc:  # e.g. a copy/script created by someone else between plan and run
         print(f"DWG_TO_DXF error: {exc}", file=sys.stderr)
         return 2
-    publish_text(Path(p["receipt"]), json.dumps(receipt, ensure_ascii=False, indent=1))
+    receipt_path = Path(p["receipt"])
+    try:
+        receipt_path.parent.mkdir(parents=True, exist_ok=True)
+        with receipt_path.open("x", encoding="utf-8", newline="\n") as stream:
+            stream.write(json.dumps(receipt, ensure_ascii=False, indent=1))
+    except FileExistsError:
+        print(f"DWG_TO_DXF refused: {receipt_path} already exists; do not use it for this attempt", file=sys.stderr)
+        return 4
+    except OSError as exc:
+        print(f"DWG_TO_DXF error: could not write receipt: {exc}", file=sys.stderr)
+        return 2
     if receipt["status"] != "pass":
         print(f"DWG_TO_DXF fail: {receipt['reason']}", file=sys.stderr)
         if "action" in receipt:

@@ -299,3 +299,27 @@ def test_output_hardlink_to_source_is_refused_before_launch(tmp_path, name):
     assert dd.main(argv, runner=fake) == 4
     assert not fake.calls and sorted(work.rglob("*")) == before
     assert src.read_bytes() == alias.read_bytes() == frozen
+
+
+@pytest.mark.parametrize("late", [False, True])
+def test_stale_receipt_is_never_replaced(tmp_path, late):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    argv, out, rec = _args(src, work)
+    (work / "acc.exe").touch()
+    stale = b'{"status":"pass","run":"previous"}'
+    if not late:
+        rec.write_bytes(stale)
+    fake = FakeAcc("nothing")
+
+    def launch(*args, **kwargs):
+        rec.write_bytes(stale)
+        return fake(*args, **kwargs)
+
+    before = sorted(work.iterdir())
+    assert dd.main(argv, runner=launch) == 4
+    assert rec.read_bytes() == stale and not out.exists()
+    assert len(fake.calls) == int(late)
+    if not late:
+        assert sorted(work.iterdir()) == before
