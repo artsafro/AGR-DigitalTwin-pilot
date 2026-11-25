@@ -32,16 +32,20 @@
     {"family": "Дверь|^WB_Дв_", "by_place": {"inside": "INTERIOR_OUT", "face": "DOORS", "roof": "DOORS", "out": "SITE"}},
     {"family": "Козыр|Навес", "layer": "ROOF_EQUIPMENT"},
     {"family": "Сетка_кровля|Сетка кровл", "layer": "ROOF_EQUIPMENT"},
-    {"family": "Ограждение|Перил|Поручень", "by_place": {"inside": "RAILINGS", "face": "RAILINGS", "roof": "RAILINGS", "out": "SITE"}},
+    {"family": "Ограждение|Перил|Поручень|поручн", "by_place": {"inside": "RAILINGS", "face": "RAILINGS", "roof": "RAILINGS", "out": "SITE"}},
     {"family": "Панель фасадная|Ламел|Кассет|Ребр|Фибробетон|Декор", "by_place": {"inside": "INTERIOR_OUT", "face": "DECOR", "roof": "DECOR", "out": "SITE"}},
     {"family": "Труба|Каркас|Пергол", "min_z0_above_base_m": 3.0, "by_place": {"inside": "ROOF_EQUIPMENT", "face": "ROOF_EQUIPMENT", "roof": "ROOF_EQUIPMENT", "out": "SITE"}, "why": "one owner per object kind (orchestrator 2026-11-25): a steel pipe frame above the ground storey is the pergola, wherever its centroid falls (under an upper slab = inside, at the edge = face)", "flag": {"key": "pergola_pipes", "ru": "Трубы каркаса перголы выше 1-го этажа → 07_КРОВЛЯ_ОБОРУД вместе с перголой (в v002 часть была ДЕКОР/ВНУТРЕННЕЕ)"}},
     {"family": "Труба|Каркас|Пергол", "by_place": {"inside": "INTERIOR_OUT", "face": "DECOR", "roof": "ROOF_EQUIPMENT", "out": "SITE"}},
     {"family": "импост", "by_place": {"inside": "INTERIOR_OUT", "face": "CURTAIN_WALL", "roof": "CURTAIN_WALL", "out": "SITE"}, "why": "curtain-wall mullions belong to the curtain wall (orchestrator 2026-11-25); the modelling plan decides geometry vs texture", "flag": {"key": "mullions", "ru": "Импосты витражей (25х100, 50х100) → 04_ВИТРАЖИ; в census_v007 часть была «вне модели»", "places": ["face", "roof"]}},
     {"family": "Системная панель|Витраж", "by_place": {"inside": "INTERIOR_OUT", "face": "CURTAIN_WALL", "roof": "CURTAIN_WALL", "out": "SITE"}},
     {"family": "Внутренн|Перегородк", "by_place": {"inside": "INTERIOR_OUT", "face": "INTERIOR_OUT", "roof": "BODY", "out": "SITE"}, "below_parapet": "INTERIOR_OUT", "why": "an interior wall standing on a roof is hidden (09) when its top is <= the parapet top of that roof, else visible body (01) (orchestrator 2026-11-25)", "flag": {"key": "roof_interior_walls", "ru": "«Внутренние» стены на кровле: ниже верха парапета → 09_ВНУТРЕННЕЕ, выше → 01_ТЕЛО", "places": ["roof"]}},
-    {"family": "Отделка|Лестниц|Брус|КолоннаЖБ|Колонна", "by_place": {"inside": "INTERIOR_OUT", "face": "INTERIOR_OUT", "roof": "ROOF_EQUIPMENT", "out": "SITE"}},
+    {"family": "Отделка|[Лл]естниц|Тетива|[Мм]онолитный марш|[Нн]емонолитный марш|[Мм]онолитная площадка|[Нн]емонолитная площадка|Брус|КолоннаЖБ|Колонна", "by_place": {"inside": "INTERIOR_OUT", "face": "INTERIOR_OUT", "roof": "ROOF_EQUIPMENT", "out": "SITE"}},
     {"family": "^Перекрытие|^Базовая крыша|Кровл|Парапет", "by_place": {"inside": "BODY", "face": "BODY", "roof": "BODY", "out": "SITE"}},
-    {"family": "^Базовая стена|Стена", "by_place": {"inside": "INTERIOR_OUT", "face": "BODY", "roof": "BODY", "out": "SITE"}}
+    {"family": "^Базовая стена|Стена", "by_place": {"inside": "INTERIOR_OUT", "face": "BODY", "roof": "BODY", "out": "SITE"}},
+    {"family": "Walkway|Logicroof|Аэратор кровельный|Воронка|Отвод угловой", "layer": "ROOF_EQUIPMENT", "why": "roof walkway tiles, aerators, roof drains (KPP1 run 2026-11-25)"},
+    {"family": "потолок", "by_place": {"inside": "INTERIOR_OUT", "face": "INTERIOR_OUT", "roof": "INTERIOR_OUT", "out": "SITE"}, "why": "suspended/finish ceilings are interior (KPP1 run 2026-11-25)"},
+    {"family": "^MEP_|^МЕР_|^BL_|Шкаф|Стул|Стол|Тумба|Стеллаж|Кресло|Диван|Кровати|Зеркало|Вешалка|Гарнитур|Кулер|Машинка для чистки|[Тт]урникет|Бронекабина|Рентген|Передаточное устройство|Лавки", "by_place": {"inside": "INTERIOR_OUT", "face": "INTERIOR_OUT", "roof": "ROOF_EQUIPMENT", "out": "SITE"}, "why": "furniture and MEP equipment: interior unless on the roof or outside (KPP1 run 2026-11-25)"},
+    {"family": "^Ось сетки", "layer": "INTERIOR_OUT", "why": "Revit grid annotation, not building geometry (KPP1 run 2026-11-25)"}
   ],
   "material_rules": [
     {"material": "Стекл|Glass|Glazing", "by_place": {"inside": "INTERIOR_OUT", "face": "CURTAIN_WALL", "roof": "ROOF_EQUIPMENT", "out": "SITE"}},

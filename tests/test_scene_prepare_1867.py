@@ -256,6 +256,28 @@ def test_sheet_without_flags_keeps_the_short_layout(rules, tmp_path):
     assert Image.open(sp.make_sheet(census, tmp_path / "s.png")).size == (2400, 1500)
 
 
+def test_kpp1_family_rules_and_generics_still_decided(rules):
+    """KPP1 run 2026-11-25: furniture/ceilings/roof drains/stairs/grid axes get layers; generic models stay in 00."""
+    d = synthetic_dump()
+    d["objects"] += [
+        box("MEP_Стул_Кухонный Офисный стул T [401]", 3, 6, 3.5, 6.5, 0, 0.9),
+        box("Лавки 1000х350х480 (Скамейка СК-1-1000 [402]", 15, 15, 16, 15.4, 0, 0.5),
+        box("TN_ПВХ Logicroof Walkway Puzzle_1 штк ПВХ Log [403]", 4, 4, 4.5, 4.5, 4.0, 4.02),
+        box("Смонтированная лестница Лест [404]", 6, 2, 8, 3, 0, 3.0),
+        box("Многослойный потолок ADSK_Подве [405]", 1, 1, 9, 9, 3.0, 3.05),
+        box("Ось сетки 1 [406]", 2, 2, 2.01, 8, 0, 0.01),
+        box("ADSK_ОбобщеннаяМодель_Прокат_По [407]", 4, 4, 4.2, 4.2, 1, 2),
+    ]
+    layers = {o["name"]: o["layer"] for o in sp.classify(d, rules)["objects"]}
+    assert layers["MEP_Стул_Кухонный Офисный стул T [401]"] == "INTERIOR_OUT"
+    assert layers["Лавки 1000х350х480 (Скамейка СК-1-1000 [402]"] == "SITE"
+    assert layers["TN_ПВХ Logicroof Walkway Puzzle_1 штк ПВХ Log [403]"] == "ROOF_EQUIPMENT"
+    assert layers["Смонтированная лестница Лест [404]"] == "INTERIOR_OUT"
+    assert layers["Многослойный потолок ADSK_Подве [405]"] == "INTERIOR_OUT"
+    assert layers["Ось сетки 1 [406]"] == "INTERIOR_OUT"
+    assert layers["ADSK_ОбобщеннаяМодель_Прокат_По [407]"] == "UNCLASSIFIED"
+
+
 @pytest.mark.parametrize("mutate,msg", [
     (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "below_parapet": "NOPE"}), "NOPE"),
     (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "min_z0_above_base_m": float("nan")}), "min_z0"),
