@@ -1,5 +1,24 @@
 # Trainer explicit FBX selection, standing #96 (OBSERVE)
 
+## Result
+
+**Кратко (RU).** H96 подтверждена для сохранённых выходов #95: явный выбор FBX снимает отказ «несколько файлов», но на KPP1 ни один из пяти выбранных FBX не проходит `bounds`. Простое объединение всех частей без изменения координат тоже не помогает: максимальное расхождение 4,0005 м при допуске 0,10 м. На отдельном эталоне 63B явный выбор сохраняет исходные оценки принятой и трёх отклонённых версий. Код тренажёра не менялся; новый прогон агента и качество модели целиком не измерялись.
+
+Freeze: `254723b263b58493d1da4db368a6659a63ae6b76`. The #95 receipt already contained informal individual KPP1 scores. R96 is a fresh native confirmation, not a discovery claim about those same files; the additional evidence is the three paired readbacks, union bounds and independent 63B perturbation. [Readback receipt](trainer-explicit-fbx-r96/receipt.json), [input manifest](trainer-explicit-fbx-r96/inputs.json).
+
+| Fixture | Clean / baseline | Explicit selection | Median max corner deviation, range over 3 repeats |
+| --- | --- | --- | --- |
+| KPP1 C1 | single file selected, bounds fail | same selection and bounds | 5.3500 m, [5.3500, 5.3500] |
+| KPP1 C2 | ambiguous, bounds not measured | two selected separately; zero pass | 4.7500 and 4.0005 m; each range width 0 |
+| KPP1 C3 | ambiguous, bounds not measured | three selected separately; zero pass | 4.7500, 4.7500, 4.0005 m; each range width 0 |
+| 63B v007 accepted | pass | pass after decoy | 0.0000 m, [0.0000, 0.0000] |
+| 63B v004/v005/v006 rejected | fail each | fail each after decoy | 0.1993 m each, [0.1993, 0.1993] |
+
+- Primary M96: 0/2 KPP1 run-level bounds passes in each repeat; median 0/2, range [0/2, 0/2]. Directory refusal on both is a selection outcome, not a bounds datapoint. C1 paired deviation spread [0, 0] m; no injection on C1 (`not_exercised`; no perturbation result).
+- 63B: each of the four clean inventories had one FBX, each injected inventory had exactly one additional nested FBX, and all 12 injected directory calls refused. Explicit selection recovered the original FBX with unchanged native bounds and verdict in all 12 comparisons; paired deviation spread [0, 0] m for each version. v007 is an accepted calibration self-compare, not a submission pass. No claim about rejected versions outside this measured set.
+- Union diagnostic for C2 and C3: upper X=12.6750 m versus key 16.6755 m; upper Z=7.9090 m versus key 8.6500 m. The mismatch is not removed by aggregation. Neither the missing east extent nor the top datum was reconstructed here. Next: read source L01 level marks and pin the east extent independently of the scoring key before a new training build. An explicit named deliverable may improve handoff clarity, but is not a geometry fix.
+- Run complete: 3/3; 97.408 s elapsed (pairs 31.294 / 34.158 / 31.956 s; median 31.956). Budget stop did not trigger. No new candidate and no product KEEP. Readback used the trainer's Blender 5.1 executable pinned in the manifest and metre bounds from the existing FBX readback.
+
 ## Frozen contract
 
 The ledger on `origin/main@e01aafc9c3ad31ad924d230a5d2ed92445ee13a7` has `artifact` 3/4, `sources-dwg` 1/4. These are ledger scoring rows, not inferred execution stops. #1917 owns the FBX-first prompt experiment, #1924/#1927 own trainer A/B, #1877 owns the Blender launch guard, and #88–#92 own the earlier Revit/tower build and transfer probes. Texture fallback is inactive; form research is closed. This experiment changes none of those files.
