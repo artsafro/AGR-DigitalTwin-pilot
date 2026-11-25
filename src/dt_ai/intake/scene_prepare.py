@@ -367,6 +367,11 @@ def _plan_image(census, size, only=None, box=None, highlight=None):
     from PIL import Image, ImageDraw
     col = {la["id"]: tuple(la["color"]) for la in census["layers"]}
     objs = [o for o in census["objects"] if only is None or o["layer"] in only]
+    hot = highlight is not None
+    if hot and box is None:  # crop to the flagged objects + 10 m of context
+        mine_bb = [o["bbox"] for o in objs if o.get("flag") == highlight] or [o["bbox"] for o in objs]
+        box = [min(b[0] for b in mine_bb) - 10, min(b[1] for b in mine_bb) - 10,
+               max(b[3] for b in mine_bb) + 10, max(b[4] for b in mine_bb) + 10]
     if box is None:
         box = [min(o["bbox"][0] for o in objs), min(o["bbox"][1] for o in objs),
                max(o["bbox"][3] for o in objs), max(o["bbox"][4] for o in objs)]
@@ -374,15 +379,16 @@ def _plan_image(census, size, only=None, box=None, highlight=None):
     s = min((w - 20) / max(box[2] - box[0], 1e-6), (h - 20) / max(box[3] - box[1], 1e-6))
     img = Image.new("RGB", size, (255, 255, 255))
     d = ImageDraw.Draw(img)
-    hot = highlight is not None
     for o in sorted(objs, key=lambda o: (hot and o.get("flag") == highlight, o["bbox"][5])):
         b = o["bbox"]
         x0, x1 = 10 + (b[0] - box[0]) * s, 10 + (b[3] - box[0]) * s
         y0, y1 = h - 10 - (b[4] - box[1]) * s, h - 10 - (b[1] - box[1]) * s
         mine = hot and o.get("flag") == highlight
-        fill = col[o["layer"]] if not hot or mine else (225, 225, 225)
-        d.rectangle([x0, y0, max(x1, x0 + 1), max(y1, y0 + 1)], fill=fill,
-                    outline=(230, 0, 0) if mine else None, width=2 if mine else 1)
+        rect = [x0, y0, max(x1, x0 + 1), max(y1, y0 + 1)]
+        if hot and not mine:  # context: thin grey outline only, so a large slab cannot hide the flagged objects
+            d.rectangle(rect, outline=(200, 200, 200))
+        else:
+            d.rectangle(rect, fill=col[o["layer"]], outline=(230, 0, 0) if mine else None, width=1)
     return img
 
 
