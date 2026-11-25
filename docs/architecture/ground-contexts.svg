@@ -1,26 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 1986" width="2360" height="1986" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 2022" width="2360" height="2022" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="1986" fill="#ffffff"/>
-<rect x="955.0" y="110" width="470" height="177.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="40.0" y="347.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="347.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="347.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="347.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="725.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="725.0" width="470" height="335.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1120.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1329.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1120.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1424.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1633.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1424.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1766.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<polyline points="510.0,453.75 630.0,453.75 630.0,327.5 1140.0,327.5 1140.0,453.75 1120.0,453.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,453.75 1240.0,453.75 1240.0,327.5 1750.0,327.5 1750.0,506.25 1730.0,506.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,198.75 1445.0,198.75 1445.0,327.5 1750.0,327.5 1750.0,1200.0 1730.0,1200.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1120.0,892.5 1140.0,892.5 1140.0,922.5 1750.0,922.5 1750.0,813.75 1730.0,813.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,1200.0 1750.0,1200.0 1750.0,1565.25 1730.0,1565.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,1565.25 1750.0,1565.25 1750.0,1846.5 1730.0,1846.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="10" y="-30" width="2360" height="2022" fill="#ffffff"/>
+<rect x="955.0" y="110" width="470" height="212.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
+<rect x="40.0" y="382.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="382.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="382.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="382.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="574.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="760.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="760.0" width="470" height="335.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1155.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1364.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1155.0" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1459.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1668.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1459.0" width="470" height="282.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1801.5" width="470" height="160.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<polyline points="510.0,488.75 630.0,488.75 630.0,362.5 1140.0,362.5 1140.0,488.75 1120.0,488.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,488.75 1240.0,488.75 1240.0,362.5 1750.0,362.5 1750.0,541.25 1730.0,541.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,216.25 1445.0,216.25 1445.0,362.5 1750.0,362.5 1750.0,541.25 1730.0,541.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,216.25 1445.0,216.25 1445.0,362.5 1750.0,362.5 1750.0,1235.0 1730.0,1235.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1120.0,927.5 1140.0,927.5 1140.0,957.5 1750.0,957.5 1750.0,848.75 1730.0,848.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,1235.0 1750.0,1235.0 1750.0,1600.25 1730.0,1600.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,1600.25 1750.0,1600.25 1750.0,1881.5 1730.0,1881.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
 </text>
@@ -30,15 +32,17 @@
 <text x="963.0" y="120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="963.0" dy="14">Общее ядро: номер тайла UDIM (UDIM = ID покрытия)</tspan>
 <tspan x="963.0" dy="17.5">Владелец: adapters/max/agr_tools/udimtile_core.py</tspan>
-<tspan x="963.0" dy="17.5">одна функция UDIM (#1337); её дубли охраняет карта НПМ</tspan>
-<tspan x="963.0" dy="17.5">(contexts.yaml)</tspan>
+<tspan x="963.0" dy="17.5">одна функция UDIM (#1337); Ground берёт номер тайла через</tspan>
+<tspan x="963.0" dy="17.5">udim_of_cell (UDIM = ID покрытия), её дубли охраняет</tspan>
+<tspan x="963.0" dy="17.5">карта НПМ (contexts.yaml)</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
 <tspan x="963.0" dy="17.5">udim_tile: u, v -&gt; номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне</tspan>
 <tspan x="963.0" dy="17.5">области — UdimDomainError</tspan>
 <tspan x="963.0" dy="17.5">face_tile: углы UV грани -&gt; тайл грани; угол в чужом</tspan>
 <tspan x="963.0" dy="17.5">тайле — UdimCrossTileError</tspan>
+<tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
-<text x="48.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="48.0" y="392.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="48.0" dy="14">Связь с DCC (Blender / 3ds Max / AGR Tools)</tspan>
 <tspan x="48.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="48.0" dy="17.5">агент выбирает DCC (D293); agr inspect читает манифест,</tspan>
@@ -51,7 +55,7 @@
 <tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="658.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658.0" y="392.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="14">Граница участка и нулевая отметка</tspan>
 <tspan x="658.0" dy="17.5">Владелец: src/dt_ai/core/heights.py</tspan>
 <tspan x="658.0" dy="17.5">граница и ноль — из проекта или агент уточняет (D293);</tspan>
@@ -64,7 +68,7 @@
 <tspan x="658.0" dy="17.5">Ground (XY, Z, уровень), рельеф в XY -&gt; pass / fail по</tspan>
 <tspan x="658.0" dy="17.5">каждой вершине (agr zero, #1406)</tspan>
 </text>
-<text x="1268.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="392.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Поверхность Ground: плоские UV → проекция → UDIM</tspan>
 <tspan x="1268.0" dy="17.5">поверхности и UV юбки</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: src/dt_ai/geometry/ground_site.py</tspan>
@@ -83,7 +87,7 @@
 <tspan x="1268.0" dy="17.5">skirt_gaps: меш, опуск -&gt; внешние рёбра без квада юбки</tspan>
 <tspan x="1268.0" dy="17.5">или с опуском меньше нормы (GND-03, D251)</tspan>
 </text>
-<text x="1878.0" y="357.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="392.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Текстуры по ID: UV-острова, тайлы, UDIM / атлас</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/atlas_core.py</tspan>
 <tspan x="1878.0" dy="17.5">цель D293: та же поверхность, НПМ на атласе вместо UDIM;</tspan>
@@ -94,7 +98,10 @@
 <tspan x="1878.0" dy="17.5">отступ -&gt; новые UV, тайлы UDIM, ячейки</tspan>
 <tspan x="1878.0" dy="17.5">atlas_png: раскладка -&gt; PNG атласа</tspan>
 </text>
-<text x="1268.0" y="735.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="584.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
+</text>
+<text x="1268.0" y="770.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">НПМ МАФ и Флора на атласе</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
 <tspan x="1268.0" dy="17.5">атлас МАФ (GroundEl) и Флоры в AGR Tools; конвертация ВПМ</tspan>
@@ -105,7 +112,7 @@
 <tspan x="1268.0" dy="17.5">atlas_flora: контекст Max, режим, узлы Флоры, превью -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">атлас Флоры НПМ</tspan>
 </text>
-<text x="658.0" y="735.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658.0" y="770.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="14">Расстановка МАФ и Флоры</tspan>
 <tspan x="658.0" dy="17.5">Владелец: src/dt_ai/placement/engine.py</tspan>
 <tspan x="658.0" dy="17.5">agr place / dt place site (src/dt_ai/placement/site.py,</tspan>
@@ -125,7 +132,7 @@
 <tspan x="658.0" dy="17.5">report_json: отчёт -&gt; строгий JSON: тот же seed и вход -&gt;</tspan>
 <tspan x="658.0" dy="17.5">те же байты</tspan>
 </text>
-<text x="1878.0" y="1130.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1165.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
 <tspan x="1878.0" dy="17.5">agr ucx: FBX / Blend → FBX (#1404); OBJ сборщика напрямую</tspan>
@@ -137,10 +144,10 @@
 <tspan x="1878.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="1878.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="1878.0" y="1339.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1374.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1268.0" y="1130.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1165.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Экспорт Ground отдельно от ZIP</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: tools/blender/ground_json_to_fbx.py</tspan>
 <tspan x="1268.0" dy="17.5">инструмент Blender читает JSON-мастер, не OBJ сборщика;</tspan>
@@ -150,7 +157,7 @@
 <tspan x="1268.0" dy="17.5">build: JSON-мастер меша, адрес -&gt; FBX и метаданные</tspan>
 <tspan x="1268.0" dy="17.5">экспорта</tspan>
 </text>
-<text x="1878.0" y="1434.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1469.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: tools/qa/sintez_checker.py</tspan>
 <tspan x="1878.0" dy="17.5">agr checker: ZIP папки -&gt; чекер AGR 1.6.1 в Blender</tspan>
@@ -162,10 +169,10 @@
 <tspan x="1878.0" dy="17.5">run: папка, выход -&gt; копия ZIP, запуск чекера, сводка</tspan>
 <tspan x="1878.0" dy="17.5">NEW.json; изменение ZIP во время прогона — отказ</tspan>
 </text>
-<text x="1878.0" y="1643.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1678.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1268.0" y="1434.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1469.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Упаковка готовых файлов НПМ / ВПМ в ZIP</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="1268.0" dy="17.5">единственный писатель ZIP сдачи (_write_zip): agr</tspan>
@@ -182,7 +189,7 @@
 <tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="1268.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1268.0" y="1776.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1811.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Проверки Ground, xView, СИНТЕЗ</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
 <tspan x="1268.0" dy="17.5">проверка пакета по регламенту (agr validate)</tspan>
@@ -192,30 +199,36 @@
 <tspan x="1268.0" dy="17.5">validate_npm_zip: имя, файлы ZIP, профиль, стадии -&gt;</tspan>
 <tspan x="1268.0" dy="17.5">находки НПМ</tspan>
 </text>
-<rect x="855.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="885.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="855.0" y="353.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="885.0" y="353.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="885.0" dy="14">исходники</tspan>
 </text>
-<rect x="1465.0" y="318.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="318.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="353.75" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="353.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">граница и ноль</tspan>
 </text>
-<rect x="1720.0" y="688.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="688.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1567.5" y="336.25" width="60" height="52.5" fill="#ffffff" opacity="0.9"/>
+<text x="1597.5" y="336.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1597.5" dy="14">номер тайла</tspan>
+<tspan x="1597.5" dy="17.5">(UDIM = ID</tspan>
+<tspan x="1597.5" dy="17.5">покрытия)</tspan>
+</text>
+<rect x="1720.0" y="723.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="723.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">проверка тайлов</tspan>
 <tspan x="1750.0" dy="17.5">при чтении FBX</tspan>
 </text>
-<rect x="1415.0" y="905.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
-<text x="1445.0" y="905.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1415.0" y="940.0" width="60" height="35.0" fill="#ffffff" opacity="0.9"/>
+<text x="1445.0" y="940.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1445.0" dy="14">точки МАФ /</tspan>
 <tspan x="1445.0" dy="17.5">Флоры</tspan>
 </text>
-<rect x="1720.0" y="1373.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="1373.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="1408.88" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1408.88" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">готовые FBX</tspan>
 </text>
-<rect x="1720.0" y="1697.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="1697.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="1732.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1732.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">ZIP / FBX сдачи</tspan>
 </text>
 </svg>

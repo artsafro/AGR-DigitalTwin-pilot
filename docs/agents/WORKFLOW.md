@@ -430,6 +430,7 @@ a merge to `main` keep `main`'s handoff unless the merged branch's handoff is th
 ## Memory map (#120)
 
 Each kind of fact lives in one place; the others point to it.
+Before adding documentation, check the [topic owner](../architecture/README.md#documentation-ownership) [D386].
 
 | Fact | File |
 |---|---|
