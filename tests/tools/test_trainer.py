@@ -75,6 +75,8 @@ def test_task_text_states_practice_self_gates_d391():
         text = T.task_text(e, Path("C:/x/in"), Path("C:/x/out"))
         assert "[D391]" in text and "gate1=practice-self" in text and "bm12=practice-self" in text
         assert "approval_sha256" in text and "not acceptance" in text and "agr trainer run" in text
+        # r81 finding: 6/6 agents reported `review` is not a PartsList status (draft|confirmed)
+        assert "status draft" in text and "status review" not in text
 
 
 def test_d391_row_recorded_once():

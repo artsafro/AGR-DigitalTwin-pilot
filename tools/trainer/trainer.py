@@ -220,7 +220,7 @@ def task_text(e, inputs_dir, out_dir):
               "and Blender are allowed; live 3ds Max is NOT available in a practice run.",
               "Practice gates [D391]: this is a trainer practice run (agr trainer run), not a real job. Where Gate 1",
               "(PartsList confirmation) or BM-12 (first module accepted before replication) would stop you, confirm it",
-              "yourself and continue to the deliverable: write parts.json (a valid PartsList, status review, gate1",
+              "yourself and continue to the deliverable: write parts.json (a valid PartsList, status draft, gate1",
               "empty) in the output folder and add to QUESTIONS.md the line `gate1=practice-self parts.json",
               "sha256=<file SHA-256> approval_sha256=<PartsList.approval_sha256()>`; after the first module add",
               "`bm12=practice-self <module file> sha256=<file SHA-256>`. The hidden-key score replaces the user's",
