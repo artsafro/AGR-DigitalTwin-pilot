@@ -1,0 +1,39 @@
+{
+ "schema": "trainer-stop-labels/1",
+ "frozen_by": "standing autoresearch #85 (t_9aa9bbc1), hand-read from built/QUESTIONS.md BEFORE any classifier code existed",
+ "runs_root": "C:/x/trainer/runs",
+ "label_order": ["fbx", "gate1", "bm12", "finish_src", "geo_src", "geom_src", "open_scene"],
+ "definitions": {
+  "fbx": "any *.fbx file anywhere under built/",
+  "gate1": "a question asks the user to approve/confirm a PartsList or Gate 1",
+  "bm12": "a question asks the user to accept a first module/floor/facade/pilot before replication or the rest of the building",
+  "finish_src": "a question asks the user for (or to confirm) a finish/material source, reference, legend, assignment or zone boundaries",
+  "geo_src": "a question asks the user for placement/CRS/MSK-77/GeoJSON/project zero/datum/levels/units/axes or address/index attributes",
+  "geom_src": "a question asks the user to confirm/provide contour, openings, niches/recesses, depths, roof, part inventory, or which source governs",
+  "open_scene": "a question asks whether to open the scene for acceptance after stages"
+ },
+ "rules": [
+  "Only a REQUEST to the user counts; a precondition ('after the contour is measured') or a recommendation ('recommendation: review a first module') does not.",
+  "null = the text is unreadable (lost non-ASCII bytes) and the label is not measured for that run."
+ ],
+ "split": {"tuning": "etalon kpp1-v004 (7 runs)", "held_out": "etalons g22-k2-stage1 (9 runs) + 63a-stage1 (1 run)"},
+ "runs": {
+  "kpp1-v004-codex-20261124":      {"split": "tuning",   "questions_sha256": "81eea996a8b0f31d263e6077d7a2d49876af991e5d5dd28850dc20dfa05c1e8b", "run_json_sha256": "b7c8d37efb84b9779e12a840c6843d0744d1067c800054b9e7aadba5ca984b89", "labels": [0, 1, 0, 0, 1, 0, 1]},
+  "kpp1-v004-codex-r83-B1":        {"split": "tuning",   "questions_sha256": "71101c11313784b4975196e33c66d71c2e741e77f2fd589387452b29ef852639", "run_json_sha256": "b53f07456d082fef49d9f2f790cd0c02ac3daa8445b779ae085028160056e7bd", "labels": [0, 1, 0, 0, 1, 1, 1]},
+  "kpp1-v004-codex-r83-B2":        {"split": "tuning",   "questions_sha256": "79a1bfedea1f1d8287ab3d8fe513cbeda1f61f908111e36365838efc18d49199", "run_json_sha256": "6554c899404072e6f4c55e4fc8766ad85ddf91fd622247ecae3ba65d9e103e46", "labels": [0, 1, 1, 1, 1, 1, 1]},
+  "kpp1-v004-codex-r83-B3":        {"split": "tuning",   "questions_sha256": "c93370a3fd519125a0b852a8e798e9434b785d019364d26cd905325a7d71fb20", "run_json_sha256": "15d6ca97b505754a7fe7c847dc98ce98b536340f174c91709ef5ed9f252e08af", "labels": [0, 1, 1, 0, 1, 1, 0]},
+  "kpp1-v004-codex-r83-C1":        {"split": "tuning",   "questions_sha256": "b1ff0bee7ff9712ba627ad93ba329c5b48aed973e07b6b697fe3ebbe34b2f8ff", "run_json_sha256": "7860a59d3d60976821bad8261c0e8216f25b242df529ca819d09cfd38d26a1b0", "labels": [0, 1, 1, 1, 1, 1, 1]},
+  "kpp1-v004-codex-r83-C2":        {"split": "tuning",   "questions_sha256": "7a093bd4d70932fd33ed4b7c004b86525abbe4f2b58e72cb85192818f84fd4d5", "run_json_sha256": "eb76d51f8aadb4f1781131bdc89ccc73056b5a2bf06508afa47b9afdb9b46643", "labels": [0, 1, 0, 1, 1, 1, 1]},
+  "kpp1-v004-codex-r83-C3":        {"split": "tuning",   "questions_sha256": "2b20dc76ff812aca6edeef77393ab2cca62cba633c0b9e8e72ce0350c94342ae", "run_json_sha256": "8f0928164c0ff0c03e3278c0ddbb2bf3f7e2be889eecdd054cefecac1f266033", "labels": [0, 1, 0, 1, 1, 1, 1]},
+  "63a-stage1-codex-20261124":     {"split": "held_out", "questions_sha256": "06b44e5b455bee8698d976ba80476b1c00f2605c1d317bd7d1efbb50189ca062", "run_json_sha256": "d0fc75edcad2ac4c3d24e54cd88b16ac6cb743f19aac8a30626330313e90052c", "labels": [0, 1, 1, 0, 0, 0, 1]},
+  "g22-k2-stage1-codex-20261124":  {"split": "held_out", "questions_sha256": "f1f16e80ae051e95deae5bdf1ff29c7adb5ae5ed9f1ecaa995c082054b89237d", "run_json_sha256": "cf442c5d41669c78aff0115832a24123172727a42d3d5f7ab9a987f79b074c9b", "labels": [0, 1, 1, 1, 0, 1, 1]},
+  "g22-k2-stage1-codex-r83-B1":    {"split": "held_out", "questions_sha256": "341d5af13bd29d9f2277ba901e1e3cc1468664e175554f3ab9e1a5f99bee1ad5", "run_json_sha256": "5d5db99d30be9fca5c2d895a14f273afd40424bf5320fdeb8d077932ec1037d1", "labels": [0, 1, 1, 1, 1, 1, 0]},
+  "g22-k2-stage1-codex-r83-B2":    {"split": "held_out", "questions_sha256": "d4668a49c00e366741a8855cc8c138361d2f08d128b468278d6eb0a400a22b7c", "run_json_sha256": "371fc4bebb77e75007778ecba37b8ae8c25424f01d854f3515bd80c8ad97f4d1", "labels": [0, 0, 1, 1, 0, 0, 1]},
+  "g22-k2-stage1-codex-r83-B3":    {"split": "held_out", "questions_sha256": "fd44a66ba3ebf7345c63f1416f0afba9729f3956931d3303309869a444300beb", "run_json_sha256": "21641f1519d21020d7c0f6250b547440b8fb729016cb9e34e2dbcbcade7948fd", "labels": [0, 1, 1, 1, 0, 1, 1]},
+  "g22-k2-stage1-codex-r83-C1":    {"split": "held_out", "questions_sha256": "5982971af77cbb0ba36d7e5391e8252adb6d1ea6629261dcc909f19fb5a83c2f", "run_json_sha256": "3a1b668fd47c657b769740c1f7da2acb652ca33383f7792d7d7e88bb38b856f8", "labels": [0, 1, 1, 1, 1, 1, 1]},
+  "g22-k2-stage1-codex-r83-C2":    {"split": "held_out", "questions_sha256": "5559e67e2ec4e18eb2a39baa97dda388eb278832487d2d0ecd1fa11f3fa46765", "run_json_sha256": "b31413d065856f6583983c79981ab335b3fcde3c81af2541d7bdc6aeddaee6cb", "labels": [0, 1, 0, 1, 1, 1, 1]},
+  "g22-k2-stage1-codex-r83-C3":    {"split": "held_out", "questions_sha256": "d99e518d80d00b68dbccafb67a3102436282f53aa8cd8282ae9a89d273204301", "run_json_sha256": "75c962ad58205873c6e52b577fab2b443b383e8e028096b99e432c49afb92b03", "labels": [0, 1, null, 1, null, null, null]},
+  "g22-k2-stage1-codex-r83-C4":    {"split": "held_out", "questions_sha256": "8ad61483a69e21b83d40584843279a93691f710e8d3b95f0762263e021f7008b", "run_json_sha256": "da9b88f5de81970aa45e178866152ac3c9e5e86576d1aa0d704c1b88768807d4", "labels": [0, 1, 0, 1, 1, 1, 1]},
+  "g22-k2-stage1-codex-r83-C5":    {"split": "held_out", "questions_sha256": "f007206cff05f714d780796b01b65d5e6f73c9e45f07685a8b04cb1bcd384877", "run_json_sha256": "24f7aa47960ccd6c0c7ca5dab6df196c6a9df284bf4e4e68696192382cf19083", "labels": [0, 1, 0, 1, 1, 1, 1]}
+ }
+}
