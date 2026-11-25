@@ -71,6 +71,29 @@ def test_skirt_takes_base_id_and_stays_in_its_tile():
     assert (r.mesh.uv[sk][..., 0] >= 0).all() and (r.mesh.uv[sk][..., 0] <= 1).all()
 
 
+@pytest.mark.parametrize("swapped", [False, True])
+def test_ground_build_udim_by_cover(monkeypatch, swapped):
+    if swapped:
+        original = gs._skirt_ids_and_uv
+
+        def swap_after_skirt(mesh, *args):
+            original(mesh, *args)
+            for i, slot in enumerate(mesh.slot):
+                mesh.uv[i, :, 0] += {"ID01_Lawn": 1, "ID02_Rubber": -1}[slot]
+
+        monkeypatch.setattr(gs, "_skirt_ids_and_uv", swap_after_skirt)
+    report = build().report
+    textures = report["stages"]["textures"]
+    assert textures["tiles"]["tiles"] == textures["expected_tiles"] == [1001, 1002]
+    assignment = textures["udim_assignment"]
+    assert assignment["status"] == ("fail" if swapped else "pass")
+    assert assignment["differences"] == ({
+        "ID01_Lawn": {"expected": [1001], "observed": [1002]},
+        "ID02_Rubber": {"expected": [1002], "observed": [1001]},
+    } if swapped else {})
+    assert report["geometry_status"] == ("fail" if swapped else "built")
+
+
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf"), True, None, "142.1"])
 def test_zero_must_be_finite(value):
     with pytest.raises(ValueError, match="project_zero_m"):
