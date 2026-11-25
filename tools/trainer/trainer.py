@@ -54,6 +54,45 @@ class TrainerError(ValueError):
 # ---------------------------------------------------------------- bank
 REQ = ("id", "object", "scenario", "status", "practice_ready", "split", "task", "sources", "key", "rejected",
        "dcc_only_steps", "evidence")
+DRIVE_BANK_RE = re.compile(r"^[Gg]:/Мой диск/AGR-[^/]+/.+")
+
+
+def _is_drive_bank_path(path):
+    """True only for concrete file paths under G:/Мой диск/AGR-* (no traversal or empty segments)."""
+    if not isinstance(path, str) or not path:
+        return False
+    norm = path.replace("\\", "/")
+    if norm.endswith("/"):
+        return False
+    parts = norm.split("/")
+    if any(seg in ("", ".", "..") for seg in parts[1:]):
+        return False
+    return bool(DRIVE_BANK_RE.fullmatch(norm))
+
+
+def _practice_paths(e):
+    """External file paths declared on an etalon entry."""
+    out = []
+    for s in e.get("sources", []):
+        if isinstance(s, dict):
+            out.append(("source", s.get("path")))
+    key = e.get("key")
+    if isinstance(key, dict):
+        out.append(("key", key.get("path")))
+        for k, v in key.items():
+            if k.startswith("package_") and not k.endswith("_sha256"):
+                out.append((f"key.{k}", v))
+    for field in ("rejected", "superseded"):
+        for item in e.get(field, []):
+            if isinstance(item, dict):
+                out.append((field, item.get("path")))
+    for field in ("stage2_key", "calibration_accepted"):
+        item = e.get(field)
+        if isinstance(item, dict):
+            out.append((field, item.get("path")))
+    if e.get("source_png") is not None:
+        out.append(("source_png", e["source_png"]))
+    return out
 
 
 def load_bank(path=BANK):
@@ -92,6 +131,10 @@ def bank_problems(data):
             sha = s.get("sha256")
             if e.get("practice_ready") and not (isinstance(sha, str) and re.fullmatch(r"[0-9a-f]{64}", sha)):
                 out.append(f"{name}: {s.get('path')} has no sha256")
+        if e.get("practice_ready"):
+            for role, p in _practice_paths(e):
+                if not _is_drive_bank_path(p):
+                    out.append(f"{name}: {role} path {p!r} is outside G:/Мой диск/AGR-*")
         for r in e.get("rejected", []):
             if not r.get("reason") or not r.get("date"):
                 out.append(f"{name}: rejected {r.get('version')} needs reason + date")

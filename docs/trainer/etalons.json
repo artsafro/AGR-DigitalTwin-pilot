@@ -1,7 +1,7 @@
 {
  "schema": "trainer-etalons/1",
  "decision": "D387",
- "note": "Paths only (rule 57): sources, keys and rejected versions live on Google Drive / C:/x with SHA-256. The key and rejected versions are HIDDEN from a practice agent (trainer.secret_tokens). split: tuning = may motivate a repo change; held_out = only re-checks a change made on another etalon (#1803 lesson).",
+ "note": "Paths only (rule 57): sources, keys and rejected versions live on Google Drive (G:/Мой диск/AGR-*) with SHA-256. The key and rejected versions are HIDDEN from a practice agent (trainer.secret_tokens). split: tuning = may motivate a repo change; held_out = only re-checks a change made on another etalon (#1803 lesson).",
  "etalons": [
   {
    "id": "kpp1-v004",
@@ -40,13 +40,13 @@
    "task": "Object G22 korpus 2 (OKS). Build stage 1 of the VPM body: the outer facade envelope with the window/door openings (no windows, glass, capsules or roof equipment), quad grid per the body rules (docs/research/body-modelling.md BM rules, [D336], [D341], [D344]), world metres in the source coordinates. Source: the Revit FBX triangle crop of this building saved as NPZ (arrays of the source mesh; inspect it first). Deliverable: one body FBX.",
    "deliverable": "one body FBX (stage 1: body with openings)",
    "sources": [
-    {"path": "C:/x/ev_1619/g22_k2_src.npz", "sha256": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622", "role": "Revit FBX triangle crop of korpus 2"}
+    {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/g22_k2_src.npz", "sha256": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622", "role": "Revit FBX triangle crop of korpus 2"}
    ],
-   "key": {"path": "C:/x/review-k2/k2_v002r1_body_quad.fbx", "sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200", "accepted": "Artem 2026-11-18 «все норм кроме b корпуса» (#1619)"},
+   "key": {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v002r1_body_quad.fbx", "sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200", "accepted": "Artem 2026-11-18 «все норм кроме b корпуса» (#1619)"},
    "rejected": [
-    {"version": "v001", "path": "C:/x/review-k2/k2_v001_body_quad.fbx", "sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519", "date": "2026-11-18", "reason": "v001 rejected for stage 1 (#1619, form check #41 A vs R; tools/qa/form_check/pairs_v1.json)"}
+    {"version": "v001", "path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v001_body_quad.fbx", "sha256": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519", "date": "2026-11-18", "reason": "v001 rejected for stage 1 (#1619, form check #41 A vs R; tools/qa/form_check/pairs_v1.json)"}
    ],
-   "superseded": [{"version": "v002", "path": "C:/x/review-k2/k2_v002_body_quad.fbx", "sha256": "620bdaec5f2eccc099c23d786d50ca3b9c07d1cb9e624c00bbf785f9e944a6c8", "note": "replaced by v002r1 the same day; no separate verdict cited"}],
+   "superseded": [{"version": "v002", "path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v002_body_quad.fbx", "sha256": "620bdaec5f2eccc099c23d786d50ca3b9c07d1cb9e624c00bbf785f9e944a6c8", "note": "replaced by v002r1 the same day; no separate verdict cited"}],
    "dcc_only_steps": [],
    "hidden_repo_paths": ["jobs/garibaldi22", "jobs/G22"],
    "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/round4-k2-stage1-r1/ (SHA256SUMS.txt)"
@@ -62,12 +62,12 @@
    "task": "Object: site 63, tower A (OKS). Build stage 1 of the VPM body for the typical floors (+10.15 .. +47.95 m, 12 floors x 3.15 m): the outer facade envelope with the openings only (no windows, glass, capsules or AC boxes), quad grid per the body rules (docs/research/body-modelling.md BM rules, [D336], [D337], [D341], [D344]), world metres of the source. Source: the customer's Revit FBX export of the whole site (towers A, B, C); tower A is the one to build. Deliverable: one body FBX of tower A.",
    "deliverable": "one body FBX of tower A (stage 1)",
    "sources": [
-    {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
+    {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
    ],
-   "key": {"path": "C:/x/review-63A/63A_Stage1_v005.fbx", "sha256": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a", "accepted": "ACCEPTED in Blender (63A v005, 2026-11-18), jobs/POLY63-A/stage2-1619/README.md; stage 2 v001 built on it"},
+   "key": {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx", "sha256": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a", "accepted": "ACCEPTED in Blender (63A v005, 2026-11-18), jobs/POLY63-A/stage2-1619/README.md; stage 2 v001 built on it"},
    "rejected": [],
-   "superseded": [{"version": "v004", "path": "C:/x/review-63A/63A_Stage1_v004.fbx", "sha256": "d51480d5916d17c0001739808a1e3edc2a44bb5454852acd9ee0f64a481ec7a8", "note": "rebuilt as v005 with the fixed module_build.py (#1660); no rejection quote found"}],
-   "stage2_key": {"path": "C:/x/review-63A/63A_Stage2_v001.fbx", "sha256": "3f9d89f3b7bc00c84a66df94d63046b1f6701cf3f294eed47ce2667c7fce774c"},
+   "superseded": [{"version": "v004", "path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v004.fbx", "sha256": "d51480d5916d17c0001739808a1e3edc2a44bb5454852acd9ee0f64a481ec7a8", "note": "rebuilt as v005 with the fixed module_build.py (#1660); no rejection quote found"}],
+   "stage2_key": {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage2_v001.fbx", "sha256": "3f9d89f3b7bc00c84a66df94d63046b1f6701cf3f294eed47ce2667c7fce774c"},
    "dcc_only_steps": ["Revit read-only intake (Revit was not running; FBX type names used instead)"],
    "hidden_repo_paths": ["jobs/POLY63-A", "jobs/POLY63-B", "jobs/POLY63-C", "jobs/garibaldi22"],
    "evidence": "G:/Мой диск/AGR-evidence/1619-body-training/tower-A/v005/ and stage2-63A/ (SHA256SUMS.txt)"
@@ -84,13 +84,13 @@
    "form_check_pair_unused": "63B: the #1832 detector marks Artem's ACCEPTED v007 as defect (14 pass / 7 fail / 1 expected / 7 not measured, calibration r2), so it cannot rank v007 above v004-v006; form_v2 is not scored for this etalon",
    "task": "Object: site 63, tower B (OKS). Build stage 1 of the VPM body (outer envelope with openings) from the site Revit FBX.",
    "sources": [
-    {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
+    {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
    ],
-   "key": {"path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v007.fbx", "sha256": null, "accepted": "Artem 2026-11-20, 63B stage 1 v007 accepted (form check #51 labels)"},
+   "key": {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx", "sha256": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7", "accepted": "Artem 2026-11-20, 63B stage 1 v007 accepted (form check #51 labels)"},
    "rejected": [
-    {"version": "v004", "path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v004.fbx", "date": "2026-11-17", "reason": "rejected by Artem 2026-11-17 (form check #51 labels; quote not in git)"},
-    {"version": "v005", "path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v005.fbx", "date": "2026-11-18", "reason": "rejected by Artem 2026-11-18 (form check #51 labels; quote not in git)"},
-    {"version": "v006", "path": "C:/x/t_fb3a0b98-r51/run1/fixtures/v006.fbx", "date": "2026-11-18", "reason": "rejected by Artem 2026-11-18 (form check #51 labels; quote not in git)"}
+    {"version": "v004", "path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx", "sha256": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae", "date": "2026-11-17", "reason": "rejected by Artem 2026-11-17 (form check #51 labels; quote not in git)"},
+    {"version": "v005", "path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v005.fbx", "sha256": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7", "date": "2026-11-18", "reason": "rejected by Artem 2026-11-18 (form check #51 labels; quote not in git)"},
+    {"version": "v006", "path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v006.fbx", "sha256": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455", "date": "2026-11-18", "reason": "rejected by Artem 2026-11-18 (form check #51 labels; quote not in git)"}
    ],
    "dcc_only_steps": [],
    "hidden_repo_paths": ["jobs/POLY63-A", "jobs/POLY63-B", "jobs/POLY63-C", "jobs/garibaldi22"],
@@ -106,7 +106,7 @@
    "split": "held_out",
    "task": "Object: site 63, tower C (OKS). Stage 1 body with openings, then stage 2 frames on the accepted body.",
    "sources": [
-    {"path": "C:/x/body-training/a101-63/source/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
+    {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/STLB-04_RR_AR.fbx", "sha256": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7", "role": "customer Revit FBX export, site 63"}
    ],
    "key": {"path": null, "sha256": null, "accepted": "Artem 2026-11-19 «принимаю» [D355]/[D356] (#1619, 63C stage 2 v001 on the accepted body v002)"},
    "rejected": [],
