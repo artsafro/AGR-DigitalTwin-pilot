@@ -32,7 +32,7 @@ QUESTIONS = {"maf-route": "ucx-fences", "flora-route": "stand-in-replace", "pack
 # #1412: red blocks closed by Artem's 2026-11-15 decisions -> block id: (stage that cites it, D-row)
 RESOLVED = {"maf-route": {"ucx-fences": ("ucx", "D298")},
             "flora-route": {"stand-in-replace": ("maps", "D299"), "lod-rule": ("lod", "D301"),
-                            "vpm-identity": ("star", "D311")},  # #1421
+                            "vpm-identity": ("star", "D311"), "c18-opacity": ("checks", "D406")},  # #1421, #1412
             "package-route": {"customer-channel": ("customer", "D300")}}
 # #1409: red blocks fixed without a D-row (box removed from the map, report row «снята»)
 FIXED = {"maf-route": {"library-version", "npm-light-tool", "uv-remap"},   # + #1410 (dt derive maf-npm-light)

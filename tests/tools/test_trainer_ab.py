@@ -1,4 +1,4 @@
-"""Trainer A/B probe of harness edits [D411] (#1924): variant check, overlay, contrast report, CLI refusals.
+"""Trainer A/B probe of harness edits [D414] (#1924): variant check, overlay, contrast report, CLI refusals.
 
 Pattern: n/a | new-case: tests of the trainer A/B contrast of two harness variants on one etalon.
 """
@@ -329,7 +329,7 @@ def test_cli_ab_fresh_process_refusal(tmp_path):
     assert p.returncode == 2 and "identical" in p.stderr and not (tmp_path / "ab").exists()
 
 
-def test_d411_row_recorded_once():
+def test_d414_row_recorded_once():
     rows = [ln for ln in (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
-            if ln.startswith("| D411 |")]
+            if ln.startswith("| D414 |")]
     assert len(rows) == 1 and "A/B" in rows[0] and "LESSONS" in rows[0]

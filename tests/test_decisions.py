@@ -34,6 +34,14 @@ PY_EXCLUDED = ("jobs/", "technical_library/", "data/", "docs/agr/", "tests/fixtu
 # Frozen fixtures carry no id, for Markdown and Python alike.
 FROZEN_FIXTURE = re.compile(r"^evals/[^/]+/fixtures/")
 CONFLICT_ITEM = re.compile(r"^(\d+)\. ")
+# Supersession links (#1897): a later row that narrows/replaces/extends/supersedes an earlier one must have
+# a matching back-pointer on the earlier row, so an agent that finds the old rule by search sees the live one.
+SUP_FWD = re.compile(
+    r"\b(narrows?|replaces?|extends?|supersedes?)\b(?:(?!\bD\d{3}\b).)*?\[(D\d{3}(?:, D\d{3})*)\]",
+    re.IGNORECASE)
+SUP_BWD = re.compile(
+    r"\b(narrowed|replaced|extended|superseded)\s+by\b\s*(?:(?!\bD\d{3}\b).)*?\[(D\d{3}(?:, D\d{3})*)\]",
+    re.IGNORECASE)
 # Lines that match MENTION but state no decision: (file, text on the line).
 NOT_DECISIONS = [
     ("tests/test_task_to_model.py", '"status": "confirmed", "gate1": {"actor": "synthetic test user", "date": "2026-10-20",'),
@@ -542,3 +550,41 @@ def test_tow02_2026_10_21_locators_point_at_the_user_or_offer_line():
         source = _decision(decision_id)[4]
         for locator in locators:
             assert locator in source, f"{decision_id} missing {locator}"
+
+
+def decision_lines():
+    """{id: raw line} for every decision-log row, to run the supersession regexes over the whole row."""
+    lines = {}
+    for line in (ROOT / LOG).read_text(encoding="utf-8").splitlines():
+        m = ROW.match(line)
+        if m:
+            lines[m.group(1)] = line
+    return lines
+
+
+def supersession_targets(line, regex):
+    """D-ids a row links by a forward (narrows/replaces/extends/supersedes) or backward
+    (narrowed/replaced/extended/superseded by) supersession reference."""
+    targets = set()
+    for _verb, ids in regex.findall(line):
+        targets.update(ids.split(", "))
+    return targets
+
+
+def test_supersession_links_are_symmetric():
+    """#1897: a later D-row that narrows/replaces/extends/supersedes an earlier one needs a matching
+    back-pointer on the earlier row (and vice versa) - a one-sided pair fails here."""
+    lines = decision_lines()
+    problems = []
+    for did, line in lines.items():
+        for old in supersession_targets(line, SUP_FWD):
+            if old not in lines:
+                problems.append(f"{did}: forward link to unknown {old}")
+            elif did not in supersession_targets(lines[old], SUP_BWD):
+                problems.append(f"{did} -> {old}: no back-link 'narrowed/replaced/extended/superseded by [{did}]'")
+        for new in supersession_targets(line, SUP_BWD):
+            if new not in lines:
+                problems.append(f"{did}: back-link to unknown {new}")
+            elif did not in supersession_targets(lines[new], SUP_FWD):
+                problems.append(f"{did} <- {new}: no forward link in {new}")
+    assert problems == []

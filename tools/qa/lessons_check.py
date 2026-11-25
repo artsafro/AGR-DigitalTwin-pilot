@@ -1,4 +1,4 @@
-"""Job LESSONS.md evidence check [D411] (#1924, Harness2 arXiv 2610.14224). Warn-only by default.
+"""Job LESSONS.md evidence check [D414] (#1924, Harness2 arXiv 2610.14224). Warn-only by default.
 
 Pattern: n/a | new-case: warn on a new job lesson without situation / lesson / evidence.
 
@@ -108,7 +108,7 @@ def warnings_for(text, base=None, path="LESSONS.md"):
         missing = [f for f in FIELDS if _empty(x["fields"].get(f))]
         if missing:
             out.append(f"WARN {path}:{x['line']}: {x['id']} \"{x['title']}\" has no {' / '.join(missing)} "
-                       f"(situation / lesson / evidence form [D411])")
+                       f"(situation / lesson / evidence form [D414])")
     if base is not None:
         before = Counter(ln for ln, fenced in _lines(base) if not fenced)
         inside = _block_lines(text)
@@ -120,7 +120,7 @@ def warnings_for(text, base=None, path="LESSONS.md"):
                 continue
             if ln in inside or not LEGACY_RE.match(ln) or TABLE_SEP_RE.match(ln):
                 continue
-            out.append(f"WARN {path}:{i}: new lesson not in situation / lesson / evidence form [D411]: "
+            out.append(f"WARN {path}:{i}: new lesson not in situation / lesson / evidence form [D414]: "
                        f"{ln.strip()[:80]}")
     return out
 

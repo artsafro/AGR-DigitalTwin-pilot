@@ -1,7 +1,7 @@
 # <JOB> — lessons (job-local)
 
 Lessons learned on this job, for the next agent on it. They stay here: no `D<n>` promotion from this file
-(the weekly harvest [D326] may propose one to Artem). Form [D411]: every lesson is one `## L<n> <title>` block
+(the weekly harvest [D326] may propose one to Artem). Form [D414]: every lesson is one `## L<n> <title>` block
 with three fields. The evidence is what proves the lesson — the contrast or before/after (an
 `agr trainer ab` report, two readbacks, two numbers), not only the issue number.
 `tools/qa/lessons_check.py --staged` (pre-commit, warn-only) warns on a new lesson without evidence.

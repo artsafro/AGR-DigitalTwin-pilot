@@ -45,7 +45,7 @@ if [ -n "$staged_log" ]; then
         py -3 "$ids" check --staged --fetch --repo-dir "$top" || exit 1
     fi
 fi
-# 4. Job lessons [D411] (#1924): warn (never block) on a new jobs/*/LESSONS.md lesson without evidence.
+# 4. Job lessons [D414] (#1924): warn (never block) on a new jobs/*/LESSONS.md lesson without evidence.
 lessons="$top/tools/qa/lessons_check.py"
 if [ -f "$lessons" ] && [ -n "$(git diff --cached --name-only -- 'jobs/*/LESSONS.md')" ]; then
     py -3 "$lessons" --staged || echo "pre-commit: lessons_check could not run (warn-only)" >&2

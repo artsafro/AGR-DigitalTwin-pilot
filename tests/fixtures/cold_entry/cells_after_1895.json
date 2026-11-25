@@ -1,0 +1,1404 @@
+{
+  "schema": 1,
+  "kind": "entry_budget_cells",
+  "metric": "tokens from AGENTS.md to the first command",
+  "tokenizer": "tiktoken o200k_base",
+  "measured_on": "2007503dc020b1b1a0ccf96e3a1fb0546902840a",
+  "targets": {
+    "sintez-fix": {
+      "cell": "sintez-fix",
+      "stage": null,
+      "files_count": 11,
+      "total_tokens": 37052,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/research/sintez-fix-1744.md",
+          "chars": 5989,
+          "tokens": 1698
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "docs/domain/areas/uv-atlas.md",
+          "chars": 16556,
+          "tokens": 4654
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": null,
+          "from": "docs/research/sintez-fix-1744.md",
+          "reason": "card has no Read first / Entry section"
+        }
+      ]
+    },
+    "vpm-to-npm": {
+      "cell": "vpm-to-npm",
+      "stage": null,
+      "files_count": 11,
+      "total_tokens": 32119,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/vpm-to-npm.md",
+          "chars": 2183,
+          "tokens": 736
+        },
+        {
+          "path": "docs/domain/areas/derivation.md",
+          "chars": 15644,
+          "tokens": 4879
+        },
+        {
+          "path": "docs/domain/areas/uv-atlas.md",
+          "chars": 16556,
+          "tokens": 4654
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": null,
+          "from": "docs/scenarios/vpm-to-npm.md",
+          "reason": "card has no Read first / Entry section"
+        }
+      ]
+    },
+    "maf-npm-to-vpm": {
+      "cell": "maf-npm-to-vpm",
+      "stage": null,
+      "files_count": 11,
+      "total_tokens": 37014,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/research/maf-npm-to-vpm-1745.md",
+          "chars": 6953,
+          "tokens": 2269
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/uv-textures.md",
+          "chars": 15336,
+          "tokens": 4449
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": null,
+          "from": "docs/research/maf-npm-to-vpm-1745.md",
+          "reason": "card has no Read first / Entry section"
+        }
+      ]
+    },
+    "npm-to-vpm": {
+      "cell": "npm-to-vpm",
+      "stage": null,
+      "files_count": 13,
+      "total_tokens": 46113,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/npm-to-vpm.md",
+          "chars": 2278,
+          "tokens": 589
+        },
+        {
+          "path": "docs/domain/areas/derivation.md",
+          "chars": 15644,
+          "tokens": 4879
+        },
+        {
+          "path": "docs/domain/areas/uv-atlas.md",
+          "chars": 16556,
+          "tokens": 4654
+        },
+        {
+          "path": "docs/experiments/npm.to_vpm.md",
+          "chars": 5772,
+          "tokens": 2190
+        },
+        {
+          "path": "adapters/max/agr_tools/npm2vpm_core.py",
+          "chars": 40910,
+          "tokens": 11951
+        }
+      ],
+      "unfollowed": []
+    },
+    "oks-vpm": {
+      "cell": "oks-vpm",
+      "stage": null,
+      "files_count": 18,
+      "total_tokens": 78805,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/oks-vpm.md",
+          "chars": 8913,
+          "tokens": 2532
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": "docs/domain/areas/body.md",
+          "chars": 21873,
+          "tokens": 5824
+        },
+        {
+          "path": "docs/domain/areas/windows.md",
+          "chars": 15178,
+          "tokens": 4363
+        },
+        {
+          "path": "docs/domain/areas/decor.md",
+          "chars": 9883,
+          "tokens": 2540
+        },
+        {
+          "path": "docs/domain/areas/textures.md",
+          "chars": 16719,
+          "tokens": 4548
+        },
+        {
+          "path": "docs/domain/areas/uv-atlas.md",
+          "chars": 16556,
+          "tokens": 4654
+        },
+        {
+          "path": "docs/domain/areas/ucx.md",
+          "chars": 13618,
+          "tokens": 3818
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "docs/agr-tools/OVERVIEW.md",
+          "chars": 7627,
+          "tokens": 2540
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": "jobs/<ID>/TASK.md",
+          "from": "docs/scenarios/oks-vpm.md",
+          "reason": "placeholder"
+        },
+        {
+          "ref": "C:\\x\\GeoAGR-private\\docs\\reference\\README.md",
+          "from": "docs/scenarios/oks-vpm.md",
+          "reason": "outside repo"
+        }
+      ]
+    },
+    "ground-npm:ground": {
+      "cell": "ground-npm",
+      "stage": "ground",
+      "files_count": 16,
+      "total_tokens": 75466,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/ground-npm.md",
+          "chars": 5357,
+          "tokens": 1507
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": ".agents/skills/model-ground/SKILL.md",
+          "chars": 13686,
+          "tokens": 3468
+        },
+        {
+          "path": "docs/domain/areas/ground-surface.md",
+          "chars": 20072,
+          "tokens": 5486
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/areas/flora.md",
+          "chars": 22903,
+          "tokens": 6282
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "jobs/VATUTINO-SITE/ground-v015-route-a-session-20261104.md",
+          "chars": 6596,
+          "tokens": 2291
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": "C:\\x\\GeoAGR-private\\docs\\reference\\README.md",
+          "from": "docs/scenarios/ground-npm.md",
+          "reason": "outside repo"
+        }
+      ]
+    },
+    "ground-npm:maf": {
+      "cell": "ground-npm",
+      "stage": "maf",
+      "files_count": 16,
+      "total_tokens": 75567,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/ground-npm.md",
+          "chars": 5357,
+          "tokens": 1507
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": ".agents/skills/model-maf/SKILL.md",
+          "chars": 14010,
+          "tokens": 3569
+        },
+        {
+          "path": "docs/domain/areas/ground-surface.md",
+          "chars": 20072,
+          "tokens": 5486
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/areas/flora.md",
+          "chars": 22903,
+          "tokens": 6282
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "jobs/VATUTINO-SITE/ground-v015-route-a-session-20261104.md",
+          "chars": 6596,
+          "tokens": 2291
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": "C:\\x\\GeoAGR-private\\docs\\reference\\README.md",
+          "from": "docs/scenarios/ground-npm.md",
+          "reason": "outside repo"
+        }
+      ]
+    },
+    "ground-npm:flora": {
+      "cell": "ground-npm",
+      "stage": "flora",
+      "files_count": 16,
+      "total_tokens": 76385,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/ground-npm.md",
+          "chars": 5357,
+          "tokens": 1507
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": ".agents/skills/model-flora/SKILL.md",
+          "chars": 17138,
+          "tokens": 4387
+        },
+        {
+          "path": "docs/domain/areas/ground-surface.md",
+          "chars": 20072,
+          "tokens": 5486
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/areas/flora.md",
+          "chars": 22903,
+          "tokens": 6282
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "jobs/VATUTINO-SITE/ground-v015-route-a-session-20261104.md",
+          "chars": 6596,
+          "tokens": 2291
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": "C:\\x\\GeoAGR-private\\docs\\reference\\README.md",
+          "from": "docs/scenarios/ground-npm.md",
+          "reason": "outside repo"
+        }
+      ]
+    },
+    "oks-npm": {
+      "cell": "oks-npm",
+      "stage": null,
+      "files_count": 16,
+      "total_tokens": 67908,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "routes/npm-oks.md",
+          "chars": 14493,
+          "tokens": 3653
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": "docs/domain/npm-vpm.md",
+          "chars": 10378,
+          "tokens": 3362
+        },
+        {
+          "path": "docs/domain/areas/body.md",
+          "chars": 21873,
+          "tokens": 5824
+        },
+        {
+          "path": "docs/domain/areas/windows.md",
+          "chars": 15178,
+          "tokens": 4363
+        },
+        {
+          "path": "docs/domain/areas/derivation.md",
+          "chars": 15644,
+          "tokens": 4879
+        },
+        {
+          "path": "docs/domain/areas/uv-atlas.md",
+          "chars": 16556,
+          "tokens": 4654
+        },
+        {
+          "path": "schemas/ProjectPassport.schema.json",
+          "chars": 8412,
+          "tokens": 2037
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": "jobs/<ID>/passport.json",
+          "from": "routes/npm-oks.md",
+          "reason": "placeholder"
+        },
+        {
+          "ref": "jobs/<ID>/",
+          "from": "routes/npm-oks.md",
+          "reason": "placeholder"
+        },
+        {
+          "ref": "docs/agr/",
+          "from": "routes/npm-oks.md",
+          "reason": "directory"
+        },
+        {
+          "ref": "jobs/<ID>/job.yaml",
+          "from": "routes/npm-oks.md",
+          "reason": "placeholder"
+        }
+      ]
+    },
+    "oks-npm-lite": {
+      "cell": "oks-npm-lite",
+      "stage": null,
+      "files_count": 15,
+      "total_tokens": 63545,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "routes/npm-oks.md",
+          "chars": 14493,
+          "tokens": 3653
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": "docs/domain/npm-vpm.md",
+          "chars": 10378,
+          "tokens": 3362
+        },
+        {
+          "path": "docs/domain/areas/body.md",
+          "chars": 21873,
+          "tokens": 5824
+        },
+        {
+          "path": "docs/domain/areas/uv-atlas.md",
+          "chars": 16556,
+          "tokens": 4654
+        },
+        {
+          "path": "schemas/ProjectPassport.schema.json",
+          "chars": 8412,
+          "tokens": 2037
+        },
+        {
+          "path": "docs/domain/areas/derivation.md",
+          "chars": 15644,
+          "tokens": 4879
+        }
+      ],
+      "unfollowed": [
+        {
+          "ref": null,
+          "from": "docs/scenarios/scenarios.json",
+          "reason": "cell has no card"
+        },
+        {
+          "ref": "jobs/<ID>/passport.json",
+          "from": "routes/npm-oks.md",
+          "reason": "placeholder"
+        },
+        {
+          "ref": "jobs/<ID>/",
+          "from": "routes/npm-oks.md",
+          "reason": "placeholder"
+        },
+        {
+          "ref": "docs/agr/",
+          "from": "routes/npm-oks.md",
+          "reason": "directory"
+        },
+        {
+          "ref": "jobs/<ID>/job.yaml",
+          "from": "routes/npm-oks.md",
+          "reason": "placeholder"
+        }
+      ]
+    },
+    "ground-vpm:ground": {
+      "cell": "ground-vpm",
+      "stage": "ground",
+      "files_count": 26,
+      "total_tokens": 161038,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/ground-vpm.md",
+          "chars": 21422,
+          "tokens": 5271
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": "docs/domain/areas/ground-surface.md",
+          "chars": 20072,
+          "tokens": 5486
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/areas/flora.md",
+          "chars": 22903,
+          "tokens": 6282
+        },
+        {
+          "path": "docs/domain/areas/ucx.md",
+          "chars": 13618,
+          "tokens": 3818
+        },
+        {
+          "path": ".agents/skills/model-ground/SKILL.md",
+          "chars": 13686,
+          "tokens": 3468
+        },
+        {
+          "path": "docs/domain/npm-vpm.md",
+          "chars": 10378,
+          "tokens": 3362
+        },
+        {
+          "path": "docs/procedure/node-r5-ground.md",
+          "chars": 1719,
+          "tokens": 433
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "docs/domain/uv-textures.md",
+          "chars": 15336,
+          "tokens": 4449
+        },
+        {
+          "path": "docs/domain/conflicts.md",
+          "chars": 27549,
+          "tokens": 8290
+        },
+        {
+          "path": ".agents/skills/validate-delivery/SKILL.md",
+          "chars": 8764,
+          "tokens": 2087
+        },
+        {
+          "path": "docs/architecture/ground-route.events.yaml",
+          "chars": 20183,
+          "tokens": 6242
+        },
+        {
+          "path": "docs/architecture/maf-route.events.yaml",
+          "chars": 12058,
+          "tokens": 3808
+        },
+        {
+          "path": "docs/architecture/flora-route.events.yaml",
+          "chars": 11300,
+          "tokens": 3591
+        },
+        {
+          "path": "docs/architecture/package-route.events.yaml",
+          "chars": 12064,
+          "tokens": 3763
+        },
+        {
+          "path": "docs/decisions.md",
+          "chars": 149241,
+          "tokens": 44256
+        }
+      ],
+      "unfollowed": []
+    },
+    "ground-vpm:maf": {
+      "cell": "ground-vpm",
+      "stage": "maf",
+      "files_count": 27,
+      "total_tokens": 164607,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/ground-vpm.md",
+          "chars": 21422,
+          "tokens": 5271
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": "docs/domain/areas/ground-surface.md",
+          "chars": 20072,
+          "tokens": 5486
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/areas/flora.md",
+          "chars": 22903,
+          "tokens": 6282
+        },
+        {
+          "path": "docs/domain/areas/ucx.md",
+          "chars": 13618,
+          "tokens": 3818
+        },
+        {
+          "path": ".agents/skills/model-ground/SKILL.md",
+          "chars": 13686,
+          "tokens": 3468
+        },
+        {
+          "path": "docs/domain/npm-vpm.md",
+          "chars": 10378,
+          "tokens": 3362
+        },
+        {
+          "path": "docs/procedure/node-r5-ground.md",
+          "chars": 1719,
+          "tokens": 433
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "docs/domain/uv-textures.md",
+          "chars": 15336,
+          "tokens": 4449
+        },
+        {
+          "path": "docs/domain/conflicts.md",
+          "chars": 27549,
+          "tokens": 8290
+        },
+        {
+          "path": ".agents/skills/model-maf/SKILL.md",
+          "chars": 14010,
+          "tokens": 3569
+        },
+        {
+          "path": ".agents/skills/validate-delivery/SKILL.md",
+          "chars": 8764,
+          "tokens": 2087
+        },
+        {
+          "path": "docs/architecture/ground-route.events.yaml",
+          "chars": 20183,
+          "tokens": 6242
+        },
+        {
+          "path": "docs/architecture/maf-route.events.yaml",
+          "chars": 12058,
+          "tokens": 3808
+        },
+        {
+          "path": "docs/architecture/flora-route.events.yaml",
+          "chars": 11300,
+          "tokens": 3591
+        },
+        {
+          "path": "docs/architecture/package-route.events.yaml",
+          "chars": 12064,
+          "tokens": 3763
+        },
+        {
+          "path": "docs/decisions.md",
+          "chars": 149241,
+          "tokens": 44256
+        }
+      ],
+      "unfollowed": []
+    },
+    "ground-vpm:flora": {
+      "cell": "ground-vpm",
+      "stage": "flora",
+      "files_count": 27,
+      "total_tokens": 165425,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/ground-vpm.md",
+          "chars": 21422,
+          "tokens": 5271
+        },
+        {
+          "path": "docs/domain/requirements-2026.md",
+          "chars": 56113,
+          "tokens": 17286
+        },
+        {
+          "path": "docs/domain/areas/ground-surface.md",
+          "chars": 20072,
+          "tokens": 5486
+        },
+        {
+          "path": "docs/domain/areas/groundel-maf.md",
+          "chars": 32050,
+          "tokens": 8446
+        },
+        {
+          "path": "docs/domain/areas/flora.md",
+          "chars": 22903,
+          "tokens": 6282
+        },
+        {
+          "path": "docs/domain/areas/ucx.md",
+          "chars": 13618,
+          "tokens": 3818
+        },
+        {
+          "path": ".agents/skills/model-ground/SKILL.md",
+          "chars": 13686,
+          "tokens": 3468
+        },
+        {
+          "path": "docs/domain/npm-vpm.md",
+          "chars": 10378,
+          "tokens": 3362
+        },
+        {
+          "path": "docs/procedure/node-r5-ground.md",
+          "chars": 1719,
+          "tokens": 433
+        },
+        {
+          "path": "docs/domain/areas/package.md",
+          "chars": 31843,
+          "tokens": 8850
+        },
+        {
+          "path": "docs/domain/uv-textures.md",
+          "chars": 15336,
+          "tokens": 4449
+        },
+        {
+          "path": "docs/domain/conflicts.md",
+          "chars": 27549,
+          "tokens": 8290
+        },
+        {
+          "path": ".agents/skills/model-flora/SKILL.md",
+          "chars": 17138,
+          "tokens": 4387
+        },
+        {
+          "path": ".agents/skills/validate-delivery/SKILL.md",
+          "chars": 8764,
+          "tokens": 2087
+        },
+        {
+          "path": "docs/architecture/ground-route.events.yaml",
+          "chars": 20183,
+          "tokens": 6242
+        },
+        {
+          "path": "docs/architecture/maf-route.events.yaml",
+          "chars": 12058,
+          "tokens": 3808
+        },
+        {
+          "path": "docs/architecture/flora-route.events.yaml",
+          "chars": 11300,
+          "tokens": 3591
+        },
+        {
+          "path": "docs/architecture/package-route.events.yaml",
+          "chars": 12064,
+          "tokens": 3763
+        },
+        {
+          "path": "docs/decisions.md",
+          "chars": 149241,
+          "tokens": 44256
+        }
+      ],
+      "unfollowed": []
+    },
+    "library-publish": {
+      "cell": "library-publish",
+      "stage": null,
+      "files_count": 12,
+      "total_tokens": 27746,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/PROJECT_STATE.md",
+          "chars": 4159,
+          "tokens": 1247
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "docs/agents/skeletons.json",
+          "chars": 24530,
+          "tokens": 7345
+        },
+        {
+          "path": ".agents/skills/scenario/SKILL.md",
+          "chars": 6024,
+          "tokens": 1596
+        },
+        {
+          "path": "docs/scenarios/scenarios.json",
+          "chars": 3643,
+          "tokens": 1150
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21960,
+          "tokens": 5306
+        },
+        {
+          "path": "docs/scenarios/library-publish.md",
+          "chars": 1205,
+          "tokens": 336
+        },
+        {
+          "path": "docs/library/PUBLISH.md",
+          "chars": 4672,
+          "tokens": 1344
+        },
+        {
+          "path": "docs/library/TEMPLATE.md",
+          "chars": 8123,
+          "tokens": 1830
+        },
+        {
+          "path": "library/assets/INTAKE.md",
+          "chars": 8232,
+          "tokens": 2386
+        }
+      ],
+      "unfollowed": []
+    }
+  }
+}

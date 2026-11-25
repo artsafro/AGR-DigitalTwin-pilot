@@ -282,8 +282,8 @@ def test_skeleton_review_scene_in_oks_cells_before_checker(cell):
 
 
 def test_skeleton_doc_rows():
-    doc = (ROOT / 'docs/agents/SKELETONS.md').read_text(encoding='utf-8')
-    gaps = doc.split('## Пробелы', 1)[1]
+    doc = (ROOT / 'docs/agents/SKELETONS-stages.md').read_text(encoding='utf-8')
+    gaps = (ROOT / 'docs/agents/SKELETONS.md').read_text(encoding='utf-8').split('## Пробелы', 1)[1]  # #1895 index
     assert '`review-scene`' not in gaps
     for cell in ('### `oks-vpm`', '### `oks-npm`'):
         section = doc.split(cell, 1)[1].split('\n### ', 1)[0]

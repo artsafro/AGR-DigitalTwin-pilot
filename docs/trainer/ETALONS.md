@@ -19,7 +19,7 @@ uv run agr trainer ledger --add NEW.json --lane codex --run NEW_DIR --date YYYY-
 uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR [--lane codex] [--dry-run]
 ```
 
-### A/B probe of a harness edit [D411]
+### A/B probe of a harness edit [D414]
 
 - `ab` (#1924, Harness2 arXiv 2610.14224) runs the SAME etalon twice, one arm after the other, on the same lane,
   model and `origin/main` commit. `OLD_DIR` / `NEW_DIR` are harness variants: folders of repo-relative files

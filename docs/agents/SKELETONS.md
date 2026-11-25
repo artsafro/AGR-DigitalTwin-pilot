@@ -1,370 +1,48 @@
-# Скелеты сценариев — читать первым для любой работы (job)
+# Скелеты сценариев — индекс входа (одна дверь)
 
-**Кратко.** Агент работает «как скальпель» [D324]: у каждого сценария (профиль × объект, ячейка
-`docs/scenarios/scenarios.json`) есть неизменный **скелет** — упорядоченные этапы, каждый вызывает уже существующую
-команду или ядро. Под задачу агент **настраивает** скелет одним файлом `jobs/<ID>/skeleton.json` и при нехватке
-пишет **несколько маленьких скриптов** в `jobs/<ID>/hooks/`, подключая их к этапу (до / после / вместо пробела).
-Свою цепочку скриптов вместо скелета не пишет: ревьюер возвращает такой PR на доработку, он не вливается [D325].
-Скрипты, повторившиеся в 2–3 работах, раз в неделю собирает отдельная задача, Артём видит сводку, и только там
-они переходят в скелет [D326]. Старые скрипты сданных работ оставлены без изменений, помечены историческими и
-скрыты из поиска агента; duplicate_guard их по-прежнему сканирует [D327]. Исторические и старые — только пути,
-замороженные на срезе #1546 (`job_scripts_baseline.txt`), а не целые папки: новый скрипт в старой работе
-(`jobs/KPP1/<задача>-<issue>/`) видим и проверяется.
+**Кратко.** Вход один: `AGENTS.md` → этот индекс → блок своей ячейки → тропа ячейки (маршрут или карточка) →
+правило и команда на шаге тропы. Агент работает «как скальпель» [D324]: у ячейки неизменный скелет — этапы, каждый
+вызывает существующую команду или ядро; под задачу он настраивается одним `jobs/<ID>/skeleton.json` и не более чем
+пятью маленькими хуками в `jobs/<ID>/hooks/`. Своя цепочка скриптов возвращается ревьюером [D325]; повторы
+собирает еженедельная задача [D326]; скрипты сданных работ скрыты из поиска [D327]. Перед любым этапом —
+паспорт `jobs/<ID>/passport.json` [D397] и опрос по `docs/agents/task-intake.md`.
 
-Machine-readable source: [`skeletons.json`](skeletons.json) (stages, owners, entry names, hook points).
-Check: `uv run python tools/architecture/skeleton_guard.py [--job jobs/<ID>]` (exit 0 clean, 1 violations, 2 bad input).
-Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
-[ground-npm](../scenarios/ground-npm.md), [ground-vpm](../scenarios/ground-vpm.md), [oks-npm](../../routes/npm-oks.md).
+Блок ячейки (этапы, команды, владельцы, пробелы, тропа) печатает
+`uv run python tools/architecture/skeleton_guard.py --show <cell>`; машинный источник — [`skeletons.json`](skeletons.json).
+Полные таблицы этапов и правила (разбиение ОКС [D336], верификатор, неделя наблюдения, хуки, `sintez-fix`,
+исключения, история) — [`SKELETONS-stages.md`](SKELETONS-stages.md): читать на этапе, не на входе.
+Проверка задания: `uv run python tools/architecture/skeleton_guard.py [--job jobs/<ID>]` (0 чисто, 1 нарушения, 2 плохой вход).
 
-## Таблица скелетов (сценарий → этапы → команда/ядро)
+## Ячейки: тропа и первая команда
 
-Каждый этап принимает хуки `before` и `after`; хук `gap` разрешён только на этапе-пробеле (нет общей реализации).
-Общее для всех ячеек: `blender-run` — запуск Blender без окна, `src/dt_ai/core/blender_runner.py` (`run_blender`).
-
-### `oks-vpm` — ОКС, ВПМ
-
-Trainer [D389]: in the existing Windows `workspace-write` sandbox, run `dwg_to_dxf.py --timeout 60`
-on a copy in a fresh workspace directory. Run `dxf_intake.py` on the hash-bound derivative before
-`plan_from_dxf.py extract`, even if AutoCAD ran in the workspace. On failure stop at `sources-dwg`;
-keep the receipt and console log, and do not escalate sandbox permissions or use a host fallback.
-
-| # | Этап | Что вызывает |
+| Ячейка | Тропа | Первая команда |
 |---|---|---|
-| 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`); без Autodesk (Blender-only, тренажёр): сначала `uv run python tools/methods/body/dxf_intake.py SOURCE.dwg DERIVATIVE.dxf PROVENANCE.json NEW_INTAKE.json` — DXF принимается только с чеком `dwg-to-dxf/1`, привязанным SHA-256 к текущим DWG и DXF, `$INSUNITS`=мм; иначе стоп на `sources-dwg` (конвертеры не одобрены) [#1857] |
-| 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
-| 3 | `body` бадик, окна, капсулы, крыша | Этап 1 (бадик с проёмами): `uv run agr body PLAN NEW_OUT` — общее ядро `tools/methods/body/body_lattice.py` (решётка BM-00, вход `schemas/BodyPlan.schema.json`: Revit `floor_from_dump.py`, DWG `plan_adapter_dwg.py`) [#1736]; этапы 2–4 — AGR Tools (`windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
-| 3a | `body` → вставка ограждения по измеренной оси парапета | [`agr railing`](../procedure/node-r3-fence-railing-gates.md#shared-headless-builder), отдельная геометрия, не приваривать к BODY [D336]; плоскость opacity только в лестнице бюджета НПМ |
-| 4 | `mesh-quality` качество сетки в конце `body` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
-| 5 | `udim` материалы и UDIM | AGR Tools этапы 5–6, `udimtile_core` |
-| 6 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
-| 7 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
-| 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
-| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152]; лист приёмки этапа 2 (изометрия + окно + капсула, каркас поверх Workbench): `tools/blender/stage2_review.py` [t_3820c6be] |
-| 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
-| 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
-| 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip`; STOP до ZIP без `export_meta` нового FBX и его readback. Для перекраски с выпуском ZIP указать оба владельца: R1 + рецепт job (АС.09: AC08 v010 через [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py)) и `agr package-vpm`; см. [маршрут ОКС ВПМ](../scenarios/oks-vpm.md#route-by-stage). |
-| 13 | `light-fbx` `_Light.fbx` | `agr validate ZIP --profile vpm`: V012, строки Light FBX ([контракт](../research/elv-agent-vs-delivered.md#контракт-light-fbx)) |
-| 14 | `validate` проверка пакета | `agr validate` (`tools/qa/validate_package.py`) |
-| 15 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved`: копия в `C:/x/review-<job>/`, новый Max 2026, Blender если Max занят [D255, D270] (#1740) |
-| 16 | `checker` SINTEZ | `agr checker` (`tools/qa/sintez_checker.py`) |
+| `oks-vpm` | [docs/scenarios/oks-vpm.md](../../docs/scenarios/oks-vpm.md) | `agr inspect --manifest JOB.json`, тело `agr body PLAN NEW_OUT` [D373] |
+| `oks-npm` | [routes/npm-oks.md](../../routes/npm-oks.md) | `agr inspect --manifest JOB.json`, тело `agr body PLAN NEW_OUT` [D373] |
+| `oks-npm-lite` | [routes/npm-oks.md](../../routes/npm-oks.md) | нет: заморожена до определения NPM-lite [D405] (пробел `lite-route`) |
+| `npm-to-vpm` | [docs/scenarios/npm-to-vpm.md](../../docs/scenarios/npm-to-vpm.md) | `agr npm-ids SOURCE NEW_OUT --profile facade` |
+| `vpm-to-npm` | [docs/scenarios/vpm-to-npm.md](../../docs/scenarios/vpm-to-npm.md) | `uv run python tools/derive/vpm_to_npm.py --job jobs/<ID> --out NEW_DIR` |
+| `maf-npm-to-vpm` | [docs/research/maf-npm-to-vpm-1745.md](../../docs/research/maf-npm-to-vpm-1745.md) | `agr maf-npm-to-vpm --plan` |
+| `ground-npm` | [routes/site.md](../../routes/site.md) | `tools/source/inspect_ground_dxf.py`, затем `agr ground site SPEC NEW_OUT` [D293] |
+| `ground-vpm` | [routes/site.md](../../routes/site.md) | `tools/source/inspect_ground_dxf.py`, затем `agr ground site SPEC NEW_OUT` [D293] |
+| `library-publish` | [docs/scenarios/library-publish.md](../../docs/scenarios/library-publish.md) | `agr library publish BATCH --kind maf --evidence DIR` |
+| `sintez-fix` | [docs/research/sintez-fix-1744.md](../../docs/research/sintez-fix-1744.md) | `agr checker COPY_DIR --output NEW_BASELINE.json` (только по просьбе Артёма) |
 
-### `oks-npm` — ОКС, НПМ (`routes/npm-oks.md`)
+Тело ОКС (этап 1) во всех профилях строится только решёткой `agr body` [D373], [D392]; AGR Tools заморожены на
+1.1.x и остаются исполнителями этапов 2–4 [D393]. `agr --help` — перечень команд до того, как писать свой скрипт.
 
-| # | Этап | Что вызывает |
-|---|---|---|
-| 1 | `inspect` | `agr inspect --manifest JOB.json` |
-| 2 | `body` | Этап 1: `uv run agr body` (ядро `tools/methods/body/body_lattice.py`) [#1736]; этапы 2–4 AGR Tools / `dt_ai` ops для поддержанных случаев; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
-| 3 | `mesh-quality` (observe, только запись) | `tools/qa/mesh_quality_observe.py stage` → `mesh_quality.json` [#1739] |
-| 4 | `brick-seams` кирпичные швы | пробел |
-| 5 | `derive-npm` ВПМ → НПМ | `agr vpm-to-npm` (`dt derive atlas`, затем `dt derive npm`) |
-| 6 | `master-qa` | `tools/qa/master_topology.py` |
-| 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 8 | `verifier` (observe) | `tools/blender/verifier_views.py` → `tools/qa/verifier.py` → `verifier.json` [#1739] |
-| 9 | `build-manifest` манифест выпуска | `agr build-manifest record` |
-| 10 | `package-npm` пакет | `agr package-npm` → `package_core._write_zip` |
-| 11 | `validate` | `agr validate` |
-| 12 | `review-scene` сцена для приёмки | `agr open-review FILE --open-approved` (`tools/open_review_scene.py`, #1740) |
-| 13 | `checker` | `agr checker` |
+## Этапы ячеек
 
-### `npm-to-vpm` — existing NPM -> VPM (OKS cells `oks-npm` -> `oks-vpm`)
-
-| # | Stage | Shared owner / command |
-|---|---|---|
-| 1 | `npm-ids` | `agr npm-ids SOURCE NEW_OUT --profile facade`; `tools/library/npm_ids.recover` reuses `maf_atlas_cells.segment`; skip only with an existing valid `npm_table.json` |
-| 2 | `npm-udim-fit` | `npm2vpm_core.udim_fit_gate`: world metres, 4096 tile, 512-1706 px/m, region extent / texel / straddle per ID; STOP before conversion writes on non-fit, ask one grouped question with seam cuts / extra tiles / allowed density / other |
-| 3 | `npm-to-vpm` | AGR Tools `npm.to_vpm`, `npm2vpm_core.plan`: `regions` without table, `table` with `npm_table.json`; core plan mode is read-only, not a native VPM certificate |
-| 4 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview EXPORTED --out NEW.json`; topology, UV, materials, transforms |
-| 5 | `checker` | `agr checker`; no checker/package on a blocked conversion plan |
-| 6 | `package-vpm` | `agr package-vpm` -> `package_core._write_zip` after required approvals |
-| 7 | `validate` | `agr validate` on the actual package |
-
-Each stage retains the standard `before` / `after` hook points (one named stage,
-no parallel conversion chain); no `gap` hook replaces a shared owner. One config:
-`jobs/G22/npm2vpm-1630/skeleton.json`. IDs from atlas cells are provisional layout
-labels, **not** library-material approval. Unresolved/mixed/straddling faces are
-listed with source indices and remain ID0; they block conversion. JSON mode writes
-`mesh_ids.json` + `id_table.json`; FBX mode adds a native `.blend` copy only when
-the assignment and preflight are complete. Exit 1 = diagnostic/blocked, 2 = invalid
-input or execution failure; neither is a pass. Prior delivered packages stay intact.
-An explicit cleanup approval records exact source polygon drops on a new copy,
-never a general geometry repair. A selected seam policy does not waive mixed
-material boundaries, singular UV metrics, texel bounds or native readback.
-
-### `vpm-to-npm` — принятая ВПМ → НПМ по практике Артёма (#1737)
-
-ВПМ первична, НПМ выводится из неё; бадик не перестраивается и не правится, ProOptimizer не используется
-(Артём 2026-11-21). Карточка: [vpm-to-npm](../scenarios/vpm-to-npm.md).
-
-| # | Этап | Что вызывает |
-|---|---|---|
-| 1 | `tris-count` треугольники ВПМ до всего | `uv run python tools/derive/vpm_to_npm.py --job jobs/<ID> --out NEW_DIR` (`vpm_npm_core.count_tris`) |
-| 2 | `remove-interiors` интерьеры — всегда | `vpm_npm_core.remove_interiors`: внутренние стенки капсул / интерьерные UDIM из `config.interiors` (явно, пустые списки = нет) |
-| 3 | `atlas` атлас НПМ, вся геометрия на атлас | `agr vpm-to-npm` → `npm_atlas.py --copied-udims --glass-white` + `export_npm.py` |
-| 4 | `glass-merge` стекло одним объектом на белом | Хук мастер-копии объединяет стекло; `export_npm.map_white_glass` проверяет белую область и переносит UV |
-| 5 | `budget-ladder` лестница бюджета | `vpm_npm_core.budget_ladder`: только пока выше бюджета, по порядку цилиндры → плоскости opacity (ограждения, кондиционеры) → плоскости окон/витражей; отчёт ran / skipped / missing |
-| 6 | `master-qa` | `tools/qa/master_topology.py` |
-| 7 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 8 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
-| 9 | `package-npm` | `agr package-npm` → `package_core._write_zip` |
-| 10 | `validate` | `agr validate` |
-| 11 | `checker` | `agr checker` |
-| 12 | `review-scene` | `agr open-review FILE --open-approved` (#1740) |
-
-Бюджет по умолчанию — `standards/NPM_STANDARD.yaml` `oks_triangles_per_fbx_max` (150000); шаг лестницы, нужный
-при превышении, но не поданный хуком, — `missing`, а не «сделано».
-
-### `maf-npm-to-vpm` — МАФ, НПМ → ВПМ
-
-`uv run agr maf-npm-to-vpm --plan` reads the registry and prints the route; it does not start a DCC, convert files, or pass QA.
-
-| # | Stage | Shared owner / checkpoint |
-|---|---|---|
-| 1 | `maf-segments` | Manual: extra segments on measured circular profiles, on copies only; keep UV seams and measure silhouette and triangle delta |
-| 2 | `maf-texture-class` | Manual: classify finishes per MAF; use 256 solid only when the finish qualifies, retain Diffuse alpha on cut-outs |
-| 3 | `maf-atlas-strategy` | Try one shared 4K tile for non-uniform finishes, then grouped 4K tiles, then per-MAF UDIM; keep eligible solids in 256 tiles |
-| 4 | `maf-pack` | `atlas_maf`, `vpm_uv` and `udimtile_core`; pixel fit is not physical density or export approval |
-| 5 | `maf-stubs` | Manual: 256 RGB Normal/ERM stubs if eligible, separate from alpha in Diffuse |
-| 6–8 | `master-qa` → `readback` → `checker` | Shared QA, export readback, then `agr checker` on a separate diagnostic or delivery archive; report scope |
-| 9 | `maf-sheet` | Before/after sheet and evidence for Artem |
-
-Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
-[`jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json`](../../jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json).
-
-### `oks-npm-lite` — ОКС, упрощённая НПМ
-
-Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
-
-### `ground-npm` — Ground + МАФ + Флора, НПМ
-
-| # | Этап | Что вызывает |
-|---|---|---|
-| 1 | `sources-ground` приём СПОЗУ | `tools/source/inspect_ground_dxf.py` |
-| 2 | `surfaces` Ground из исходных границ покрытий | `agr ground site SPEC NEW_OUT`, `params.surfaces: "shared"` — одна грань на точку плана, верхнее покрытие, общий набор вершин на каждой границе (#1738) |
-| 3 | `quads` квадраты и швы | `dt ground v015` только для Ватутино; `ground_quads.py` |
-| 4 | `library` МАФ и Флора, атласы | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
-| 5 | `maf-light` лёгкий МАФ | пробел |
-| 6 | `flora-star` звёзды Флоры | Каталог → при отсутствии принятого куста [`tools/flora/build_flora_star.py`](../../tools/flora/build_flora_star.py) (#1146) → расчёт НПМ-точки через `engine.place`. `agr place` → [`placement/site.py`](../../src/dt_ai/placement/site.py) вызывает то же ядро только для пары НПМ + ВПМ. Указать обе точки входа, даже если план останавливается на сверке вида, карт и точки СПОЗУ. |
-| 7 | `placement` расстановка | `uv run python -m dt_ai.placement.engine` |
-| 8 | `optimise` бюджет НПМ (без ProOptimizer) | пробел |
-| 9 | `master-qa` | `tools/qa/master_topology.py` |
-| 10 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 11 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
-| 12 | `package-npm` | `agr package-npm` |
-| 13 | `validate` | `agr validate` |
-| 14 | `checker` | `agr checker` |
-
-### `ground-vpm` — Ground + МАФ + Флора + UCX, ВПМ (порядок [D293], рельеф последним)
-
-| # | Этап | Что вызывает |
-|---|---|---|
-| 1 | `sources-ground` | `tools/source/inspect_ground_dxf.py` |
-| 2 | `zero` граница и нуль | пробел |
-| 3 | `surfaces` | `agr ground site` (`surfaces: "shared"`, #1738) |
-| 4 | `quads` | `dt ground v015` только для Ватутино |
-| 5 | `ground-textures` ID и текстуры | пробел |
-| 6 | `relief` проекция на рельеф | пробел (кирпичики `ground_cake.project_z`) |
-| 7 | `skirt` юбка | `agr ground site`: `ground_cake.add_skirt` >= 1 м + `ground_site.skirt_check_export` на записанном OBJ (#1738) |
-| 8 | `ucx-ground` коллизии Ground | пробел (прецедент `tools/blender/ucx_build.py`) |
-| 9 | `library` | `tools/materials/atlas_maf.py`, `dt_ai.materials.flora` |
-| 10 | `placement` | `uv run python -m dt_ai.placement.engine` |
-| 11 | `derive-npm` | `agr vpm-to-npm` |
-| 12 | `master-qa` | `tools/qa/master_topology.py` |
-| 13 | `readback` | `tools/blender/fbx_readback.py`, `dt qa xview` |
-| 14 | `verifier` (observe) | `tools/qa/verifier.py` → `verifier.json` |
-| 15 | `package-vpm` | `agr package-vpm` |
-| 16 | `validate` | `agr validate --ground-area-m2` |
-| 17 | `checker` | `agr checker` после визуальной приёмки |
-
-### `library-publish` — своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование) [D372], [D368]-[D371]
-
-Одна команда `agr library publish BATCH --kind maf --evidence DIR` проходит этапы 1–6; затем на «ок» Артёма
-`agr library accept NAMES --words "..."`, на отказ `agr library reject NAME --words "..."`. Подробно:
-[`docs/library/PUBLISH.md`](../library/PUBLISH.md), карточка [library-publish](../scenarios/library-publish.md).
-
-| # | Этап | Что вызывает |
-|---|---|---|
-| 1 | `intake` приём копии партии | `tools/library/publish.py` `intake_batch` (каждый файл — объект или отброс с причиной) |
-| 2 | `identify` дубль / вариант / новый | `identify_object` по `library/assets/maf_unified.json`; `assets_library`, `intake_identify.dims_check` |
-| 3 | `name` библиотечное имя [D369] | `library_name` (`assets_library.propose_maf_name`, translit, ё=е) |
-| 4 | `qa` ВПМ и НПМ | `qa_object` на `tools/blender/fbx_readback.py` + `twinqa.maf_checks.maf_findings` |
-| 5 | `register` версия vNNN + черновик [D370] | `register_version` → `AGR-assets/<kind>/<name>/vNNN/`, `library/published/catalogue.json` |
-| 6 | `sheet` лист Артёму, accept/reject [D371] | `write_sheet`, `accept_records`, `reject_record` |
-
-## OKS modelling split [D336]
-
-Stage `body` of `oks-vpm` and `oks-npm`, all OKS buildings; the rule itself is the row [D336] in
-`docs/decisions.md`, its machine form is `stages.body.modelling_split` in `skeletons.json`.
-
-- Inset elements (separate, cut into the body, own clean quads, not welded into the body):
-  `windows`, `stained_glass`, `roof`, `flashings` (roof and window), `posts`.
-- Texture, not modelled: `panels` (seam in the texture/UV).
-- Per project: `plinth` = `one_with_body` or `inset`; the final split follows the project, its textures and
-  texturing convenience.
-- Job report: one line, checked by `skeleton_guard.modelling_split_problems`:
-  `Modelling split [D336]: plinth=<one_with_body|inset>; inset=<parts>; texture=<parts>; reason=<why for this project: profile, sub-stage, object/version, now/later, exception link if any>`.
-  Example (synthetic): `Modelling split [D336]: plinth=one_with_body; inset=windows, stained_glass, roof, flashings, posts; texture=panels; reason=VPM, body stage 1, ExampleBuilding v001; body and windows now, roof/flashings later in stage 2; exception: none`.
-
-Master/QA checks on these parts are element-wise; no check may require welding inset elements into the body:
-
-| Check | How it sees inset elements |
-|---|---|
-| `tools/qa/master_topology.py` (`master_topology_core.check`) [D312] | one row and one verdict per object; quads/n-gons per element |
-| `tools/qa/body_layout.py` | per named `--part`; a window/roof/post element is its own part |
-| `dt qa xview` [D152] (`xview_gate.part_gate`) | per part; inside one part an inset element keeps its vertices off the body's (embed/offset, as decor [D199]) so the 2 mm overlap count stays 0 - never by welding |
-
-## Verifier step before showing Artem (#1577, observe mode)
-
-`oks-vpm`, `oks-npm` (#1739), `ground-npm` and `ground-vpm` (MAF and Flora are built inside the ground cells) run
-`verifier` right after `readback` and before the model is shown to Artem. The 6 views come from the read-back export:
-
-```
-blender --background --factory-startup --python-exit-code 1 --python tools/blender/verifier_views.py -- --vpm VPM --npm NPM --out NEW_DIR
-uv run python tools/qa/verifier.py --job jobs/<ID> --renders <dir with the 6 views> --slide <slide.png> \
-  --facades south=<label>,north=..,east=..,west=.. [--legend jobs/<ID>/vpm_textures.json]
-```
-
-- Input: the 6 views `vpm_south/north/east/west/iso` + `npm_iso` (.png, `tools/qa/vlm_checklist.py` `VIEWS`) rendered
-  from the read-back export. VLM = Claude CLI, as in `vlm_checklist.py`.
-- It answers the fixed checklist variant A (#768: recall >= 80 %, FP <= 1) with the views forward and reversed and
-  keeps only order-consistent answers, then scores the materials on 6 axes 1-5 with a one-line reason (missing,
-  base_color, borders, scale, finish, consistency); fix order missing → base colour → borders → scale.
-- It writes `jobs/<ID>/verifier.json` (`schemas/Verifier.schema.json`): findings, the ONE main discrepancy it would
-  fix next, scores. It never overwrites a report (`--out verifier.r2.json` for a rerun) and never edits the model.
-- **Observe is the only mode.** `--mode fix` is refused unless `jobs/<ID>/skeleton.json` sets
-  `"config": {"verifier_mode": "fix"}` — only after Artem's word; at most 3 rounds. Not a delivery gate.
-- The VLM confirms; positions and counts come from geometry and drawing vectors (CrossProjection, arXiv
-  2608.00473: 82 % view matching vs 22 % line localisation). A rib/seam/door finding names *what* to check; where
-  the line is and how many come from the model and the DXF, never from the image.
-- After Artem's review the job records `verifier_review.json` (`{"reviews": [{"verifier": "verifier.json",
-  "artem_corrected": ["material:base_color"]}]}`); `uv run python tools/qa/verifier_summary.py --jobs jobs` shows per
-  job how often the main discrepancy matched his correction.
-
-## Observe week: mesh-quality + verifier on every sheet (#1739)
-
-Artem 2026-11-21, decision 7: the mesh-quality score and the verifier only **record** for one week; he sees their
-output next to each sheet, then sets a threshold from the numbers. Until then nothing returns work to the agent.
-
-- Stage `mesh-quality` at the end of `body` in `oks-vpm` and `oks-npm`:
-  `uv run python tools/qa/mesh_quality_observe.py stage MASTER --out NEW/mesh_quality.json [--cell-m 3.0]`.
-  It writes the unchanged #1616 score plus the per-facade-cell defect signal (#1724: irregular / sliver / n-gon
-  faces, and triangles in a quad master, per facade cell `side u z` of `cell_m`), so a local corner defect is not
-  averaged away. `returns_work` is always `false`, a `fail` status still exits 0; there is no threshold, return or
-  refusal option. Errors (unreadable / non-finite geometry, output aliasing the input or existing) exit 2.
-- Every sheet sent to Artem carries ONE line, printed by
-  `uv run python tools/qa/verifier_summary.py --sheet-line --verifier V.json --mesh-quality MQ.json`.
-- The status push carries the weekly line `uv run python tools/qa/verifier_summary.py --jobs jobs --digest`.
-- Return/fix mode stays off: the verifier needs `config.verifier_mode = "fix"`; mesh-quality has no return mode.
-  Both change only after Artem's word on the week's numbers.
-
-## How a job configures the skeleton (one config file)
-
-`jobs/<ID>/skeleton.json` (template: [`skeleton.template.json`](skeleton.template.json); copy it into the job folder):
-
-```json
-{"scenario": "oks-vpm",
- "config": {"sources": "jobs/<ID>/sources.json", "profile": "VPM"},
- "hooks": [{"script": "hooks/fix_seams.py", "stage": "vpm-uv", "point": "after"}]}
-```
-
-- `scenario` is a cell above; `config` keys are only the cell's `config_keys` in `skeletons.json` (an unknown key is an
-  error naming it). The skeleton's commands read these values; the job does not copy the commands.
-- Run the stages in order with the commands in the table; a job never renumbers, merges or replaces a stage that has
-  a shared implementation.
-
-## How a job adds a hook script
-
-1. The script lives in `jobs/<ID>/hooks/` and is listed once in `hooks` with its `stage` and `point`
-   (`before` | `after` | `gap`). At most 5 hooks per job; a sixth means a parallel pipeline [D324].
-2. A hook **calls** the stage owners (`from tools.blender.qa_master import world_bm`), it never defines their entry
-   names (`world_bm`, `pack_uv`, `_write_zip`, ...) or a copy that duplicate_guard flags — that is a re-implemented
-   stage and fails `skeleton_guard` [D325].
-3. `gap` is only for a stage in the gap list below; the hook fills the gap for this job, the skeleton stays as is.
-4. `skeleton.json` may sit at any depth: a new task inside an old job (`jobs/KPP1/<task>-<issue>/skeleton.json` +
-   `hooks/`) is its own job and is checked. Only the script paths frozen at the #1546 cut
-   (`docs/agents/job_scripts_baseline.txt`, never extended) may live outside a `skeleton.json` folder; any other
-   script under `jobs/` fails, in a new or an old job folder alike. An old job opts in by adding `skeleton.json`.
-
-For an explicit SINTEZ repair request, use the separate [`sintez-fix`](#sintez-fix) cell, not a delivery hook.
-
-## `sintez-fix`
-
-**Только по просьбе Артёма.** Это отдельная ячейка диагностики и правки копии,
-не этап сдачи. Без ссылки `request_ref` на явное поручение и согласованного
-перечня правок не запускать ячейку. Наличие конфигурации, замечания чекера
-или очередной выпуск сами по себе не разрешают запуск. Обычный `checker`
-в маршруте сдачи ничего не исправляет.
-
-| # | Stage | Existing owner / operator action |
-|---|---|---|
-| 1 | `checker` | `agr checker COPY_DIR --output NEW_BASELINE.json`; pin source ZIP, copy hashes and checker version. |
-| 2 | `sintez-classify` | Read `rules` in the summary; route by profile + requirement + underlying message, not by exit code. Unknown/partial/ambiguous rows stop the targeted repair. |
-| 3 | `sintez-recipe` | One job hook or manual owner action on a new candidate: `vpm-uv` for local chart changes, `master-qa` for topology diagnosis, package/metadata owners for non-mesh defects. No unattended generic fix. |
-| 4 | `sintez-uv-drift` | Fresh `twinqa.scene.readback` bound to each exact FBX ZIP member; compare indexed surfaces with `twinqa.sintez_uv.indexed_uv_drift` (#1732/#1744). Independently verify all map bytes and their bindings. |
-| 5 | `sintez-recheck` | `agr checker CANDIDATE_DIR --output NEW_CANDIDATE.json`; compare targeted findings, coverage and new regressions. |
-| 6 | `sintez-sheet` | Sheet for Artem: source/candidate hashes, code and counts, operation, maximum UV/world movement, changed maps, unmatched faces, new/unmeasured findings and next decision. No delivery or publication. |
-
-For unchanged FBX and texture member bytes, byte identity proves no movement on the
-retained surfaces. For changed FBX, exact zero in both indexed metrics plus known
-unchanged bindings and maps preserves the triangle's texture registration. Do not
-round away movement: even a UV change on one loop must be reported. Changed topology,
-unresolved slots, absent/partial data or altered texture pixels are not a zero-drift
-result. List exceptions and stop for explicit review; don't repack or re-unwrap whole
-islands to clear a warning. `not_measured`, a missing finding and process exit 0 are
-not substitutes for a measured before/after pair. See [research and recipes](../research/sintez-fix-1744.md).
-
-## Imported-library exemptions
-
-The guard owner records the following exact-path exception in `skeleton_guard.IMPORTED_LIBRARIES` (#1591):
-`jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py` is a stdlib library imported by the historical
-`jobs/KPP1/quad-1372/build_quad_master.py` and its tests. `write_provenance` is called after the build;
-it is not an `after` hook of `master-qa` and has no standalone entry point. Keep its existing import path
-and the sub-job's `skeleton.json` with an empty hook list. The guard rejects registering this library as
-a hook, including path aliases. It still checks the library for stage reimplementation, duplicate code
-and Python syntax errors. Sibling, renamed and nested files are not exempt. This does not extend the
-frozen #1546 baseline, exempt a directory, or establish a job-configurable library bypass.
-
-## Reviewer rule [D325]
-
-A PR whose job adds its own chain of scripts instead of configuring the skeleton is returned for rework and not merged
-(`docs/agents/REVIEW_CHECKLIST.md`). Evidence: `skeleton_guard.py` output, hooks count, stages called.
-
-## Weekly promotion [D326]
-
-Once a week a separate orchestrator task collects hook scripts repeated in 2–3 jobs and the lessons, and shows Artem
-a summary; promotion into a skeleton stage happens only there (outside this repo change).
-Reports, one file per week in `docs/agents/skeleton-harvest/`: [2026-11-23](skeleton-harvest/2026-11-23.md) (no promotion, #1804).
-
-## Job lessons form [D411]
-
-A job lesson in `jobs/<ID>/LESSONS.md` is one `## L<n> <title>` block: situation / lesson / evidence, where the
-evidence is the contrast or before/after that proves it (an `agr trainer ab` report, two readbacks, numbers).
-Lessons stay job-local (no D-row promotion; only the weekly harvest above may propose one). Template:
-`jobs/_template/LESSONS.md`. `tools/qa/lessons_check.py --staged` runs in pre-commit and warns (never blocks) on a
-new lesson without evidence or a new free-form line. A harness edit drawn from lessons is tagged INVARIANT (entry,
-context, tools) or DOMAIN (OKS / Ground / MAF / Flora) and probed by a separate A/B run per tag
-(`docs/trainer/ETALONS.md`, "A/B probe").
-
-## Historical delivered-job scripts [D327]
-
-Scripts of the delivered jobs (`finished_jobs` in `docs/architecture/contexts.yaml`) that no live command reaches are
-listed in the generated block of the root `.ignore`, one `# HISTORICAL [D327] jobs/<ID>` header line per job, so `rg`
-and agent search skip them; the files are unchanged and duplicate_guard still scans them. Regenerate after a job is
-delivered or a script becomes live: `uv run python tools/architecture/duplicate_guard.py --write-ignore`. To read one on
-purpose: `rg --no-ignore-dot PATTERN jobs/<ID>`.
-
-#1614 extends this to data and docs with a second generated block (`# BEGIN historical-data`) owned by
-`tools/architecture/search_noise.py`: every non-script file of a delivered job (except the job-root `STATE.md`,
-`LESSONS.md`, `README.md`, `REPORT.md`, `TASK.md`, `PASSPORT.md`, `job.yaml`, `passport.json`, `sources.json`, `object.json`,
-`materials.json`, `EVIDENCE-MOVED.json`, `skeleton.json` folders and `live_paths`) and every docs/ file that no entry doc,
-route, scenario, skill or live code reaches (markdown links followed transitively; inventories and job files do
-not propagate). A script that a route, scenario or skill names stays visible. Every `jobs/<ID>` folder is either
-in `finished_jobs` or in `kept_jobs` of `docs/architecture/search-noise.yaml` with a Russian reason; an open issue
-that uses a hidden path adds it to `live_paths` there. Large JSON/TXT data of delivered jobs lives in the evidence
-store (rule 57): `jobs/<ID>/EVIDENCE-MOVED.json` lists path + sha256 + copy; tests read it via
-`search_noise.evidence_path` and skip when the copy is absent. Commands: check `uv run python
-tools/architecture/search_noise.py`, regenerate `--write-ignore`, Russian job table `--table`, what agent search
-sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job data stays visible until the next
-`--write-ignore` (reported as pending); the check fails only when the block hides a live or gone path.
+- `oks-vpm`: `sources-dwg` → `inspect` → `body` → `mesh-quality` → `udim` → `vpm-uv` → `ucx-oks` → `master-qa` → `readback` → `verifier` → `geojson` → `package-vpm` → `light-fbx` → `validate` → `review-scene` → `checker`
+- `oks-npm`: `inspect` → `body` → `mesh-quality` → `brick-seams` → `derive-npm` → `master-qa` → `readback` → `verifier` → `build-manifest` → `package-npm` → `validate` → `review-scene` → `checker`
+- `oks-npm-lite`: `lite-route`
+- `npm-to-vpm`: `npm-ids` → `npm-udim-fit` → `npm-to-vpm` → `readback` → `checker` → `package-vpm` → `validate`
+- `vpm-to-npm`: `tris-count` → `remove-interiors` → `atlas` → `glass-merge` → `budget-ladder` → `master-qa` → `readback` → `verifier` → `package-npm` → `validate` → `checker` → `review-scene`
+- `maf-npm-to-vpm`: `maf-segments` → `maf-texture-class` → `maf-atlas-strategy` → `maf-pack` → `maf-stubs` → `master-qa` → `readback` → `checker` → `maf-sheet`
+- `ground-npm`: `sources-ground` → `surfaces` → `quads` → `library` → `maf-light` → `flora-star` → `placement` → `optimise` → `master-qa` → `readback` → `verifier` → `package-npm` → `validate` → `checker`
+- `ground-vpm`: `sources-ground` → `zero` → `surfaces` → `quads` → `ground-textures` → `relief` → `skirt` → `ucx-ground` → `library` → `placement` → `derive-npm` → `master-qa` → `readback` → `verifier` → `package-vpm` → `validate` → `checker`
+- `library-publish`: `intake` → `identify` → `name` → `qa` → `register` → `sheet`
+- `sintez-fix`: `checker` → `sintez-classify` → `sintez-recipe` → `sintez-uv-drift` → `sintez-recheck` → `sintez-sheet`
 
 Before hiding or archiving a `jobs/` path, run `uv run pytest -q tests/test_live_route_imports.py`.
 The fresh-process runtime guard must show no live route loads Python from that path; if the affected
@@ -373,7 +51,6 @@ not prove that lazy or path-based imports are gone. Explicit job data inputs are
 
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
-
 - `maf-segments` — ручная правка кругового профиля с замером отклонения и бюджета.
 - `maf-texture-class` — ручное подтверждение происхождения отделки и альфы.
 - `maf-atlas-strategy` — выбор по замерам плотности, отступов и швов.
@@ -381,13 +58,7 @@ not prove that lazy or path-based imports are gone. Explicit job data inputs are
 - `maf-sheet` — парные виды и замеры для Артёма.
 - `sintez-recipe` — один согласованный хук задания или работа у владельца; автоматической правки нет.
 - `sintez-sheet` — ручной лист по отчётам и замерам, общего генератора нет.
-- `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
-- `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.
-- `zero` — нет команды границы и нуля проекта; читать ПЗУ / вертикальную планировку, спрашивать [D279].
+- `lite-route` — `oks-npm-lite` заморожена [D405]; карточки и правила упрощения нет, пока Артём не определит её.
+- `zero` — `agr zero` только проверяет заданный нуль; граница и сам нуль — из ПЗУ / вертикальной планировки, иначе вопрос [D279].
 - `quads` — нет команды раскроя/спаривания для нового участка; `dt ground v015` повторяет только Ватутино.
-- `ground-textures` — нет общей команды ID/UV/текстур плоского Ground.
-- `relief` — нет общей команды проекции на рельеф для нового участка [D293].
-- `ucx-ground` — `agr ucx` недоступен; `ucx_build.py` — прецедент, не команда для реального участка.
-- `maf-light` — нет инструмента лёгкой НПМ-версии / перекладки UV для МАФ.
-- `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём
-  [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.
+- `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.
