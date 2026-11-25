@@ -1,0 +1,418 @@
+{
+  "issue": 1938,
+  "source_sha": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+  "legacy_before_sha": "73bf58902ef4926420beb396b7614697bbb42e97",
+  "tokenizer": "tiktoken 0.14.0 / o200k_base",
+  "entry_budget": {
+    "before": {
+      "sintez-fix": [
+        11,
+        43378
+      ],
+      "vpm-to-npm": [
+        11,
+        38447
+      ],
+      "maf-npm-to-vpm": [
+        11,
+        43340
+      ],
+      "npm-to-vpm": [
+        13,
+        52441
+      ],
+      "oks-vpm": [
+        18,
+        84950
+      ],
+      "ground-npm:ground": [
+        16,
+        81794
+      ],
+      "ground-npm:maf": [
+        16,
+        81895
+      ],
+      "ground-npm:flora": [
+        16,
+        82713
+      ],
+      "oks-npm": [
+        15,
+        72066
+      ],
+      "oks-npm-lite": [
+        14,
+        67705
+      ],
+      "ground-vpm:ground": [
+        26,
+        165170
+      ],
+      "ground-vpm:maf": [
+        27,
+        168739
+      ],
+      "ground-vpm:flora": [
+        27,
+        169557
+      ],
+      "library-publish": [
+        12,
+        34074
+      ]
+    },
+    "legacy_after": {
+      "sintez-fix": [
+        11,
+        37215
+      ],
+      "vpm-to-npm": [
+        11,
+        32304
+      ],
+      "maf-npm-to-vpm": [
+        11,
+        37362
+      ],
+      "npm-to-vpm": [
+        13,
+        46298
+      ],
+      "oks-vpm": [
+        18,
+        79043
+      ],
+      "ground-npm:ground": [
+        16,
+        75784
+      ],
+      "ground-npm:maf": [
+        16,
+        75951
+      ],
+      "ground-npm:flora": [
+        16,
+        76714
+      ],
+      "oks-npm": [
+        16,
+        68199
+      ],
+      "oks-npm-lite": [
+        15,
+        63836
+      ],
+      "ground-vpm:ground": [
+        26,
+        163735
+      ],
+      "ground-vpm:maf": [
+        27,
+        167359
+      ],
+      "ground-vpm:flora": [
+        27,
+        168122
+      ],
+      "library-publish": [
+        12,
+        27893
+      ]
+    },
+    "door_after": {
+      "sintez-fix": [
+        5,
+        7206
+      ],
+      "vpm-to-npm": [
+        5,
+        6570
+      ],
+      "maf-npm-to-vpm": [
+        5,
+        7987
+      ],
+      "npm-to-vpm": [
+        5,
+        6170
+      ],
+      "oks-vpm": [
+        5,
+        8651
+      ],
+      "ground-npm:ground": [
+        6,
+        10276
+      ],
+      "ground-npm:maf": [
+        6,
+        10443
+      ],
+      "ground-npm:flora": [
+        6,
+        11206
+      ],
+      "oks-npm": [
+        5,
+        9655
+      ],
+      "oks-npm-lite": [
+        5,
+        9149
+      ],
+      "ground-vpm:ground": [
+        6,
+        10334
+      ],
+      "ground-vpm:maf": [
+        6,
+        10501
+      ],
+      "ground-vpm:flora": [
+        6,
+        11264
+      ],
+      "library-publish": [
+        5,
+        5922
+      ]
+    },
+    "walker_sha256": {
+      "w01-oks-vpm": "cfbfa4c7ce254682ddcfdfad732e30fadda29192a64156124539ee0d935fd3de",
+      "w02-oks-npm": "e63dfefbb7d33c3d7e71fdb67deb4e1669e21b64335adfb55cdf66c18882c473",
+      "w03-oks-npm-lite": "bc866f63083af8217884889cde736021fab89e55ccaab245439a5b833371c738",
+      "w04-npm-ground": "5804eb7884d6f9c5e166fa7f47eaf308b2a3b2295bd451564134ed6e07587654",
+      "w05-npm-maf": "b257767dec84f5c74a4edbe1ef1e703a553dc7249527e8d093161ff5f51cafff",
+      "w06-npm-flora": "8028ee4170f23d243f2d067447755c55cc8ec77e4b30a8ee437bdbbc47145466",
+      "w07-vpm-ground-maf-flora": "ed7e346da2c5572e1d7eea3850469b366e14904d52f4c621a0aa45c935ab56eb",
+      "w08-vpm-to-npm": "5c7516cfe8318838c0e3f3dcb4d34bb731ce5012f0ddbef7c3b9e694c49d835a",
+      "w09-maf-library-publish": "7eb06520a0eea82f73d876e48bc5699d02dd7ceb97422760083917ee0febe8d6",
+      "w10-sintez-package": "fcfe8fb7a837065d4543ac617368edb2076a68f88cc6ac02b86e7245358ec6ff"
+    }
+  },
+  "codex_cli": "0.160.1",
+  "probe_fixture_sha256": "4545f93bf478d14cd49044754b467dd57783ce76b86df4d074bbfb9b56c29106",
+  "probes": [
+    {
+      "side": "before",
+      "probe": "npm-oks-body",
+      "source_sha": "cf4efcbba169541d7163a83f7b28d054f0649db1",
+      "thread_id": "01a214fb-05cf-77a0-8d79-d764066a45f9",
+      "raw_sha256": "d6b5aa2db4341e315e34e49becdd200607c18187962d6dd9b409d7737803366d",
+      "terminal_usage": {
+        "input_tokens": 151252,
+        "cached_input_tokens": 107776,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 561,
+        "reasoning_output_tokens": 71
+      },
+      "answer_tokens": 151813,
+      "explicitly_read": [
+        ".agents/skills/scenario/SKILL.md",
+        "AGENTS.md",
+        "docs/agents/SKELETONS.md",
+        "docs/agents/skeletons.json",
+        "docs/domain/areas/body.md",
+        "docs/scenarios/scenarios.json",
+        "routes/npm-oks.md",
+        "routes/revit-intake.md"
+      ],
+      "command_count": 3,
+      "answer": {
+        "cell": "oks-npm",
+        "rule": [
+          "D023",
+          "D028",
+          "D336",
+          "D337",
+          "D338",
+          "D341"
+        ],
+        "first_command": "uv run agr body PLAN NEW_OUT",
+        "check": "После записи геометрии выполнить `uv run dt qa xview FILE --out NEW.json`; в конце этапа body записать наблюдение качества сетки: `uv run python tools/qa/mesh_quality_observe.py stage MASTER --out NEW/mesh_quality.json`. PLAN должен быть подготовлен из дампа Revit в формате BodyPlan; конкретные пути источника и результата пока не заданы.",
+        "files_read": [
+          "AGENTS.md",
+          "docs/agents/SKELETONS.md",
+          ".agents/skills/scenario/SKILL.md",
+          "routes/npm-oks.md",
+          "routes/revit-intake.md",
+          "docs/scenarios/scenarios.json",
+          "docs/agents/skeletons.json",
+          "docs/domain/areas/body.md"
+        ]
+      },
+      "right": {
+        "cell": true,
+        "rule": false,
+        "first_command": true,
+        "check": true
+      }
+    },
+    {
+      "side": "before",
+      "probe": "ground-npm",
+      "source_sha": "cf4efcbba169541d7163a83f7b28d054f0649db1",
+      "thread_id": "01a214fa-0800-77c3-a6de-e84593f44ef8",
+      "raw_sha256": "4fd96a6052ac84660bbf4dec4ae53f4d2c8ccdec0c1a2bed1b92f807364e6432",
+      "terminal_usage": {
+        "input_tokens": 207768,
+        "cached_input_tokens": 160896,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 569,
+        "reasoning_output_tokens": 0
+      },
+      "answer_tokens": 208337,
+      "explicitly_read": [
+        ".agents/skills/model-ground/SKILL.md",
+        ".agents/skills/scenario/SKILL.md",
+        "AGENTS.md",
+        "docs/agents/SKELETONS.md",
+        "docs/agents/skeletons.json",
+        "docs/decisions.md",
+        "docs/domain/areas/ground-surface.md",
+        "docs/ground-site-1535.md",
+        "docs/scenarios/ground-npm.md",
+        "docs/scenarios/scenarios.json",
+        "src/dt_ai/geometry/ground_site.py"
+      ],
+      "command_count": 4,
+      "answer": {
+        "cell": "ground-npm",
+        "rule": [
+          "D293"
+        ],
+        "first_command": "agr ground site SPEC.json NEW_OUT",
+        "check": "В SPEC.json задать params.surfaces=\"shared\". После сборки проверить записанный OBJ через ground_site.skirt_check_export: глубина юбки не менее 1 м вдоль каждого внешнего края (D251).",
+        "files_read": [
+          "AGENTS.md",
+          "docs/agents/SKELETONS.md",
+          ".agents/skills/scenario/SKILL.md",
+          ".agents/skills/model-ground/SKILL.md",
+          "docs/scenarios/scenarios.json",
+          "docs/scenarios/ground-npm.md",
+          "docs/domain/areas/ground-surface.md",
+          "docs/decisions.md",
+          "docs/agents/skeletons.json",
+          "docs/ground-site-1535.md",
+          "src/dt_ai/geometry/ground_site.py"
+        ]
+      },
+      "right": {
+        "cell": true,
+        "rule": true,
+        "first_command": true,
+        "check": true
+      }
+    },
+    {
+      "side": "after",
+      "probe": "npm-oks-body",
+      "source_sha": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+      "thread_id": "01a214f9-9642-7861-bc04-2bf9e825c809",
+      "raw_sha256": "1b83b3d69c663d595faafd141ebdc177aa411406261a57a68595ee745de43c95",
+      "terminal_usage": {
+        "input_tokens": 123841,
+        "cached_input_tokens": 79104,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 565,
+        "reasoning_output_tokens": 9
+      },
+      "answer_tokens": 124406,
+      "explicitly_read": [
+        ".agents/skills/scenario/SKILL.md",
+        "AGENTS.md",
+        "docs/agents/SKELETONS-stages.md",
+        "docs/agents/SKELETONS.md",
+        "docs/agents/skeletons.json",
+        "docs/domain/areas/body.md",
+        "docs/scenarios/scenarios.json",
+        "routes/npm-oks.md",
+        "routes/revit-intake.md"
+      ],
+      "command_count": 9,
+      "answer": {
+        "cell": "oks-npm",
+        "rule": [
+          "D373",
+          "D392"
+        ],
+        "first_command": "uv run agr body PLAN NEW_OUT",
+        "check": "После записи BODY выполнить uv run dt qa xview FILE --out NEW.json; в конце стадии body выполнить mesh-quality в режиме observe: uv run python tools/qa/mesh_quality_observe.py stage MASTER --out NEW/mesh_quality.json.",
+        "files_read": [
+          "AGENTS.md",
+          ".agents/skills/scenario/SKILL.md",
+          "docs/agents/SKELETONS.md",
+          "docs/scenarios/scenarios.json",
+          "routes/revit-intake.md",
+          "routes/npm-oks.md",
+          "docs/domain/areas/body.md",
+          "docs/agents/skeletons.json",
+          "docs/agents/SKELETONS-stages.md"
+        ]
+      },
+      "right": {
+        "cell": true,
+        "rule": true,
+        "first_command": true,
+        "check": true
+      }
+    },
+    {
+      "side": "after",
+      "probe": "ground-npm",
+      "source_sha": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+      "thread_id": "01a214fa-86a6-7ba0-87f4-3dedaca93393",
+      "raw_sha256": "8bb5807167685e021d5f6b28f2057a3e13e078996f77671901faac138b40d279",
+      "terminal_usage": {
+        "input_tokens": 173768,
+        "cached_input_tokens": 132992,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 578,
+        "reasoning_output_tokens": 15
+      },
+      "answer_tokens": 174346,
+      "explicitly_read": [
+        ".agents/skills/model-ground/SKILL.md",
+        ".agents/skills/scenario/SKILL.md",
+        "AGENTS.md",
+        "docs/agents/SKELETONS-stages.md",
+        "docs/agents/SKELETONS.md",
+        "docs/agents/skeletons.json",
+        "docs/decisions.md",
+        "docs/domain/areas/ground-surface.md",
+        "docs/scenarios/ground-npm.md",
+        "docs/scenarios/scenarios.json",
+        "routes/site.md"
+      ],
+      "command_count": 10,
+      "answer": {
+        "cell": "ground-npm",
+        "rule": [
+          "D293"
+        ],
+        "first_command": "agr ground site SPEC.json NEW_OUT",
+        "check": "Прочитать записанный OBJ и проверить юбку по внешнему периметру: skirt_check_export, глубина не менее 1 м; изучить ground-report.json.",
+        "files_read": [
+          "AGENTS.md",
+          ".agents/skills/scenario/SKILL.md",
+          ".agents/skills/model-ground/SKILL.md",
+          "docs/agents/SKELETONS.md",
+          "docs/scenarios/scenarios.json",
+          "docs/scenarios/ground-npm.md",
+          "routes/site.md",
+          "docs/agents/skeletons.json",
+          "docs/domain/areas/ground-surface.md",
+          "docs/agents/SKELETONS-stages.md",
+          "docs/decisions.md"
+        ]
+      },
+      "right": {
+        "cell": true,
+        "rule": true,
+        "first_command": true,
+        "check": true
+      }
+    }
+  ]
+}
