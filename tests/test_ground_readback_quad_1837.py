@@ -2,6 +2,7 @@
 
 Native Blender 5.1 headless build + readback of synthetic, non-origin fixtures (no mocked Blender API).
 """
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -115,7 +116,8 @@ def tile_exports(tmp_path_factory):
 
 @pytest.mark.parametrize('case,status', [
     ('matched', 'pass'), ('swapped', 'fail'), ('missing', 'not_measured'), ('empty', 'not_measured'),
-    ('partial', 'fail'), ('crossing', 'fail'), ('nonfinite', 'fail'), ('unsupported', 'fail'),
+    ('partial', 'fail'), ('crossing', 'fail'), ('nonfinite', 'fail'), ('infinite', 'fail'),
+    ('unsupported', 'fail'), ('duplicate_slot', 'fail'), ('unmapped_material', 'fail'),
 ])
 def test_vpm_readback_udim_by_material(tile_exports, case, status):
     tmp, data, fbx, swapped = tile_exports
@@ -126,9 +128,13 @@ def test_vpm_readback_udim_by_material(tile_exports, case, status):
         expected['uv'] = []
     elif case == 'partial':
         expected['uv'] = data['uv'][:1]
-    elif case in {'crossing', 'nonfinite', 'unsupported'}:
-        u = {'crossing': 2.25, 'nonfinite': float('nan'), 'unsupported': '2'}[case]
+    elif case in {'crossing', 'nonfinite', 'infinite', 'unsupported'}:
+        u = {'crossing': 2.25, 'nonfinite': float('nan'), 'infinite': float('inf'), 'unsupported': '2'}[case]
         expected['uv'] = [data['uv'][0], [[1, 0], [u, 0], [1, 1]]]
+    elif case == 'duplicate_slot':
+        expected['slots'] = ['Tile', 'Tile']
+    elif case == 'unmapped_material':
+        expected['slots'] = ['Tile', 'Other']
     report = _readback(tmp, swapped if case == 'swapped' else fbx, case, expected)
     tile, lawn = ('M_Synthetic_Ground_' + slot for slot in ('Tile', 'Lawn'))
     facts = report['uv_tiles']
@@ -142,6 +148,48 @@ def test_vpm_readback_udim_by_material(tile_exports, case, status):
             tile: {'expected': [1001], 'observed': [1002]},
             lawn: {'expected': [1002], 'observed': [1001]},
         } if case == 'swapped' else {})
+    elif case == 'unmapped_material':
+        assert set(assignment['differences']) == {lawn, 'M_Synthetic_Ground_Other'}
+    else:
+        assert assignment['reason']
+
+
+def test_vpm_readback_straddling_face_is_named(tile_exports, tmp_path):
+    _, data, _, _ = tile_exports
+    crossing = {**data, 'uv': [data['uv'][0], [[1, 0], [2.25, 0], [1, 1]]]}
+    fbx = _build(tmp_path, 'crossing', crossing, '--profile', 'vpm')
+    uv = _readback(tmp_path, fbx, 'crossing', data)['uv_tiles']
+    assert uv['straddling'] == 1
+    assignment = uv['udim_assignment']
+    assert assignment['status'] == 'fail'
+    assert set(assignment['invalid_imported_faces_by_material']) == {'M_Synthetic_Ground_Lawn'}
+
+
+def test_vpm_readback_without_an_imported_uv_layer(tile_exports, tmp_path):
+    _, data, fbx, _ = tile_exports
+    dst = tmp_path / 'no_uv.fbx'
+    script = tmp_path / 'remove_uv.py'
+    script.write_text(
+        'import bpy\n'
+        f'bpy.ops.import_scene.fbx(filepath={str(fbx)!r})\n'
+        'mesh, = bpy.data.meshes\n'
+        'mesh.uv_layers.remove(mesh.uv_layers.active)\n'
+        f'bpy.ops.export_scene.fbx(filepath={str(dst)!r})\n', encoding='utf-8')
+    run = subprocess.run([str(BLENDER), '--background', '--factory-startup', '--threads', '1',
+                          '--python-exit-code', '1', '--python-expr',
+                          f'import bpy; bpy.ops.wm.read_factory_settings(use_empty=True); '
+                          f'exec(open({str(script)!r}).read())'], capture_output=True, text=True)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+    # Synthetic fault injection only: bind the VPM profile to the mutated FBX bytes.
+    meta = json.loads(Path(str(fbx) + '.export_meta.json').read_text(encoding='utf-8'))
+    meta.update(exported_files=[dst.name], exported_sha256={dst.name: hashlib.sha256(dst.read_bytes()).hexdigest()})
+    Path(str(dst) + '.export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    report = _readback(tmp_path, dst, 'no_uv', data, 4096, 0, 5000)
+    assert report['uv_layers'] == []
+    uv = report['uv_tiles']
+    assert uv['by_material'] == {}
+    assert uv['udim_assignment']['status'] == 'not_measured'
+    assert uv['udim_assignment']['reason'] == 'imported Ground has no applicable UV evidence'
 
 
 @pytest.mark.parametrize('case', ['missing_profile', 'stale_profile', 'npm'])

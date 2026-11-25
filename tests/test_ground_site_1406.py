@@ -7,6 +7,7 @@ import math
 import random
 import subprocess
 import sys
+from itertools import permutations
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -92,6 +93,46 @@ def test_ground_build_udim_by_cover(monkeypatch, swapped):
         "ID02_Rubber": {"expected": [1002], "observed": [1001]},
     } if swapped else {})
     assert report["geometry_status"] == ("fail" if swapped else "built")
+
+
+@pytest.mark.parametrize("tiles", list(permutations((1, 2, 3))))
+def test_ground_build_rejects_nonidentity_tile_permutations(monkeypatch, tiles):
+    cs = covers() + [gs.Cover(3, "Paving", [box(12, 12, 16, 16)], (100, 100, 100), "spec")]
+    slots = ["ID01_Lawn", "ID02_Rubber", "ID03_Paving"]
+    original = gs._skirt_ids_and_uv
+
+    def permute_after_skirt(mesh, *args):
+        original(mesh, *args)
+        for i, slot in enumerate(mesh.slot):
+            j = slots.index(slot)
+            mesh.uv[i, :, 0] += tiles[j] - (j + 1)
+
+    monkeypatch.setattr(gs, "_skirt_ids_and_uv", permute_after_skirt)
+    report = build(covers=cs).report
+    facts = report["stages"]["textures"]
+    assert facts["tiles"]["tiles"] == facts["expected_tiles"] == [1001, 1002, 1003]
+    expected_diffs = {s for s, tile, expected in zip(slots, tiles, (1, 2, 3)) if tile != expected}
+    assert set(facts["udim_assignment"]["differences"]) == expected_diffs
+    assert report["geometry_status"] == ("fail" if expected_diffs else "built")
+
+
+def test_ground_build_reports_crossing_skirt_even_when_aggregate_matches(monkeypatch):
+    original = gs._skirt_ids_and_uv
+
+    def cross_one_skirt(mesh, *args):
+        original(mesh, *args)
+        i = np.flatnonzero(mesh.level < 0)[0]
+        mesh.uv[i, 0, 0] = 1.25
+
+    monkeypatch.setattr(gs, "_skirt_ids_and_uv", cross_one_skirt)
+    report = build().report
+    textures = report["stages"]["textures"]
+    assert textures["tiles"]["tiles"] == textures["expected_tiles"] == [1001, 1002]
+    assert textures["udim_assignment"]["differences"] == {}
+    assert textures["udim_assignment"]["invalid_faces_by_slot"] == {
+        "ID01_Lawn": {"straddling": 1, "outside_udim_range": 0},
+    }
+    assert textures["udim_assignment"]["status"] == report["geometry_status"] == "fail"
 
 
 @pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf"), True, None, "142.1"])
