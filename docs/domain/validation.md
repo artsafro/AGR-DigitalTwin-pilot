@@ -39,6 +39,14 @@ bundle pass is an accepted delivery; all mandatory checks and manual gates below
 - Manual gates: sources_confirmed (CRS/units), materials_approved, master_geometry_approved, facade_and_windows_approved, placement_approved, collision_review_approved (VPM), delivery_approved; each records author/date/input versions; changed dependency resets gate to review. local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#9; local: docs/agr/workflow/pipeline.md.
 - Pilot inputs needed: source FBX + units, facade/material/window album with sizes, DWG/SPOZU with insertion point/CRS/zero mark, reference accepted NPM/VPM package or screenshots, accepted GeoJSON sample, address naming, customer addendum. local: docs/agr/DIGITAL_TWIN_AI_PROJECT_BRIEF.md#10; local: docs/agr/READINESS_REPORT.md#8.
 
+### Delivered-project dispositions
+
+For readiness, the empty VPM `s_podz` on the delivered KPP1 and ELV projects is an
+accepted exception [D377], not a customer-data request. This does not alter V011, apply
+to other jobs or excuse a missing GeoJSON. See the [KPP1 v004 disposition](../../jobs/KPP1/lattice-1609/README.md#package-acceptance-disposition-1817)
+for the exact report and package scope of [D382]. Use raw validator findings and user
+dispositions separately; an exception or manual acceptance is not a machine pass.
+
 ### Implementation status inventory (static audit)
 
 > [!IMPORTANT]

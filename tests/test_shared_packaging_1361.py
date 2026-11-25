@@ -82,7 +82,7 @@ def test_npm_uses_exporter_sidecar_and_never_packs_it(tmp_path):
     (pkg / '0000_Synthetic_Ground.fbx').write_bytes(b'synthetic Ground')
     record_export(fbx, source='synthetic fixture', top=3.5)
     record_export(pkg / '0000_Synthetic_Ground.fbx', source='synthetic ground route', top=0.2,
-                  address='Synthetic_Ground', profile='vpm')  # #1637: Ground recorded by its own route
+                  address='Synthetic_Ground', profile='npm')  # #1637 own route; #1844: NPM needs an npm record
     result = subprocess.run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-npm', str(pkg)],
                             capture_output=True, text=True, cwd=ROOT)
     assert result.returncode == 0, result.stderr

@@ -511,7 +511,8 @@ def test_ground_flat_steps_name_ids_seams_insets_tiles_udim():
     quads = _stage(events, "quads")["event_ru"].lower()
     assert "шв" in quads and "вставк" in quads
     tex = _stage(events, "textures")["event_ru"]
-    assert "UDIM = ID" in tex and "тайл" in tex
+    assert "UDIM подряд с 1001" in tex and "тайл" in tex
+    assert "D399" in _stage(events, "textures")["rules"]
 
 
 # ---------------------------------------------------------------- 5. NPM step before export
@@ -582,6 +583,272 @@ def test_1820_ground_owns_flat_and_skirt_uv_but_not_npm_atlas():
     assert not ({("ground", target) for target in ("placement", "ucx", "ground-export")} &
                 {(r["from"], r["to"]) for r in cmap["relations"]})
     assert route_map.route_coverage(events, maps["contexts"], cmap) == []
+
+
+def test_1839_placement_distinguishes_approved_exclusion_from_unresolved_stop():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    placement = _stage(events, "placement")
+    assert {"D302", "D329"} <= set(placement["rules"])
+    assert {"dt place site", "agr place"} <= set(placement["commands"])
+    assert "объект, не попавший на поверхность, удаляется и пишется в отчёт" not in placement["event_ru"]
+    for token in ("D302", "одобрен", "sha256 Ground", "останавливает", "до инстансирования"):
+        assert token in placement["event_ru"], token
+    for path in (
+        "src/dt_ai/placement/engine.py",
+        "src/dt_ai/placement/site.py",
+        "src/dt_ai/placement/scene.py",
+        "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+        "jobs/VATUTINO-SITE/placement-report.md",
+    ):
+        assert path in placement["evidence"], path
+
+    hotspots = {h["id"]: h for h in events["hotspots"]}
+    note = hotspots["outside-ground-stop"]
+    assert note["stage"] == "placement"
+    assert {"D302", "D329"} <= set(note["rules"])
+    for path in (
+        "src/dt_ai/placement/engine.py",
+        "src/dt_ai/placement/site.py",
+        "src/dt_ai/placement/scene.py",
+        "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+        "jobs/VATUTINO-SITE/placement-report.md",
+    ):
+        assert path in note["evidence"], path
+    for token in (
+        "D302",
+        "apply_ground_exceptions",
+        "ground_master_sha256",
+        "ground_exception",
+        "results.json",
+        "point_outside_ground",
+        "point_over_ground_hole",
+        "engine_report.json",
+        "make_plan",
+        "до инстансирования",
+    ):
+        assert token in note["ru"], token
+
+    # Existing rendered views: event board, short scheme, context map and owners table.
+    board_text = " ".join(" ".join(el["text"].split()) for el in route_map.route_board(events, maps["contexts"]).elements
+                          if el["type"] == "text")
+    for token in ("apply_ground_exceptions", "make_plan", "до инстансирования", "results.json", "engine_report.json"):
+        assert token in board_text, token
+
+    short_text = " ".join(" ".join(el["text"].split()) for el in route_map.short_route_board(events, cmap, maps).elements
+                          if el["type"] == "text")
+    for token in ("D302", "одобрен", "sha256 Ground", "до инстансирования", "engine_report.json", "results.json"):
+        assert token in short_text, token
+
+    ctx = next(c for c in cmap["contexts"] if c["id"] == "placement")
+    assert ctx["owner"] == "src/dt_ai/placement/engine.py"
+    for token in ("src/dt_ai/placement/site.py", "apply_ground_exceptions", "scene.py", "make_plan",
+                  "engine_report.json", "results.json", "до инстансирования"):
+        assert token in ctx["owner_ru"], token
+    place_contract = next(f["contract"] for f in ctx["functions"] if f["name"] == "place")
+    assert "point_outside_ground" in place_contract and "point_over_ground_hole" in place_contract
+
+    owners_md = route_map.owners_markdown(events, cmap, maps)
+    for path in (
+        "src/dt_ai/placement/engine.py",
+        "src/dt_ai/placement/site.py",
+        "src/dt_ai/placement/scene.py",
+        "jobs/VATUTINO-SITE/ground-exceptions-v015.json",
+        "jobs/VATUTINO-SITE/placement-report.md",
+    ):
+        assert f"[`{path}`]" in owners_md, path
+
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^- `outside-ground-stop` — .*apply_ground_exceptions.*make_plan", report, re.M)
+    assert re.search(r"^\| `outside-ground-stop` \| открыта \| .*D302.*до инстансирования", report, re.M)
+
+
+def test_1839_quads_cites_vatutino_v015_only_as_job_specific_post_relief_evidence():
+    events = _routes()["ground-route"]
+    quads = _stage(events, "quads")
+    assert not quads.get("commands")
+    pairing = next(h for h in events["hotspots"] if h["id"] == "pairing")
+    assert pairing["stage"] == "quads"
+    assert "tools/ground/build_ground_v015.py" in pairing["evidence"]
+    for token in ("agr ground v015", "dt ground v015", "после рельефа", "дорельеф"):
+        assert token in pairing["ru"], token
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^\| `quads` \| нет команды .*agr ground v015.*после рельефа", report, re.M)
+    assert re.search(r"^- `pairing` — .*agr ground v015.*после рельефа", report, re.M)
+
+
+# ---------------------------------------------------------------- #1900 Ground export, validate --master, ZIP, sintez
+def test_1900_export_distinguishes_surface_helper_site_export_and_d366_work_fbx():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    export = _stage(events, "export")
+    assert {"D293", "D366"} <= set(export["rules"])
+    assert not export.get("commands")
+    assert "jobs/VATUTINO-SITE/assemble_delivery.py" not in export["evidence"]
+    for token in ("сводный экспорт участка", "без триангуляции", "рядом с пакетом", "только поверхность Ground"):
+        assert token in export["event_ru"], token
+
+    note = next(h for h in events["hotspots"] if h["id"] == "obj-to-export")
+    assert note["stage"] == "export"
+    assert "jobs/VATUTINO-SITE/assemble_delivery.py" in note["evidence"]
+    assert "docs/domain/export-import.md" in note["evidence"]
+    for token in (
+        "только поверхности Ground",
+        "JSON-мастер, не OBJ",
+        "сводный экспорт участка",
+        "без триангуляции",
+        "рядом с пакетом",
+        "D366",
+        "jobs/VATUTINO-SITE/assemble_delivery.py",
+        "use_triangles=True",
+        "историческое свидетельство триангулированного FBX сдачи",
+        "не канонический маршрут",
+        "не реализация D366",
+    ):
+        assert token in note["ru"], token
+
+    ctx = next(c for c in cmap["contexts"] if c["id"] == "ground-export")
+    assert ctx["owner"] == "tools/blender/ground_json_to_fbx.py"
+    for token in (
+        "только поверхность Ground",
+        "сводный экспорт участка",
+        "канонического сборщика участка нет",
+        "jobs/VATUTINO-SITE/assemble_delivery.py",
+        "триангулированного FBX сдачи",
+        "нетриангулированный рабочий FBX рядом с пакетом",
+        "D366",
+    ):
+        assert token in ctx["owner_ru"], token
+    assert ("ground", "ground-export") not in {(r["from"], r["to"]) for r in cmap["relations"]}
+
+    board_text = " ".join(" ".join(el["text"].split()) for el in route_map.route_board(events, maps["contexts"]).elements
+                          if el["type"] == "text")
+    assert "сводный экспорт участка" in board_text and "не реализация D366" in board_text
+    short_text = " ".join(" ".join(el["text"].split()) for el in route_map.short_route_board(events, cmap, maps).elements
+                          if el["type"] == "text")
+    assert "только поверхность Ground" in short_text and "сводного экспорта участка" in short_text
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^- `obj-to-export` — .*assemble_delivery\.py.*D366", report, re.M)
+
+
+def test_1900_validate_documents_master_limits_and_d293_surface_parity():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    validate = _stage(events, "validate")
+    assert "tools/qa/validate_package.py" in validate["evidence"]
+    assert "src/twinqa/master.py" in validate["evidence"]
+    assert "--master" in validate["event_ru"] and "не сравнивает поверхности" in validate["event_ru"]
+
+    note = next(h for h in events["hotspots"] if h["id"] == "validate-master-limit")
+    assert note["stage"] == "validate"
+    assert {"D293", "D366"} <= set(note["rules"])
+    assert {"tools/qa/validate_package.py", "src/twinqa/master.py"} <= set(note["evidence"])
+    for token in (
+        "Ограничение",
+        "не провал сдачи",
+        "не утверждённый допуск",
+        "--master",
+        "V003",
+        "V001",
+        "не сравнивает поверхности рабочего и сдаточного FBX",
+        "Одинаковое число треугольников недостаточно",
+        "D293",
+    ):
+        assert token in note["ru"], token
+
+    ctx = next(c for c in cmap["contexts"] if c["id"] == "validation")
+    assert ctx["owner"] == "tools/qa/validate_package.py"
+    assert {"validate_vpm_zip", "validate_npm_zip", "add_master", "add_build_manifest"} <= {
+        f["name"] for f in ctx["functions"]
+    }
+    for token in (
+        "ограничение --master",
+        "не провал сдачи",
+        "не допуск",
+        "V003",
+        "V001",
+        "не сравнивает поверхности рабочего и сдаточного FBX",
+        "числа треугольников не доказывает паритет поверхности D293",
+    ):
+        assert token in ctx["owner_ru"], token
+
+    board_text = " ".join(" ".join(el["text"].split()) for el in route_map.route_board(events, maps["contexts"]).elements
+                          if el["type"] == "text")
+    assert "не сравнивает поверхности рабочего и сдаточного FBX" in board_text
+    short_text = " ".join(" ".join(el["text"].split()) for el in route_map.short_route_board(events, cmap, maps).elements
+                          if el["type"] == "text")
+    assert "не сравнивает поверхности FBX" in short_text and "не fail и не допуск" in short_text
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^- `validate-master-limit` — .*--master.*D293", report, re.M)
+    assert re.search(r"^\| `validate-master-limit` \| открыта \| .*не провал сдачи", report, re.M)
+
+
+def test_1900_package_limits_write_zip_to_shared_route_and_links_package_contexts():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    pkg_ctx = next(c for c in cmap["contexts"] if c["id"] == "package")
+    assert "единственный писатель ZIP" not in pkg_ctx["owner_ru"]
+    assert "на общем маршруте" in pkg_ctx["owner_ru"]
+    assert "_write_zip" in pkg_ctx["owner_ru"]
+    assert "package-contexts.yaml" in pkg_ctx["owner_ru"]
+    assert "duplicates" not in pkg_ctx  # link package-contexts.yaml rather than adding a second timeline
+
+    # Existing historical bypass remains owned by package-contexts.yaml
+    pkg_map_ctx = next(c for c in maps["package-contexts"]["contexts"] if c["id"] == "package")
+    drv = next(d for d in pkg_map_ctx["duplicates"] if d["at"] == "jobs/VATUTINO-SITE/run_delivery.py::main")
+    assert drv["status"] == "historical"
+
+    pkg_stage = _stage(events, "package")
+    assert "jobs/VATUTINO-SITE/run_delivery.py" not in pkg_stage["evidence"]
+    assert "общий маршрут" in pkg_stage["event_ru"].lower()
+    note = next(h for h in events["hotspots"] if h["id"] == "package-input")
+    assert note["stage"] == "package"
+    assert "docs/architecture/package-contexts.yaml" in note["evidence"]
+    for token in ("готовые файлы", "не экспортирует FBX", "общем маршруте", "package-contexts.yaml", "historical"):
+        assert token in note["ru"], token
+
+
+def test_1900_validate_sintez_same_input_separate_from_reports():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    sintez = _stage(events, "sintez")
+    assert sintez["event_ru"] != "Чекер СИНТЕЗ отработал на тех же файлах"
+    assert "jobs/VATUTINO-SITE/run_delivery.py" not in sintez["evidence"]
+    for token in ("целевое требование", "независимые отчёты", "без взаимной сверки хешей"):
+        assert token in sintez["event_ru"], token
+
+    note = next(h for h in events["hotspots"] if h["id"] == "validate-sintez-input")
+    assert note["stage"] == "sintez"
+    assert "D104" in note["rules"]
+    assert {
+        "tools/qa/validate_package.py",
+        "tools/qa/sintez_checker.py",
+        "docs/architecture/package-contexts.yaml",
+        "jobs/VATUTINO-SITE/run_delivery.py",
+    } <= set(note["evidence"])
+    for token in (
+        "отделено от самих отчётов",
+        "#1805",
+        "PR #1830",
+        "не сверяют хеши друг с другом",
+        "хеш ZIP не доказывает идентичный входной FBX",
+        "Исторический jobs/VATUTINO-SITE/run_delivery.py",
+    ):
+        assert token in note["ru"], token
+
+    val_ctx = next(c for c in cmap["contexts"] if c["id"] == "validation")
+    for token in ("хеши между инструментами не сверяются", "хеш ZIP не доказывает идентичный FBX", "#1805", "PR #1830"):
+        assert token in val_ctx["owner_ru"], token
+
+    board_text = " ".join(" ".join(el["text"].split()) for el in route_map.route_board(events, maps["contexts"]).elements
+                          if el["type"] == "text")
+    assert "не сверяют хеши друг с другом" in board_text and "хеш ZIP не доказывает идентичный входной FBX" in board_text
+    short_text = " ".join(" ".join(el["text"].split()) for el in route_map.short_route_board(events, cmap, maps).elements
+                          if el["type"] == "text")
+    assert "не сверяют хеши друг с другом" in short_text and "хеш ZIP не доказывает идентичный FBX" in short_text
+    report = REPORT.read_text(encoding="utf-8")
+    assert re.search(r"^- `validate-sintez-input` — .*#1805.*PR #1830", report, re.M)
+    assert re.search(r"^\| `validate-sintez-input` \| открыта \| .*не сверяют хеши", report, re.M)
 
 
 # ---------------------------------------------------------------- red boxes: resolved or explained

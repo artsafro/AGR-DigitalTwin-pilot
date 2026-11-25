@@ -21,7 +21,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 
 | Topic | Rule |
 |---|---|
-| Passport | `jobs/<ID>/passport.json` (K1) is required only on the AGR Tools route until a second route exists; other OKS routes record the same facts in `job.yaml` inputs / REPORT [D247]. |
+| Passport | `jobs/<ID>/passport.json` (K1) is required for every task, on any route; this supersedes the AGR-Tools-only scope of [D247] [D397]. |
 | Budget | PartsList `triangle_budget` is the allocated project budget for NPM/VPM: ≤ 150 000 triangles per OKS FBX per profile [D010/D161]; not the regulation ceiling (VPM 1 000 000), which stays in budgets/QA [D276] |
 | Texel | VPM diffuse 512–1706 px/m [D160]; AGR Tools grid 3.6 m per tile at 1000 px/m [D207] |
 | UDIM | body numbered per mesh from 1001 [D209]; all glass UVs in 1001, no maps on glass [D221] |
@@ -37,7 +37,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 
 | Stage | Route today | Status |
 |---|---|---|
-| Source intake | skill `analyze-architectural-source`, 2D branch: [`dwg_to_dxf.py`](../../tools/methods/body/dwg_to_dxf.py) → [`plan_from_dxf.py`](../../tools/methods/body/plan_from_dxf.py) census/extract; facade schedule: [`facade_openings_from_dxf.py`](../../tools/methods/body/facade_openings_from_dxf.py) | explicit sheet maps/datums; rectangular facade outlines only, no inferred depth or world placement |
+| Source intake | skill `analyze-architectural-source`, 2D branch: [`dwg_to_dxf.py`](../../tools/methods/body/dwg_to_dxf.py) (Blender-only lane: hash-bound DXF derivative checked by [`dxf_intake.py`](../../tools/methods/body/dxf_intake.py), #1857) → [`plan_from_dxf.py`](../../tools/methods/body/plan_from_dxf.py) census/extract; facade schedule: [`facade_openings_from_dxf.py`](../../tools/methods/body/facade_openings_from_dxf.py) | explicit sheet maps/datums; rectangular facade outlines only, no inferred depth or world placement |
 | Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D250]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
 | Materials, UDIM, textures | AGR Tools stages 5–6; `tools/materials/` | partial; texel checked by V009 |
 | Recolour an accepted master | [R1 — colouring](../procedure/node-r1-colouring.md) + the job's approved recipe. AC09 owner: the AC08 v010 recipe via [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py) (`execute`); [`run_building.sh`](../../jobs/TEC26-OKS/AC09/run_building.sh) shows the recipe stages, but running it end to end would rebuild UV and deliver both profiles. See the [AC09 build report](../../jobs/TEC26-OKS/AC09/BUILD_REPORT.md). | First map the specified side to its IDs and texture on a copy. If the existing recipe cannot isolate that side, stop and ask; do not introduce a second recolour script. Read back vertices, IDs and UV against the accepted master and compare the finish with the approved source (AC09: slide 53). For a VPM ZIP request, name both owners in the plan: this AC08 v010 → AC09 recipe for recolour, and `agr package-vpm` (`package_core`) for ZIP after matching `export_meta` and readback; otherwise stop before ZIP. |
@@ -45,6 +45,9 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Master QA before export | `runtime.master_topology(nodes)` in AGR Tools; `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json` for agents (also work FBX / JSON inventory); run beside xView **before** delivery triangulation [D312] | n-gons fail; per-object triangle count/share reported; quads pass; checked Max export refuses a failed master before its triangle snapshot |
 | Export, readback | Max export [D212]; `tools/blender/fbx_readback.py`; `dt qa xview` | proven |
 | Package and checks | `agr package-vpm` ([`tools/derive/package_vpm.py`](../../tools/derive/package_vpm.py) → [`package_core.py`](../../adapters/max/agr_tools/package_core.py)); AGR Tools stage 9; `tools/qa/validate_package.py`; SINTEZ AGR Checker | **STOP before ZIP** without matching `export_meta` for the new FBX. Use the job's export recipe (AC08 v010 [sidecar example](../../jobs/TEC26-OKS/AC08/pilot-v010/export_meta.json), not metadata to copy) and export readback; unpack and read back the actual ZIP for package QA. Validator V001–V013 partial; no package has reached passed=true yet. |
+
+For the OKS trail, prepare the [Step 3 modelling-plan sheet](../procedure/oks-modelling-plan.md)
+from the human-accepted Step 0 split and obtain picture acceptance before modelling.
 
 For body / windows / roof, **after Gate 1**, when **Max is busy**, the offline route
 (`dt_ai.ops` / [VARIANTS R14 kernel-prisms](../methods/building-body/VARIANTS.md)) is permitted only as

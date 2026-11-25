@@ -81,7 +81,7 @@
    "x": 955.0,
    "y": 110,
    "width": 470,
-   "height": 177.5,
+   "height": 212.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffec99",
@@ -106,7 +106,11 @@
     },
     {
      "type": "arrow",
-     "id": "e2fb7c8f9af212b6"
+     "id": "e9ccff5639075e74"
+    },
+    {
+     "type": "arrow",
+     "id": "e43fe1d6effa52ad"
     }
    ],
    "updated": 1,
@@ -119,7 +123,7 @@
    "x": 963.0,
    "y": 120.0,
    "width": 454,
-   "height": 157.5,
+   "height": 192.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -139,13 +143,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); её дубли охраняет карта НПМ\n(contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError",
+   "text": "Общее ядро: номер тайла UDIM\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); Ground передаёт в udim_of_cell\nплотный индекс покрытия [D399], дубли формулы охраняет\nкарта НПМ (contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError\nudim_of_cell: целые (столбец, ряд) -> номер тайла",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e5fc34e422e7f3b2",
-   "originalText": "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); её дубли охраняет карта НПМ\n(contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError",
+   "originalText": "Общее ядро: номер тайла UDIM\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); Ground передаёт в udim_of_cell\nплотный индекс покрытия [D399], дубли формулы охраняет\nкарта НПМ (contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError\nudim_of_cell: целые (столбец, ряд) -> номер тайла",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -153,7 +157,7 @@
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
    "x": 40.0,
-   "y": 347.5,
+   "y": 382.5,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -191,7 +195,7 @@
    "id": "ed4e9eac2280ec03",
    "type": "text",
    "x": 48.0,
-   "y": 357.5,
+   "y": 392.5,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -227,7 +231,7 @@
    "id": "eb4da33cf7db574a",
    "type": "rectangle",
    "x": 650.0,
-   "y": 347.5,
+   "y": 382.5,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -269,7 +273,7 @@
    "id": "e6321df6a0ab0d98",
    "type": "text",
    "x": 658.0,
-   "y": 357.5,
+   "y": 392.5,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -305,7 +309,7 @@
    "id": "e6d720b192cc3ebb",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 347.5,
+   "y": 382.5,
    "width": 470,
    "height": 317.5,
    "angle": 0,
@@ -333,6 +337,10 @@
     {
      "type": "arrow",
      "id": "e77226c36711e551"
+    },
+    {
+     "type": "arrow",
+     "id": "e9ccff5639075e74"
     }
    ],
    "updated": 1,
@@ -343,7 +351,7 @@
    "id": "e594a5e4af19e3bb",
    "type": "text",
    "x": 1268.0,
-   "y": 357.5,
+   "y": 392.5,
    "width": 454,
    "height": 297.5,
    "angle": 0,
@@ -379,7 +387,7 @@
    "id": "e3b32b4a8117835a",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 347.5,
+   "y": 382.5,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -413,7 +421,7 @@
    "id": "e235e3fa5de9ad90",
    "type": "text",
    "x": 1878.0,
-   "y": 357.5,
+   "y": 392.5,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -446,10 +454,80 @@
    "lineHeight": 1.25
   },
   {
+   "id": "e99c9ff8d7aad5df",
+   "type": "rectangle",
+   "x": 1870.0,
+   "y": 574.0,
+   "width": 470,
+   "height": 35.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "#ffc9c9",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": {
+    "type": 3
+   },
+   "seed": 1071397470,
+   "version": 1,
+   "versionNonce": 333385270,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e6464ee46504a376"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false
+  },
+  {
+   "id": "e6464ee46504a376",
+   "type": "text",
+   "x": 1878.0,
+   "y": 584.0,
+   "width": 454,
+   "height": 15.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 775920337,
+   "version": 1,
+   "versionNonce": 88591795,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "Дубли вне владельца: 1",
+   "fontSize": 12,
+   "fontFamily": 2,
+   "textAlign": "left",
+   "verticalAlign": "middle",
+   "containerId": "e99c9ff8d7aad5df",
+   "originalText": "Дубли вне владельца: 1",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
    "id": "ebefb8015300e481",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 725.0,
+   "y": 760.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -476,7 +554,7 @@
     },
     {
      "type": "arrow",
-     "id": "e96d77d38abca637"
+     "id": "e9fcb6d874f2a894"
     }
    ],
    "updated": 1,
@@ -487,7 +565,7 @@
    "id": "ee52b2029f7668ad",
    "type": "text",
    "x": 1268.0,
-   "y": 735.0,
+   "y": 770.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -523,9 +601,9 @@
    "id": "e1aaee826150be1a",
    "type": "rectangle",
    "x": 650.0,
-   "y": 725.0,
+   "y": 760.0,
    "width": 470,
-   "height": 230.0,
+   "height": 335.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -550,7 +628,7 @@
     },
     {
      "type": "arrow",
-     "id": "e96d77d38abca637"
+     "id": "e9fcb6d874f2a894"
     }
    ],
    "updated": 1,
@@ -561,9 +639,9 @@
    "id": "edec5de9abb756a8",
    "type": "text",
    "x": 658.0,
-   "y": 735.0,
+   "y": 770.0,
    "width": 454,
-   "height": 210.0,
+   "height": 315.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -583,13 +661,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (placement/site.py): на профиль\nmaster JSON + (offset или readback) + (FBX или mesh). OBJ\nсборщика напрямую не подключён.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
+   "text": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (src/dt_ai/placement/site.py,\nD329): на профиль master JSON + (offset или readback) +\n(FBX или mesh); OBJ сборщика напрямую не подключён.\nОдобренные исключения (exceptions ->\napply_ground_exceptions в scene.py) привязаны к снимку\nточки и sha256 Ground и пишутся в results.json; новый\nпромах вне Ground (engine_report.json) останавливает\nстрогий прогон в make_plan (выход 1) до инстансирования.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом (point_outside_ground\n/ point_over_ground_hole)\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1aaee826150be1a",
-   "originalText": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (placement/site.py): на профиль\nmaster JSON + (offset или readback) + (FBX или mesh). OBJ\nсборщика напрямую не подключён.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
+   "originalText": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (src/dt_ai/placement/site.py,\nD329): на профиль master JSON + (offset или readback) +\n(FBX или mesh); OBJ сборщика напрямую не подключён.\nОдобренные исключения (exceptions ->\napply_ground_exceptions в scene.py) привязаны к снимку\nточки и sha256 Ground и пишутся в results.json; новый\nпромах вне Ground (engine_report.json) останавливает\nстрогий прогон в make_plan (выход 1) до инстансирования.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом (point_outside_ground\n/ point_over_ground_hole)\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -597,7 +675,7 @@
    "id": "ec200d9f38e404b3",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1015.0,
+   "y": 1155.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -631,7 +709,7 @@
    "id": "e5ab4a0c3613fa92",
    "type": "text",
    "x": 1878.0,
-   "y": 1025.0,
+   "y": 1165.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -667,7 +745,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1224.0,
+   "y": 1364.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -701,7 +779,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 1878.0,
-   "y": 1234.0,
+   "y": 1374.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -737,9 +815,9 @@
    "id": "ef92cdfbed336437",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1015.0,
+   "y": 1155.0,
    "width": 470,
-   "height": 160.0,
+   "height": 282.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -764,11 +842,11 @@
     },
     {
      "type": "arrow",
-     "id": "e2fb7c8f9af212b6"
+     "id": "e43fe1d6effa52ad"
     },
     {
      "type": "arrow",
-     "id": "e49ef418dc53732d"
+     "id": "e892efedd5760cb6"
     }
    ],
    "updated": 1,
@@ -779,9 +857,9 @@
    "id": "ea61552795c00c21",
    "type": "text",
    "x": 1268.0,
-   "y": 1025.0,
+   "y": 1165.0,
    "width": 454,
-   "height": 140.0,
+   "height": 262.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -801,13 +879,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Экспорт Ground отдельно от ZIP\nВладелец: tools/blender/ground_json_to_fbx.py\nинструмент Blender читает JSON-мастер, не OBJ сборщика;\nD366 отдельно требует рабочий FBX с квадами вместе с FBX\nсдачи\n\nbuild: JSON-мастер меша, адрес -> FBX и метаданные\nэкспорта",
+   "text": "Helper экспорта поверхности Ground (отдельно от сводного\nэкспорта участка и ZIP)\nВладелец: tools/blender/ground_json_to_fbx.py\nhelper Blender выгружает только поверхность Ground из\nJSON-мастера, не OBJ сборщика и не сводный экспорт\nучастка после расстановки МАФ и Флоры; канонического\nсборщика участка нет (исторический\njobs/VATUTINO-SITE/assemble_delivery.py — только\nсвидетельство триангулированного FBX сдачи, не маршрут и\nне D366); D366 отдельно требует нетриангулированный\nрабочий FBX рядом с пакетом (вне ZIP)\n\nbuild: JSON-мастер поверхности Ground, адрес -> FBX\nповерхности Ground и метаданные экспорта (не сводный\nэкспорт участка и не рабочий FBX D366)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ef92cdfbed336437",
-   "originalText": "Экспорт Ground отдельно от ZIP\nВладелец: tools/blender/ground_json_to_fbx.py\nинструмент Blender читает JSON-мастер, не OBJ сборщика;\nD366 отдельно требует рабочий FBX с квадами вместе с FBX\nсдачи\n\nbuild: JSON-мастер меша, адрес -> FBX и метаданные\nэкспорта",
+   "originalText": "Helper экспорта поверхности Ground (отдельно от сводного\nэкспорта участка и ZIP)\nВладелец: tools/blender/ground_json_to_fbx.py\nhelper Blender выгружает только поверхность Ground из\nJSON-мастера, не OBJ сборщика и не сводный экспорт\nучастка после расстановки МАФ и Флоры; канонического\nсборщика участка нет (исторический\njobs/VATUTINO-SITE/assemble_delivery.py — только\nсвидетельство триангулированного FBX сдачи, не маршрут и\nне D366); D366 отдельно требует нетриангулированный\nрабочий FBX рядом с пакетом (вне ZIP)\n\nbuild: JSON-мастер поверхности Ground, адрес -> FBX\nповерхности Ground и метаданные экспорта (не сводный\nэкспорт участка и не рабочий FBX D366)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -815,7 +893,7 @@
    "id": "e89f7e0e63e2fdf9",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1319.0,
+   "y": 1497.5,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -849,7 +927,7 @@
    "id": "ef7093cdc86ed328",
    "type": "text",
    "x": 1878.0,
-   "y": 1329.0,
+   "y": 1507.5,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -885,7 +963,7 @@
    "id": "ed319371ca8c4f40",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1528.0,
+   "y": 1706.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -919,7 +997,7 @@
    "id": "e7ce9eed157c440c",
    "type": "text",
    "x": 1878.0,
-   "y": 1538.0,
+   "y": 1716.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -955,9 +1033,9 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1319.0,
+   "y": 1497.5,
    "width": 470,
-   "height": 282.5,
+   "height": 317.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -982,11 +1060,11 @@
     },
     {
      "type": "arrow",
-     "id": "e49ef418dc53732d"
+     "id": "e892efedd5760cb6"
     },
     {
      "type": "arrow",
-     "id": "e1604c8d882fa176"
+     "id": "ef06b28c2269b1c7"
     }
    ],
    "updated": 1,
@@ -997,9 +1075,9 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 1268.0,
-   "y": 1329.0,
+   "y": 1507.5,
    "width": 454,
-   "height": 262.5,
+   "height": 297.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1019,13 +1097,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Упаковка готовых файлов НПМ / ВПМ в ZIP\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "text": "Упаковка готовых файлов НПМ / ВПМ в ZIP\nВладелец: adapters/max/agr_tools/package_core.py\nобщий писатель ZIP сдачи на общем маршруте (_write_zip):\nagr package-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377); исторический обход ZIP Ватутино учтён в\npackage-contexts.yaml (historical), без второй хронологии\nздесь\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1648b9a5855f96c",
-   "originalText": "Упаковка готовых файлов НПМ / ВПМ в ZIP\nВладелец: adapters/max/agr_tools/package_core.py\nединственный писатель ZIP сдачи (_write_zip): agr\npackage-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377)\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
+   "originalText": "Упаковка готовых файлов НПМ / ВПМ в ZIP\nВладелец: adapters/max/agr_tools/package_core.py\nобщий писатель ZIP сдачи на общем маршруте (_write_zip):\nagr package-npm / package-vpm (tools/derive) и AGR Tools\n(#1361, #1377); исторический обход ZIP Ватутино учтён в\npackage-contexts.yaml (historical), без второй хронологии\nздесь\n\nzip_plan: папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и\nпропуски с причиной; файлы не трогает\ncheck_members: члены архива -> плоские безопасные имена;\nплохое имя — ошибка до записи\n_write_zip: папка, архив, цель -> новый ZIP через\n.partial без перезаписи; дубль, пустой вход, изменение во\nвремя упаковки — ошибка\nzip_apply: предпросмотр -> новая папка Сборка_<время>,\nZIP + проверка; ГОТОВО.txt только без провалов",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1033,9 +1111,9 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1661.5,
+   "y": 1875.0,
    "width": 470,
-   "height": 160.0,
+   "height": 405.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -1060,7 +1138,7 @@
     },
     {
      "type": "arrow",
-     "id": "e1604c8d882fa176"
+     "id": "ef06b28c2269b1c7"
     }
    ],
    "updated": 1,
@@ -1071,9 +1149,9 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 1268.0,
-   "y": 1671.5,
+   "y": 1885.0,
    "width": 454,
-   "height": 140.0,
+   "height": 385.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1093,13 +1171,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Проверки Ground, xView, СИНТЕЗ\nВладелец: tools/qa/validate_package.py\nпроверка пакета по регламенту (agr validate)\n\nvalidate_vpm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки ВПМ\nvalidate_npm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки НПМ",
+   "text": "Проверки Ground, xView, СИНТЕЗ\nВладелец: tools/qa/validate_package.py\nпроверка пакета по регламенту (agr validate); ограничение\n--master (не провал сдачи и не допуск): по вызову\nпроверяет рабочий FBX в V003 (twinqa/master.py, с\n--scene) и/или хеш роли в build-манифесте V001, но не\nсравнивает поверхности рабочего и сдаточного FBX;\nсовпадение числа треугольников не доказывает паритет\nповерхности D293; с agr checker (sintez) отчёты\nнезависимы — хеши между инструментами не сверяются, хеш\nZIP не доказывает идентичный FBX (#1805, PR #1830)\n\nvalidate_vpm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки ВПМ\nvalidate_npm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки НПМ\nadd_master: профиль, рабочий FBX (с --scene) -> проверки\nV003 рабочего FBX (twinqa/master.py), без сравнения\nповерхностей со сдаточным FBX\nadd_build_manifest: ZIP, build.json, --master [role=]путь\n-> сверка SHA-256 роли с манифестом в V001, без сравнения\nповерхностей FBX",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e7b912642e1534e2",
-   "originalText": "Проверки Ground, xView, СИНТЕЗ\nВладелец: tools/qa/validate_package.py\nпроверка пакета по регламенту (agr validate)\n\nvalidate_vpm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки ВПМ\nvalidate_npm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки НПМ",
+   "originalText": "Проверки Ground, xView, СИНТЕЗ\nВладелец: tools/qa/validate_package.py\nпроверка пакета по регламенту (agr validate); ограничение\n--master (не провал сдачи и не допуск): по вызову\nпроверяет рабочий FBX в V003 (twinqa/master.py, с\n--scene) и/или хеш роли в build-манифесте V001, но не\nсравнивает поверхности рабочего и сдаточного FBX;\nсовпадение числа треугольников не доказывает паритет\nповерхности D293; с agr checker (sintez) отчёты\nнезависимы — хеши между инструментами не сверяются, хеш\nZIP не доказывает идентичный FBX (#1805, PR #1830)\n\nvalidate_vpm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки ВПМ\nvalidate_npm_zip: имя, файлы ZIP, профиль, стадии ->\nнаходки НПМ\nadd_master: профиль, рабочий FBX (с --scene) -> проверки\nV003 рабочего FBX (twinqa/master.py), без сравнения\nповерхностей со сдаточным FBX\nadd_build_manifest: ZIP, build.json, --master [role=]путь\n-> сверка SHA-256 роли с манифестом в V001, без сравнения\nповерхностей FBX",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1107,7 +1185,7 @@
    "id": "ec869757a061c16a",
    "type": "arrow",
    "x": 510.0,
-   "y": 453.75,
+   "y": 488.75,
    "width": 630.0,
    "height": 126.25,
    "angle": 0,
@@ -1179,7 +1257,7 @@
    "id": "ed73a221f4369e6d",
    "type": "text",
    "x": 825.0,
-   "y": 318.75,
+   "y": 353.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1215,7 +1293,7 @@
    "id": "e77226c36711e551",
    "type": "arrow",
    "x": 1120.0,
-   "y": 453.75,
+   "y": 488.75,
    "width": 630.0,
    "height": 178.75,
    "angle": 0,
@@ -1287,7 +1365,7 @@
    "id": "ed977eb5248da36a",
    "type": "text",
    "x": 1435.0,
-   "y": 318.75,
+   "y": 353.75,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1320,12 +1398,12 @@
    "lineHeight": 1.25
   },
   {
-   "id": "e2fb7c8f9af212b6",
+   "id": "e9ccff5639075e74",
    "type": "arrow",
    "x": 1425.0,
-   "y": 198.75,
+   "y": 216.25,
    "width": 325.0,
-   "height": 896.25,
+   "height": 325.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1337,14 +1415,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 928189571,
+   "seed": 1190039195,
    "version": 1,
-   "versionNonce": 1986346823,
+   "versionNonce": 1028968239,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "ed08ab0fd06cdcfe"
+     "id": "ecca7d1b588cd90d"
     }
    ],
    "updated": 1,
@@ -1361,19 +1439,127 @@
     ],
     [
      20.0,
-     128.75
+     146.25
     ],
     [
      325.0,
-     128.75
+     146.25
     ],
     [
      325.0,
-     896.25
+     325.0
     ],
     [
      305.0,
-     896.25
+     325.0
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e5fc34e422e7f3b2",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e6d720b192cc3ebb",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "ecca7d1b588cd90d",
+   "type": "text",
+   "x": 1537.5,
+   "y": 327.5,
+   "width": 120,
+   "height": 70.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 8280504,
+   "version": 1,
+   "versionNonce": 838685144,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "номер тайла по\nплотному\nиндексу\nпокрытия",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e9ccff5639075e74",
+   "originalText": "номер тайла по\nплотному\nиндексу\nпокрытия",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e43fe1d6effa52ad",
+   "type": "arrow",
+   "x": 1425.0,
+   "y": 216.25,
+   "width": 325.0,
+   "height": 1080.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 488114568,
+   "version": 1,
+   "versionNonce": 635371826,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e04ef367d2eaca64"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     146.25
+    ],
+    [
+     325.0,
+     146.25
+    ],
+    [
+     325.0,
+     1080.0
+    ],
+    [
+     305.0,
+     1080.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1392,10 +1578,10 @@
    }
   },
   {
-   "id": "ed08ab0fd06cdcfe",
+   "id": "e04ef367d2eaca64",
    "type": "text",
    "x": 1690.0,
-   "y": 688.0,
+   "y": 723.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1409,9 +1595,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1645648359,
+   "seed": 147246243,
    "version": 1,
-   "versionNonce": 1373043822,
+   "versionNonce": 858080957,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1422,16 +1608,16 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e2fb7c8f9af212b6",
+   "containerId": "e43fe1d6effa52ad",
    "originalText": "проверка тайлов\nпри чтении FBX",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e96d77d38abca637",
+   "id": "e9fcb6d874f2a894",
    "type": "arrow",
    "x": 1120.0,
-   "y": 840.0,
+   "y": 927.5,
    "width": 630.0,
    "height": 108.75,
    "angle": 0,
@@ -1445,14 +1631,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 10319178,
+   "seed": 827851703,
    "version": 1,
-   "versionNonce": 1484333862,
+   "versionNonce": 281777646,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e951072e6227931e"
+     "id": "e606743a0a5c527f"
     }
    ],
    "updated": 1,
@@ -1469,19 +1655,19 @@
     ],
     [
      20.0,
-     82.5
+     30.0
     ],
     [
      630.0,
-     82.5
+     30.0
     ],
     [
      630.0,
-     -26.25
+     -78.75
     ],
     [
      610.0,
-     -26.25
+     -78.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1500,10 +1686,10 @@
    }
   },
   {
-   "id": "e951072e6227931e",
+   "id": "e606743a0a5c527f",
    "type": "text",
    "x": 1385.0,
-   "y": 905.0,
+   "y": 940.0,
    "width": 120,
    "height": 35.0,
    "angle": 0,
@@ -1517,9 +1703,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 873904759,
+   "seed": 1004748457,
    "version": 1,
-   "versionNonce": 1381209312,
+   "versionNonce": 1261872362,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1530,18 +1716,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e96d77d38abca637",
+   "containerId": "e9fcb6d874f2a894",
    "originalText": "точки МАФ /\nФлоры",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e49ef418dc53732d",
+   "id": "e892efedd5760cb6",
    "type": "arrow",
    "x": 1730.0,
-   "y": 1095.0,
+   "y": 1296.25,
    "width": 20.0,
-   "height": 365.25,
+   "height": 360.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1553,14 +1739,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 386328247,
+   "seed": 241513274,
    "version": 1,
-   "versionNonce": 1095360113,
+   "versionNonce": 189470553,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "ee0c75cde296e8e3"
+     "id": "ee26260c213f2aaf"
     }
    ],
    "updated": 1,
@@ -1577,11 +1763,11 @@
     ],
     [
      20.0,
-     365.25
+     360.0
     ],
     [
      0.0,
-     365.25
+     360.0
     ]
    ],
    "lastCommittedPoint": null,
@@ -1600,10 +1786,10 @@
    }
   },
   {
-   "id": "ee0c75cde296e8e3",
+   "id": "ee26260c213f2aaf",
    "type": "text",
    "x": 1690.0,
-   "y": 1268.88,
+   "y": 1467.5,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1617,9 +1803,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1773090309,
+   "seed": 196002879,
    "version": 1,
-   "versionNonce": 20235557,
+   "versionNonce": 1685203439,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1630,18 +1816,18 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e49ef418dc53732d",
+   "containerId": "e892efedd5760cb6",
    "originalText": "готовые FBX",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "e1604c8d882fa176",
+   "id": "ef06b28c2269b1c7",
    "type": "arrow",
    "x": 1730.0,
-   "y": 1460.25,
+   "y": 1656.25,
    "width": 20.0,
-   "height": 281.25,
+   "height": 421.25,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1653,14 +1839,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 495887704,
+   "seed": 183840072,
    "version": 1,
-   "versionNonce": 1635596984,
+   "versionNonce": 1335169232,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e9e619527c57941d"
+     "id": "e327664fba660664"
     }
    ],
    "updated": 1,
@@ -1677,11 +1863,11 @@
     ],
     [
      20.0,
-     281.25
+     421.25
     ],
     [
      0.0,
-     281.25
+     421.25
     ]
    ],
    "lastCommittedPoint": null,
@@ -1700,10 +1886,10 @@
    }
   },
   {
-   "id": "e9e619527c57941d",
+   "id": "e327664fba660664",
    "type": "text",
    "x": 1690.0,
-   "y": 1592.12,
+   "y": 1858.12,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1717,9 +1903,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 866633627,
+   "seed": 933886980,
    "version": 1,
-   "versionNonce": 1759562190,
+   "versionNonce": 709759526,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1730,7 +1916,7 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "e1604c8d882fa176",
+   "containerId": "ef06b28c2269b1c7",
    "originalText": "ZIP / FBX сдачи",
    "autoResize": true,
    "lineHeight": 1.25

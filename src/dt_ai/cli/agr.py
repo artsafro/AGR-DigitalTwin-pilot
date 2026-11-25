@@ -26,6 +26,7 @@ SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validat
            "checker": "tools/qa/sintez_checker.py", "build-manifest": "tools/derive/build_manifest.py",
            "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py",
            "railing": "tools/blender/railing.py",
+           "trainer": "tools/trainer/trainer.py",  # #1855 [D387]: etalon bank, practice run, score, ledger
            "library": "tools/library/publish.py",  # #1743: publish|accept|reject [D372, D368-D371]
            # open-review (#1740): skeleton stage review-scene; copy to C:/x/review-<job>/, new Max 2026 or Blender
            "open-review": "tools/open_review_scene.py"}
@@ -108,7 +109,7 @@ def _dispatch(args: list[str]) -> int:
         tail = args[1:]
         if tail in (["--help"], ["-h"]):
             print("usage: agr vpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
-                  "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --master MASTER --recipe-dir RECIPE)\n"
+                  "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --master MASTER [--kpp-spec KPP.json])\n"
                   "NPM_ARGS: dt derive npm --help (MASTER SPEC ATLAS NEW_EXPORT PREFIX)\n"
                   "No rollback; existing tools own their contracts. After npm, the NPM UV readback (#1580,\n"
                   "python -m twinqa.npm_uv) checks the exported FBX named in NEW_EXPORT/../export_npm_meta.json\n"

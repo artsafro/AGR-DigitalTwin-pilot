@@ -64,6 +64,16 @@ def statuses(found, stage):
     return {f.name: f.status for f in found[stage]}
 
 
+@pytest.mark.parametrize("tiles, expected", [((1001, 1002, 1003), "pass"), ((1001, 1003), "fail"),
+                                            ((1002, 1003), "fail"), ((), "fail"), ((1001, 1101), "fail")])
+def test_v008_ground_readback_tile_sequence(tiles, expected):
+    found = scene_findings(rb(mesh(name="SM_Test_Ground", tiles=tiles),
+                              mesh(name="SM_Test_GroundGlass", tiles=(1001,)),
+                              mesh(name="UCX_SM_Test_Ground_001", uv=0, tiles=())),
+                           "vpm", "ground", PROFILES.vpm)
+    assert statuses(found, "V008")["Ground UV tile sequence"] == expected
+
+
 @pytest.mark.parametrize("uv, expected", [(1, "pass"), (0, "fail"), (2, "fail")])
 def test_v008_uv_contract_excludes_collision_only(uv, expected):
     """Ground UCX has no UV by design; render meshes still require exactly one channel."""

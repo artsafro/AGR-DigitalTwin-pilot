@@ -1,6 +1,8 @@
 # Manual mode without AI: chunk inventory (#1374)
 
-Status: inventory only, 2026-11-15 (finish-or-close audit of #1374). Nothing here is implemented by this note; the
+Status: done (2026-11-24)
+
+Inventory only, 2026-11-15 (finish-or-close audit of #1374). Nothing here is implemented by this note; the
 gaps are filed as issues. Synthetic data: none.
 
 Requirement (Artem 2026-11-14, #1374, voice, summarized): every pipeline chunk worked out with agents must be usable
