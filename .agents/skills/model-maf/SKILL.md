@@ -52,8 +52,8 @@ disagree. Lamps on lighting layers are MAF-24 geometry only.
 
 ### Step 2 — Pick from the library
 
-The entry point is the audited catalogue `library/maf/catalogue.json`
-([#183](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/183)): `spec_matches` are dimension-only
+The entry point is the published catalogue `library/published/catalogue.json` (look up through `maf_unified.json`); the audited `library/maf/catalogue.json` is only the legacy record
+([#183](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/183)). `spec_matches` are dimension-only
 candidates, `npm_matches` are NPM .blend candidates, and previews plus per-MAF .max/FBX paths sit outside git. A
 dimension candidate is not a match: compare the preview with the specification picture (construction, shape). Where
 the catalogue does not reach (a new library scene, a missing entry): visual selection in a copy of the user's
@@ -92,7 +92,7 @@ share of [D097]), make a light version: fewer segments, simpler round parts, unt
 times the instances from Step 1. Prefer an existing NPM candidate (`npm_matches`). The silhouette stays (MAF-03).
 The light version goes back through Step 4.
 
-- Route: 3ds Max batch (ProOptimizer or segment edits on a copy) or Blender headless (Decimate or rebuilt primitives).
+- Route: 3ds Max batch (segment edits on a copy) or Blender headless (Decimate or rebuilt primitives).
 - Needs: headless, no tool yet; human for the silhouette look.
 - Done when: a table MAF -> tris full / light -> instances -> total against the MAF share, and the NPM total under the budget.
 

@@ -1,6 +1,6 @@
 # MAF library material IDs
 
-Active list: [`material_ids_v007.json`](material_ids_v007.json) (approved-v1, 2026-11-10 [D240]; raised to v007 [D400]).
+Active list: [`material_ids_v007.json`](material_ids_v007.json) (approved-v1, 2026-11-10 [D240]; raised to v007 [D401]).
 `material_ids.json` is a pointer at that file and its sha256. Nothing is reassigned in the library scenes.
 
 v005 is the first working version; v006 adds ID 32 `wood_hpl_satin` (D229), v007 adds ID 33 `wood_pine` [D240]. Corrections only from project use, and each change is a new version with a changelog line. Items still marked «на проверку» stay flagged (HDPE container on id 10, HPL «атласное дерево» on id 14). The human-readable twin is [`material_ids_v007.md`](material_ids_v007.md).
