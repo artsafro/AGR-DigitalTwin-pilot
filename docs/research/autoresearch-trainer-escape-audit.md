@@ -130,3 +130,10 @@ Process probes (`Get-CimInstance`/`Get-Process`) appear in every labelled run (2
    only E93-clean runs (#92 next target).
 3. 63B scope: the bank task text gives no floor range and the key is a 5-run belt stack (`stack63b.py`); ask the bank
    owner whether 63B stage 1 is the whole +4.65..+51.90 stack before any `bounds` research.
+
+## Checks
+
+- `uv run --frozen python docs/research/trainer-escape-r93/audit.py --selftest` — selftest ok 9.
+- Affected tests: `uv run --frozen pytest -q tests/tools/test_trainer.py` — 73 passed (no product code changed).
+- `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 559 passed, `repo_guards: GREEN`.
+- Full suite: deferred to merge batch (rule 68).
