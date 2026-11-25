@@ -35,7 +35,11 @@ COLORS = {"04_cassette_fin_RAL8023": (0.55, 0.30, 0.20, 1), "05_cw_structural_RA
           "10_mesh_20_RAL9003": (0.45, 0.62, 0.50, 1), "12_frame_RAL9003": (0.95, 0.95, 0.93, 1),
           "14_flashing_RAL7016": (0.22, 0.24, 0.26, 1), "M_Glass_01": (0.62, 0.82, 0.86, 1),
           "13_decor_relief_RAL9003": (0.97, 0.96, 0.92, 1), "15_roof_hatch_RAL7016": (0.25, 0.27, 0.30, 1),
-          "16_pier_facade": (0.80, 0.78, 0.74, 1)}
+          "16_pier_facade": (0.80, 0.78, 0.74, 1),
+          # v008 (plan #1896): openings and roof decks moved out of the body keep the v007 body colours (same picture)
+          "17_window_glass": (0.25, 0.45, 0.65, 1), "18_door_glass": (0.20, 0.38, 0.55, 1),
+          "19_curtain_glass": (0.30, 0.50, 0.68, 1), "20_stemalit_texture": (0.35, 0.40, 0.45, 1),
+          "21_roof_deck_RAL7016": (0.45, 0.45, 0.47, 1)}
 
 
 def geo_hash(ob):

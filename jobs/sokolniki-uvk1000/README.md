@@ -164,3 +164,28 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet7 <renders7> <ren
 - 3ds Max was not run: native Max checks `not measured`. Evidence:
   `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step3-insets-v007/` (`sok-step3-v007.pdf` 35 sheets: summary, table 1,
   27 facades v006 | v007 | Revit, 5 close-ups C1-C5, iso; `SHA256SUMS.txt`). Waiting for Artem's picture approval.
+
+### v008 — strictly by the accepted modelling plan sokolniki-v002 (#1896)
+
+Artem 2026-11-25 accepted the scene split v004 and the modelling plan `sokolniki-v002` (decision row comes with
+PR #1899, id pending renumber). v008 follows every plan row (geometry / inset / texture / not shown):
+
+```
+uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py C:/x/ev_1784/step3/revit_obb_v007.json C:/x/ev_1784/step2/volume-lines-v002.json <build-v008> --body-config jobs/sokolniki-uvk1000/body_config_v007.json --plan "G:/Мой диск/AGR-evidence/1896-oks-modelling-plan/sokolniki-v002/modelling_plan.json" --dump "G:/Мой диск/AGR-evidence/1867-scene-prepare/sokolniki-v004/dump.json" --body-meshes <build-v007-body>/meshes.json
+blender44 ... tools/methods/body/volume_body_blender.py -- <build-v008>/body_meshes.json <build-v008>/body
+blender44 ... hooks/inset_write_blender.py -- <build-v008>/body/body.blend <build-v008>/insets_meshes.json <build-v008> v008
+uv run dt qa xview <build-v008>/body_v008_quad.fbx --out <build-v008>/xview_quad.json --profile NPM
+blender44 ... hooks/inset_write_blender.py -- render <build-v008>/body_v008.blend C:/x/ev_1784/step3/views_v007.json <renders> v008
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet8 <renders> "<renders7>;<renders>;<v007 closeups>" C:/x/ev_1784/step3/views_v007.json <build-v008> <modelling_plan.json> <new.pdf>
+```
+
+- `--plan` drops every Revit object whose verdict is texture / not shown (1 decor panel [2284113] of layer 09,
+  640 + 98 curtain glass, 11 piers, 147 BM slats); the F05 ground glazing is built from 89 panels instead of 129.
+- `--body-meshes` moves the v007 body's WINDOW faces (Windows 362, Doors 20, Glazing 2, by the nearest planned Revit
+  object) and the 4 ROOF decks into own inset objects, not welded to the body; body + insets face multiset = body v007.
+- Mullions and stemalit = texture; railings NOT built (own card t_086564bb). Budget: body 8 099 + insets 18 510 =
+  26 609 triangles (plan ~40 000). xView NPM 0/0/0 PASS; Max not measured.
+- Open for Artem: 4 of 232 windows, 17 of 33 doors and ~598 of 885 curtain-wall glass panels (F05 has 287) have no
+  opening in the accepted body (e.g. F01): an inset needs an opening, i.e. a body change.
+- Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step3-insets-v008/` (`sok-step3-v008.pdf` 37 sheets:
+  summary, 3 table sheets plan verdict -> v008, 27 facades v007 | v008 | Revit, 5 close-ups, iso; `SHA256SUMS.txt`).

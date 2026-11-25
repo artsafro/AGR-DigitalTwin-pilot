@@ -297,3 +297,77 @@ def test_census_rows_count_every_object_and_keep_unclassified():
     by = {r['family']: r for r in rows}
     assert by['Люк выхода на кровлю']['v007'] == '3' and by['Неизвестное']['decision'] == 'не классифицировано'
     assert sum(r['count'] for r in rows) == 5
+
+
+# v008 (plan #1896): build strictly by the accepted modelling plan sokolniki-v002 (synthetic plan / body / dump below).
+PLAN = {'rows': [
+    {'layer': '05_ДЕКОР', 'family': 'Панель фасадная 2 Фигурная', 'representation': 'inset', 'objects': ['P1', 'P2']},
+    {'layer': '09_ВНУТРЕННЕЕ_НЕ_В_МОДЕЛЬ', 'family': 'Панель фасадная 2 Фигурная', 'representation': 'not_shown',
+     'objects': ['P3']},
+    {'layer': '04_ВИТРАЖИ', 'family': 'Системная панель ADSK_Cтемалит_25', 'representation': 'texture',
+     'objects': ['G9']},
+    {'layer': '02_ОКНА', 'family': 'WB_Окно_1Створка', 'representation': 'inset', 'objects': ['W1']},
+    {'layer': '03_ДВЕРИ', 'family': 'AC_ДверьВитражная', 'representation': 'inset', 'objects': ['DR1']},
+    {'layer': '04_ВИТРАЖИ', 'family': 'Системная панель ADSK_Cтеклопак', 'representation': 'inset',
+     'objects': ['G1']}]}
+
+
+def test_plan_filter_drops_texture_and_not_shown_objects():
+    objs = [{'name': n, 'family': f} for n, f in (('P1', 'decor_panel'), ('P2', 'decor_panel'), ('P3', 'decor_panel'),
+                                                   ('G9', 'curtain_glass'), ('X', 'mesh'))]
+    kept, dropped = ib.plan_filter(objs, ib.plan_verdicts(PLAN))
+    assert [o['name'] for o in kept] == ['P1', 'P2', 'X']
+    assert dropped['decor_panel'] == {'not_shown': 1} and dropped['curtain_glass'] == {'texture': 1}
+    assert dropped['_unplanned'] == ['X']
+
+
+def _body():
+    # one volume: a 10 x 10 x 3 box-ish strip: 2 wall quads, 1 window quad and 1 door quad in the y=0 face, 1 roof
+    v = [[0, 0, 0], [4, 0, 0], [4, 0, 3], [0, 0, 3], [6, 0, 0], [6, 0, 3], [8, 0, 0], [8, 0, 3], [10, 0, 0], [10, 0, 3],
+         [0, 10, 3], [10, 10, 3]]
+    f = [([0, 1, 2, 3], 'WALL'), ([1, 4, 5, 2], 'WINDOW'), ([4, 6, 7, 5], 'WALL'), ([6, 8, 9, 7], 'WINDOW'),
+         ([3, 2, 5, 7, 9, 11, 10], 'ROOF')]
+    return {'A': {'body': {'verts': v, 'faces': [{'v': ids, 'mat': m, 'uv': [[0, 0]] * len(ids)} for ids, m in f]}}}
+
+
+DUMP = [{'name': 'W1', 'hull': [[4.1, -0.2], [5.9, -0.2], [5.9, 0.2], [4.1, 0.2]], 'z': [0.5, 2.5]},
+        {'name': 'DR1', 'hull': [[8.1, -0.2], [9.9, -0.2], [9.9, 0.2], [8.1, 0.2]], 'z': [0.0, 2.4]},
+        {'name': 'G1', 'hull': [[30, 30], [31, 30], [31, 31]], 'z': [0, 3]},
+        {'name': 'P1', 'hull': [[4.5, -0.3], [5.5, -0.3], [5.5, 0.0]], 'z': [0, 3]}]
+
+
+def test_partition_moves_window_and_roof_faces_out_of_the_body_unwelded():
+    pcfg = CFG['partition']
+    body, insets, rep = ib.partition_body(_body(), DUMP, ib.plan_verdicts(PLAN), pcfg)
+    assert {f['mat'] for f in body['A']['body']['faces']} == {'WALL'}
+    assert rep['multiset_equal'] and rep['faces_moved'] == 3 and rep['unmatched'] == 0
+    win, door = pcfg['classes'][0], pcfg['classes'][1]
+    assert win['layer'] == '02' and door['layer'] == '03'
+    assert len(insets[win['object']]['faces']) == 1 and len(insets[door['object']]['faces']) == 1
+    assert insets[win['object']]['faces'][0]['mat'] == win['material']
+    roof = insets[pcfg['ROOF']['object']]
+    assert len(roof['faces']) == 1 and len(roof['faces'][0]['v']) == 7
+    # own vertices: the body keeps only wall vertices, the inset objects get their own copies
+    assert len(body['A']['body']['verts']) == 8
+
+
+def test_partition_counts_revit_openings_with_a_body_face():
+    dump = DUMP + [{'name': 'W2', 'hull': [[50, 50], [51, 50], [51, 51]], 'z': [0, 3]}]
+    plan = {'rows': PLAN['rows'] + [{'layer': '02_ОКНА', 'family': 'WB_Окно_1Створка', 'representation': 'inset',
+                                     'objects': ['W2']}]}
+    _, _, rep = ib.partition_body(_body(), dump, ib.plan_verdicts(plan), CFG['partition'])
+    assert rep['revit_with_opening']['02'] == {'matched': 1, 'planned': 2}  # W2 has no opening in the body
+
+
+def test_plan_rows_follow_every_plan_row_and_flag_railings():
+    plan = {'rows': PLAN['rows'] + [{'layer': '06_ОГРАЖДЕНИЯ', 'family': 'Ограждение', 'representation': 'geometry',
+                                     'objects': ['R1']}]}
+    rep = {'families': {'decor_panel': {'faces': 20}, 'f05_glazing': {'revit_panels': 5, 'faces': 3},
+                        'f05_ground': {'glass_panels': 2, 'bays': [[0, 1]]}}, 'objects': {}, 'merged_runs': {},
+           'partition': {'by_class': {'17_window_glass': 3}, 'revit_with_opening': {'02': {'matched': 1, 'planned': 2}}}}
+    rows = sh.plan_rows(plan, rep)
+    assert len(rows) == len(plan['rows'])
+    by = {(r['layer'][:2], r['plan']): r for r in rows}
+    assert by[('05', 'вставка')]['v008'].endswith('2 тел рельефа') and by[('09', 'не показывать')]['ok']
+    assert not by[('06', 'геометрия')]['ok']
+    assert '1 из 2' in by[('02', 'вставка')]['v008']

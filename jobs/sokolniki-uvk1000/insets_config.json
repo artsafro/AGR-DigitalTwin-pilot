@@ -349,5 +349,51 @@
   "glass_material": "05_cw_structural_RAL7016",
   "pier_zmax_min": 7.4,
   "pier_piece_max_m": 1.2
+ },
+ "partition": {
+  "_comment": "v008 (plan #1896): plan sokolniki-v002 - windows, doors, curtain-wall glass and the roof decks are insets (own objects, not welded to the body); the body v007 faces move as they are (face multiset proof). WINDOW faces go to the class of the nearest split-v004 object (2D hull distance + z gap) within tol_m. Mullions ('импост', texture) mark curtain-wall glass; 'темалит' panels keep the opening plane with the stemalit texture material.",
+  "tol_m": 1.0,
+  "fallback": 2,
+  "ROOF": {
+   "object": "SM_Sokolniki_OKS_Roof",
+   "material": "21_roof_deck_RAL7016"
+  },
+  "classes": [
+   {
+    "layer": "02",
+    "rep": "inset",
+    "family_has": "Окно",
+    "object": "SM_Sokolniki_OKS_Windows",
+    "material": "17_window_glass"
+   },
+   {
+    "layer": "03",
+    "rep": "inset",
+    "family_has": "",
+    "object": "SM_Sokolniki_OKS_Doors",
+    "material": "18_door_glass"
+   },
+   {
+    "layer": "04",
+    "rep": "inset",
+    "family_has": "",
+    "object": "SM_Sokolniki_OKS_Glazing",
+    "material": "19_curtain_glass"
+   },
+   {
+    "layer": "04",
+    "rep": "texture",
+    "family_has": "темалит",
+    "object": "SM_Sokolniki_OKS_Glazing",
+    "material": "20_stemalit_texture"
+   },
+   {
+    "layer": "04",
+    "rep": "texture",
+    "family_has": "импост",
+    "object": "SM_Sokolniki_OKS_Glazing",
+    "material": "19_curtain_glass"
+   }
+  ]
  }
 }

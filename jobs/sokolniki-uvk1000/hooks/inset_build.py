@@ -776,10 +776,146 @@ def f05_ground(objs, vl, g, sill):
     return pm, gm, rep
 
 
-def build(obb, vl, cfg, body_cfg):
+def plan_verdicts(plan):
+    """{Revit object name: (layer prefix, plan family, representation)} of an accepted modelling plan (plan #1896)."""
+    out = {}
+    for r in plan["rows"]:
+        for n in r["objects"]:
+            out[n] = (r["layer"][:2], r["family"], r["representation"])
+    return out
+
+
+def plan_filter(objs, verdicts):
+    """Keep the Revit objects the plan shows as geometry/inset; drop texture / not_shown ones (counted per family).
+    Objects the plan does not list are kept and named under `_unplanned` (the plan covers the whole split)."""
+    kept = []
+    dropped: dict = {"_unplanned": []}
+    for o in objs:
+        v = verdicts.get(o["name"])
+        if v is None:
+            dropped["_unplanned"].append(o["name"])
+            kept.append(o)
+        elif v[2] in ("inset", "geometry"):
+            kept.append(o)
+        else:
+            d = dropped.setdefault(o["family"], {})
+            d[v[2]] = d.get(v[2], 0) + 1
+    return kept, dropped
+
+
+def _hull_dist(p, ring):
+    """2D distance from p to a polygon (0 inside)."""
+    inside = False
+    for i in range(len(ring)):
+        a, b = ring[i], ring[(i + 1) % len(ring)]
+        if (a[1] > p[1]) != (b[1] > p[1]) and p[0] < a[0] + (p[1] - a[1]) * (b[0] - a[0]) / (b[1] - a[1]):
+            inside = not inside
+    if inside:
+        return 0.0
+    best = float("inf")
+    for i in range(len(ring)):
+        a, b = ring[i], ring[(i + 1) % len(ring)]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        ll = dx * dx + dy * dy
+        k = 0.0 if ll == 0 else max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / ll))
+        best = min(best, math.hypot(p[0] - a[0] - k * dx, p[1] - a[1] - k * dy))
+    return best
+
+
+def _canon_face(verts, ids):
+    pts = [tuple(round(x, 4) for x in verts[i]) for i in ids]
+    k = pts.index(min(pts))
+    return tuple(pts[k:] + pts[:k])
+
+
+def partition_body(body, dump_objs, verdicts, pcfg):
+    """v008 (plan #1896): move the body's WINDOW faces (by the nearest planned window / door / curtain-wall object) and ROOF
+    faces into own inset objects. Faces keep their vertices, winding and UVs; each target object gets its own vertex
+    copies (no weld to the body). Returns (new body meshes, inset meshes, report with the face-multiset proof)."""
+    classes = pcfg["classes"]
+    cands = []
+    for o in dump_objs:
+        v = verdicts.get(o["name"])
+        if v is None:
+            continue
+        for ci, c in enumerate(classes):
+            if v[0] == c["layer"] and v[2] == c["rep"] and c.get("family_has", "") in v[1]:
+                cands.append((ci, o))
+                break
+    insets, new_body = {}, {}
+    rep = {"faces_moved": 0, "unmatched": 0, "by_class": {}, "volumes": {}}
+    remap = {}
+
+    def put(obj, verts, f, mat):
+        m = insets.setdefault(obj, {"verts": [], "faces": []})
+        idx = remap.setdefault(obj, {})
+        ids = []
+        for i in f["v"]:
+            key = (id(verts), i)
+            if key not in idx:
+                idx[key] = len(m["verts"])
+                m["verts"].append(list(verts[i]))
+            ids.append(idx[key])
+        m["faces"].append({"v": ids, "mat": mat, "uv": f["uv"]})
+
+    before, after, seen = [], [], {}
+    for vol in sorted(body):
+        b = body[vol]["body"]
+        verts = b["verts"]
+        keep, vmap, kv = [], {}, []
+        moved = 0
+        for f in b["faces"]:
+            before.append(_canon_face(verts, f["v"]))
+            if f["mat"] == "ROOF":
+                put(pcfg["ROOF"]["object"], verts, f, pcfg["ROOF"]["material"])
+            elif f["mat"] == "WINDOW":
+                pts = [verts[i] for i in f["v"]]
+                c = [sum(p[k] for p in pts) / len(pts) for k in range(3)]
+                best, bc, bo = pcfg["tol_m"], None, None
+                for ci, o in cands:
+                    d = _hull_dist(c, o["hull"]) + max(0.0, o["z"][0] - c[2], c[2] - o["z"][1])
+                    if d <= best:
+                        best, bc, bo = d, ci, o["name"]
+                if bo is not None and classes[bc]["rep"] == "inset":
+                    seen.setdefault(classes[bc]["layer"], set()).add(bo)
+                if bc is None:
+                    rep["unmatched"] += 1
+                    bc = pcfg["fallback"]
+                cl = classes[bc]
+                rep["by_class"][cl["material"]] = rep["by_class"].get(cl["material"], 0) + 1
+                put(cl["object"], verts, f, cl["material"])
+            else:
+                ids = []
+                for i in f["v"]:
+                    if i not in vmap:
+                        vmap[i] = len(kv)
+                        kv.append(verts[i])
+                    ids.append(vmap[i])
+                keep.append(dict(f, v=ids))
+                after.append(_canon_face(kv, ids))
+                continue
+            moved += 1
+        rep["volumes"][vol] = {"faces_before": len(b["faces"]), "faces_moved": moved}
+        rep["faces_moved"] += moved
+        new_body[vol] = dict(body[vol], body={"verts": kv, "faces": keep})
+    for m in insets.values():
+        after.extend(_canon_face(m["verts"], f["v"]) for f in m["faces"])
+    rep["multiset_equal"] = sorted(before) == sorted(after)
+    # planned inset Revit objects per layer that got at least one opening face (openings missing in
+    # the accepted body cannot get an inset without changing the body)
+    rep["revit_with_opening"] = {lay: {"matched": len(seen.get(lay, ())),
+                                       "planned": len({o["name"] for ci, o in cands
+                                                        if classes[ci]["layer"] == lay and classes[ci]["rep"] == "inset"})}
+                                 for lay in sorted({c["layer"] for c in classes if c["rep"] == "inset"})}
+    return new_body, insets, rep
+
+
+def build(obb, vl, cfg, body_cfg, verdicts=None):
     fams = cfg["families"]
     meshes, report = {}, {"families": {}, "decisions": []}
     objs = obb["objects"]
+    if verdicts is not None:
+        objs, report["plan_dropped"] = plan_filter(objs, verdicts)
     cx = sum(o["center"][0] for o in objs) / len(objs)
     cy = sum(o["center"][1] for o in objs) / len(objs)
     cc = cfg["cage"]
@@ -853,6 +989,14 @@ def build(obb, vl, cfg, body_cfg):
         report["families"]["f05_ground"] = dict(grep_, objects=[g["pier_object"], g["glass_object"]],
                                                 faces=len(pm.faces) + len(gg.faces))
     out = {k: m.as_dict() for k, m in meshes.items()}
+    totals(out, report)
+    report["decisions"] = cfg.get("decisions", [])
+    return out, report
+
+
+def totals(out, report):
+    """Per object verts / faces / tris / non-quads and the total, into report (recomputed after a partition)."""
+    report["objects"] = {}
     tot = {"faces": 0, "tris": 0, "non_quads": 0}
     for k, m in out.items():
         nq = sum(1 for fc in m["faces"] if len(fc["v"]) != 4)
@@ -863,8 +1007,6 @@ def build(obb, vl, cfg, body_cfg):
         tot["tris"] += tr
         tot["non_quads"] += nq
     report["total"] = tot
-    report["decisions"] = cfg.get("decisions", [])
-    return out, report
 
 
 def main(argv=None):
@@ -874,6 +1016,9 @@ def main(argv=None):
     ap.add_argument("out")
     ap.add_argument("--config", default=os.path.join(JOB, "insets_config.json"))
     ap.add_argument("--body-config", default=os.path.join(JOB, "body_config_v005.json"))
+    ap.add_argument("--plan", help="v008 (plan #1896): accepted modelling_plan.json; texture / not_shown objects are dropped")
+    ap.add_argument("--dump", help="v008: split dump.json (hull + z per Revit object) for the opening partition")
+    ap.add_argument("--body-meshes", help="v008: body meshes.json whose WINDOW / ROOF faces become insets")
     a = ap.parse_args(argv)
     if os.path.exists(os.path.join(a.out, "insets_meshes.json")):
         print("refused: %s already has insets_meshes.json" % a.out, file=sys.stderr)
@@ -887,13 +1032,38 @@ def main(argv=None):
             cfg = json.load(fh)
         with open(a.body_config, encoding="utf-8") as fh:
             body_cfg = json.load(fh)
-        meshes, report = build(obb, vl, cfg, body_cfg)
+        verdicts = None
+        if a.plan:
+            with open(a.plan, encoding="utf-8") as fh:
+                verdicts = plan_verdicts(json.load(fh))
+        meshes, report = build(obb, vl, cfg, body_cfg, verdicts)
+        new_body = None
+        if a.body_meshes:
+            if not (verdicts and a.dump):
+                raise ValueError("--body-meshes needs --plan and --dump")
+            with open(a.body_meshes, encoding="utf-8") as fh:
+                body = json.load(fh)
+            with open(a.dump, encoding="utf-8") as fh:
+                dump = json.load(fh)["objects"]
+            new_body, parts, report["partition"] = partition_body(body, dump, verdicts, cfg["partition"])
+            if not report["partition"]["multiset_equal"]:
+                raise ValueError("partition changed the body face multiset")
+            for k, m in parts.items():
+                if k in meshes:
+                    raise ValueError("partition object %s collides with an inset" % k)
+                meshes[k] = m
+            totals(meshes, report)
     except (OSError, ValueError, KeyError) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2
     report["inputs"] = {"obb": os.path.realpath(a.obb), "obb_sha256": obb.get("sha256"),
-                        "volume_lines": os.path.realpath(a.volume_lines)}
+                        "volume_lines": os.path.realpath(a.volume_lines), "plan": a.plan and os.path.realpath(a.plan),
+                        "dump": a.dump and os.path.realpath(a.dump),
+                        "body_meshes": a.body_meshes and os.path.realpath(a.body_meshes)}
     os.makedirs(a.out, exist_ok=True)
+    if new_body is not None:
+        with open(os.path.join(a.out, "body_meshes.json"), "w", encoding="utf-8") as fh:
+            json.dump(new_body, fh)
     with open(os.path.join(a.out, "insets_meshes.json"), "w", encoding="utf-8") as fh:
         json.dump(meshes, fh)
     with open(os.path.join(a.out, "insets_report.json"), "w", encoding="utf-8") as fh:

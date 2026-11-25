@@ -364,6 +364,204 @@ def sheet_v007(a):
     return len(pages), crow
 
 
+# ---- v008 (plan #1896): build strictly by the accepted modelling plan sokolniki-v002 ----
+REP_RU = {"geometry": "геометрия", "inset": "вставка", "texture": "текстура", "not_shown": "не показывать"}
+
+
+def plan_rows(plan, rep):
+    """Table 'plan verdict -> what v008 did': one row per plan row (layer, family, Revit count, plan, v008, ok).
+    ok False = v008 deviates from the plan verdict (said in the row)."""
+    fam, part = rep["families"], rep.get("partition", {"by_class": {}})
+    obj = rep["objects"]
+    bc = part["by_class"]
+    wo = part.get("revit_with_opening", {})
+
+    def opened(lay):
+        w = wo.get(lay)
+        return "; Revit с проёмом в теле: %d из %d" % (w["matched"], w["planned"]) if w else ""
+    out = []
+    for r in plan["rows"]:
+        lay, f, how, n = r["layer"][:2], r["family"], r["representation"], len(r["objects"])
+        did, ok = None, True
+        if lay == "06":
+            did, ok = "нет: перила — отдельная карточка t_086564bb (решение 2026-11-25)", False
+        elif how == "not_shown":
+            did = "не показано" + (" (рейки BM — интерьерный экран)" if "Брус" in f else "")
+        elif how == "texture":
+            did = "текстура, геометрии нет" + ("; проёмов с материалом 20_stemalit: %d" % bc.get(
+                "20_stemalit_texture", 0) if "темалит" in f else "")
+        elif lay == "01" and "крыша" in f:
+            did = "вставка Roof: %d площадки (колодцы S/N/D + верх H)" % obj["SM_Sokolniki_OKS_Roof"]["faces"]
+        elif lay == "01":
+            did = "тело (решётка v007, без изменений)"
+            if "Наружная_уте" in f:
+                did += "; 4 пилона F05 — вставка F05_Piers"
+        elif "Отлив" in f:
+            did = "вставка Flashing: %d плоскостей" % fam["flashing"]["faces"]
+        elif lay == "02":
+            did = "вставка Windows: %d плоскостей на все окна" % bc.get("17_window_glass", 0) + opened("02")
+        elif lay == "03":
+            did = "вставка Doors: %d плоскостей на все двери" % bc.get("18_door_glass", 0) + opened("03")
+        elif lay == "04":
+            did = "вставки F05_Glazing (%d панелей → %d граней), F05 низ (%d → %d полос), Glazing %d" % (
+                fam["f05_glazing"]["revit_panels"], fam["f05_glazing"]["faces"], fam["f05_ground"]["glass_panels"],
+                len(fam["f05_ground"]["bays"]), bc.get("19_curtain_glass", 0)) + opened("04")
+        elif "Фигурная со" in f:
+            did = "вставка Lamella: %d боксов" % (fam["lamella"]["faces"] // 6)
+        elif "Фигурная" in f:
+            did = "вставка DecorPanel: %d тел рельефа" % (fam["decor_panel"]["faces"] // 10)
+        elif "Каркас" in f:
+            did = "вставка Cage: %d ригелей (дубли убраны)" % rep["merged_runs"]["cage_beam"]["boxes"]
+        elif "Колонна" in f:
+            did = "вставка Cage: %d стоек на площадках колодцев" % rep["merged_runs"]["cage_column"]["boxes"]
+        elif "Козырьки" in f:
+            did = "вставка Canopy: %d стёкол, подвесов нет" % (fam["canopy"]["faces"] // 6)
+        elif "Сетка" in f:
+            did = "вставка Mesh: плоскости сетки (всего %d)" % fam["mesh"]["faces"]
+        elif "Люк" in f:
+            did = "вставка RoofHatch: %d коробов" % (fam["hatch"]["faces"] // 6)
+        else:
+            did, ok = "нет правила", False
+        out.append({"layer": r["layer"], "family": f, "count": n, "plan": REP_RU.get(how, how), "v008": did,
+                    "ok": ok})
+    return out
+
+
+def sheet_v008(a):
+    """(#1896) v008 sheet: summary, table 'plan verdict -> v008', facades v007 | v008 | Revit, close-ups, iso."""
+    from PIL import Image, ImageDraw, ImageFont
+    W, H = 2480, 1754
+    f_t, f_b, f_s = ImageFont.truetype(FONT_B, 40), ImageFont.truetype(FONT, 26), ImageFont.truetype(FONT, 20)
+    ld = lambda p: json.load(open(p, encoding="utf-8"))  # noqa: E731
+    rep = ld(os.path.join(a.build_dir, "insets_report.json"))
+    xv = ld(os.path.join(a.build_dir, "xview_quad.json"))
+    plan, vw = ld(a.plan), ld(a.views)
+    dirs = [a.render_dir] + a.prev_dirs.split(";")
+
+    def find(name):
+        for dd in dirs:
+            p = os.path.join(dd, name)
+            if os.path.exists(p):
+                return p
+        raise FileNotFoundError(name)
+    pages = []
+
+    def page(title):
+        im = Image.new("RGB", (W, H), "white")
+        d = ImageDraw.Draw(im)
+        d.text((60, 40), title, font=f_t, fill="black")
+        d.text((60, H - 50), "Сокольники УВК 1000, #1784, шаг 3 v008 по плану моделирования sokolniki-v002 (#1896). "
+               "Ветка job/sokolniki-step3-insets, PR #1833, карточка t_416ef473. Лист %d" % (len(pages) + 1),
+               font=f_s, fill="#666")
+        pages.append(im)
+        return im, d
+    part, pd = rep["partition"], rep["plan_dropped"]
+    bm = ld(os.path.join(a.build_dir, "body_meshes.json"))
+    body_tris = sum(len(fc["v"]) - 2 for v in bm.values() for fc in v["body"]["faces"])
+    rail = [r for r in plan["rows"] if r["layer"].startswith("06")]
+    rows = plan_rows(plan, rep)
+    im, d = page("Сокольники v008: модель строго по принятому плану моделирования — итог")
+    txt = [
+        "Основа: принятые разбиение сцены v004 и план sokolniki-v002 (Артём 2026-11-25 «принимаю», #1896); 76 строк плана,",
+        "каждое семейство Revit идёт по своему вердикту: геометрия / вставка / текстура / не показывать.",
+        "Что изменилось к v007:",
+        "• окна, двери, витражи и площадки кровли — отдельные объекты-вставки (Windows %d, Doors %d, Glazing %d, Roof %d"
+        % (part["by_class"].get("17_window_glass", 0), part["by_class"].get("18_door_glass", 0),
+           part["by_class"].get("19_curtain_glass", 0) + part["by_class"].get("20_stemalit_texture", 0),
+           rep["objects"]["SM_Sokolniki_OKS_Roof"]["faces"]),
+        "   граней), не сварены с телом; грани перенесены из тела v007 как есть: набор граней тело+вставки = тело v007 (%s)."
+        % ("совпадает" if part["multiset_equal"] else "НЕ СОВПАДАЕТ"),
+        "   Проём относится к окну / двери / витражу по ближайшему объекту Revit плана; без пары: %d (→ Glazing)."
+        % part["unmatched"],
+        "   Окна Revit с проёмом в принятом теле: %d из %d, двери: %d из %d; остальные — на глухих участках тела v005"
+        % (part["revit_with_opening"]["02"]["matched"], part["revit_with_opening"]["02"]["planned"],
+           part["revit_with_opening"]["03"]["matched"], part["revit_with_opening"]["03"]["planned"]),
+        "   — без изменения тела им некуда встать. Стеклопакеты витражей: %d по плану; F05 вставками %d + %d; в проёмах тела %d;"
+        % (part["revit_with_opening"]["04"]["planned"], rep["families"]["f05_glazing"]["revit_panels"],
+           rep["families"]["f05_ground"]["glass_panels"], part["revit_with_opening"]["04"]["matched"]),
+        "   остальные (например F01) стоят на глухих участках принятого тела v005 — вопрос к Артёму: прорезать ли проёмы.",
+        "• по плану сняты: объёмная панель [2284113] (слой 09) — %d; стекло витражей «не показывать / текстура» — %d / %d;"
+        % (pd.get("decor_panel", {}).get("not_shown", 0), pd.get("curtain_glass", {}).get("not_shown", 0),
+           pd.get("curtain_glass", {}).get("texture", 0)),
+        "   из-за этого остекление 1-го этажа F05 строится по %d панелям вместо 129 (полос по-прежнему %d)."
+        % (rep["families"]["f05_ground"]["glass_panels"], len(rep["families"]["f05_ground"]["bays"])),
+        "• импосты (2 647 шт.) и стемалит — текстура, геометрии нет; интерьер, 147 реек BM, подоконники — не показаны.",
+        "• перила (%d строк плана, %d шт., «геометрия») в v008 НЕ сделаны: отдельная карточка t_086564bb."
+        % (len(rail), sum(len(r["objects"]) for r in rail)),
+        "• тело, перголы (стальной каркас), сетка, козырьки, ламели, отливы, люки, пилоны F05 — как в v007.",
+        "",
+        "Бюджет НПМ: тело %d + вставки %d = %d треугольников (цель плана ~40 000, потолок 150 000); v007 было 26 629."
+        % (body_tris, rep["total"]["tris"], body_tris + rep["total"]["tris"]),
+        "Не квадов во вставках: %d (площадки кровли и проёмы — многоугольники тела v007, как были)." % rep["total"][
+            "non_quads"],
+        "xView NPM (вся сборка v008, по объектам): перекрытых граней %d, вершин %d, «бабочек» %d — %s."
+        % (xv["totals"]["overlapping_faces"], xv["totals"]["overlapping_vertices"], xv["totals"]["bowtie_vertices"],
+           "PASS" if xv["passed"] else "FAIL"),
+        "Проверки в 3ds Max (нативные): не измерены — Max не запускался, сборка и рендеры в Blender 4.4 без окна.",
+        "",
+        "Листы 2–%d — таблица «вердикт плана → что сделано в v008». Фасады" % (1 + -(-len(rows) // 36)) + " v007 | v008 | Revit — тот же вид, масштаб и свет;",
+        "затем крупные планы и изометрия. Нужна приёмка картинок Артёмом. Синтетики нет.",
+    ]
+    y = 120
+    for r in txt:
+        d.text((60, y), r, font=f_b, fill="black")
+        y += 37
+    cols = [60, 330, 1020, 1130, 1330]
+    per = 36
+    for k in range(0, len(rows), per):
+        im, d = page("Таблица: вердикт плана sokolniki-v002 → что сделано в v008 (%d–%d из %d строк)"
+                     % (k + 1, min(k + per, len(rows)), len(rows)))
+        y = 115
+        for x, h in zip(cols, ["Слой", "Семейство Revit", "шт.", "План", "v008"]):
+            d.text((x, y), h, font=ImageFont.truetype(FONT_B, 22), fill="black")
+        y += 34
+        for r in rows[k:k + per]:
+            d.text((cols[0], y), r["layer"][:20], font=f_s, fill="black")
+            d.text((cols[1], y), r["family"][:52], font=f_s, fill="black")
+            d.text((cols[2], y), str(r["count"]), font=f_s, fill="black")
+            d.text((cols[3], y), r["plan"], font=f_s, fill="black")
+            d.text((cols[4], y), r["v008"][:92], font=f_s, fill="black" if r["ok"] else "#c00")
+            y += 38
+    lab = ("v007 (на приёмке 2026-11-24)", "v008 = план sokolniki-v002 (#1896)", "Revit FBX (sokolniki_ar_r23_v1)")
+
+    def tiles_page(title, files, cols3):
+        im, d = page(title)
+        ts = [Image.open(p) for p in files]
+        if not cols3:
+            avail_h = (H - 230) // 3 - 40
+            sc = min((W - 120) / ts[0].width, avail_h / ts[0].height)
+            y = 110
+            for tag, t in zip(lab, ts):
+                d.text((60, y), tag, font=f_b, fill="black")
+                im.paste(t.resize((max(1, int(t.width * sc)), max(1, int(t.height * sc)))), (60, y + 34))
+                y += avail_h + 40
+            return
+        tw = (W - 160) // 2
+        for i, (tag, t) in enumerate(zip(lab, ts)):
+            th = int(t.height * tw / t.width)
+            x, yy = 60 + (i % 2) * (tw + 40), 110 + (i // 2) * (min(th, 760) + 60)
+            d.text((x, yy), tag, font=f_b, fill="black")
+            im.paste(t.resize((tw, th)).crop((0, 0, tw, min(th, 760))), (x, yy + 34))
+    for f in vw["facades"]:
+        tiles_page("%s (рёбра %s): v007 | v008 | Revit — один вид, масштаб и свет" % (f["id"], ", ".join(f["edges"])),
+                   [find("v007_%s.png" % f["id"]), find("v008_%s.png" % f["id"]), find("revit_%s.png" % f["id"])],
+                   False)
+    names = {"C1_roof_S": "кровля S: площадка-вставка 11,12 м и перголы", "C2_F05_piers": "F05: колонны и остекление",
+             "C3_panels_S": "объёмные декор-панели и окна-вставки (фасад S)",
+             "C4_roof_D": "кровля D: площадка 17,42 м, перголы, H", "C5_roof_N": "кровля N: площадка 13,22 м и перголы"}
+    for c in vw.get("closeups", []):
+        tiles_page("Крупный план %s — %s" % (c["id"][:2], names.get(c["id"], c["id"])),
+                   [find("v007_%s.png" % c["id"]), find("v008_%s.png" % c["id"]), find("revit_%s.png" % c["id"])], True)
+    im, d = page("Изометрия: v007 | v008 | Revit")
+    tw = (W - 160) // 3
+    for i, (tag, nm) in enumerate(zip(("v007", "v008", "Revit"), ("v007_iso.png", "v008_iso.png", "revit_iso.png"))):
+        t = Image.open(find(nm))
+        d.text((60 + i * (tw + 20), 120), tag, font=f_b, fill="black")
+        im.paste(t.resize((tw, int(t.height * tw / t.width))), (60 + i * (tw + 20), 160))
+    pages[0].save(a.pdf, save_all=True, append_images=pages[1:], resolution=150)
+    return len(pages), rows
+
+
 # ---- v007 census and roof-well proof (folded in: a job keeps at most 5 listed hooks [D324]) ----
 FACE_M = 0.8
 _ID = re.compile(r"(_[0-9a-f]{7}| \[\d+\]|\.\d{3})$")
@@ -575,12 +773,15 @@ def main(argv=None):
     p = sub.add_parser("welldiff", help="[D384] roof wells: nothing changed outside the wells (exit 1 if it did)")
     for k in ("meshes_v005", "meshes_v007", "body_config", "volume_lines", "out"):
         p.add_argument(k)
+    p = sub.add_parser("sheet8", help="v008 (plan #1896): v007 | v008 | Revit sheet with the plan-verdict table")
+    for k in ("render_dir", "prev_dirs", "views", "build_dir", "plan", "pdf"):
+        p.add_argument(k)
     p = sub.add_parser("sheet7", help="[D384] v006 | v007 | Revit sheet with table 1 and close-ups")
     for k in ("render_dir", "prev_dir", "closeup_dir", "views", "build_dir", "body_dir", "decor", "pdf"):
         p.add_argument(k)
     p.add_argument("--config", default=os.path.join(JOB, "insets_config.json"))
     a = ap.parse_args(argv)
-    out = a.pdf if a.cmd in ("sheet", "sheet7") else a.out
+    out = a.pdf if a.cmd in ("sheet", "sheet7", "sheet8") else a.out
     if os.path.exists(out):
         print("refused: %s exists" % out, file=sys.stderr)
         return 2
@@ -599,6 +800,12 @@ def main(argv=None):
         with open(os.path.splitext(a.pdf)[0] + "_table1.json", "w", encoding="utf-8") as fh:
             json.dump(crow, fh, ensure_ascii=False, indent=1)
         print("SHEET", n, "pages", a.pdf)
+        return 0
+    elif a.cmd == "sheet8":
+        n, rows = sheet_v008(a)
+        with open(os.path.splitext(a.pdf)[0] + "_plan_table.json", "w", encoding="utf-8") as fh:
+            json.dump(rows, fh, ensure_ascii=False, indent=1)
+        print("SHEET", n, "pages", a.pdf, "deviations", sum(1 for r in rows if not r["ok"]))
         return 0
     elif a.cmd == "views":
         doc = views(json.load(open(a.volume_lines, encoding="utf-8")))
