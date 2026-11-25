@@ -1,0 +1,855 @@
+{
+  "runtime": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+  "head": "cf4efcbba169541d7163a83f7b28d054f0649db1",
+  "driver_sha256": "23c7c9d119c5159dbc0744922600e98f8025c8105224273be7d9f5f1550493f4",
+  "base": "cf4efcbba169541d7163a83f7b28d054f0649db1",
+  "pins_before": {
+    "C:\\x\\body-training\\a101-63\\source\\STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\gate1\\boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\round4-k2-stage1\\floor_k2_v002.json": "6a6599168dddfcc7c4af79f0439ccdde609e463c373ed62a908b9224a4a833f9",
+    "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\63a-stage1\\63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a",
+    "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\63b-stage1\\v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\63b-stage1\\v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-C\\v002\\63C_stage1_v002_QUAD.fbx": "462ba61b2c379de53a72667635fd0714703764b2409407cc67ff28d8684de1da",
+    "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+  },
+  "rows": [
+    {
+      "tower": "63A",
+      "rep": 1,
+      "crop_sha256": "cfe49244ce5524ae571af9c7e5e81ac7070ba332740c7c7a2001c512ee0928c8",
+      "changed_jambs": 15,
+      "exercise": "exercised",
+      "raw_arm_parity": true,
+      "baseline": {
+        "m92": 0,
+        "exit": 1,
+        "plan_sha256": "39367233ba16fcdac87a96c897ef280cee9d750ca3585602651310c5740de9ab",
+        "fbx_sha256": null,
+        "plan_result": 0,
+        "steps": {
+          "artifact": {
+            "status": "fail",
+            "reason": "no FBX in the built result"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          },
+          "readback": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "bounds": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "topology": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "form": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "form_v2": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          }
+        },
+        "first_failing_step": "artifact",
+        "score": 0.0
+      },
+      "aligned": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "a17efb879dfd4601fa2975a961cd2f2296b54cbd2632476a5ffe08756ab0307e",
+        "fbx_sha256": "314c1bbff5addc529f8787723ce18d1505328f05c64c15933e22dbfdc2da5ff6",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 171868,
+            "sha256": "314c1bbff5addc529f8787723ce18d1505328f05c64c15933e22dbfdc2da5ff6"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 5940,
+            "key_polygons": 4560
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.217,
+            "max_m": 1.3812,
+            "samples": 14248,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      }
+    },
+    {
+      "tower": "63C",
+      "rep": 1,
+      "crop_sha256": "5c68c62429edf9874db84bdb128286b9ae31fc6ddff141edb3ad8ccdd7470c18",
+      "changed_jambs": 0,
+      "exercise": "not_exercised",
+      "raw_arm_parity": true,
+      "baseline": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "c44283780a761cdb3358fe6d7d0747aba09fae6396d9c37773b8f605c427ff95",
+        "fbx_sha256": "4ce9c2171be8d5a0ab462bcb7dd823f37279181113b3838740c0371345a2ffb4",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 131644,
+            "sha256": "4ce9c2171be8d5a0ab462bcb7dd823f37279181113b3838740c0371345a2ffb4"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 4246,
+            "key_polygons": 4081
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.6809,
+            "max_m": 1.5166,
+            "samples": 12742,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      },
+      "aligned": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "5d00fe094fdbd3e1161a447a35394065220b84f6d159e1ad85056e6db8d9e70e",
+        "fbx_sha256": "a769127c180af1b112f059aa8cad63c3e699f7631c89954e205ad60be2bc12aa",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 131644,
+            "sha256": "a769127c180af1b112f059aa8cad63c3e699f7631c89954e205ad60be2bc12aa"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 4246,
+            "key_polygons": 4081
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.6809,
+            "max_m": 1.5166,
+            "samples": 12742,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      }
+    },
+    {
+      "tower": "63A",
+      "rep": 2,
+      "crop_sha256": "47024224bb17ffdf4df35aa87e71514103d1ffd5893a10ffb69ecbb414dcab7f",
+      "changed_jambs": 15,
+      "exercise": "exercised",
+      "raw_arm_parity": true,
+      "baseline": {
+        "m92": 0,
+        "exit": 1,
+        "plan_sha256": "acf6d072c24b960a7a648357a90fc510646a931e1fa152bef1dcc9b318529dd5",
+        "fbx_sha256": null,
+        "plan_result": 0,
+        "steps": {
+          "artifact": {
+            "status": "fail",
+            "reason": "no FBX in the built result"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          },
+          "readback": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "bounds": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "topology": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "form": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "form_v2": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          }
+        },
+        "first_failing_step": "artifact",
+        "score": 0.0
+      },
+      "aligned": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "e8854c0906a548a1249e5ba1e20b463486760133def9481c9390d2a55ea111f9",
+        "fbx_sha256": "c04dcc5a20b1dece9e9ba03b3ad2919d43435a072245fa1fdce6b7d7674f1e69",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 171916,
+            "sha256": "c04dcc5a20b1dece9e9ba03b3ad2919d43435a072245fa1fdce6b7d7674f1e69"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 5940,
+            "key_polygons": 4560
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.217,
+            "max_m": 1.3812,
+            "samples": 14248,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      }
+    },
+    {
+      "tower": "63C",
+      "rep": 2,
+      "crop_sha256": "e9fb0788cc9f9aaf359791a88e4dbe25e31b9c3ae8d2af6c08642aa8949b3665",
+      "changed_jambs": 0,
+      "exercise": "not_exercised",
+      "raw_arm_parity": true,
+      "baseline": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "c4a394ab6cbe0fba95f3be8225d6aa236bcd44c40f9397ff9ed6b05f0e1f48a3",
+        "fbx_sha256": "c93111cf65860cedc4c1479d21544c23e031bba6442842e1cc4c8a1bdd989550",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 131756,
+            "sha256": "c93111cf65860cedc4c1479d21544c23e031bba6442842e1cc4c8a1bdd989550"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 4246,
+            "key_polygons": 4081
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.6809,
+            "max_m": 1.5166,
+            "samples": 12742,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      },
+      "aligned": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "42e5aebc1379a506dd7f2bb8dd53b57286d87a8a9910f3e0ecc719ffb3c51a48",
+        "fbx_sha256": "91ac6f52f2adf3d2d91c27f5ff897c1279b47b87f45f3e9b132b11991e80fa2e",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 131756,
+            "sha256": "91ac6f52f2adf3d2d91c27f5ff897c1279b47b87f45f3e9b132b11991e80fa2e"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 4246,
+            "key_polygons": 4081
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.6809,
+            "max_m": 1.5166,
+            "samples": 12742,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      }
+    },
+    {
+      "tower": "63A",
+      "rep": 3,
+      "crop_sha256": "2cc5c3fd44aa8981745b2c748f4784612d3ed9d764ade53d6a3c17d0e071440e",
+      "changed_jambs": 15,
+      "exercise": "exercised",
+      "raw_arm_parity": true,
+      "baseline": {
+        "m92": 0,
+        "exit": 1,
+        "plan_sha256": "7c857ea45eebd5c0340b8398eef2aada0d9b7878356b009c432ab18c8f31c833",
+        "fbx_sha256": null,
+        "plan_result": 0,
+        "steps": {
+          "artifact": {
+            "status": "fail",
+            "reason": "no FBX in the built result"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          },
+          "readback": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "bounds": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "topology": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "form": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "form_v2": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "an earlier step did not pass"
+          }
+        },
+        "first_failing_step": "artifact",
+        "score": 0.0
+      },
+      "aligned": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "26bfb154ba210b221ed4a57c9ce86839b53c3c41d235d7d694bfc7ab25f34975",
+        "fbx_sha256": "aa46ff397de4612dd0b61a7b8164debea848826dd5cab981383c1d5268d99973",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 171900,
+            "sha256": "aa46ff397de4612dd0b61a7b8164debea848826dd5cab981383c1d5268d99973"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 5940,
+            "key_polygons": 4560
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.217,
+            "max_m": 1.3812,
+            "samples": 14248,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      }
+    },
+    {
+      "tower": "63C",
+      "rep": 3,
+      "crop_sha256": "2f41ff7e1686576faca62bc1ff1680f83ae180a6c7216e0cfab4884e8a835a8c",
+      "changed_jambs": 0,
+      "exercise": "not_exercised",
+      "raw_arm_parity": true,
+      "baseline": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "a0f6a0cffee884191d5818df1334e043b415d1b18cbcd24b83f8794371a28a2b",
+        "fbx_sha256": "c8d215367d1b199e32a2fb817f143135debda59494ec6773b444a65df357644f",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 131660,
+            "sha256": "c8d215367d1b199e32a2fb817f143135debda59494ec6773b444a65df357644f"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 4246,
+            "key_polygons": 4081
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.6809,
+            "max_m": 1.5166,
+            "samples": 12742,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      },
+      "aligned": {
+        "m92": 1,
+        "exit": 0,
+        "plan_sha256": "8b649173c8bd3c38c9a6540950b64ab9463caf46f463e48a2dcb0c4de3d30f9c",
+        "fbx_sha256": "db7e5602a139cfeea1d1e76e52d995960fe036a23da5df45e283773676f4d2a0",
+        "plan_result": 1,
+        "steps": {
+          "artifact": {
+            "status": "pass",
+            "bytes": 131660,
+            "sha256": "db7e5602a139cfeea1d1e76e52d995960fe036a23da5df45e283773676f4d2a0"
+          },
+          "readback": {
+            "status": "pass",
+            "meshes": 1
+          },
+          "bounds": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0442,
+            "tol_m": 0.1
+          },
+          "topology": {
+            "status": "pass",
+            "quad_share": 1.0,
+            "key_quad_share": 1.0,
+            "polygons": 4246,
+            "key_polygons": 4081
+          },
+          "form": {
+            "status": "fail",
+            "p95_m": 0.6809,
+            "max_m": 1.5166,
+            "samples": 12742,
+            "tol_p95_m": 0.05,
+            "tol_max_m": 0.3
+          },
+          "form_v2": {
+            "status": "not_applicable",
+            "reason": "etalon has no form-check v2 key"
+          },
+          "vlm": {
+            "status": "not_run",
+            "reason": "pass --vlm (2 judge calls)"
+          },
+          "package": {
+            "status": "not_applicable",
+            "reason": "etalon target is not a package"
+          }
+        },
+        "first_failing_step": "form",
+        "score": 0.6667
+      }
+    }
+  ],
+  "controls": {
+    "accepted_c": {
+      "steps": {
+        "artifact": {
+          "status": "pass",
+          "bytes": 125980,
+          "sha256": "462ba61b2c379de53a72667635fd0714703764b2409407cc67ff28d8684de1da"
+        },
+        "readback": {
+          "status": "pass",
+          "meshes": 1
+        },
+        "bounds": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "topology": {
+          "status": "pass",
+          "quad_share": 1.0,
+          "key_quad_share": 1.0,
+          "polygons": 4081,
+          "key_polygons": 4081
+        },
+        "form": {
+          "status": "pass",
+          "p95_m": 0.0,
+          "max_m": 0.0,
+          "samples": 12742,
+          "tol_p95_m": 0.05,
+          "tol_max_m": 0.3
+        },
+        "form_v2": {
+          "status": "not_applicable",
+          "reason": "etalon has no form-check v2 key"
+        },
+        "vlm": {
+          "status": "not_run",
+          "reason": "pass --vlm (2 judge calls)"
+        },
+        "package": {
+          "status": "not_applicable",
+          "reason": "etalon target is not a package"
+        }
+      },
+      "first_failing_step": "vlm",
+      "score": 0.8333
+    },
+    "rejected_b": {
+      "steps": {
+        "artifact": {
+          "status": "pass",
+          "bytes": 303132,
+          "sha256": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae"
+        },
+        "readback": {
+          "status": "pass",
+          "meshes": 1
+        },
+        "bounds": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        },
+        "topology": {
+          "status": "fail",
+          "quad_share": 0.8973,
+          "key_quad_share": 1.0,
+          "polygons": 9463,
+          "key_polygons": 13644
+        },
+        "form": {
+          "status": "fail",
+          "p95_m": 0.365,
+          "max_m": 1.2306,
+          "samples": 28218,
+          "tol_p95_m": 0.05,
+          "tol_max_m": 0.3
+        },
+        "form_v2": {
+          "status": "not_applicable",
+          "reason": "etalon has no form-check v2 key"
+        },
+        "vlm": {
+          "status": "not_run",
+          "reason": "pass --vlm (2 judge calls)"
+        },
+        "package": {
+          "status": "not_applicable",
+          "reason": "etalon target is not a package"
+        }
+      },
+      "first_failing_step": "bounds",
+      "score": 0.3333
+    },
+    "same_key": {
+      "steps": {
+        "artifact": {
+          "status": "fail",
+          "reason": "built result IS the key (copied, not built)"
+        },
+        "package": {
+          "status": "not_applicable",
+          "reason": "etalon target is not a package"
+        },
+        "readback": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "bounds": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "topology": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "form": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "form_v2": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "vlm": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        }
+      },
+      "first_failing_step": "artifact",
+      "score": 0.0
+    },
+    "truncated": {
+      "steps": {
+        "artifact": {
+          "status": "pass",
+          "bytes": 23,
+          "sha256": "ead04c7308ddd6bde0f6804674414ea11008706cbfe483b12f83ff93bbca718e"
+        },
+        "readback": {
+          "status": "fail",
+          "meshes": 0
+        },
+        "package": {
+          "status": "not_applicable",
+          "reason": "etalon target is not a package"
+        },
+        "bounds": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "topology": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "form": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "form_v2": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        },
+        "vlm": {
+          "status": "not_run",
+          "reason": "an earlier step did not pass"
+        }
+      },
+      "first_failing_step": "readback",
+      "score": 0.1429
+    }
+  },
+  "status": "finished",
+  "crop_driver": {
+    "candidate.py": "51fac9c597732a26a853a7ea12124b212db61a35ac98e6c9a0b7fa36e4100d5c",
+    "paired_driver.py": "f5af28c521f730358f04979896685961add10e0a7b6c856ecdd510862b952b06",
+    "replay.py": "b1c4a31762dd788ec397610c3ada977304a59dce98926f3fe1613eee464fc988"
+  },
+  "crop_status": "finished",
+  "first_pair_wall_s": 57.273,
+  "pins_after": {
+    "C:\\x\\body-training\\a101-63\\source\\STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\gate1\\boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\round4-k2-stage1\\floor_k2_v002.json": "6a6599168dddfcc7c4af79f0439ccdde609e463c373ed62a908b9224a4a833f9",
+    "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\63a-stage1\\63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a",
+    "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\63b-stage1\\v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\63b-stage1\\v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:\\Мой диск\\AGR-evidence\\1619-body-training\\tower-C\\v002\\63C_stage1_v002_QUAD.fbx": "462ba61b2c379de53a72667635fd0714703764b2409407cc67ff28d8684de1da",
+    "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+  },
+  "wall_s": 255.235
+}
