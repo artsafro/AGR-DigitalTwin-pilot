@@ -1,0 +1,35 @@
+{
+  "schema": "r101-manifest/1",
+  "base": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+  "code": {
+    "tools/trainer/trainer.py": "b48f86ecd8f5626a6d39fdcee13bedd0574a29d7738561e48f695d55b95aad0e",
+    "tools/blender/fbx_readback.py": "09c9e9bcfbc75598dd483b39a2e48c3f23cc2be7719d85583d7cbd1a0f1e095b"
+  },
+  "kpp1": {
+    "l03_dxf": ["G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l03.dxf", "c631e672112fb6a12580c65c888c99304465747564ba54454ce75062124d7513"],
+    "l01_dxf": ["G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l01.dxf", "5d436743cf86576586eaec4614401ffe0f2be2b033c7df9a8529c9771af19442"],
+    "frame": ["G:/Мой диск/AGR-evidence/1855-r101-bounds-source/contours.json", "c4db08ebf71d03d4ae6a0d241195828a7ddbf4a8848f6ea0331b7dee9e86f658"],
+    "source_dwg_sha256": {
+      "L01": "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+      "L03": "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469"
+    },
+    "key": ["G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx", "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8"],
+    "rejected": ["G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx", "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca"],
+    "built": {
+      "r99-C1": ["C:/x/trainer/runs/kpp1-v004-codex-r99-C1/built/body_v001/body.fbx", "0e71ccfec23c3d03de89879ca70960ee2f4fd111f3fc2968aa9e2340a1ab6588"],
+      "r99-C2": ["C:/x/trainer/runs/kpp1-v004-codex-r99-C2/built/body-v001/body.fbx", "8bee99696e39d88ca96db826fbfff12f0ff1f0f92955ce9fd85a6de33395453b"],
+      "r99-C3": ["C:/x/trainer/runs/kpp1-v004-codex-r99-C3/built/body/body.fbx", "5525efc174c10404819f5c806653f4c077826fd288c1cc14396bdeb3c035f83f"],
+      "r99-D1": ["C:/x/trainer/runs/kpp1-v004-codex-r99-D1/built/deliverable.fbx", "820c1bca6ce496a503b0d4f2d863b59b6045c00725d2c379245c66efa37fde50"],
+      "r99-D2": ["C:/x/trainer/runs/kpp1-v004-codex-r99-D2/built/deliverable.fbx", "aa6b7d25fd29e3fe6e387a93f20d4bbd16f8bb24c22195380255ccbc3e90c214"],
+      "r99-D3": ["C:/x/trainer/runs/kpp1-v004-codex-r99-D3/built/deliverable.fbx", "e8f307f178c967522f1bf106054a83f04cc66603e7fe645b09b90403dfd562b6"]
+    }
+  },
+  "ac08_heldout": {
+    "dwg": ["G:/Мой диск/AGR-assets/tec26/ac08/source/22E56-AR2-1002-AC08.dwg", "cb90ed375df4fd708b7a69c6d018600347953245f0f6bde396f394bee3e1fa52"],
+    "dxf": ["G:/Мой диск/AGR-evidence/1855-r101-bounds-source/ac08.dxf", "a01051f590c87e41dfb7913f3f2a9686ab3f956cb3a9d9b7ee5daf8e0205dc29"],
+    "key": ["G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v010/SM_Nku_1_quads_review.fbx", "c09b02acce7c8516ef2b7139691b55b6ea47e6912f69292532dacf7f785be9fa"],
+    "note": "dwg_to_dxf.py reported pass but the DXF lacks the terminal ENDSEC/EOF (log: 'Custom object(s) encountered'); dxf_intake.py rejects it. Read here with ezdxf.recover for the held-out only."
+  },
+  "budget_s": 900,
+  "repeats": 3
+}
