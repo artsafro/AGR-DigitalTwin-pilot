@@ -1,0 +1,154 @@
+{
+ "inputs": {
+  "accepted": [
+   "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx",
+   "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8"
+  ],
+  "rejected": [
+   "G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx",
+   "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca"
+  ]
+ },
+ "cases": {
+  "acc_clean": {
+   "files": {
+    "deliverable.fbx": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8"
+   },
+   "C": {
+    "built": "built",
+    "rc": 0,
+    "score": 0.0,
+    "first_failing_step": "artifact",
+    "steps": {
+     "artifact": "fail",
+     "package": "fail",
+     "readback": "not_run",
+     "bounds": "not_run",
+     "topology": "not_run",
+     "form": "not_run",
+     "form_v2": "not_run",
+     "vlm": "not_run"
+    },
+    "tail": ""
+   },
+   "D": {
+    "built": "deliverable.fbx",
+    "rc": 0,
+    "score": 0.0,
+    "first_failing_step": "artifact",
+    "steps": {
+     "artifact": "fail",
+     "package": "fail",
+     "readback": "not_run",
+     "bounds": "not_run",
+     "topology": "not_run",
+     "form": "not_run",
+     "form_v2": "not_run",
+     "vlm": "not_run"
+    },
+    "tail": ""
+   }
+  },
+  "acc_inj": {
+   "files": {
+    "decoy.fbx": "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca",
+    "deliverable.fbx": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8"
+   },
+   "C": {
+    "built": "built",
+    "rc": 2,
+    "score": null,
+    "first_failing_step": null,
+    "steps": {},
+    "tail": "ERROR: several FBX in C:\\x\\ev_t_bda45f44\\control\\acc_inj\\built: ['decoy.fbx', 'deliverable.fbx']; pass --built FILE"
+   },
+   "D": {
+    "built": "deliverable.fbx",
+    "rc": 0,
+    "score": 0.0,
+    "first_failing_step": "artifact",
+    "steps": {
+     "artifact": "fail",
+     "package": "fail",
+     "readback": "not_run",
+     "bounds": "not_run",
+     "topology": "not_run",
+     "form": "not_run",
+     "form_v2": "not_run",
+     "vlm": "not_run"
+    },
+    "tail": ""
+   }
+  },
+  "rej_clean": {
+   "files": {
+    "deliverable.fbx": "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca"
+   },
+   "C": {
+    "built": "built",
+    "rc": 0,
+    "score": 0.4286,
+    "first_failing_step": "bounds",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "fail",
+     "topology": "pass",
+     "form": "fail",
+     "form_v2": "not_applicable",
+     "vlm": "not_run",
+     "package": "fail"
+    },
+    "tail": ""
+   },
+   "D": {
+    "built": "deliverable.fbx",
+    "rc": 0,
+    "score": 0.4286,
+    "first_failing_step": "bounds",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "fail",
+     "topology": "pass",
+     "form": "fail",
+     "form_v2": "not_applicable",
+     "vlm": "not_run",
+     "package": "fail"
+    },
+    "tail": ""
+   }
+  },
+  "rej_inj": {
+   "files": {
+    "decoy.fbx": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8",
+    "deliverable.fbx": "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca"
+   },
+   "C": {
+    "built": "built",
+    "rc": 2,
+    "score": null,
+    "first_failing_step": null,
+    "steps": {},
+    "tail": "ERROR: several FBX in C:\\x\\ev_t_bda45f44\\control\\rej_inj\\built: ['decoy.fbx', 'deliverable.fbx']; pass --built FILE"
+   },
+   "D": {
+    "built": "deliverable.fbx",
+    "rc": 0,
+    "score": 0.4286,
+    "first_failing_step": "bounds",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "fail",
+     "topology": "pass",
+     "form": "fail",
+     "form_v2": "not_applicable",
+     "vlm": "not_run",
+     "package": "fail"
+    },
+    "tail": ""
+   }
+  }
+ }
+}

@@ -1,0 +1,19 @@
+21:55:41 start kpp1-v004-codex-r99-C1
+22:00:05 done kpp1-v004-codex-r99-C1 rc=0
+22:00:10 score kpp1-v004-codex-r99-C1 built=C:\x\trainer\runs\kpp1-v004-codex-r99-C1\built rc=0 {"etalon": "kpp1-v004", "first_failing_step": "bounds", "score": 0.4286, "form_p95_m": 2.2395}
+22:00:10 start kpp1-v004-codex-r99-D1
+22:04:41 done kpp1-v004-codex-r99-D1 rc=0
+22:04:46 score kpp1-v004-codex-r99-D1 built=C:\x\trainer\runs\kpp1-v004-codex-r99-D1\built\deliverable.fbx rc=0 {"etalon": "kpp1-v004", "first_failing_step": "bounds", "score": 0.4286, "form_p95_m": 2.4757}
+22:04:46 start kpp1-v004-codex-r99-C2
+22:09:15 done kpp1-v004-codex-r99-C2 rc=0
+22:09:19 score kpp1-v004-codex-r99-C2 built=C:\x\trainer\runs\kpp1-v004-codex-r99-C2\built rc=0 {"etalon": "kpp1-v004", "first_failing_step": "bounds", "score": 0.4286, "form_p95_m": 40.4403}
+22:09:19 start kpp1-v004-codex-r99-D2
+22:13:28 done kpp1-v004-codex-r99-D2 rc=0
+22:13:32 score kpp1-v004-codex-r99-D2 built=C:\x\trainer\runs\kpp1-v004-codex-r99-D2\built\deliverable.fbx rc=0 {"etalon": "kpp1-v004", "first_failing_step": "bounds", "score": 0.4286, "form_p95_m": 3.51}
+22:13:32 start kpp1-v004-codex-r99-C3
+22:17:41 done kpp1-v004-codex-r99-C3 rc=0
+22:17:45 score kpp1-v004-codex-r99-C3 built=C:\x\trainer\runs\kpp1-v004-codex-r99-C3\built rc=0 {"etalon": "kpp1-v004", "first_failing_step": "bounds", "score": 0.4286, "form_p95_m": 2.4757}
+22:17:45 start kpp1-v004-codex-r99-D3
+22:21:37 done kpp1-v004-codex-r99-D3 rc=0
+22:21:42 score kpp1-v004-codex-r99-D3 built=C:\x\trainer\runs\kpp1-v004-codex-r99-D3\built\deliverable.fbx rc=0 {"etalon": "kpp1-v004", "first_failing_step": "bounds", "score": 0.4286, "form_p95_m": 2.3423}
+22:21:42 SERIES DONE
