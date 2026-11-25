@@ -258,4 +258,6 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv>
   Artem 2026-11-25 ~22:40 ([D413]): material zoning + atlas layout of sheet v002 (14 IDs) **accepted**. The joined
   `*_Main` xView contacts are fixed at delivery: inset elements offset 1-2 mm off the wall plane + a before/after sheet
   proving the look is unchanged (not done here; the delivery FBX is out of scope). **Windows not accepted**: question
-  sheet `step4-uv-atlas-v001/question-windows/` (Revit | v009 per type, numbers); no window rework before Artem's answer.
+  sheet `step4-uv-atlas-v001/question-windows/sok-question-windows-v001.png` (sha `a44cc4ba…`; 6 types W1-W4 / D1 / CW,
+  Revit | v009 | NPM atlas, 3/4 + straight-on, measured numbers; `SHA256SUMS.txt` 98 files); no window rework before
+  Artem's answer.
