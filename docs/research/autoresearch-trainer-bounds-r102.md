@@ -21,3 +21,24 @@ uv run --frozen python docs/research/trainer_bounds_r102/measure.py --out .r102-
 ```
 
 The output directory must not exist. Replay is limited to hosts with the pinned Drive inputs and Blender installation. The command never writes into those fixtures. Full suite: deferred to merge batch (rule 68).
+
+Affected tests: `uv run --frozen pytest -q --basetemp=.venv/pytest-r102 tests/tools/test_trainer.py tests/test_trainer_inspect.py` — 105 passed, 1 pytest temporary-directory warning, 0 failed.
+
+## Result — OBSERVE, no KEEP
+
+**Гипотеза H102 опровергнута.** Фильтр аннотаций дал стабильное улучшение, но не прошёл штатный `bounds`: осталось 110 мм на западной грани при допуске 100 мм. На другом объекте перенос не измерен: AC05 не прошёл проверку пригодности. Пакеты, валидатор и правила производства не менялись; PR нет.
+
+Three complete pairs, wall 82.848 s (26.395 / 25.707 / 23.990 s per pair), no budget stop. All pairs agree; input SHA-256 pre/post parity passed. Exact driver committed before the series at `bb50475c`; contract at `c5af20e1`. Git-LF SHA-256 of [`receipt.json`](trainer_bounds_r102/receipt.json): `78616501557735a0fffd90b5eb342fbf1cae4a333a00d2fb1c3bbeb3066cb09f`.
+
+| Native KPP1 `bounds` | Median deviation | Passes at 0.10 m |
+| --- | ---: | ---: |
+| E1 | 0.5396 m | 0/3 |
+| E1b | 0.1100 m | 0/3 |
+| Accepted key vs itself (identity only) | 0.0000 m | 3/3 |
+| Artem-rejected D380 lattice vs key | 3.8005 m | 0/3 |
+
+Paired gain: median 0.4296 m, range [0.4296, 0.4296]. Signed west error moved from −0.5396 m to +0.1100 m. Native layer trigger: 806 removals on L03 and 660 on L01; L03 removed 54 `A-WALL-____-IDEN` from the 394 entities with boxable wall bounds in E1's envelope. The clean reapplication produced identical envelopes but removed zero entities on either sheet: active collateral change on the clean streams **not measured**. With one synthetic plan annotation, E1 moved west by 2.0000 m, E1b stayed exactly invariant and its L03 removal count rose by one; L01 unchanged, **not measured** for injection. Removing stairs excluded 79 L03 plan members and yielded an east error of −4.0005 m, with no L01 change.
+
+Held-out eligibility: AC05 had 25 recovered layers, zero physical AIA prefix matches and one DXF recovery fix after strict `missing ENDSEC` refusal. No AC05 FBX comparison, no second independently accepted KPP1 submission, no fresh-agent behaviour, no full package validation: **not measured**. Evidence is the branch receipt plus prior external fixture hashes, not copied customer sources or replacement packages.
+
+Next: (1) get an independent paired plan/facade AIA export and an accepted same-scope FBX; run strict source eligibility before comparing envelopes, (2) test a source-bound west facade post projection on KPP1, then check it on that independently held-out building, with no key-derived offset or relaxed tolerance.

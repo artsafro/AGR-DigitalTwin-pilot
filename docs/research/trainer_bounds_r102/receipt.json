@@ -1,0 +1,459 @@
+{
+  "schema": "r102-receipt/1",
+  "base": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+  "prior": "d51167a2acdeda51429a3580eb9dda50cf6990ed",
+  "summary": {
+    "verdict": "refuted",
+    "run_status": "complete",
+    "pairs": 3,
+    "wall_s": 82.848,
+    "input_parity": true,
+    "held_out": "not_exercised",
+    "paired_gain_m": {
+      "median": 0.4296,
+      "range": [
+        0.4296,
+        0.4296
+      ]
+    },
+    "median_dev_m": {
+      "E1": 0.5396,
+      "E1b": 0.11
+    },
+    "native_candidate_passes": 0
+  },
+  "held_out": {
+    "fixture": "TEC26 AC05",
+    "status": "not_exercised",
+    "scoring": "not measured",
+    "strict_error": "DXFStructureError: missing ENDSEC tag.",
+    "recovery_fixes": 1,
+    "recovery_errors": 0,
+    "drawing_units": 4,
+    "physical_prefix_counts": {},
+    "layers_seen": 25,
+    "most_common": [
+      [
+        "PDF14_Сплошная заливка",
+        97
+      ],
+      [
+        "PDF15_Сплошная заливка",
+        90
+      ],
+      [
+        "PDF19_Сплошная заливка",
+        75
+      ],
+      [
+        "СПДС_РАЗМЕРЫ",
+        35
+      ],
+      [
+        "PDF5_Геометрия",
+        35
+      ],
+      [
+        "AC_dim",
+        23
+      ],
+      [
+        "AC-axis",
+        22
+      ],
+      [
+        "СПДС_СИМВОЛЫ",
+        19
+      ]
+    ]
+  },
+  "manifest": {
+    "fixture": {
+      "l03_dxf": [
+        "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l03.dxf",
+        "c631e672112fb6a12580c65c888c99304465747564ba54454ce75062124d7513"
+      ],
+      "l01_dxf": [
+        "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l01.dxf",
+        "5d436743cf86576586eaec4614401ffe0f2be2b033c7df9a8529c9771af19442"
+      ],
+      "frame": [
+        "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/contours.json",
+        "c4db08ebf71d03d4ae6a0d241195828a7ddbf4a8848f6ea0331b7dee9e86f658"
+      ],
+      "key": [
+        "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx",
+        "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8"
+      ],
+      "rejected": [
+        "G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx",
+        "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca"
+      ]
+    },
+    "other": {
+      "driver": "872dc73f1d6389d4d303c496e19d5dcfcd63be19797f7ef44495c4bb007cd630",
+      "r101": {
+        "measure.py": "7b49322f2496b4ef4b9ca831e37044856413a83afef8bc9a7e3f7cefa88cd494",
+        "manifest.json": "1604102733159f655758099e763aaef624824a0ea4a1b209945f91df51c40595"
+      },
+      "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l03.dxf": "c631e672112fb6a12580c65c888c99304465747564ba54454ce75062124d7513",
+      "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l01.dxf": "5d436743cf86576586eaec4614401ffe0f2be2b033c7df9a8529c9771af19442",
+      "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/contours.json": "c4db08ebf71d03d4ae6a0d241195828a7ddbf4a8848f6ea0331b7dee9e86f658",
+      "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8",
+      "G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx": "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca",
+      "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC05\\gate1-v004\\AC05-readback-v002.dxf": "84486940c29c1bbb288486f2b62f4fb9d3d7b8addf002e3f1e0b8be846461a73",
+      "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+    },
+    "code_git_lf": {
+      "tools/trainer/trainer.py": "b48f86ecd8f5626a6d39fdcee13bedd0574a29d7738561e48f695d55b95aad0e",
+      "tools/blender/fbx_readback.py": "09c9e9bcfbc75598dd483b39a2e48c3f23cc2be7719d85583d7cbd1a0f1e095b",
+      "src/dt_ai/core/blender_runner.py": "6b0ec90794ded4274580ad05bd15b59b6eefdfa9b364538409c3f2a20b07b236",
+      "pyproject.toml": "5329672394e79056b3153c59b3efac4ec5ca48499dcfbd6583bfaf9e16803dcc",
+      "uv.lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+    }
+  },
+  "pairs": [
+    {
+      "E1": {
+        "step": {
+          "status": "fail",
+          "max_corner_dev_m": 0.5396,
+          "tol_m": 0.1
+        },
+        "faces_m": {
+          "x_min": -0.5396,
+          "y_min": -0.0311,
+          "z_min": 0.0,
+          "x_max": -0.0005,
+          "y_max": 0.0004,
+          "z_max": -0.0
+        },
+        "plan_counts": {
+          "A-WALL-": 394,
+          "A-GLAZ-": 98,
+          "S-STRS-": 79
+        }
+      },
+      "E1b": {
+        "step": {
+          "status": "fail",
+          "max_corner_dev_m": 0.11,
+          "tol_m": 0.1
+        },
+        "faces_m": {
+          "x_min": 0.11,
+          "y_min": 0.0,
+          "z_min": 0.0,
+          "x_max": -0.0005,
+          "y_max": 0.0004,
+          "z_max": -0.0
+        },
+        "plan_counts": {
+          "A-WALL-": 340,
+          "A-GLAZ-": 98,
+          "S-STRS-": 79
+        },
+        "matches": {
+          "L03": {
+            "removed": 806,
+            "by_layer": {
+              "A-AREA-____-IDEN": 50,
+              "A-DOOR-____-IDEN": 91,
+              "A-WALL-____-IDEN": 54,
+              "A-____-NOTE-TEXT": 185,
+              "A-____-____-DIMS": 82,
+              "G-____-____-DIMS": 126,
+              "G-____-____-TEXT": 204,
+              "S-GRID-____-IDEN": 14
+            },
+            "coverage": "exercised"
+          },
+          "L01": {
+            "removed": 660,
+            "by_layer": {
+              "A-DOOR-____-IDEN": 36,
+              "A-WALL-____-IDEN": 40,
+              "A-____-NOTE-TEXT": 73,
+              "G-____-____-DIMS": 452,
+              "G-____-____-TEXT": 43,
+              "S-GRID-____-IDEN": 16
+            },
+            "coverage": "exercised"
+          }
+        },
+        "west_gain_m": 0.4296
+      },
+      "calibration": {
+        "accepted_identity": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 3.8005,
+          "tol_m": 0.1
+        },
+        "ok": true
+      },
+      "clean_reapply": {
+        "parity": true,
+        "L03": {
+          "removed": 0,
+          "by_layer": {},
+          "coverage": "not_exercised"
+        },
+        "L01": {
+          "removed": 0,
+          "by_layer": {},
+          "coverage": "not_exercised"
+        }
+      },
+      "injected_plan_iden": {
+        "e1_shift_m": -2.0,
+        "e1b_parity": true,
+        "L03_incremental_removed": 1,
+        "L03_coverage": "exercised",
+        "L01_incremental_removed": 0,
+        "L01_coverage": "not_exercised"
+      },
+      "native_stair_ablation": {
+        "east_error_m": -4.0005,
+        "L03_removed_from_envelope": 79,
+        "L01_changed": 0,
+        "L01_coverage": "not_exercised"
+      },
+      "witnesses_ok": true,
+      "gain_m": 0.4296,
+      "wall_s": 26.395
+    },
+    {
+      "E1": {
+        "step": {
+          "status": "fail",
+          "max_corner_dev_m": 0.5396,
+          "tol_m": 0.1
+        },
+        "faces_m": {
+          "x_min": -0.5396,
+          "y_min": -0.0311,
+          "z_min": 0.0,
+          "x_max": -0.0005,
+          "y_max": 0.0004,
+          "z_max": -0.0
+        },
+        "plan_counts": {
+          "A-WALL-": 394,
+          "A-GLAZ-": 98,
+          "S-STRS-": 79
+        }
+      },
+      "E1b": {
+        "step": {
+          "status": "fail",
+          "max_corner_dev_m": 0.11,
+          "tol_m": 0.1
+        },
+        "faces_m": {
+          "x_min": 0.11,
+          "y_min": 0.0,
+          "z_min": 0.0,
+          "x_max": -0.0005,
+          "y_max": 0.0004,
+          "z_max": -0.0
+        },
+        "plan_counts": {
+          "A-WALL-": 340,
+          "A-GLAZ-": 98,
+          "S-STRS-": 79
+        },
+        "matches": {
+          "L03": {
+            "removed": 806,
+            "by_layer": {
+              "A-AREA-____-IDEN": 50,
+              "A-DOOR-____-IDEN": 91,
+              "A-WALL-____-IDEN": 54,
+              "A-____-NOTE-TEXT": 185,
+              "A-____-____-DIMS": 82,
+              "G-____-____-DIMS": 126,
+              "G-____-____-TEXT": 204,
+              "S-GRID-____-IDEN": 14
+            },
+            "coverage": "exercised"
+          },
+          "L01": {
+            "removed": 660,
+            "by_layer": {
+              "A-DOOR-____-IDEN": 36,
+              "A-WALL-____-IDEN": 40,
+              "A-____-NOTE-TEXT": 73,
+              "G-____-____-DIMS": 452,
+              "G-____-____-TEXT": 43,
+              "S-GRID-____-IDEN": 16
+            },
+            "coverage": "exercised"
+          }
+        },
+        "west_gain_m": 0.4296
+      },
+      "calibration": {
+        "accepted_identity": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 3.8005,
+          "tol_m": 0.1
+        },
+        "ok": true
+      },
+      "clean_reapply": {
+        "parity": true,
+        "L03": {
+          "removed": 0,
+          "by_layer": {},
+          "coverage": "not_exercised"
+        },
+        "L01": {
+          "removed": 0,
+          "by_layer": {},
+          "coverage": "not_exercised"
+        }
+      },
+      "injected_plan_iden": {
+        "e1_shift_m": -2.0,
+        "e1b_parity": true,
+        "L03_incremental_removed": 1,
+        "L03_coverage": "exercised",
+        "L01_incremental_removed": 0,
+        "L01_coverage": "not_exercised"
+      },
+      "native_stair_ablation": {
+        "east_error_m": -4.0005,
+        "L03_removed_from_envelope": 79,
+        "L01_changed": 0,
+        "L01_coverage": "not_exercised"
+      },
+      "witnesses_ok": true,
+      "gain_m": 0.4296,
+      "wall_s": 25.707
+    },
+    {
+      "E1": {
+        "step": {
+          "status": "fail",
+          "max_corner_dev_m": 0.5396,
+          "tol_m": 0.1
+        },
+        "faces_m": {
+          "x_min": -0.5396,
+          "y_min": -0.0311,
+          "z_min": 0.0,
+          "x_max": -0.0005,
+          "y_max": 0.0004,
+          "z_max": -0.0
+        },
+        "plan_counts": {
+          "A-WALL-": 394,
+          "A-GLAZ-": 98,
+          "S-STRS-": 79
+        }
+      },
+      "E1b": {
+        "step": {
+          "status": "fail",
+          "max_corner_dev_m": 0.11,
+          "tol_m": 0.1
+        },
+        "faces_m": {
+          "x_min": 0.11,
+          "y_min": 0.0,
+          "z_min": 0.0,
+          "x_max": -0.0005,
+          "y_max": 0.0004,
+          "z_max": -0.0
+        },
+        "plan_counts": {
+          "A-WALL-": 340,
+          "A-GLAZ-": 98,
+          "S-STRS-": 79
+        },
+        "matches": {
+          "L03": {
+            "removed": 806,
+            "by_layer": {
+              "A-AREA-____-IDEN": 50,
+              "A-DOOR-____-IDEN": 91,
+              "A-WALL-____-IDEN": 54,
+              "A-____-NOTE-TEXT": 185,
+              "A-____-____-DIMS": 82,
+              "G-____-____-DIMS": 126,
+              "G-____-____-TEXT": 204,
+              "S-GRID-____-IDEN": 14
+            },
+            "coverage": "exercised"
+          },
+          "L01": {
+            "removed": 660,
+            "by_layer": {
+              "A-DOOR-____-IDEN": 36,
+              "A-WALL-____-IDEN": 40,
+              "A-____-NOTE-TEXT": 73,
+              "G-____-____-DIMS": 452,
+              "G-____-____-TEXT": 43,
+              "S-GRID-____-IDEN": 16
+            },
+            "coverage": "exercised"
+          }
+        },
+        "west_gain_m": 0.4296
+      },
+      "calibration": {
+        "accepted_identity": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 3.8005,
+          "tol_m": 0.1
+        },
+        "ok": true
+      },
+      "clean_reapply": {
+        "parity": true,
+        "L03": {
+          "removed": 0,
+          "by_layer": {},
+          "coverage": "not_exercised"
+        },
+        "L01": {
+          "removed": 0,
+          "by_layer": {},
+          "coverage": "not_exercised"
+        }
+      },
+      "injected_plan_iden": {
+        "e1_shift_m": -2.0,
+        "e1b_parity": true,
+        "L03_incremental_removed": 1,
+        "L03_coverage": "exercised",
+        "L01_incremental_removed": 0,
+        "L01_coverage": "not_exercised"
+      },
+      "native_stair_ablation": {
+        "east_error_m": -4.0005,
+        "L03_removed_from_envelope": 79,
+        "L01_changed": 0,
+        "L01_coverage": "not_exercised"
+      },
+      "witnesses_ok": true,
+      "gain_m": 0.4296,
+      "wall_s": 23.99
+    }
+  ]
+}
