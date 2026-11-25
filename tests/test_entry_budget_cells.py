@@ -209,6 +209,37 @@ def test_walker_with_alternate_form_status_is_not_counted_contradictory(tmp_path
     assert rep["unknown_status"] == ["Contradictory?"]
 
 
+def test_intake_reads_off_path_get_their_own_bucket(tmp_path):
+    """Review r1 P1: stage=="intake" reads not on the path are pre-command, not beyond_path."""
+    root = _repo(tmp_path)
+    path = eb.cell_path(root, "ground-npm", "maf")["files"]
+    rows = [{"stage": "intake", "status": "ready", "docs_read": ["docs/domain/areas/body.md", "AGENTS.md"]},
+            {"stage": "OKS", "status": "ready", "docs_read": ["docs/domain/areas/body.md"]}]
+    rep = eb.walker_report(_walker(rows), path, root)
+    assert rep["intake_off_path"] == ["docs/domain/areas/body.md"]
+    assert rep["beyond_path"] == [] and rep["on_path"] == ["AGENTS.md"]
+    # the same file read only at a later stage is beyond_path, never intake_off_path
+    later = eb.walker_report(_walker(rows[1:]), path, root)
+    assert later["intake_off_path"] == [] and later["beyond_path"] == ["docs/domain/areas/body.md"]
+    # alternate-form stage values are intake explicitly; a non-intake stage or no stage is not
+    alt = eb.walker_report(_walker([{"stage": " Intake ", "docs_read": ["docs/domain/areas/body.md"]},
+                                    {"stage": "intake-review", "docs_read": ["docs/domain/req.md"]},
+                                    {"docs_read": ["docs/domain/areas/flora.md"]}]), ["AGENTS.md"], root)
+    assert alt["intake_off_path"] == ["docs/domain/areas/body.md"]
+    assert alt["beyond_path"] == ["docs/domain/areas/flora.md", "docs/domain/req.md"]
+
+
+def test_intake_check_levels_doc_is_on_every_path():
+    """task-intake.md sends the agent to TASK_TO_MODEL.md#check-levels at intake (review r1 P1a)."""
+    assert eb.INTAKE_DOC in eb.COMMON
+    assert eb.COMMON.index(eb.INTAKE_DOC) == eb.COMMON.index("docs/agents/task-intake.md") + 1
+    intake = (ROOT / "docs/agents/task-intake.md").read_text(encoding="utf-8")
+    assert "../procedure/TASK_TO_MODEL.md#check-levels" in intake
+    for tid in eb.targets(ROOT):
+        cell, _, stage = tid.partition(":")
+        assert eb.INTAKE_DOC in eb.cell_path(ROOT, cell, stage or None)["files"], tid
+
+
 # --- measurement and CLI --------------------------------------------------------------
 
 def test_measure_cells_totals_and_targets(tmp_path):
@@ -280,3 +311,10 @@ def test_committed_baseline_is_consistent():
         assert all(f["tokens"] > 0 for f in target["files"])
     covered = {t for w in data["walkers"].values() for t in w["targets"]}
     assert covered == set(data["targets"])
+    for name, walker in data["walkers"].items():
+        for tid, rep in walker["targets"].items():
+            assert "intake_off_path" in rep, (name, tid)
+            assert not set(rep["intake_off_path"]) & set(rep["beyond_path"]), (name, tid)
+            paths = {f["path"] for f in data["targets"][tid]["files"]}
+            assert not set(rep["intake_off_path"]) & paths, (name, tid)
+            assert eb.INTAKE_DOC in paths, (name, tid)
