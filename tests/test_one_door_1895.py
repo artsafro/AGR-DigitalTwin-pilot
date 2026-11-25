@@ -180,3 +180,13 @@ def test_elv_marked_not_delivered(rel):
 def test_psu275_is_not_a_body_etalon():
     row = next(ln for ln in _text("docs/cases.md").splitlines() if ln.startswith("| PSU275"))
     assert "before the lattice method [D373]" in row
+
+
+def test_committed_after_fixtures_are_consistent():
+    base = json.loads(_text("tests/fixtures/cold_entry/cells_baseline.json"))["targets"]
+    for name in ("door_after_1895.json", "cells_after_1895.json"):
+        data = json.loads(_text(f"tests/fixtures/cold_entry/{name}"))
+        assert re.fullmatch(r"[0-9a-f]{40}", data["measured_on"]) and set(data["targets"]) == set(base), name
+        for tid, t in data["targets"].items():
+            assert t["total_tokens"] == sum(f["tokens"] for f in t["files"]) > 0, (name, tid)
+            assert t["total_tokens"] < base[tid]["total_tokens"], (name, tid)
