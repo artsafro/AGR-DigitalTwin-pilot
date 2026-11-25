@@ -31,7 +31,6 @@ disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
 - Review/author receipts: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
 - Tools/MCP status: `docs/agents/CAPABILITIES.md`.
 - Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation): `docs/domain/`.
-- Open conflicts between sources: `docs/domain/conflicts.md`.
 - Pipeline stages and their status: `docs/pipeline.md`.
 - Unsolved work: `docs/backlog.md`.
 - Archive (tag `archive/2026-11`): `docs/ARCHIVE.md`.
