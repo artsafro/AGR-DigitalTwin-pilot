@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -30 1460 1505" width="1460" height="1505" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -30 1460 1765" width="1460" height="1765" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="0" y="-30" width="1460" height="1505" fill="#ffffff"/>
+<rect x="0" y="-30" width="1460" height="1765" fill="#ffffff"/>
 <rect x="30" y="140" width="1050" height="38.75" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="30" y="355" width="460" height="120.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
 <rect x="610" y="355" width="470" height="60.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
@@ -19,23 +19,23 @@
 <rect x="610" y="850.0" width="470" height="80.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <line x1="845.0" y1="765.0" x2="260.0" y2="850.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <line x1="490" y1="940.0" x2="610" y2="890.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="30" y="1095.0" width="460" height="80.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<rect x="610" y="1095.0" width="470" height="60.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<rect x="30" y="1095.0" width="460" height="160.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="1095.0" width="470" height="120.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
 <line x1="845.0" y1="930.0" x2="260.0" y2="1095.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="490" y1="1135.0" x2="610" y2="1125.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="30" y="1240.0" width="460" height="60.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<rect x="610" y="1240.0" width="470" height="40.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<line x1="845.0" y1="1155.0" x2="260.0" y2="1240.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="490" y1="1270.0" x2="610" y2="1260.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<rect x="30" y="1365.0" width="460" height="80.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<rect x="610" y="1365.0" width="470" height="40.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
-<line x1="845.0" y1="1280.0" x2="260.0" y2="1365.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<line x1="490" y1="1405.0" x2="610" y2="1385.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="1175.0" x2="610" y2="1155.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="30" y="1320.0" width="460" height="120.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="1320.0" width="470" height="60.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<line x1="845.0" y1="1215.0" x2="260.0" y2="1320.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="1380.0" x2="610" y2="1350.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="30" y="1505.0" width="460" height="200.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<rect x="610" y="1505.0" width="470" height="60.0" rx="8" fill="#c3fae8" stroke="#1e1e1e"/>
+<line x1="845.0" y1="1380.0" x2="260.0" y2="1505.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="490" y1="1605.0" x2="610" y2="1535.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="30" y="0" font-size="24" text-anchor="start" fill="#1e1e1e">
 <tspan x="30" dy="24">Маршрут Ground (НПМ + ВПМ) — целевой порядок D293 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: ef7ccd084dff5048c5bab876b6d180135c8dc9cee56f875d4bab25342431173b</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: 88b619f924034e476c81132996d7deff4c78b5959e00d4a2011bf1e1dcac55dc</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников</tspan>
@@ -96,26 +96,44 @@
 </text>
 <text x="260.0" y="1105.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
 <tspan x="260.0" dy="16">5. Экспортировать НПМ / ВПМ отдельно от упаковки</tspan>
-<tspan x="260.0" dy="20.0">Приёмка: Blender Ground JSON-to-FBX читает</tspan>
-<tspan x="260.0" dy="20.0">JSON-мастер, не OBJ сборщика</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Отличать helper поверхности Ground</tspan>
+<tspan x="260.0" dy="20.0">(JSON-мастер, не OBJ сборщика) от сводного</tspan>
+<tspan x="260.0" dy="20.0">экспорта участка после расстановки; общего</tspan>
+<tspan x="260.0" dy="20.0">канонического сборщика участка нет (исторический</tspan>
+<tspan x="260.0" dy="20.0">jobs/VATUTINO-SITE/assemble_delivery.py писал</tspan>
+<tspan x="260.0" dy="20.0">только триангулированный FBX сдачи, не D366)</tspan>
 </text>
 <text x="845.0" y="1105.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="845.0" dy="16">Артефакт: Ground FBX сдачи и рабочий FBX с квадами</tspan>
-<tspan x="845.0" dy="20.0">(D366)</tspan>
+<tspan x="845.0" dy="16">Артефакт: Цель: триангулированный FBX сдачи</tspan>
+<tspan x="845.0" dy="20.0">участка (Ground + МАФ + Флора) и отдельный рабочий</tspan>
+<tspan x="845.0" dy="20.0">FBX без триангуляции рядом с пакетом, вне ZIP</tspan>
+<tspan x="845.0" dy="20.0">(D366); helper ground_json_to_fbx.py выгружает</tspan>
+<tspan x="845.0" dy="20.0">только поверхность Ground</tspan>
 </text>
-<text x="260.0" y="1250.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="260.0" dy="16">6. Упаковать готовые файлы</tspan>
-<tspan x="260.0" dy="20.0">Приёмка: Упаковка не означает приёмку</tspan>
+<text x="260.0" y="1330.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">6. Упаковать готовые файлы общим маршрутом</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Общий писатель _write_zip относится к</tspan>
+<tspan x="260.0" dy="20.0">общему маршруту (исторический обход ZIP Ватутино</tspan>
+<tspan x="260.0" dy="20.0">учтён в package-contexts.yaml); упаковка не</tspan>
+<tspan x="260.0" dy="20.0">означает приёмку</tspan>
 </text>
-<text x="845.0" y="1250.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="845.0" dy="16">Артефакт: ZIP; схема «Пакет и сдача»</tspan>
+<text x="845.0" y="1330.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: ZIP через package_core._write_zip; схема</tspan>
+<tspan x="845.0" dy="20.0">«Пакет и сдача»</tspan>
 </text>
-<text x="260.0" y="1375.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="260.0" dy="16">7. Проверить Ground и передать Артёму</tspan>
-<tspan x="260.0" dy="20.0">Приёмка: Отказы не скрыты; визуальная приёмка — в</tspan>
+<text x="260.0" y="1515.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="260.0" dy="16">7. Проверить Ground и выполнить СИНТЕЗ</tspan>
+<tspan x="260.0" dy="20.0">(требование одного входа — отдельно от отчётов)</tspan>
+<tspan x="260.0" dy="20.0">Приёмка: Отказы не скрыты; --master проверяет</tspan>
+<tspan x="260.0" dy="20.0">рабочий FBX и/или хеш роли в манифесте, но не</tspan>
+<tspan x="260.0" dy="20.0">сравнивает поверхности FBX (ограничение, не fail</tspan>
+<tspan x="260.0" dy="20.0">и не допуск); инструменты не сверяют хеши друг с</tspan>
+<tspan x="260.0" dy="20.0">другом, хеш ZIP не доказывает идентичный FBX</tspan>
+<tspan x="260.0" dy="20.0">(#1805, PR #1830); визуальная приёмка — в</tspan>
 <tspan x="260.0" dy="20.0">маршруте сдачи</tspan>
 </text>
-<text x="845.0" y="1375.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
-<tspan x="845.0" dy="16">Артефакт: Отчёт, xView и находки СИНТЕЗ</tspan>
+<text x="845.0" y="1515.0" font-size="16" text-anchor="middle" fill="#1e1e1e">
+<tspan x="845.0" dy="16">Артефакт: Раздельные отчёты agr validate / xView и</tspan>
+<tspan x="845.0" dy="20.0">находки agr checker (СИНТЕЗ)</tspan>
 </text>
 </svg>

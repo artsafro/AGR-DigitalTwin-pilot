@@ -23,6 +23,11 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 
 ### `oks-vpm` — ОКС, ВПМ
 
+Trainer [D389]: in the existing Windows `workspace-write` sandbox, run `dwg_to_dxf.py --timeout 60`
+on a copy in a fresh workspace directory. Run `dxf_intake.py` on the hash-bound derivative before
+`plan_from_dxf.py extract`, even if AutoCAD ran in the workspace. On failure stop at `sources-dwg`;
+keep the receipt and console log, and do not escalate sandbox permissions or use a host fallback.
+
 | # | Этап | Что вызывает |
 |---|---|---|
 | 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`); без Autodesk (Blender-only, тренажёр): сначала `uv run python tools/methods/body/dxf_intake.py SOURCE.dwg DERIVATIVE.dxf PROVENANCE.json NEW_INTAKE.json` — DXF принимается только с чеком `dwg-to-dxf/1`, привязанным SHA-256 к текущим DWG и DXF, `$INSUNITS`=мм; иначе стоп на `sources-dwg` (конвертеры не одобрены) [#1857] |
