@@ -221,3 +221,36 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py sheet9 <renders9> "<re
   manifest `9e4f7501…`).
 - **Accepted** by Artem 2026-11-25 ~14:00 («Да»): body v006 and assembly v009 ([D409]); the uncut fill stays uncut
   for the reasons on sheet 2. Next OKS stage: UV / materials / atlas on v009 (not started on this card).
+
+## Step 4 — material IDs, UV and the NPM atlas on v009 ([D411])
+
+Artem 2026-11-25 ~19:30 («Да», #1925): IDs / UV / NPM atlas on the accepted body v006 + assembly v009 [D409]. The skeleton
+keeps 5 hooks: the work is the `uv` and `render atlas|checker` modes of `inset_write_blender.py`, `body_finish` in
+`inset_build.py` and the `uvsheet` subcommand of `inset_sheet.py`; the spec is `uv_config.json`. Blender 4.4 for the master,
+5.1 for the shared export (its FBX writer needs `SMOOTH_GROUP`):
+
+```
+blender44 -b --factory-startup --python-exit-code 1 --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- uv <step3-body-v006>/assembly/body_v009.blend jobs/sokolniki-uvk1000/uv_config.json C:/x/ev_1784/step2/volume-lines-v002.json <uv>
+uv run agr vpm-to-npm --blender blender51 jobs/sokolniki-uvk1000/uv_config.json <atlas> --master <uv>/master_v001.blend --then-npm <uv>/master_v001.blend jobs/sokolniki-uvk1000/uv_config.json <atlas> <npm>/fbx NPM
+uv run dt qa xview <uv>/parts_quad.fbx --out <uv>/xview_parts_quad.json --profile NPM     (+ the exported FBX)
+blender51 -b --factory-startup --python-exit-code 1 --python tools/blender/fbx_readback.py -- <npm>/fbx/NPM_Sokolniki_UVK1000_01.fbx <npm>/readback.json
+blender51 ... hooks/inset_write_blender.py -- render <npm>/fbx/NPM_Sokolniki_UVK1000_01.fbx <views_uv.json> <renders> atlas|checker 26.1481,61.9071
+uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv> <atlas> <npm> <joined v009 xview.json> <new.pdf> --decision D411
+```
+
+- IDs: 14 finishes of the PDF passport. Body by volume and the existing lattice levels: N dark brick (0-0.6 porcelain), D light
+  cassettes over a porcelain ground floor (to +3.84), S light cassettes over a dark brick ground floor (to +3.04), H light
+  cassettes; the dark / light joints lie on the existing N|D and S|D corner verticals and levels (no new cut). Jambs, sills,
+  heads, soffits = reveal RAL 9003; parapet tops and inner parapet / well walls = flashing RAL 7016; insets by their v009
+  material (`material_map`). Canopy glass = `*_MainGlass`.
+- UV: shared `tools/blender/vpm_uv.py` (edge-ring texel cuts, quad side <= 3.94 m minus the pattern period [D320], periodic
+  metre projection, stacked islands); 15 textured n-gons larger than a tile are bisected on world-axis planes (hook
+  `split_overflow`, shared edges, no vertex move). Flat-colour objects are not cut. Imposts / window frames stay texture.
+- Result: 28 313 -> 32 731 triangles + 120 glass (target ~40 000, limit 150 000); accepted vertices moved max 0.0 m; UV
+  overflow 0; open-edge length unchanged on every object, 0 non-manifold; xView NPM per object 0/0/0 PASS; V006 atlas padding
+  PASS; FBX readback ok. The single `*_Main` of `dt derive npm` fails xView (957 faces / 4 406 verts) - the same join of
+  v009 WITHOUT UV fails too (738 / 3 836): inset-to-body contacts, open for Artem at the delivery stage.
+- SYNTHETIC look (shared painter joints, approximate RAL, no X folds / per-type frames / 20 mm mesh); address placeholder;
+  Max not run. Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step4-uv-atlas-v001/` (`sheet/sok-step4-uv-atlas-v001.pdf`
+  8 sheets, atlas, master, NPM FBX, xView / readback, renders; `SHA256SUMS.txt` 37 files, manifest `68f38f73…`).
+  Waiting for Artem's picture approval of the atlas.

@@ -1,0 +1,57 @@
+{
+ "_doc": "#1925 Sokolniki step 4: finish zones, UV and NPM atlas on the accepted body v006 + assembly v009 [D409]. One spec serves tools/blender/vpm_uv.py (texel cuts, periodic UDIM per finish, path B: one finish = one UDIM tile, stacked islands [D320]) and tools/derive/npm_atlas.py (dt derive atlas). Finishes = PDF finish passport (СОКОЛЬНИКИ_УВК1000_АР_R23_вар1.pdf legend 1-12); rgb = approximate RAL sRGB, not measured; all patterns are the shared painter's (SYNTHETIC look: brick / porcelain / cassette joints, curtain-wall and window impost step as a periodic grid, mesh as the shared 'cage' opacity grid). Address is a placeholder (no confirmed NPM address).",
+ "address": "Sokolniki_UVK1000",
+ "address_note": "placeholder, not a delivery address",
+ "synthetic": true,
+ "size_full": 4096,
+ "size_placeholder": 256,
+ "pad_m": 0.016,
+ "zero_m": 0.0,
+ "glass": {"udim": 1001},
+ "finishes": {
+  "01_brick_F301-80": {"udim": 1001, "kind": "full", "pattern": "cassette", "rgb": [82, 82, 84], "S": 4.0, "P": [0.25, 0.075], "shift": [true, true], "h_joints": true, "rough": 0.85, "metal": 0.0, "passport": "1 Бетонная плитка White Hills «Лондон Брик» F301-80 (тёмная)"},
+  "02_porcelain_600_RAL7012": {"udim": 1002, "kind": "full", "pattern": "cassette", "rgb": [78, 87, 84], "S": 4.0, "P": [0.6, 0.6], "shift": [true, true], "h_joints": true, "rough": 0.5, "metal": 0.0, "passport": "2 Керамогранит 600x600 RAL 7012"},
+  "03_cassette_RAL9003": {"udim": 1003, "kind": "full", "pattern": "cassette", "rgb": [236, 236, 233], "S": 4.0, "P": [1.2, 1.2], "shift": [true, true], "h_joints": true, "rough": 0.45, "metal": 0.3, "passport": "3 Металлокассеты матовые RAL 9003 (светлые; складки X - не в общем художнике)"},
+  "04_fin_RAL8023": {"udim": 1004, "kind": "placeholder", "rgb": [166, 94, 46], "rough": 0.6, "metal": 0.1, "passport": "4 Металлокассеты RAL 8023 (ламели, пилоны F05)"},
+  "05_cw_structural_RAL7016": {"udim": 1005, "kind": "full", "pattern": "cassette", "rgb": [92, 112, 122], "S": 4.0, "P": [1.5, 1.8], "shift": [true, true], "h_joints": true, "rough": 0.1, "metal": 0.0, "passport": "5 Витраж структурный, профиль RAL 7016 (шаг импостов - текстура)"},
+  "06_cw_stick_RAL7016": {"udim": 1006, "kind": "full", "pattern": "cassette", "rgb": [92, 112, 122], "S": 4.0, "P": [1.2, 1.5], "shift": [true, true], "h_joints": true, "rough": 0.1, "metal": 0.0, "passport": "6 Витраж обычный, профиль RAL 7016 (шаг импостов - текстура)"},
+  "07_window_RAL7016": {"udim": 1007, "kind": "full", "pattern": "cassette", "rgb": [70, 88, 100], "S": 4.0, "P": [1.2, 1.45], "shift": [true, true], "h_joints": true, "rough": 0.1, "metal": 0.0, "passport": "7 Окна, профиль RAL 7016 (переплёт - текстура)"},
+  "08_door_RAL7016": {"udim": 1008, "kind": "full", "pattern": "cassette", "rgb": [70, 88, 100], "S": 4.0, "P": [1.0, 2.2], "shift": [true, true], "h_joints": true, "rough": 0.1, "metal": 0.0, "passport": "двери витражные, профиль RAL 7016"},
+  "10_mesh_20_RAL9003": {"udim": 1009, "kind": "full", "pattern": "cage", "rgb": [244, 244, 244], "S": 4.0, "P": [0.46, 0.833], "shift": [true, true], "rough": 0.5, "metal": 0.2, "passport": "10 Сетка 20x20 RAL 9003 (прозрачность - общая сетка 'cage', ячейка 20 мм на 94 px/м не читается)"},
+  "11_reveal_RAL9003": {"udim": 1010, "kind": "placeholder", "rgb": [244, 244, 244], "rough": 0.6, "metal": 0.1, "passport": "11 Оконный откос RAL 9003 (+ софиты, подоконники)"},
+  "12_frame_RAL9003": {"udim": 1011, "kind": "placeholder", "rgb": [240, 240, 238], "rough": 0.6, "metal": 0.1, "passport": "12 Металлический каркас RAL 9003 (перголы)"},
+  "13_decor_relief_RAL9003": {"udim": 1012, "kind": "placeholder", "rgb": [232, 232, 228], "rough": 0.5, "metal": 0.2, "passport": "3 рельефные панели RAL 9003 (вставки v007)"},
+  "14_flashing_RAL7016": {"udim": 1013, "kind": "placeholder", "rgb": [56, 62, 66], "rough": 0.6, "metal": 0.1, "passport": "нет в паспорте: отливы, парапеты, люки RAL 7016"},
+  "21_roof_membrane": {"udim": 1014, "kind": "placeholder", "rgb": [140, 143, 145], "rough": 0.8, "metal": 0.0, "passport": "нет в паспорте: кровля"}
+ },
+ "source_ids": {
+  "1": {"finish": "01_brick_F301-80"}, "2": {"finish": "02_porcelain_600_RAL7012"}, "3": {"finish": "03_cassette_RAL9003"},
+  "4": {"finish": "04_fin_RAL8023"}, "5": {"finish": "05_cw_structural_RAL7016"}, "6": {"finish": "06_cw_stick_RAL7016"},
+  "7": {"finish": "07_window_RAL7016"}, "8": {"finish": "08_door_RAL7016"}, "10": {"finish": "10_mesh_20_RAL9003"},
+  "11": {"finish": "11_reveal_RAL9003"}, "12": {"finish": "12_frame_RAL9003"}, "13": {"finish": "13_decor_relief_RAL9003"},
+  "14": {"finish": "14_flashing_RAL7016"}, "21": {"finish": "21_roof_membrane"}
+ },
+ "material_map": {
+  "04_cassette_fin_RAL8023": "04_fin_RAL8023", "05_cw_structural_RAL7016": "05_cw_structural_RAL7016",
+  "10_mesh_20_RAL9003": "10_mesh_20_RAL9003", "12_frame_RAL9003": "12_frame_RAL9003",
+  "13_decor_relief_RAL9003": "13_decor_relief_RAL9003", "14_flashing_RAL7016": "14_flashing_RAL7016",
+  "15_roof_hatch_RAL7016": "14_flashing_RAL7016", "16_pier_facade": "04_fin_RAL8023",
+  "17_window_glass": "07_window_RAL7016", "18_door_glass": "08_door_RAL7016", "19_curtain_glass": "06_cw_stick_RAL7016",
+  "21_roof_deck_RAL7016": "21_roof_membrane"
+ },
+ "glass_materials": ["M_Glass_01"],
+ "body_material": "WALL",
+ "body_objects": {"SM_Sokolniki_OKS_N": "N", "SM_Sokolniki_OKS_D": "D", "SM_Sokolniki_OKS_S": "S", "SM_Sokolniki_OKS_H": "H"},
+ "zoning": {
+  "_doc": "PDF elevations (1-169, 14-170, D1-A1): N wing = dark brick 1 (plinth 0-0.6 porcelain 2), D = light cassettes 3 above the porcelain 2 ground floor (to +3.84), S = light cassettes 3 above a dark brick 1 ground floor (to +3.04), H = light cassettes 3. Dark/light joints fall on the existing N|D and S|D volume corners and on the existing lattice levels 0.6 / 3.04 / 3.84 (no new cut). Jambs, sills, heads, soffits = reveal 11; parapet tops and inner parapet / well walls = flashing 14; up-facing ledges >= 4 m2 = roof.",
+  "eps_m": 0.01, "horizontal_nz": 0.7, "parallel_cos": 0.9, "inner_min_m": 0.05, "ledge_roof_area_m2": 4.0,
+  "reveal": "11_reveal_RAL9003", "parapet_top": "14_flashing_RAL7016", "parapet_inner": "14_flashing_RAL7016",
+  "ledge_roof": "21_roof_membrane",
+  "volumes": {
+   "N": {"roof": 13.22, "bands": [[0.6, "02_porcelain_600_RAL7012"], [99.0, "01_brick_F301-80"]]},
+   "D": {"roof": 17.42, "bands": [[3.84, "02_porcelain_600_RAL7012"], [99.0, "03_cassette_RAL9003"]]},
+   "S": {"roof": 11.12, "bands": [[3.04, "01_brick_F301-80"], [99.0, "03_cassette_RAL9003"]]},
+   "H": {"roof": 22.02, "bands": [[99.0, "03_cassette_RAL9003"]]}
+  }
+ }
+}

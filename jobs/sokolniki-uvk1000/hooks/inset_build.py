@@ -1009,6 +1009,51 @@ def totals(out, report):
     report["total"] = tot
 
 
+def ring_relation(xy, normal_xy, ring):
+    """#1925: plan distance of a face centroid to the nearest edge of a volume ring and |cos| between the face
+    normal and that edge's normal (1 = the face lies along the facade line, 0 = a jamb across it)."""
+    best = None
+    for i in range(len(ring) - 1):
+        a, b = ring[i], ring[i + 1]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        ln = math.hypot(dx, dy)
+        if ln < 1e-9:
+            continue
+        t = max(0.0, min(1.0, ((xy[0] - a[0]) * dx + (xy[1] - a[1]) * dy) / (ln * ln)))
+        d = math.hypot(xy[0] - a[0] - t * dx, xy[1] - a[1] - t * dy)
+        if best is None or d < best[0]:
+            nl = math.hypot(normal_xy[0], normal_xy[1]) or 1.0
+            best = (d, abs((-dy * normal_xy[0] + dx * normal_xy[1]) / (ln * nl)))
+    if best is None:
+        raise ValueError("degenerate ring")
+    return best
+
+
+def body_finish(vol, n, z, ring_dist, along_cos, area, rules):
+    """#1925 finish zone of one accepted body face (no geometry change): `z` = (min, centre, max) world Z,
+    `n` = unit normal. Rules come from uv_config.json `zoning` (PDF finish passport, per volume bands at the
+    existing lattice levels). Returns (finish, reason); a face crossing a band level raises (a cut would be needed)."""
+    r = rules["volumes"][vol]
+    eps = rules["eps_m"]
+    zmin, zc, zmax = z
+    if abs(n[2]) >= rules["horizontal_nz"]:
+        if n[2] > 0 and zmin >= r["roof"] - eps:
+            return rules["parapet_top"], "parapet_top"
+        if n[2] > 0 and area >= rules["ledge_roof_area_m2"]:
+            return rules["ledge_roof"], "ledge_roof"
+        return rules["reveal"], "sill_head_soffit"
+    if zmin >= r["roof"] - eps and ring_dist > rules["inner_min_m"]:
+        return rules["parapet_inner"], "parapet_inner"
+    if along_cos < rules["parallel_cos"]:
+        return rules["reveal"], "jamb"
+    for top, finish in r["bands"]:
+        if zmin < top - eps and zmax > top + eps:
+            raise ValueError(f"{vol}: face z {zmin:.3f}..{zmax:.3f} crosses the finish level {top}")
+        if zc < top:
+            return finish, f"band<{top}"
+    raise ValueError(f"{vol}: no band above z {zc:.3f}")
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("obb")

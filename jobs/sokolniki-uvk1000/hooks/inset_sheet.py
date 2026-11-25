@@ -884,6 +884,146 @@ def well_diff(m5, m7, cfg, vl):
 
 
 
+def uv_rows(rep, cfg, atlas):
+    """#1925: per-finish table rows (faces, triangles, VPM-tile and NPM-atlas texel px/m) and totals of uv_report.json.
+    NPM px/m = VPM px/m * atlas region px / size_full (a finish tile of S metres fills one atlas region)."""
+    fin = cfg["finishes"]
+    rows = {n: {"finish": n, "udim": fin[n]["udim"], "kind": fin[n]["kind"], "passport": fin[n].get("passport", ""),
+                "faces": 0, "dens": None} for n in fin}
+    for o in rep["objects"].values():
+        for n, q in o["uv_qa"].items():
+            rows[n]["faces"] += q["faces"]
+        for n, (lo, hi) in o["density_px_per_m"].items():
+            d = rows[n]["dens"]
+            rows[n]["dens"] = [lo, hi] if d is None else [min(d[0], lo), max(d[1], hi)]
+    scale = atlas["region"] / cfg["size_full"]
+    for r in rows.values():
+        r["npm_px_per_m"] = None if r["dens"] is None else [round(r["dens"][0] * scale, 1), round(r["dens"][1] * scale, 1)]
+    tot = {"tris_before": sum(o["tris_before"] for o in rep["objects"].values()),
+           "tris_after": sum(o["tris_after"] for o in rep["objects"].values()),
+           "overflow": sum(q["overflow"] for o in rep["objects"].values() for q in o["uv_qa"].values()),
+           "ngons_split": sum(o.get("overflow_ngons_split", 0) for o in rep["objects"].values()),
+           "open_len_changed": [k for k, o in rep["objects"].items()
+                                if abs(o["edges_before"]["open_len_m"] - o["edges_after"]["open_len_m"]) > 1e-3],
+           "nonmanifold_after": sum(o["edges_after"]["nonmanifold"] for o in rep["objects"].values())}
+    return sorted(rows.values(), key=lambda r: r["udim"]), tot
+
+
+def sheet_uv(a):
+    """#1925 step 4 sheet (Russian): summary + checks, atlas preview, texel table, UV checker | atlas per facade, iso."""
+    from PIL import Image, ImageDraw, ImageFont
+    W, H = 2480, 1754
+    f_t, f_b, f_s = ImageFont.truetype(FONT_B, 40), ImageFont.truetype(FONT, 26), ImageFont.truetype(FONT, 20)
+    f_h = ImageFont.truetype(FONT_B, 24)
+    ld = lambda p: json.load(open(p, encoding="utf-8"))  # noqa: E731
+    cfg, rep = ld(a.config), ld(os.path.join(a.uv_dir, "uv_report.json"))
+    atlas = ld(os.path.join(a.atlas_dir, "npm_atlas.json"))
+    xp = ld(os.path.join(a.uv_dir, "xview_parts_quad.json"))
+    xj, xb = ld(os.path.join(a.npm_dir, "xview.json")), ld(a.baseline_xview)
+    meta, rb = ld(os.path.join(a.npm_dir, "export_npm_meta.json")), ld(os.path.join(a.npm_dir, "readback.json"))
+    rows, tot = uv_rows(rep, cfg, atlas)
+    glass_tris = sum(m["triangles"] for m in rb["meshes"] if m["name"].endswith("_MainGlass"))
+    main_tris = sum(m["triangles"] for m in rb["meshes"] if m["name"].endswith("_Main"))
+    pages = []
+
+    def page(title):
+        im = Image.new("RGB", (W, H), "white")
+        d = ImageDraw.Draw(im)
+        d.text((60, 40), title, font=f_t, fill="black")
+        d.text((60, H - 50), "Сокольники УВК 1000, #1784 / #1925, шаг 4: UV / материалы / атлас НПМ на теле v006 + сборке "
+               "v009 [D409]. Карточка t_1bf47b0e, %s. Лист %d" % (a.decision, len(pages) + 1), font=f_s, fill="#666")
+        pages.append(im)
+        return im, d
+    xt = lambda x: x["totals"]  # noqa: E731
+    im, d = page("Сокольники: ID материалов, UV и атлас НПМ (решение Артёма 2026-11-25, %s)" % a.decision)
+    txt = [
+        "Исходник: принятая сборка v009 (тело v006 + вставки), body_v009.blend sha256 %s…; работа на новой копии, Blender 4.4/5.1."
+        % rep["source_sha256"][:12],
+        "ID материалов: %d отделок по паспорту PDF (легенда 1–12). Тело: N — тёмная плитка «Лондон Брик» (цоколь 0–0,6 м — керамогранит)," % len(rows),
+        "D — светлые кассеты RAL 9003 над цоколем-керамогранитом до +3,84; S — светлые кассеты над тёмной плиткой 1-го этажа до +3,04;",
+        "H — светлые кассеты. Стык тёмное/светлое — на существующих вертикальных рёбрах углов объёмов N|D и S|D и на уровнях решётки",
+        "0,6 / 3,04 / 3,84 (новых разрезов для стыка не понадобилось). Откосы, подоконники, софиты — RAL 9003; верх и внутренняя сторона",
+        "парапетов — отлив RAL 7016. Вставки — по своим материалам v009 (сопоставление в uv_config.json).",
+        "UV: общий tools/blender/vpm_uv.py — разрезы по кольцам рёбер (без Т-стыков), сторона квада <= 3,94 м на тайле 4K минус период",
+        "рисунка [D320]; периодическая проекция в метрах, острова стопкой; шаг импостов и переплётов — ТЕКСТУРОЙ. Плоские цвета не режутся.",
+        "Атлас: общий маршрут agr vpm-to-npm (dt derive atlas + dt derive npm, tools/derive), 2048 px, %d ячеек, поля 16 px; V006 PASS."
+        % len(atlas["finishes"]),
+        "",
+        "Проверки (числа):",
+        "• треугольники (без стекла козырьков): v009 %d → после UV %d (Main %d + MainGlass %d = %d; цель ~40 000, предел 150 000)"
+        % (tot["tris_before"], tot["tris_after"], main_tris, glass_tris, main_tris + glass_tris),
+        "• сдвиг вершин принятой сетки: макс. %.6f м (порог 1 мм); %d n-угольников рассечены по осям, вылетов UV из тайла: %d"
+        % (rep["orig_vertex_max_move_m"], tot["ngons_split"], tot["overflow"]),
+        "• открытые рёбра: длина границ до/после совпадает у всех объектов (%s); неманифолдных рёбер после: %d"
+        % ("да" if not tot["open_len_changed"] else "НЕТ: " + ", ".join(tot["open_len_changed"]), tot["nonmanifold_after"]),
+        "• xView NPM по объектам (как принята v009): граней %d, вершин %d, «бабочек» %d — %s"
+        % (xt(xp)["overlapping_faces"], xt(xp)["overlapping_vertices"], xt(xp)["bowtie_vertices"], "PASS" if xp["passed"] else "FAIL"),
+        "• xView NPM экспорта (один объект *_Main — контракт dt derive npm): граней %d, вершин %d — %s; та же сборка v009 без UV,"
+        % (xt(xj)["overlapping_faces"], xt(xj)["overlapping_vertices"], "PASS" if xj["passed"] else "FAIL"),
+        "   объединённая и триангулированная: граней %d, вершин %d — %s (касания вставок с телом, были до UV; вопрос 2)."
+        % (xt(xb)["overlapping_faces"], xt(xb)["overlapping_vertices"], "PASS" if xb["passed"] else "FAIL"),
+        "• чтение FBX: %s, UV-каналов 1, текстуры встроены; опора экспорта (центр плана) %s." % (
+            "ok" if rb["readback_ok"] else "ОШИБКА", meta["pivot_revit_internal_m"]),
+        "",
+        "СИНТЕТИКА: рисунки отделок — общий художник (швы плитки/кассет, сетка импостов), цвета RAL приблизительно; складки X кассет,",
+        "переплёты окон по типам и сетка 20 мм не нарисованы. Адрес Sokolniki_UVK1000 — заглушка. Max не запускался: нативные проверки",
+        "Max не измерены. Это не сдача (FBX сдачи, участок и ограждения — вне карточки).",
+        "",
+        "Вопросы Артёму: 1) атлас и зонирование по картинкам — принимаете? 2) xView единого *_Main: касания вставок с телом",
+        "(окна, отливы, витражи) — сваривать / отодвигать на этапе сдачи или принять как есть?",
+    ]
+    y = 115
+    for r in txt:
+        d.text((60, y), r, font=f_b, fill="#b00" if r.startswith(("СИНТЕТИКА", "Вопросы")) else "black")
+        y += 35
+    im, d = page("Атлас НПМ 2048 px (диффуз) и легенда ячеек")
+    at = Image.open(os.path.join(a.atlas_dir, "T_%s_001_Main_d_1.png" % cfg["address"])).convert("RGB")
+    im.paste(at.resize((1400, 1400)), (60, 120))
+    y = 120
+    for r in rows:
+        reg = atlas["finishes"][r["finish"]]
+        d.rectangle((1500, y, 1540, y + 32), fill=tuple(cfg["finishes"][r["finish"]]["rgb"]), outline="black")
+        d.text((1555, y), "%s  (UDIM %d, ячейка %d,%d)" % (r["finish"], r["udim"], round(reg["u0"] * 2048),
+                                                        round((1 - reg["v0"] - reg["size"]) * 2048)), font=f_s, fill="black")
+        d.text((1555, y + 24), r["passport"][:70], font=f_s, fill="#444")
+        y += 68
+    d.text((1500, y + 10), "Прозрачность: только ячейка сетки 10 (карта _o_).", font=f_s, fill="black")
+    im, d = page("Плотность текселя и счёт граней по отделкам")
+    y = 120
+    cols = (60, 560, 720, 880, 1080, 1340, 1640)
+    for x, h in zip(cols, ("Отделка", "UDIM", "вид", "граней", "ВПМ px/м", "НПМ px/м (атлас)", "паспорт")):
+        d.text((x, y), h, font=f_h, fill="black")
+    y += 40
+    for r in rows:
+        dens = "%d–%d" % tuple(r["dens"]) if r["dens"] else "—"
+        npm = "%.1f–%.1f" % tuple(r["npm_px_per_m"]) if r["npm_px_per_m"] else "плоский цвет"
+        for x, v in zip(cols, (r["finish"], r["udim"], "текстура" if r["kind"] == "full" else "цвет", r["faces"], dens,
+                               npm, r["passport"][:42])):
+            d.text((x, y), str(v), font=f_s, fill="black")
+        y += 34
+    y += 20
+    for s in ("ВПМ px/м = 4096 / S (S = 4,0 м) по площади грани; ниже 1024 — косые стены (проекция на ось мира) и",
+              "доли тайла. НПМ px/м = ВПМ × 377 / 4096 (ячейка 377 px = 4 м). Для ОКС НПМ плотность не нормируется (UV-07);",
+              "ограничение — сторона квада <= 3,94 м [D320]. Плоские цвета масштабированы в свою ячейку, плотность не важна."):
+        d.text((60, y), s, font=f_b, fill="black")
+        y += 36
+    for fid, label in (("F01", "F01 (N, N04)"), ("F05", "F05 (D, D06/D07)"), ("F03", "F03 (S, S01)"), ("F04", "F04 (D, D01–D03)"),
+                       ("iso", "изометрия")):
+        im, d = page("%s: UV-шахматка 0,5 м | атлас" % label)
+        for k, tag in enumerate(("checker", "atlas")):
+            r = Image.open(os.path.join(a.render_dir, "%s_%s.png" % (tag, fid))).convert("RGB")
+            r.thumbnail((1160, 1500))
+            im.paste(r, (60 + k * 1200, 120))
+            d.text((60 + k * 1200, 120 + r.size[1] + 10), "UV-шахматка (клетка 0,5 м по атласу)" if tag == "checker"
+                   else "Атлас НПМ (экспорт FBX)", font=f_b, fill="black")
+    pages[0].save(a.pdf, save_all=True, append_images=pages[1:], resolution=150)
+    for k, p in enumerate(pages):
+        p.save(os.path.join(os.path.dirname(a.pdf), "sheet_%02d.png" % (k + 1)))
+    with open(os.path.splitext(a.pdf)[0] + "_table.json", "w", encoding="utf-8") as fh:
+        json.dump({"rows": rows, "totals": tot, "main_tris": main_tris, "glass_tris": glass_tris}, fh,
+                  ensure_ascii=False, indent=1)
+    return len(pages), tot
+
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
@@ -916,11 +1056,20 @@ def main(argv=None):
     for k in ("render_dir", "prev_dir", "closeup_dir", "views", "build_dir", "body_dir", "decor", "pdf"):
         p.add_argument(k)
     p.add_argument("--config", default=os.path.join(JOB, "insets_config.json"))
+    p = sub.add_parser("uvsheet", help="#1925 step 4: IDs / UV / NPM atlas sheet (checker | atlas, texel table)")
+    for k in ("render_dir", "uv_dir", "atlas_dir", "npm_dir", "baseline_xview", "pdf"):
+        p.add_argument(k)
+    p.add_argument("--config", default=os.path.join(JOB, "uv_config.json"))
+    p.add_argument("--decision", default="D-row pending")
     a = ap.parse_args(argv)
-    out = a.pdf if a.cmd in ("sheet", "sheet7", "sheet8", "sheet9") else a.out
+    out = a.pdf if a.cmd in ("sheet", "sheet7", "sheet8", "sheet9", "uvsheet") else a.out
     if os.path.exists(out):
         print("refused: %s exists" % out, file=sys.stderr)
         return 2
+    if a.cmd == "uvsheet":
+        n, tot = sheet_uv(a)
+        print("SHEET", n, "pages", a.pdf, "tris", tot["tris_after"], "overflow", tot["overflow"])
+        return 0
     if a.cmd == "census":
         doc = census(json.load(open(a.dump, encoding="utf-8")), json.load(open(a.volume_lines, encoding="utf-8")))
     elif a.cmd == "welldiff":
