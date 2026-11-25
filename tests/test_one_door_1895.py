@@ -192,6 +192,19 @@ def test_live_route_imports_rule_survives_the_move():
     assert (ROOT / "tests/test_live_route_imports.py").is_file()
 
 
+@pytest.mark.parametrize(
+    ("path", "section_start", "section_end"),
+    [
+        ("docs/agents/SKELETONS.md", "| `oks-npm-lite`", "\n"),
+        ("docs/agents/SKELETONS-stages.md", "### `oks-npm-lite`", "### `ground-npm`"),
+        ("routes/npm-oks.md", "Only cell `oks-npm`", "[scenarios.json]"),
+    ],
+)
+def test_npm_lite_freeze_survives_the_one_door_split(path, section_start, section_end):
+    section = _text(path).split(section_start, 1)[1].split(section_end, 1)[0]
+    assert "[D405]" in section
+
+
 def test_psu275_is_not_a_body_etalon():
     row = next(ln for ln in _text("docs/cases.md").splitlines() if ln.startswith("| PSU275"))
     assert "before the lattice method [D373]" in row

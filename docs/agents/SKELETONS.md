@@ -19,7 +19,7 @@
 |---|---|---|
 | `oks-vpm` | [docs/scenarios/oks-vpm.md](../../docs/scenarios/oks-vpm.md) | `agr inspect --manifest JOB.json`, тело `agr body PLAN NEW_OUT` [D373] |
 | `oks-npm` | [routes/npm-oks.md](../../routes/npm-oks.md) | `agr inspect --manifest JOB.json`, тело `agr body PLAN NEW_OUT` [D373] |
-| `oks-npm-lite` | [routes/npm-oks.md](../../routes/npm-oks.md) | нет: ждёт определения NPM-lite (пробел `lite-route`) |
+| `oks-npm-lite` | [routes/npm-oks.md](../../routes/npm-oks.md) | нет: заморожена до определения NPM-lite [D405] (пробел `lite-route`) |
 | `npm-to-vpm` | [docs/scenarios/npm-to-vpm.md](../../docs/scenarios/npm-to-vpm.md) | `agr npm-ids SOURCE NEW_OUT --profile facade` |
 | `vpm-to-npm` | [docs/scenarios/vpm-to-npm.md](../../docs/scenarios/vpm-to-npm.md) | `uv run python tools/derive/vpm_to_npm.py --job jobs/<ID> --out NEW_DIR` |
 | `maf-npm-to-vpm` | [docs/research/maf-npm-to-vpm-1745.md](../../docs/research/maf-npm-to-vpm-1745.md) | `agr maf-npm-to-vpm --plan` |
@@ -58,7 +58,7 @@ not prove that lazy or path-based imports are gone. Explicit job data inputs are
 - `maf-sheet` — парные виды и замеры для Артёма.
 - `sintez-recipe` — один согласованный хук задания или работа у владельца; автоматической правки нет.
 - `sintez-sheet` — ручной лист по отчётам и замерам, общего генератора нет.
-- `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения; ячейка заморожена до определения NPM-lite.
+- `lite-route` — `oks-npm-lite` заморожена [D405]; карточки и правила упрощения нет, пока Артём не определит её.
 - `zero` — `agr zero` только проверяет заданный нуль; граница и сам нуль — из ПЗУ / вертикальной планировки, иначе вопрос [D279].
 - `quads` — нет команды раскроя/спаривания для нового участка; `dt ground v015` повторяет только Ватутино.
 - `optimise` — шага ProOptimizer нет (Артём 2026-11-21, #1737); распределение бюджета Флора/МАФ решает Артём [D167]; бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`.

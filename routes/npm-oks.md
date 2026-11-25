@@ -1,7 +1,7 @@
 # NPM / OKS — accepted route template (#1296, #1317)
 
 **Accepted route shape [D271]; not approval of any particular model or delivery.**
-Only cell `oks-npm`; `oks-npm-lite` waits for Artem's NPM-lite definition (frozen), VPM is
+Only cell `oks-npm`; `oks-npm-lite` is FROZEN until Artem defines it [D405], VPM is
 [oks-vpm](../docs/scenarios/oks-vpm.md), Ground -> MAF -> Flora is [routes/site.md](site.md). The router
 [scenarios.json](../docs/scenarios/scenarios.json) points this ready cell here.
 Call `agr --help` before writing a script. Milestone 1 is five thin dispatch aliases

@@ -39,6 +39,7 @@ and [`scene_findings`](../../../src/twinqa/scene.py).
 
 Project practice from Artem's Ground grilling, rounds 1-3 (notes: hermes_kanban docs/grill/ground-2026-10-15.md). **This is project practice, not regulation**; it does not override the table.
 
+- GND-09 [D399]: working cover IDs are independent of export tile numbering. `agr ground site` allocates consecutive tiles from 1001 only to covers with faces and records both versions of the table. V008 checks the archive PNG filenames per slot and the observed tile sequence on opaque Ground meshes in FBX readback.
 - Source: the SPOZU DWG. Take the coverings sheet (or model space), hide everything else; needed: coverings, plant planting points, MAF placement points, plant and MAF specifications. Hatches -> contours (take existing contours); export contours per covering type, one DWG each.
 - GND-03 perimeter means the outer boundary of every Ground component; inner rings (holes and building cut-outs) are excluded from the >= 1 m skirt requirement [D251]. This does not exempt disconnected components or boundary-connected cuts. Rings that share one welded vertex (two components touching at a corner, or a hole touching the outer ring) are split at that vertex and classified one by one (#1224). An interior step rim is excluded only when a closed chain of wall faces joins it to opposite surface edges covering its full span in plan (#1693).
 - Boundary: the Ground boundary is the designed-plot boundary, an AutoCAD layer named like «граница проектируемого участка» / «граница ГП» (feeds GND-01).

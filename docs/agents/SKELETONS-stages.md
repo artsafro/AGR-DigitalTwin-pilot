@@ -118,9 +118,9 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
 [`jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json`](../../jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json).
 
-### `oks-npm-lite` — ОКС, упрощённая НПМ
+### `oks-npm-lite` — ОКС, упрощённая НПМ (FROZEN)
 
-Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
+Заморожена до определения Артёмом на одну страницу [D405] (профиль/заказчик, что запекаем, бюджет полигонов и карт, нужна ли ВПМ-основа); агенты не должны её выдумывать. Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
 
 ### `ground-npm` — Ground + МАФ + Флора, НПМ
 
