@@ -1,0 +1,57 @@
+{
+ "rows": [
+  {
+   "etalon": "kpp1-v004",
+   "lane": "codex",
+   "date": "2026-11-24",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "report": "C:/x/trainer/runs/kpp1-v004-codex-20261124/score.json",
+   "run": "C:/x/trainer/runs/kpp1-v004-codex-20261124",
+   "wall_s": 243.9,
+   "tokens_in": 1736017,
+   "tokens_out": 5793,
+   "questions": 3,
+   "stages_used": [
+    "sources-dwg",
+    "validate"
+   ],
+   "new_code_lines": 0,
+   "exit": 0
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "lane": "codex",
+   "date": "2026-11-24",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "report": "C:/x/trainer/runs/g22-k2-stage1-codex-20261124/score.json",
+   "run": "C:/x/trainer/runs/g22-k2-stage1-codex-20261124",
+   "wall_s": 158.3,
+   "tokens_in": 734035,
+   "tokens_out": 5051,
+   "questions": 4,
+   "stages_used": [
+    "body"
+   ],
+   "new_code_lines": 0,
+   "exit": 0
+  },
+  {
+   "etalon": "63a-stage1",
+   "lane": "codex",
+   "date": "2026-11-24",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "report": "C:/x/trainer/runs/63a-stage1-codex-20261124/score.json",
+   "run": "C:/x/trainer/runs/63a-stage1-codex-20261124",
+   "wall_s": 331.7,
+   "tokens_in": 2759494,
+   "tokens_out": 6289,
+   "questions": 3,
+   "stages_used": [],
+   "new_code_lines": 0,
+   "exit": 0
+  }
+ ]
+}
