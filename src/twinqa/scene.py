@@ -31,7 +31,7 @@ from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
 from twinqa.sintez_uv import duplicate_vertex_finding, uv_findings as sintez_uv_findings
 from twinqa.uv import (DENSITY_MAX_PX_PER_M, DENSITY_MIN_PX_PER_M, UdimDomainError, _density_finding, edge_densities,
-                       udim_of)
+                       sequential_tiles, udim_of)
 
 READBACK = Path(__file__).resolve().parents[2] / "tools" / "blender" / "fbx_readback.py"
 ANGLE_TOL_DEG, SCALE_TOL = 1e-3, 1e-4
@@ -1961,6 +1961,15 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
         out["V008"].append(_f("fail" if mirrored else "pass", "mirrored islands", f"{src}: {mirrored or 'none'}", "no mirrored UV", [31], src))
         if glass:
             out["V008"].append(_f("fail", "glass tile", f"{src}: {glass}", "glass only in UDIM 1001", [31, 32], src))
+        if role == "ground":
+            opaque = [m for m in meshes if m not in ucx and not m["name"].endswith(GLASS_SUFFIXES)]
+            missing = [m["name"] for m in opaque if not m.get("udim_tiles")]
+            tiles = [tile for m in opaque for tile in (m.get("udim_tiles") or [])]
+            valid = all(type(tile) is int for tile in tiles)
+            ok = bool(tiles) and not missing and valid and sequential_tiles(tiles)
+            observed = f"{sorted(set(tiles)) if valid else 'invalid UDIM evidence'}; meshes without tiles: {missing}"
+            out["V008"].append(_f("pass" if ok else "fail", "Ground UV tile sequence", f"{src}: {observed}",
+                                    "1001..1100 sequential without gaps", [31], src))
         # V008/V009 per polygon with SINTEZ 1.6.1 rules (#1732): mirrored, out of tile, unwrapped, density
         side_of = (lambda tile, material: _tile_side(diffuse_px, tile, material)) if diffuse_px else None
         for stage_id, found in sintez_uv_findings([m for m in meshes if m not in ucx], "vpm", src, side_of,

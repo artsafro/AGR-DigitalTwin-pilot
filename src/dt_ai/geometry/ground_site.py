@@ -1,5 +1,5 @@
 """Ground for any site in the D293 order: sources -> boundary / zero -> flat Ground -> triangles / seams / insets
--> textures by ID (UDIM = ID) -> projection onto the relief -> texture fix + skirt -> UCX (#1406).
+-> textures by ID (dense export UDIMs [D399]) -> projection onto the relief -> texture fix + skirt -> UCX (#1406).
 
 Pattern: n/a | new-case: site-independent Ground orchestration over ground_cake (one owner for every site, #1406).
 
@@ -8,7 +8,7 @@ Program choice per step (one line why):
   without a DCC; any other reader (3ds Max / AGR Tools) passes the same plain polygons to ``build_site``.
 - flat Ground, triangles, seams, insets, projection, skirt: ``dt_ai.geometry.ground_cake`` (shapely + numpy) -
   the existing layered-cake core; pure Python, so the same call works from the agent CLI and from Max Python.
-- textures by ID: per-face UV shift by ``ID - 1`` tiles (UDIM 1000 + ID) - no DCC needed for a planar UV.
+- textures by ID: shift UVs to consecutive tiles allocated to the cover slots present on the mesh.
 - UCX: not built here; owner is compaction 7 (#1404, ``ucx10_core.py`` [D225]); the report says ``not_run``.
 
 The core never invents data: missing zero, unmapped covers, hatches without a background colour (unless the
@@ -33,7 +33,7 @@ STAGES = ("sources", "zero", "surfaces", "quads", "textures", "relief", "skirt",
 UCX_OWNER = "#1404 compaction 7 (ucx10_core.py, D225)"
 FBX_ZERO_NOT_MEASURED = {"status": "not_measured",
                          "reason": "no FBX is exported or read back by the site build (OBJ only, #1821)"}
-MAX_ID = 10  # UDIM = 1000 + ID in the first row 1001-1010; slot "IDnn_" parsing assumes two digits
+MAX_COVER_ID = 1000  # Working material IDs are not export tile numbers [D030].
 
 
 @dataclass
@@ -88,15 +88,15 @@ def _finite(name: str, value, positive: bool = False) -> float:
 
 
 def check_covers(covers: list[Cover], base_id: int) -> None:
-    """IDs are 1..N without gaps (UDIM 1001.. sequential, GND-09); names unique; colour RGB 0..255."""
+    """Working cover IDs are unique integers; only export tile numbers must be consecutive [D399]."""
     if not covers:
         raise ValueError("no covers: the flat Ground needs at least one cover (hatch -> ID)")
-    ids = sorted(c.id for c in covers)
-    if ids != list(range(1, len(covers) + 1)):
-        raise ValueError(f"cover IDs must be 1..{len(covers)} without gaps or repeats, got {ids}")
-    if ids[-1] > MAX_ID:
-        raise ValueError(f"cover ID {ids[-1]} > {MAX_ID}: ID {MAX_ID + 1} and above leave the first UDIM row "
-                         f"(1001-{1000 + MAX_ID}); split the site or merge covers")
+    for cid in [*(c.id for c in covers), base_id]:
+        if type(cid) is not int or not 1 <= cid <= MAX_COVER_ID:
+            raise ValueError(f"cover ID {cid!r}: expected an integer in 1..{MAX_COVER_ID}")
+    ids = {c.id for c in covers}
+    if len(ids) != len(covers):
+        raise ValueError(f"duplicate cover IDs: {sorted(c.id for c in covers)}")
     names = [c.name for c in covers]
     if len(set(names)) != len(names):
         raise ValueError(f"duplicate cover names {sorted(n for n in set(names) if names.count(n) > 1)}")
@@ -109,18 +109,23 @@ def check_covers(covers: list[Cover], base_id: int) -> None:
         if not c.polygons:
             raise ValueError(f"cover {c.id} {c.name}: no polygons")
     if base_id not in ids:
-        raise ValueError(f"base cover ID {base_id} is not one of the cover IDs {ids}")
+        raise ValueError(f"base cover ID {base_id} is not one of the cover IDs {sorted(ids)}")
 
 
 def slot_name(cover: Cover) -> str:
     return f"ID{cover.id:02d}_{cover.name}"
 
 
-def _cover_udim(cover_id: int) -> int:
-    """First-row UDIM tile of a Ground cover ID (1..MAX_ID -> cell (cover_id - 1, 0)) via udimtile_core."""
-    if isinstance(cover_id, bool):
-        raise gc._udimtile.UdimDomainError(f"cover_id must be an integer, got {cover_id!r}")
-    return gc._udimtile.udim_of_cell(cover_id - 1, 0)
+def _cover_cells(covers: list[Cover], used_slots) -> dict[str, tuple[int, int]]:
+    """Allocate dense UV cells in ascending working-ID order, only to faces that exist."""
+    slots = {slot_name(c): c.id for c in covers}
+    used = set(used_slots)
+    if extra := used - slots.keys():
+        raise ValueError(f"unmapped Ground cover slots: {sorted(extra)}")
+    width = gc._udimtile.U_TILES
+    if not 1 <= len(used) <= width**2:
+        raise ValueError(f"Ground needs 1..{width**2} used cover slots for UDIM, got {len(used)}")
+    return {slot: (i % width, i // width) for i, slot in enumerate(sorted(used, key=slots.__getitem__))}
 
 
 def relief_margin(snap, extension):
@@ -202,7 +207,6 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
                                 "tin_slivers_inner": tin.slivers_inner}
 
     # surfaces: covers -> IDs (ID colour = hatch background colour)
-    by_name = {c.name: c for c in covers}
     base = next(c for c in covers if c.id == base_id)
     slots = {c.name: slot_name(c) for c in covers}
     plan = gc.plan_layers(local(boundary), {c.name: [local(p) for p in c.polygons] for c in covers}, base.name,
@@ -213,13 +217,17 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
             raise ValueError(f"unhatched policy must name the base cover {base_id} and a reason, got {unhatched}")
     report["stages"]["surfaces"] = {"mode": surfaces, "plan": plan.report, "unhatched_m2": sliver,
                                     "unhatched_policy": unhatched, "ids": [
-        {"id": c.id, "name": c.name, "slot": slots[c.name], "udim": _cover_udim(c.id), "colour_rgb": list(c.colour),
+        {"id": c.id, "name": c.name, "slot": slots[c.name], "colour_rgb": list(c.colour),
          "colour_source": c.colour_source, "sources": c.sources,
          "area_m2": round(sum(p.area for p in c.polygons), 6)} for c in covers]}
 
     # quads: flat Ground first (no relief), one partition with shared seams and inset layers
     flat = gc.build_flat(plan, cell=cell, chord=chord, origin=(0.0, 0.0), snap=snap, surfaces=surfaces)
-    _udim_by_id(flat, by_name)
+    cells = _cover_cells(covers, flat.slot)
+    cover_tiles = {slot: [gc._udimtile.udim_of_cell(*cell)] for slot, cell in cells.items()}
+    for row in report["stages"]["surfaces"]["ids"]:
+        row["udim"] = cover_tiles[row["slot"]][0] if row["slot"] in cover_tiles else None
+    _place_udims(flat, cells)
     cov = gc.measure_coverage(flat, plan, tol=snap)
     report["stages"]["quads"] = {"flat_triangles": int(len(flat.faces)), "flat_vertices": int(len(flat.verts)),
                                  "coverage": cov, "flat_z": sorted({float(z) for z in np.unique(flat.verts[:, 2])})}
@@ -240,7 +248,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     mesh, misses = gc.project_z(refined, sampler, step)
     if misses:
         raise ValueError(f"projection missed {len(misses)} vertices")
-    _udim_by_id(mesh, by_name)
+    _place_udims(mesh, cells)
     kept = _retained(flat.verts[:, :2], mesh.verts[:, :2], snap)
     err = gc.measure_relief_error(mesh, sampler, step, tol=relief_tol)
     report["stages"]["relief"] = {"triangles": int(len(mesh.faces)), "flat_vertices_retained": kept,
@@ -258,7 +266,7 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
 
     # texture fix + skirt (outer edges of the base layer only, holes included as their own rings, D251)
     mesh = gc.add_skirt(mesh, skirt_m, slot="Skirt")
-    _skirt_ids_and_uv(mesh, by_name, slots, cell)
+    _skirt_ids_and_uv(mesh, cells, cell)
     gaps = skirt_gaps(mesh, skirt_m)
     invalid_uv = np.flatnonzero(~np.isfinite(mesh.uv).all(axis=(1, 2)))
     if invalid_uv.size:
@@ -266,8 +274,6 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
         raise ValueError(f"non-finite UV on Ground cover slot {mesh.slot[i]!r}, face {i}")
     tiles = gc.uv_tile_report(mesh.uv)
     # Skirts that inherit a cover slot are checked with that cover, just like the OBJ readback.
-    used_slots = set(mesh.slot)
-    cover_tiles = {slots[c.name]: [_cover_udim(c.id)] for c in covers if slots[c.name] in used_slots}
     assignment = _udim_assignment(mesh, cover_tiles)
     dens = gc.texel_density(mesh.verts, mesh.faces, mesh.uv, tex_px)
     top = mesh.level >= 0
@@ -347,16 +353,16 @@ def _uv_parity_not_measured(flat: gc.Mesh, relief: gc.Mesh) -> dict:
                       "(stages.textures) is not UV-parity proof"}
 
 
-def _udim_by_id(mesh: gc.Mesh, by_name: dict) -> None:
-    """Stacked [0,1]^2 cell UV -> tile of the face's ID: u += ID - 1 (UDIM 1000 + ID)."""
+def _place_udims(mesh: gc.Mesh, cells: dict[str, tuple[int, int]]) -> None:
+    """Move each face by whole UV cells without changing its in-tile coordinates."""
     for i, slot in enumerate(mesh.slot):
-        if slot == "Skirt":
-            continue
-        cid = int(slot[2:4])
-        mesh.uv[i, :, 0] = mesh.uv[i, :, 0] - np.floor(mesh.uv[i, :, 0].min() + 1e-9) + (cid - 1)
+        if slot not in cells:
+            raise ValueError(f"unmapped Ground cover slot: {slot}")
+        mesh.uv[i, :, 0] -= np.floor(mesh.uv[i, :, 0].min() + 1e-9)
+        mesh.uv[i] += cells[slot]
 
 
-def _skirt_ids_and_uv(mesh: gc.Mesh, by_name: dict, slots: dict, cell: float) -> None:
+def _skirt_ids_and_uv(mesh: gc.Mesh, cells: dict[str, tuple[int, int]], cell: float) -> None:
     """Texture fix: each skirt quad takes the ID of the base face above it; vertical planar UV in that tile."""
     edge_slot = {}
     for f, lv, s in zip(mesh.faces, mesh.level, mesh.slot):
@@ -373,7 +379,7 @@ def _skirt_ids_and_uv(mesh: gc.Mesh, by_name: dict, slots: dict, cell: float) ->
         if mesh.faces[j][0] != b or mesh.faces[j][1] != la:
             raise ValueError(f"skirt faces {i}, {j} are not one quad")
         s = edge_slot[(min(a, b), max(a, b))]
-        cid = int(s[2:4])
+        cu, cv = cells[s]
         length = float(np.linalg.norm(mesh.verts[a, :2] - mesh.verts[b, :2]))
         depth = float(mesh.verts[b, 2] - mesh.verts[lb, 2])
         uv = {b: (0.0, 1.0), a: (length * scale, 1.0), la: (length * scale, 1.0 - depth * scale),
@@ -381,7 +387,7 @@ def _skirt_ids_and_uv(mesh: gc.Mesh, by_name: dict, slots: dict, cell: float) ->
         for f in (i, j):
             mesh.slot[f] = s
             for k, v in enumerate(mesh.faces[f]):
-                mesh.uv[f, k] = (cid - 1 + uv[v][0], uv[v][1])
+                mesh.uv[f, k] = (cu + uv[v][0], cv + uv[v][1])
 
 
 def skirt_gaps(mesh: gc.Mesh, drop_m: float, xy_tol: float = 1e-6) -> list:
@@ -660,14 +666,14 @@ def _recoloured(rgb: np.ndarray, target) -> np.ndarray:
     return np.rint(out).astype(np.uint8)
 
 
-def write_materials(folder: Path, prefix: str, bindings: list[dict]) -> dict:
+def write_materials(folder: Path, prefix: str, bindings: list[dict], tiles: list[dict]) -> dict:
     """``<prefix>.mtl`` (one material per cover slot, map_Kd -> a PNG beside it) + the diffuse PNGs."""
     from PIL import Image
-    site = prefix.removeprefix("SM_").removesuffix("_Ground")
     lines, slots = [f"# {prefix}: cover -> library diffuse (#1315)"], []
-    for b in bindings:
-        slot = slot_name(b["cover"])
-        name, tex = f"M_{prefix.removeprefix('SM_')}_{slot}", f"T_{site}_Ground_Diffuse_{slot}.png"
+    by_slot = {slot_name(b["cover"]): b for b in bindings}
+    for row in tiles:
+        slot, name, tex = row["slot"], row["material"], row["diffuse"]
+        b = by_slot[slot]
         with Image.open(b["source"]) as im:
             rgb = np.asarray(im.convert("RGB"))
         if b["recolour"] == "cover-colour":

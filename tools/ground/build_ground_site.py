@@ -6,14 +6,16 @@ usage: dt ground site SPEC.json NEW_OUT_DIR
 
 The spec names the DXF (with sha256), boundary handle, project zero (+ source), covers (ID, name, hatch handles;
 ID colour = hatch background colour or a stated colour with reason), base ID, relief marks (block / INSERT names /
-contour layers) and optional crop box and parameters. Cover IDs are 1..10 only (UDIM 1000 + ID = the first row
-1001-1010; ID 11+ is refused, never renumbered). Relief: model space (no ``block``) is read directly; a ``block``
+contour layers) and optional crop box and parameters. Working cover IDs are unchanged; the used covers receive
+consecutive UDIMs from 1001 [D399]. Relief: model space (no ``block``) is read directly; a ``block``
 is placed by an explicit outermost-first ``insert_chain`` (covers-path conventions) or read in its own local
 coordinates via ``definition_only: true`` - a block with neither selector is refused, never silently assumed at
 identity. Output (new directory, written via NEW_OUT_DIR.partial):
-ground-flat.obj (flat-first stage), SM_<site>_Ground.obj (projected + skirt, UDIM = ID), ground-report.json
+ground-flat.obj (flat-first stage), SM_<site>_Ground.obj (projected + skirt), ground-udim.json + ground-udim.md,
+ground-report.json
 (every stage, OBJ readback and the project zero check on the OBJ readback). Optional ``materials`` binds every
-cover ID to a library diffuse (``gs.resolve_materials``, #1315): SM_<site>_Ground.mtl + T_<site>_Ground_Diffuse_*.png
+cover ID to a library diffuse (``gs.resolve_materials``, #1315): SM_<site>_Ground.mtl +
+T_<site>_Ground_Diffuse_<cover-slot>.<UDIM>.png for the used covers
 beside the OBJ, recoloured to the cover colour where the spec says so; the core never picks a material. Exit 0 built (advisories such as
 UCX not_run: #1404 never change it), 1 geometry failures (diagnostic OBJ + failed report are still published,
 passed=false: not package readiness evidence), 2 refused. No FBX is written or read: its zero is not_measured.
@@ -60,7 +62,7 @@ def adapter_sources(path: Path, spec: dict):
             polys += list(getattr(g, "geoms", [g]))
         if "colour" not in row or not str(row.get("colour_reason", "")).strip():
             raise ValueError(f"cover {row['id']} {row['name']}: adapter covers need a stated colour + colour_reason")
-        covers.append(gs.Cover(int(row["id"]), row["name"], polys, tuple(row["colour"]), "spec",
+        covers.append(gs.Cover(row["id"], row["name"], polys, tuple(row["colour"]), "spec",
                                [{"adapter_key": k} for k in keys]))
     left = sorted(set(cov) - set(named) - set(spec.get("adapter_empty") or []))
     if left:
@@ -130,13 +132,23 @@ def run(spec_path: Path, out: Path) -> int:
     rep["stages"]["sources"].update({"dxf": str(dxf), "dxf_sha256": digest, "spec": str(spec_path),
                                      "spec_sha256": gs.sha256(spec_path), "zero_source": zero["source"]})
     prefix = f"SM_{site}_Ground"
+    rows = []
+    unused = []
+    for cover in rep["stages"]["surfaces"]["ids"]:
+        slot, tile = cover["slot"], cover["udim"]
+        if tile is None:
+            unused.append({"id": cover["id"], "slot": slot, "reason": "no faces in the built site"})
+            continue
+        rows.append({"udim": tile, "id": cover["id"], "slot": slot, "material": f"M_{site}_Ground_{slot}",
+                     "diffuse": f"T_{site}_Ground_Diffuse_{slot}.{tile}.png" if bindings is not None else None})
+    rows.sort(key=lambda row: row["udim"])
     if gs.sha256(spec_path) != spec_digest or gs.sha256(dxf) != digest:
         raise ValueError("spec or DXF changed during the site build; nothing published")
     rep["stages"]["sources"]["spec_sha256"] = spec_digest
     partial.mkdir(parents=True)
     mtllib = None
     if bindings is not None:
-        mats = gs.write_materials(partial, prefix, bindings)
+        mats = gs.write_materials(partial, prefix, bindings, rows)
         rep["stages"]["textures"]["materials"] = {"library": str(spec["materials"]["library"]),
                                                   "decision": spec["materials"]["decision"], **mats}
         mtllib = mats["mtl"]
@@ -175,16 +187,25 @@ def run(spec_path: Path, out: Path) -> int:
         "fbx_z_of_zero": dict(gs.FBX_ZERO_NOT_MEASURED),
         "h_values_basis": "h_otn / h_abs derive from the OBJ readback with the assumed OBJ zero, not from an FBX",
         **check}
-    expected = {f"M_{site}_Ground_{s}": [1000 + int(s[2:4])] for s in result.slots
-                if f"M_{site}_Ground_{s}" in back["tiles"]}
+    expected = {row["material"]: [row["udim"]] for row in rows}
     if back["tiles"] != expected:
-        fails.append(f"readback UDIM tiles {back['tiles']} != ID tiles {expected}")
+        fails.append(f"readback UDIM tiles {back['tiles']} != tile table {expected}")
     if rep["project_zero_check"]["status"] != "pass":
         fails.append("project zero check: " + "; ".join(rep["project_zero_check"]["findings"]))
     status = 1 if gs.finalize_geometry(rep) else 0
     rep["passed"] = False
     (partial / "ground-report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1) + "\n",
                                                 encoding="utf-8", newline="\n")
+    table = {"schema": "ground-udim/1", "site": site, "geometry_status": rep["geometry_status"],
+             "tiles": rows, "unused_covers": unused}
+    (partial / "ground-udim.json").write_text(json.dumps(table, ensure_ascii=False, indent=2) + "\n",
+                                             encoding="utf-8", newline="\n")
+    md = [f"# {site} Ground UDIM table", "", f"Geometry status: {rep['geometry_status']}", "",
+          "| UDIM | Cover ID | Cover slot | OBJ material | Diffuse |", "| --- | --- | --- | --- | --- |"]
+    md.extend(f"| {r['udim']} | {r['id']} | {r['slot']} | {r['material']} | {r['diffuse'] or '—'} |" for r in rows)
+    if unused:
+        md += ["", "Unused covers (no faces in this build): " + ", ".join(r["slot"] for r in unused) + "."]
+    (partial / "ground-udim.md").write_text("\n".join(md) + "\n", encoding="utf-8", newline="\n")
     if gs.sha256(spec_path) != spec_digest or gs.sha256(dxf) != digest:
         raise ValueError("spec or DXF changed during output readback; partial retained, nothing published")
     os.replace(partial, out_r)

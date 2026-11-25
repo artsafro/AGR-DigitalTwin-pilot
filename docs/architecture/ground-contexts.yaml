@@ -14,9 +14,9 @@ rules:
 shared_kernel:
   serves_stage: export
   id: udim
-  ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
+  ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
-  owner_ru: "одна функция UDIM (#1337); Ground берёт номер тайла через udim_of_cell (UDIM = ID покрытия), её дубли охраняет карта НПМ (contexts.yaml)"
+  owner_ru: "одна функция UDIM (#1337); Ground передаёт в udim_of_cell плотный индекс покрытия [D399], дубли формулы охраняет карта НПМ (contexts.yaml)"
   functions:
     - name: udim_tile
       contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
@@ -173,7 +173,7 @@ relations:
     ru: "граница и ноль"
   - from: udim
     to: ground
-    ru: "номер тайла (UDIM = ID покрытия)"
+    ru: "номер тайла по плотному индексу покрытия"
   - from: udim
     to: ground-export
     ru: "проверка тайлов при чтении FBX"

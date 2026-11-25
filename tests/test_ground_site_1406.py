@@ -151,7 +151,6 @@ def test_skirt_threshold(drop, ok):
 
 
 @pytest.mark.parametrize("cs,msg", [
-    ([gs.Cover(1, "A", [box(0, 0, 20, 20)], (0, 0, 0), "spec"), gs.Cover(3, "B", [box(1, 1, 2, 2)], (1, 1, 1), "spec")], "without gaps"),
     ([gs.Cover(1, "A", [box(0, 0, 20, 20)], (0, 0, 0), "spec"), gs.Cover(2, "A", [box(1, 1, 2, 2)], (1, 1, 1), "spec")], "duplicate"),
     ([gs.Cover(1, "A b", [box(0, 0, 20, 20)], (0, 0, 0), "spec")], "Latin"),
     ([gs.Cover(1, "A", [box(0, 0, 20, 20)], (0, 0, 256), "spec")], "colour"),
@@ -168,13 +167,16 @@ def test_base_must_be_a_cover():
         build(base_id=7)
 
 
-def test_cover_ids_beyond_first_udim_row_refused():
-    """Review r1 P3: ID 11+ would leave the first UDIM row (1001-1010); refuse naming the limit."""
+def test_dense_tiles_roll_over_to_second_row():
     cs = [gs.Cover(1, "A", [box(0, 0, 20, 20)], (0, 0, 0), "spec")]
-    cs += [gs.Cover(i, f"C{i}", [box(i, 1, i + 0.5, 2)], (1, 1, 1), "spec") for i in range(2, 12)]
-    with pytest.raises(ValueError, match="ID 11 .*1010"):
-        gs.check_covers(cs, 1)
-    gs.check_covers(cs[:10], 1)  # ID 10 = UDIM 1010 is the last allowed
+    cs += [gs.Cover(3 * i, f"C{i}", [box(i, 1, i + 0.5, 2)], (1, 1, 1), "spec") for i in range(2, 12)]
+    result = build(covers=cs[::-1])
+    assert result.report["geometry_status"] == "built"
+    assert result.report["stages"]["textures"]["udim_assignment"]["expected"]["ID33_C11"] == [1011]
+    assert result.report["stages"]["textures"]["tiles"]["tiles"] == list(range(1001, 1012))
+    last = np.array(result.mesh.slot) == "ID33_C11"
+    assert last.any() and result.mesh.uv[last, :, 0].max() <= 1
+    assert result.mesh.uv[last, :, 1].min() >= 1
 
 
 def test_relief_miss_is_an_error_not_extrapolated():
@@ -212,26 +214,27 @@ def test_crop_box_fragment():
 
 @pytest.mark.parametrize("seed", range(12))
 def test_generated_sites_invariants(seed):
-    """Probe: random sites -> skirt drop >= 1 m on every outer edge, UDIM = ID, no straddle, flat vertices kept."""
+    """Probe sparse working IDs, arbitrary input order and dense tile allocation on generated sites."""
     rnd = random.Random(seed)
     w, h = rnd.uniform(8, 30), rnd.uniform(8, 30)
     n = rnd.randint(1, 4)
     cs = [gs.Cover(1, "Base", [box(0, 0, w, h)], (1, 1, 1), "spec")]
-    for i in range(2, n + 1):
+    for idx in range(2, n + 1):
+        i = 3 * idx
         x0, y0 = rnd.uniform(0, w - 3), rnd.uniform(0, h - 3)
         cs.append(gs.Cover(i, f"C{i}", [box(x0, y0, min(w, x0 + rnd.uniform(1, 6)), min(h, y0 + rnd.uniform(1, 6)))],
                            (i, i, i), "spec"))
     a, b, c = rnd.uniform(-0.2, 0.2), rnd.uniform(-0.2, 0.2), rnd.uniform(-0.01, 0.01)
     pts = relief(w, h, 7, 1.0, lambda x, y: 150 + a * x + b * y + c * x * y)
-    r = gs.build_site(box(0, 0, w, h), cs, 1, pts, 150.0, origin_xy=(0, 0), cell=rnd.choice([2.0, 3.0, 4.0]),
+    r = gs.build_site(box(0, 0, w, h), cs[::-1], 1, pts, 150.0, origin_xy=(0, 0), cell=rnd.choice([2.0, 3.0, 4.0]),
                       skirt_m=rnd.choice([1.0, 1.5]))
     st = r.report["stages"]
     assert st["skirt"]["skirt_gap_edges"] == []
     assert st["textures"]["tiles"]["straddling"] == 0
     used = sorted({int(s[2:4]) for s in r.mesh.slot})
-    assert st["textures"]["tiles"]["tiles"] == [1000 + i for i in used]
+    assert st["textures"]["tiles"]["tiles"] == list(range(1001, 1001 + len(used)))
     for i, s in enumerate(r.mesh.slot):
-        assert math.floor(r.mesh.uv[i, :, 0].min() + 1e-9) == int(s[2:4]) - 1
+        assert math.floor(r.mesh.uv[i, :, 0].min() + 1e-9) == used.index(int(s[2:4]))
     assert st["relief"]["flat_vertices_retained"]["missing"] == 0
     assert st["relief"]["relief_error"]["faces_over_tol"] == 0
 
@@ -457,11 +460,30 @@ def test_sparse_cover_ids_publish_dense_udim_table(tmp_path):
         assert f"| {tile} | {cid} | {slot} | {material} | {texture} |" in markdown
         assert gs.read_mtl(out / "SM_SYN_Ground.mtl")[material] == texture
         with Image.open(out / texture) as image:
-            assert list(image.getdata()) == [(cid, cid + 1, cid + 2)] * 4
+            np.testing.assert_array_equal(np.asarray(image), np.full((2, 2, 3), (cid, cid + 1, cid + 2)))
         expected[material] = [tile]
     for obj in ("ground-flat.obj", "SM_SYN_Ground.obj"):
         assert gs.read_obj(out / obj)["tiles"] == expected
     assert {p.name: p.read_bytes() for p in tmp_path.iterdir() if p.is_file()} == before
+
+    # Compare a consecutive-ID control through the same fresh-process export. The OBJ must
+    # match byte-for-byte after normalizing only the three stable semantic material names.
+    for cover, cid in zip(spec["covers"], (3, 2, 1), strict=True):
+        cover["id"] = cid
+    spec["base_id"] = 1
+    spec["materials"]["by_cover"] = {str(rank): {"diffuse": f"map{cid}.png"}
+                                        for rank, cid in enumerate((3, 7, 12), 1)}
+    control_spec = tmp_path / "control-spec.json"
+    control_spec.write_text(json.dumps(spec), encoding="utf-8")
+    control = tmp_path / "control"
+    r = run(SITE, control_spec, control)
+    assert r.returncode == 0, r.stderr or r.stdout
+    for obj in ("ground-flat.obj", "SM_SYN_Ground.obj"):
+        text = (out / obj).read_bytes()
+        for row, rank in zip(rows, (1, 2, 3), strict=True):
+            material = row["material"]
+            text = text.replace(material.encode(), material.replace(f"ID{row['id']:02d}_", f"ID{rank:02d}_").encode())
+        assert text == (control / obj).read_bytes()
 
 
 def test_cli_fresh_process_builds_and_reads_back(tmp_path):
@@ -476,7 +498,8 @@ def test_cli_fresh_process_builds_and_reads_back(tmp_path):
     assert rep["readback"]["tiles"] == {"M_SYN_Ground_ID01_Lawn": [1001], "M_SYN_Ground_ID02_Rubber": [1002]}
     assert rep["project_zero_check"]["status"] == "pass" and rep["passed"] is False
     assert sorted(p.name for p in (tmp_path / "out").iterdir()) == ["SM_SYN_Ground.obj", "ground-flat.obj",
-                                                                     "ground-report.json"]
+                                                                     "ground-report.json", "ground-udim.json",
+                                                                     "ground-udim.md"]
     assert {p.name: p.read_bytes() for p in tmp_path.iterdir() if p.is_file()} == before  # inputs untouched
     assert rep["project_zero_check"]["checked_vertices"] > 0
     back = gs.read_obj(tmp_path / "out/SM_SYN_Ground.obj")
