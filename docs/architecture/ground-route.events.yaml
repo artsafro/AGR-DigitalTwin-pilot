@@ -133,7 +133,7 @@ stages:
       - jobs/VATUTINO-SITE/ground-v015-pairing-session.md
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
   - id: textures
-    event_ru: "Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM = ID"
+    event_ru: "Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM подряд с 1001"
     actor: agent-dcc
     context: ground
     commands:
@@ -144,6 +144,7 @@ stages:
       - D160
       - D210
       - D293
+      - D399
     evidence:
       - jobs/VATUTINO-SITE/ground-textures.md
       - jobs/VATUTINO-SITE/ground-v015-texel-contract-checkpoint.md

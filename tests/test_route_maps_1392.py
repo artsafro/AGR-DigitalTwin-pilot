@@ -511,7 +511,8 @@ def test_ground_flat_steps_name_ids_seams_insets_tiles_udim():
     quads = _stage(events, "quads")["event_ru"].lower()
     assert "шв" in quads and "вставк" in quads
     tex = _stage(events, "textures")["event_ru"]
-    assert "UDIM = ID" in tex and "тайл" in tex
+    assert "UDIM подряд с 1001" in tex and "тайл" in tex
+    assert "D399" in _stage(events, "textures")["rules"]
 
 
 # ---------------------------------------------------------------- 5. NPM step before export
