@@ -75,6 +75,11 @@ def test_owner_delegation_witness_for_both_report_fields(monkeypatch):
     ]
     assert st["textures"]["expected_tiles"] == [1001 + sentinel_offset, 1010 + sentinel_offset]
     assert st["textures"]["tiles"]["tiles"] == [1001 + sentinel_offset, 1010 + sentinel_offset]
+    assignment = st["textures"]["udim_assignment"]
+    assert assignment["expected"] == assignment["observed"] == {
+        "ID01_Lawn": [1001 + sentinel_offset], "ID10_Tile10": [1010 + sentinel_offset],
+    }
+    assert assignment["status"] == "pass"
     assert calls_by_phase["surfaces"] == [(i, 0) for i in range(10)]
     assert calls_by_phase["textures"] == [(0, 0), (9, 0)]
     assert res.report["geometry_status"] == "built" and res.report["geometry_failures"] == []

@@ -10,7 +10,7 @@ job `outputs/` are local-only (git-ignored). Full AGR history: `data/archive/*.b
 The "Files read" list below keeps the original AGR paths.
 
 ## Regulation PDF
-- `standards/source/Rasporyajenies19012026trebovaniya(2).pdf` (plain Git blob) - 56 pages, SHA-256 933f6b700c074d0db6b82030fc79d1dbe9db4a0067495ca716e0636acd544222 (per local: standards/source/source-lock.json). Order of Moscow DIT + Moskomarkhitektura 19.04.2023 No 64-16-192/23/769, App.1 NPM pp.1-19, App.2 VPM pp.20-50, App.3 GeoJSON pp.51-56.
+- `standards/source/Rasporyajenies19012026trebovaniya(2).pdf` (plain Git blob, 24.9 MB; stays in git under `standards/source/source-lock.json` as the recorded exception to the no-large-binaries rule, COORDINATION_RULES 57 [D398]) - 56 pages, SHA-256 933f6b700c074d0db6b82030fc79d1dbe9db4a0067495ca716e0636acd544222 (per local: standards/source/source-lock.json). Order of Moscow DIT + Moskomarkhitektura 19.04.2023 No 64-16-192/23/769, App.1 NPM pp.1-19, App.2 VPM pp.20-50, App.3 GeoJSON pp.51-56.
 - Byte copies exist under jobs/REVIT-OPENINGS/outputs/diffuse-v001/pytest-tmp/ and tmp/*/pytest-run-*/ (test fixtures; not used).
 - Verification: text of all 56 pages extracted with poppler `pdftotext -enc UTF-8` (OCR text layer, noisy) and read for pp.1-14, 20-56 (pp.15-19 are figures with captions only). Pages 32 and 40 rendered with `pdftoppm` and checked visually (density formula = division; pivot = geometric center X/Y; fig.2.1 limits 800k/3M, 1-700 texture sets, 2-21 ZIPs). Every `reg p.N` citation in this folder refers to a page I read.
 

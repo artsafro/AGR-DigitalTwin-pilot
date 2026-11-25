@@ -67,6 +67,15 @@ def test_d389_row_recorded_once():
     assert len(rows) == 1 and "AutoCAD Core Console" in rows[0] and "3ds Max" in rows[0]
 
 
+def test_dwg_practice_prompt_requires_intake_and_stops_on_failure():
+    entries = {e["id"]: e for e in bank()["etalons"]}
+    text = T.task_text(entries["kpp1-v004"], Path("i"), Path("o"))
+    assert "--timeout 60" in text
+    assert text.index("dxf_intake.py") < text.index("plan_from_dxf.py")
+    assert "stop at sources-dwg" in text and "do not escalate" in text
+    assert "dxf_intake.py" not in T.task_text(entries["g22-k2-stage1"], Path("i"), Path("o"))
+
+
 def test_task_text_refuses_a_leaking_task():
     e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
     e["task"] += " Compare with k2_v002r1_body_quad.fbx."
@@ -377,3 +386,74 @@ def test_practice_tree_refuses_existing_dst_and_survivor(tmp_path, monkeypatch):
 def test_cmd_run_does_not_use_git_worktree():
     src = Path(T.__file__).read_text(encoding="utf-8")
     assert '"worktree", "add"' not in src and "practice_tree(ROOT" in src
+
+
+# ---------------------------------------------------------------- #1861: bank paths live on Drive, not C:/x
+def _etalon_file_paths(e):
+    paths = [s.get("path") for s in e.get("sources", [])]
+    key = e.get("key") or {}
+    paths.append(key.get("path"))
+    for k, v in key.items():
+        if k.startswith("package_") and not k.endswith("_sha256"):
+            paths.append(v)
+    for field in ("rejected", "superseded"):
+        paths.extend(x.get("path") for x in e.get(field, []))
+    for field in ("stage2_key", "calibration_accepted"):
+        if isinstance(e.get(field), dict):
+            paths.append(e[field].get("path"))
+    return [p for p in paths if p is not None]
+
+
+def test_bank_has_no_scratch_paths_and_complete_entries_live_on_drive():
+    b = bank()
+    assert "C:/x" not in json.dumps(b, ensure_ascii=False)
+    for e in b["etalons"]:
+        if e["status"] == "complete":
+            paths = _etalon_file_paths(e)
+            assert paths, e["id"]
+            for p in paths:
+                assert p.startswith("G:/Мой диск/AGR-"), (e["id"], p)
+
+
+@pytest.mark.parametrize("mutate", [
+    lambda e: e["sources"][0].__setitem__("path", "C:/x/ev_1619/g22_k2_src.npz"),
+    lambda e: e["key"].__setitem__("path", "C:/x/review-k2/k2_v002r1_body_quad.fbx"),
+    lambda e: e["key"].__setitem__("package_vpm", "C:/x/tmp/SM_Kpp_1.zip"),
+    lambda e: e["key"].__setitem__("package_npm", "D:/other/0000_Kpp_1.zip"),
+    lambda e: e["rejected"][0].__setitem__("path", "C:/x/review-k2/k2_v001_body_quad.fbx"),
+    lambda e: e.__setitem__("superseded", [{"version": "v2", "path": "C:/x/review-k2/k2_v002.fbx"}]),
+    lambda e: e.__setitem__("stage2_key", {"path": "C:/x/review-63A/63A_Stage2_v001.fbx"}),
+    lambda e: e.__setitem__("calibration_accepted", {"path": "C:/x/review-k2/acc.fbx"}),
+    lambda e: e["sources"][0].__setitem__("path", "G:/Мой диск/AGR-evidence/../../Windows/x.fbx"),
+    lambda e: e["sources"][0].__setitem__("path", "G:/Мой диск/AGR-evidence/../other/x.fbx"),
+    lambda e: e["sources"][0].__setitem__("path", r"G:/Мой диск/AGR-evidence\..\..\x.fbx"),
+    lambda e: e["sources"][0].__setitem__("path", "G:/Мой диск/other/x.fbx"),
+    lambda e: e["sources"][0].__setitem__("path", "G:/Мой диск/AGR-/x.fbx"),
+    lambda e: e["sources"][0].__setitem__("path", "G:/Мой диск/AGR-evidence/"),
+    lambda e: e["sources"][0].__setitem__("path", "jobs/KPP1/local.dwg"),
+    lambda e: e["sources"][0].__setitem__("path", ""),
+    lambda e: e["sources"][0].__setitem__("path", None),
+])
+def test_bank_flags_practice_ready_path_outside_drive(mutate):
+    b = {"etalons": [json.loads(json.dumps(bank()["etalons"][0]))]}  # kpp1-v004: practice_ready on Drive
+    assert T.bank_problems(b) == []
+    mutate(b["etalons"][0])
+    probs = T.bank_problems(b)
+    assert any("G:/Мой диск/AGR-" in p for p in probs), probs
+
+
+def test_bank_allows_non_practice_ready_non_drive_placeholder():
+    e = json.loads(json.dumps(bank()["etalons"][0]))
+    e["practice_ready"] = False
+    e["sources"][0]["path"] = "jobs/VATUTINO-SITE/sources.json"
+    assert T.bank_problems({"etalons": [e]}) == []
+
+
+def test_cli_check_refuses_practice_ready_path_outside_drive(tmp_path):
+    b = {"etalons": [json.loads(json.dumps(bank()["etalons"][0]))]}
+    b["etalons"][0]["sources"][0]["path"] = "C:/x/scratch/a.dwg"
+    bad = tmp_path / "bad_etalons.json"
+    bad.write_text(json.dumps(b, ensure_ascii=False), encoding="utf-8")
+    p = _cli("--bank", str(bad), "check")
+    assert p.returncode == 2
+    assert "G:/Мой диск/AGR-" in p.stderr and "C:/x/scratch/a.dwg" in p.stderr
