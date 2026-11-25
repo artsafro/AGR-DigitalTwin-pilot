@@ -260,11 +260,20 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
     mesh = gc.add_skirt(mesh, skirt_m, slot="Skirt")
     _skirt_ids_and_uv(mesh, by_name, slots, cell)
     gaps = skirt_gaps(mesh, skirt_m)
+    invalid_uv = np.flatnonzero(~np.isfinite(mesh.uv).all(axis=(1, 2)))
+    if invalid_uv.size:
+        i = int(invalid_uv[0])
+        raise ValueError(f"non-finite UV on Ground cover slot {mesh.slot[i]!r}, face {i}")
     tiles = gc.uv_tile_report(mesh.uv)
+    # Skirts that inherit a cover slot are checked with that cover, just like the OBJ readback.
+    used_slots = set(mesh.slot)
+    cover_tiles = {slots[c.name]: [_cover_udim(c.id)] for c in covers if slots[c.name] in used_slots}
+    assignment = _udim_assignment(mesh, cover_tiles)
     dens = gc.texel_density(mesh.verts, mesh.faces, mesh.uv, tex_px)
     top = mesh.level >= 0
-    report["stages"]["textures"] = {"tiles": tiles, "expected_tiles": [_cover_udim(c.id) for c in covers
-                                                                        if slots[c.name] in set(mesh.slot)],
+    report["stages"]["textures"] = {"tiles": tiles,
+                                    "expected_tiles": [ts[0] for ts in assignment["expected"].values()],
+                                    "udim_assignment": assignment,
                                     "tex_px": tex_px,
                                     "density_px_per_m_top": [float(np.nanmin(dens[top])), float(np.nanmax(dens[top]))]}
     report["stages"]["skirt"] = {"drop_m": skirt_m, "skirt_faces": int((~top).sum()), "skirt_gap_edges": gaps}
@@ -274,6 +283,8 @@ def build_site(boundary: Polygon, covers: list[Cover], base_id: int, relief_xyz,
         findings.append(f"UV: {tiles['straddling']} straddling, {tiles['outside_udim_range']} outside UDIM range")
     if sorted(tiles["tiles"]) != sorted(report["stages"]["textures"]["expected_tiles"]):
         findings.append(f"UDIM tiles {tiles['tiles']} != IDs {report['stages']['textures']['expected_tiles']}")
+    for slot, diff in assignment["differences"].items():
+        findings.append(f"UDIM slot {slot}: expected {diff['expected']}, observed {diff['observed']}")
     if sliver > 0 and unhatched is None:
         findings.append(f"unhatched {sliver} m2 has no cover (put on the base only with a stated policy)")
     if gaps:
@@ -305,6 +316,26 @@ def finalize_geometry(report: dict) -> bool:
     report["findings_scope"] = "compatibility: geometry_failures + advisories; status follows geometry_failures"
     report["geometry_status"] = "fail" if failed else "built"
     return failed
+
+
+def _udim_assignment(mesh: gc.Mesh, cover_tiles: dict) -> dict:
+    indices = {}
+    for i, slot in enumerate(mesh.slot):
+        if slot not in cover_tiles:
+            raise ValueError(f"unmapped Ground cover slot {slot!r} on face {i}")
+        indices.setdefault(slot, []).append(i)
+    if not len(mesh.slot) == len(mesh.uv) == len(mesh.faces) or not indices:
+        raise ValueError("Ground cover slots require one UV row per face and at least one face")
+    observed, invalid = {}, {}
+    for slot in cover_tiles:
+        facts = gc.uv_tile_report(mesh.uv[indices[slot]])
+        observed[slot] = facts["tiles"]
+        if facts["straddling"] or facts["outside_udim_range"]:
+            invalid[slot] = {key: facts[key] for key in ("straddling", "outside_udim_range")}
+    differences = {slot: {"expected": ts, "observed": observed[slot]}
+                   for slot, ts in cover_tiles.items() if ts != observed[slot]}
+    return {"status": "fail" if differences or invalid else "pass", "expected": cover_tiles,
+            "observed": observed, "differences": differences, "invalid_faces_by_slot": invalid}
 
 
 def _uv_parity_not_measured(flat: gc.Mesh, relief: gc.Mesh) -> dict:

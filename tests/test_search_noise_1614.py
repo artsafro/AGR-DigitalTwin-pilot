@@ -242,6 +242,75 @@ def _rg(root):
     return set(out.splitlines())
 
 
+ARCHIVE_SECTION = "## Hidden from search (still in the tree)\n"
+
+
+@needs_rg
+def test_search_archive_round_trip(tmp_path):
+    old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
+    first = f"- `{old}` — Superseded result.\n"
+    second = f"- `{other}` — Historical receipt.\n"
+    index = "# Archive\n\n" + ARCHIVE_SECTION + "\n### evidence/\n\n"
+    root = _repo(tmp_path, {old: "old", other: "other", sibling: "sibling", "docs/ARCHIVE.md": index + first + second,
+                            "AGENTS.md": "See [archive](docs/ARCHIVE.md).\n"})
+    archive = root / "docs/ARCHIVE.md"
+    cli = [sys.executable, str(ROOT / "tools/architecture/search_noise.py"), "--write-ignore", "--root", str(root)]
+    ignore = root / ".ignore"
+    tracked = sn.tracked(root)
+    assert {old, other, sibling} <= _rg(root)
+    sn.write_block(root, [], [])
+    assert sn.main(["--root", str(root)]) == 1  # missing explicit rules are not ordinary pending paths
+    partial = root / ".ignore.partial"
+    partial.hardlink_to(root / old)
+    before = ignore.read_bytes()
+    assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+    assert ignore.read_bytes() == before and partial.read_bytes() == b"old"
+    partial.unlink()
+    subprocess.run(cli, cwd=root, check=True)
+    assert sibling in _rg(root) and not {old, other} & _rg(root)
+    before = ignore.read_bytes()
+    (root / "AGENTS.md").write_text(f"Use `{other}`.\n", encoding="utf-8")
+    assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+    assert ignore.read_bytes() == before
+    (root / "AGENTS.md").write_text("See [archive](docs/ARCHIVE.md).\n", encoding="utf-8")
+    archive.write_text(index + second + first, encoding="utf-8")
+    subprocess.run(cli, cwd=root, check=True)
+    assert ignore.read_bytes() == before
+    archive.write_text(index + second, encoding="utf-8")
+    assert sn.main(["--root", str(root)]) == 1  # removing the row makes the old rule stale
+    subprocess.run(cli, cwd=root, check=True)
+    assert old in _rg(root) and other not in _rg(root)
+    archive.write_text(index, encoding="utf-8")
+    subprocess.run(cli, cwd=root, check=True)
+    assert {old, other, sibling} <= _rg(root)
+    assert sn.tracked(root) == tracked
+    assert [(root / p).read_bytes() for p in (old, other, sibling)] == [b"old", b"other", b"sibling"]
+
+
+@pytest.mark.parametrize("bad", [
+    "- `evidence/gone.json` — Missing.", "- `evidence/./ok.json` — Alias.", "- `evidence` — Directory.",
+    "- `evidence/ok.json` — Duplicate.", "- `evidence/ok.json`", "- `evidence/*.json` — Wildcard.",
+])
+def test_search_archive_rejects_bad_rows(tmp_path, capsys, bad):
+    valid = "- `evidence/ok.json` — Historical receipt.\n"
+    root = _repo(tmp_path, {"evidence/ok.json": "original", "docs/ARCHIVE.md": ARCHIVE_SECTION + valid + bad + "\n"})
+    ignore = root / ".ignore"
+    ignore.write_bytes(b"# unchanged\n")
+    for _ in range(2):
+        assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+        assert "docs/ARCHIVE.md" in capsys.readouterr().err
+        assert ignore.read_bytes() == b"# unchanged\n"
+        assert (root / "evidence/ok.json").read_bytes() == b"original"
+
+
+@needs_rg
+def test_real_search_archive_is_tracked_and_hidden(real):
+    paths = set(real["archive"])
+    assert paths and paths <= set(real["files"])
+    assert paths.isdisjoint(_rg(ROOT))
+
+
+
 # --- real repository ---------------------------------------------------------------------------------------------
 
 @pytest.fixture(scope="module")
@@ -296,7 +365,7 @@ def test_real_repo_measure_dropped_against_the_cut():
     # 5399ed96 sat exactly on the edge (2232 of max 2232 non-test, 545 of max 546 jobs), so any new card failed.
     # 2026-11-24: the 25-file allowance was used up by live code/jobs merged in one day (6e453db5: 2259 of max 2257;
     # KPP1 lattice job, railing core, Revit material intake) - red main again. Raised to 60; the cut itself is unchanged.
-    growth = 100  # 2026-11-25: trainer v0 (#1859) +3 over 60; the night hygiene plan (archive batches) brings this far below the cut - lower it back then.
+    growth = 60  # #1885: B1 search-only archive restores the pre-trainer allowance.
     assert m["visible_non_test"] <= BEFORE["visible_non_test"] - 400 + growth
     assert m["jobs_visible"] <= BEFORE["jobs_visible"] - 150 + growth
     assert m["docs_visible"] <= BEFORE["docs_visible"] - 250 + growth
