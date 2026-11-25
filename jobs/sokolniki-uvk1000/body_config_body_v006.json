@@ -1,0 +1,777 @@
+{
+ "_comment": "[D384] Artem 2026-11-24 ~19:55: v007 = the accepted v005 lattice + roof wells inside the parapets of S/N/D (decks dropped to the Revit roof levels so the steel pergolas stand free); facades, parapets and openings unchanged. Everything else is the [D378] v005 config. Synthetic: none.",
+ "extra_rectangles": [
+  {
+   "name": "F05-glazing-lower [D378]",
+   "facade": "F05",
+   "kind": "contour",
+   "edge": "D06",
+   "projected_rect": [
+    0.0,
+    28.13837429828251,
+    7.525,
+    13.5
+   ],
+   "state": "contour_cut",
+   "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py"
+  },
+  {
+   "name": "F05-glazing-upper [D378]",
+   "facade": "F05",
+   "kind": "contour",
+   "edge": "D06",
+   "projected_rect": [
+    0.0,
+    41.23692762561245,
+    13.5,
+    18.47
+   ],
+   "state": "contour_cut",
+   "source": "Revit FBX sokolniki_ar_r23_v1 (feaae527), F05 curtain panels (195 members, compare-v004 curtain_groups) projected on D06/D07: glass z 7.525..18.47-18.97 on D06 s 0..28.138, z 12.225..18.97 on D07; C:/x/t_c15955e5/f05_contour2.py",
+   "note": "runs over D07 (collinear with D06); below 13.5 D07 is hidden by S (seam J-DS1)"
+  },
+  {
+   "name": "B006-D01-01",
+   "facade": "F04",
+   "kind": "door",
+   "edge": "D01",
+   "projected_rect": [
+    0.485,
+    2.335,
+    0.0,
+    2.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 1 objects (door), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D01-02",
+   "facade": "F04",
+   "kind": "glass",
+   "edge": "D01",
+   "projected_rect": [
+    26.861,
+    34.2941,
+    0.6,
+    3.6
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 14 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D04-03",
+   "facade": "F11",
+   "kind": "door+glass",
+   "edge": "D04",
+   "projected_rect": [
+    5.0141,
+    11.5591,
+    0.0,
+    2.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 5 objects (door,glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D05-04",
+   "facade": "F06",
+   "kind": "glass+stem",
+   "edge": "D05",
+   "projected_rect": [
+    27.7886,
+    28.9454,
+    3.84,
+    7.4
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 5 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D08-05",
+   "facade": "F16",
+   "kind": "glass",
+   "edge": "D08",
+   "projected_rect": [
+    1.0292,
+    4.9788,
+    13.5,
+    18.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 8 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D08-06",
+   "facade": "F16",
+   "kind": "glass",
+   "edge": "D08",
+   "projected_rect": [
+    7.1714,
+    11.124,
+    13.5,
+    18.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 8 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D08-07",
+   "facade": "F16",
+   "kind": "glass",
+   "edge": "D08",
+   "projected_rect": [
+    13.1714,
+    17.124,
+    13.5,
+    18.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 8 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D08-08",
+   "facade": "F16",
+   "kind": "glass",
+   "edge": "D08",
+   "projected_rect": [
+    19.1714,
+    23.124,
+    13.5,
+    18.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 8 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D08-09",
+   "facade": "F16",
+   "kind": "glass",
+   "edge": "D08",
+   "projected_rect": [
+    24.9963,
+    29.7,
+    13.5,
+    18.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 10 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D09-10",
+   "facade": "F26",
+   "kind": "glass",
+   "edge": "D09",
+   "projected_rect": [
+    0.3,
+    4.0567,
+    13.5,
+    18.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 8 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D09-11",
+   "facade": "F26",
+   "kind": "glass",
+   "edge": "D09",
+   "projected_rect": [
+    6.9255,
+    8.8841,
+    13.5,
+    18.6
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 4 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D09-12",
+   "facade": "F26",
+   "kind": "glass",
+   "edge": "D09",
+   "projected_rect": [
+    13.7502,
+    19.9498,
+    13.5,
+    18.5
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 14 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-D12-13",
+   "facade": "F12",
+   "kind": "door",
+   "edge": "D12",
+   "projected_rect": [
+    14.6449,
+    15.2996,
+    0.0,
+    2.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 1 objects (door), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-H01-14",
+   "facade": "F15",
+   "kind": "glass",
+   "edge": "H01",
+   "projected_rect": [
+    0.3,
+    22.75,
+    18.1,
+    20.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 46 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-H02-15",
+   "facade": "F19",
+   "kind": "glass",
+   "edge": "H02",
+   "projected_rect": [
+    0.3,
+    18.2,
+    18.1,
+    20.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 38 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-H03-16",
+   "facade": "F27",
+   "kind": "glass",
+   "edge": "H03",
+   "projected_rect": [
+    0.3,
+    8.6674,
+    18.1,
+    20.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 20 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-H04-17",
+   "facade": "F18",
+   "kind": "glass",
+   "edge": "H04",
+   "projected_rect": [
+    0.3,
+    21.7338,
+    18.1,
+    20.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 44 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-H05-18",
+   "facade": "F24",
+   "kind": "glass",
+   "edge": "H05",
+   "projected_rect": [
+    0.332,
+    12.63,
+    18.1,
+    20.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 26 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N01-19",
+   "facade": "F02",
+   "kind": "glass+stem",
+   "edge": "N01",
+   "projected_rect": [
+    0.3,
+    5.737,
+    0.6,
+    14.0
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 35 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N03-20",
+   "facade": "F09",
+   "kind": "glass",
+   "edge": "N03",
+   "projected_rect": [
+    1.0338,
+    14.9836,
+    0.6,
+    12.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 66 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-21",
+   "facade": "F01",
+   "kind": "glass+stem",
+   "edge": "N04",
+   "projected_rect": [
+    2.0894,
+    5.2891,
+    3.84,
+    12.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 16 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-22",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    7.2381,
+    8.2383,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-23",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    7.2474,
+    8.2477,
+    9.3,
+    12.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-24",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    9.4375,
+    10.4378,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-25",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    9.4375,
+    11.5375,
+    9.3,
+    12.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 3 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-26",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    9.4375,
+    11.5375,
+    0.6,
+    3.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 4 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-27",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    12.6366,
+    13.6369,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-28",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    12.6366,
+    14.7367,
+    0.6,
+    3.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 4 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-29",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    13.7363,
+    15.8363,
+    9.3,
+    12.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 3 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-30",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    14.836,
+    16.9361,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 3 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-31",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    15.9358,
+    16.9361,
+    0.6,
+    3.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 4 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-32",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    18.1352,
+    21.3349,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 3 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-33",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    18.1352,
+    19.1455,
+    9.3,
+    12.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-34",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    18.1352,
+    19.1455,
+    0.6,
+    3.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 4 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-35",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    20.3346,
+    23.5343,
+    0.6,
+    3.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 5 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-36",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    21.4343,
+    23.5343,
+    9.3,
+    12.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 3 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-37",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    22.534,
+    23.5343,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-38",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    24.8084,
+    25.8087,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-39",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    24.8084,
+    29.1079,
+    0.6,
+    3.7
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 7 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-40",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    25.9081,
+    29.1079,
+    9.3,
+    12.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 3 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-41",
+   "facade": "F01",
+   "kind": "glass",
+   "edge": "N04",
+   "projected_rect": [
+    28.1076,
+    29.1079,
+    5.2,
+    7.9
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 2 objects (glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-N04-42",
+   "facade": "F01",
+   "kind": "glass+stem",
+   "edge": "N04",
+   "projected_rect": [
+    31.4317,
+    32.457,
+    3.84,
+    13.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 7 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-S02-43",
+   "facade": "F08",
+   "kind": "door+glass",
+   "edge": "S02",
+   "projected_rect": [
+    10.38,
+    15.58,
+    0.0,
+    2.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 8 objects (door,glass), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-S02-44",
+   "facade": "F08",
+   "kind": "glass+stem",
+   "edge": "S02",
+   "projected_rect": [
+    15.93,
+    19.43,
+    3.04,
+    11.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 27 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-S03-45",
+   "facade": "F10",
+   "kind": "glass+stem",
+   "edge": "S03",
+   "projected_rect": [
+    19.92,
+    21.67,
+    3.04,
+    10.1
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 10 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-S08-46",
+   "facade": "F30",
+   "kind": "glass+stem",
+   "edge": "S08",
+   "projected_rect": [
+    0.3,
+    3.03,
+    3.04,
+    12.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 19 objects (glass,stem), body v006 #1784 [D408]"
+  },
+  {
+   "name": "B006-S11-47",
+   "facade": "F29",
+   "kind": "glass+stem",
+   "edge": "S11",
+   "projected_rect": [
+    1.649,
+    3.53,
+    3.04,
+    13.2
+   ],
+   "state": "contour_cut",
+   "source": "Revit split v004 10 objects (glass,stem), body v006 #1784 [D408]"
+  }
+ ],
+ "reveal_m_by_name": {
+  "WB_Окно_2Створки_1Фрамуга_Слева _71d52e7": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _cc2a4e7": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _2e4ad7c": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _bbaa44e": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _2de6d50": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _0a5888d": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _a410cb4": 0.394,
+  "WB_Окно_2Створки_1Фрамуга_Слева _4732cf2": 0.394,
+  "B006-D01-01": 0.95,
+  "B006-D01-02": 0.08,
+  "B006-D04-03": 0.95,
+  "B006-D05-04": 0.13,
+  "B006-D08-05": 0.08,
+  "B006-D08-06": 0.08,
+  "B006-D08-07": 0.08,
+  "B006-D08-08": 0.08,
+  "B006-D08-09": 0.08,
+  "B006-D09-10": 0.08,
+  "B006-D09-11": 0.08,
+  "B006-D09-12": 0.08,
+  "B006-D12-13": 0.95,
+  "B006-H01-14": 0.08,
+  "B006-H02-15": 0.08,
+  "B006-H03-16": 0.08,
+  "B006-H04-17": 0.19,
+  "B006-H05-18": 0.08,
+  "B006-N01-19": 0.08,
+  "B006-N03-20": 0.12,
+  "B006-N04-21": 0.19,
+  "B006-N04-22": 0.28,
+  "B006-N04-23": 0.28,
+  "B006-N04-24": 0.33,
+  "B006-N04-25": 0.33,
+  "B006-N04-26": 0.35,
+  "B006-N04-27": 0.4,
+  "B006-N04-28": 0.42,
+  "B006-N04-29": 0.45,
+  "B006-N04-30": 0.45,
+  "B006-N04-31": 0.48,
+  "B006-N04-32": 0.53,
+  "B006-N04-33": 0.53,
+  "B006-N04-34": 0.53,
+  "B006-N04-35": 0.63,
+  "B006-N04-36": 0.63,
+  "B006-N04-37": 0.63,
+  "B006-N04-38": 0.68,
+  "B006-N04-39": 0.71,
+  "B006-N04-40": 0.76,
+  "B006-N04-41": 0.76,
+  "B006-N04-42": 0.84,
+  "B006-S02-43": 0.95,
+  "B006-S02-44": 0.1,
+  "B006-S03-45": 0.08,
+  "B006-S08-46": 0.08,
+  "B006-S11-47": 0.08
+ },
+ "_reveal_note": "F13 pairs: one mouth per pair, the seat at the back of the inner Revit frame (depth 0.25..0.394 m)",
+ "agreed_edge_clamps": {
+  "AC_ДверьВитражная_Двупольная_А_22daf24": 0.268
+ },
+ "roof_wells": {
+  "S": {
+   "deck_z": 11.12,
+   "parapet_m": 0.15
+  },
+  "N": {
+   "deck_z": 13.22,
+   "parapet_m": 0.15
+  },
+  "D": {
+   "deck_z": 17.42,
+   "parapet_m": 0.15,
+   "parapet_m_by_edge": {
+    "D06": 0.3,
+    "D07": 0.3
+   }
+  }
+ },
+ "_roof_wells_source": "Revit FBX sokolniki_ar_r23_v1 (feaae527): 'Базовая крыша ADSK_Плоская_Покр' finish tops S 9955613 z 11.12, N 775bf3c z 13.22, D 17ec87d z 17.42; roof slab edges 0.05-0.30 m (median 0.10-0.15) inside the v002 rings -> parapet 0.15 m. D06/D07 0.30 m: the F05 upper mouth (head 18.47 > deck) has its window plane at the 0.15 m reveal back, so the well wall stands 0.15 m behind it.",
+ "base_by_volume": {
+  "H": 17.42
+ },
+ "_base_by_volume_source": "H stands on the dropped D deck (v002 base 17.50 would leave an 8 cm slit over the deck 17.42); inside the D parapet, top unchanged.",
+ "_comment_body_v006": "#1784 body v006 [D408]: the v007 config + openings for the Revit fill the accepted body had no opening for, generated by hooks/body_openings.py"
+}
