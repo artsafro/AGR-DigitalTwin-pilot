@@ -383,6 +383,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | procedure/node-r6-oks-body-facade | [procedure/node-r6-oks-body-facade.md](../procedure/node-r6-oks-body-facade.md) |  |
 | procedure/node-r7-flora-star-planes | [procedure/node-r7-flora-star-planes.md](../procedure/node-r7-flora-star-planes.md) |  |
 | procedure/node-recipes | [procedure/NODE_RECIPES.md](../procedure/NODE_RECIPES.md) |  |
+| procedure/oks-modelling-plan | [procedure/oks-modelling-plan.md](../procedure/oks-modelling-plan.md) |  |
 | procedure/review-textures | [procedure/REVIEW_TEXTURES.md](../procedure/REVIEW_TEXTURES.md) |  |
 | procedure/task-to-model | [procedure/TASK_TO_MODEL.md](../procedure/TASK_TO_MODEL.md) |  |
 | procedure/task-to-model-dry-run | [procedure/task-to-model-dry-run.md](../procedure/task-to-model-dry-run.md) |  |
