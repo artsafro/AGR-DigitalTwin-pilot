@@ -255,4 +255,7 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv>
   Max not run. Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step4-uv-atlas-v001/` (`sheet-v002/sok-step4-uv-atlas-v002.pdf`
   11 sheets incl. «До» v009 | «После» atlas for F01 / F05 / iso from the same cameras; v001 sheet kept; atlas, master,
   NPM FBX, xView / readback, renders; `SHA256SUMS.txt` 55 files, manifest `ac7831f5…`).
-  Waiting for Artem's picture approval of the atlas.
+  Artem 2026-11-25 ~22:40 ([D413]): material zoning + atlas layout of sheet v002 (14 IDs) **accepted**. The joined
+  `*_Main` xView contacts are fixed at delivery: inset elements offset 1-2 mm off the wall plane + a before/after sheet
+  proving the look is unchanged (not done here; the delivery FBX is out of scope). **Windows not accepted**: question
+  sheet `step4-uv-atlas-v001/question-windows/` (Revit | v009 per type, numbers); no window rework before Artem's answer.
