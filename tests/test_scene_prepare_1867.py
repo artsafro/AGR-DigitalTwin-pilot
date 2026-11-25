@@ -232,7 +232,7 @@ def test_roof_wall_at_exact_parapet_top_is_hidden_and_without_parapet_is_body(ru
     assert objs["Базовая стена ADSK_Внутренняя_Г_000000d"]["parapet_top"] is None
 
 
-def test_flagged_spots_are_counted_for_the_sheet(rules):
+def test_flagged_spots_are_counted_for_the_sheet(rules, tmp_path):
     census = sp.classify(flagged_dump(), rules)
     flags = {f["key"]: f for f in census["flags"]}
     assert set(flags) == {"mullions", "pergola_pipes", "roof_interior_walls"}
@@ -242,6 +242,18 @@ def test_flagged_spots_are_counted_for_the_sheet(rules):
     assert all(f["ru"] for f in census["flags"])
     md = sp.census_markdown(census, rules)
     assert "## Отмечено на листе" in md
+    png = sp.make_sheet(census, tmp_path / "sheet.png")
+    from PIL import Image
+    assert Image.open(png).size == (2400, 2060)
+
+
+def test_sheet_without_flags_keeps_the_short_layout(rules, tmp_path):
+    d = synthetic_dump()
+    d["objects"] = [o for o in d["objects"] if "Труба" not in o["name"]]
+    census = sp.classify(d, rules)
+    assert all(f["count"] == 0 for f in census["flags"])
+    from PIL import Image
+    assert Image.open(sp.make_sheet(census, tmp_path / "s.png")).size == (2400, 1500)
 
 
 @pytest.mark.parametrize("mutate,msg", [

@@ -55,6 +55,15 @@ def _compile(rule, key, where, ids):
         rule["_re"] = re.compile(rule[key])
     except (re.error, KeyError, TypeError) as exc:
         raise ScenePrepareError(f"{where}: bad regex {rule.get(key)!r}: {exc}") from exc
+    if "min_z0_above_base_m" in rule and not (_finite(rule["min_z0_above_base_m"]) and rule["min_z0_above_base_m"] >= 0):
+        raise ScenePrepareError(f"{where}: min_z0_above_base_m must be a finite number >= 0")
+    if "flag" in rule:
+        fl = rule["flag"]
+        if not (isinstance(fl, dict) and isinstance(fl.get("key"), str) and fl["key"] and isinstance(fl.get("ru"), str)
+                and fl["ru"] and set(fl.get("places", PLACES)) <= set(PLACES)):
+            raise ScenePrepareError(f"{where}: flag needs non-empty key and ru strings and places from {PLACES}")
+    if "below_parapet" in rule and (rule["below_parapet"] not in ids or rule["below_parapet"] == "UNCLASSIFIED"):
+        raise ScenePrepareError(f"{where}: below_parapet: unknown layer {rule['below_parapet']!r}")
     if rule.get("decide"):
         return
     if ("layer" in rule) == ("by_place" in rule):
@@ -84,10 +93,11 @@ def load_rules(path) -> dict:
         if not la.get("ru") or not la.get("max_layer") or len(la.get("color", [])) != 3:
             raise ScenePrepareError(f"layer {la['id']}: needs ru, max_layer and an RGB color")
     env = data.get("envelope") or {}
-    for k in ("families", "slabs", "wall_top", "wall_top_m", "close_m", "face_m", "z_margin_m", "min_area_m2"):
+    for k in ("families", "slabs", "wall_top", "wall_top_m", "close_m", "face_m", "z_margin_m", "min_area_m2",
+              "parapet_max_m"):
         if k not in env:
             raise ScenePrepareError(f"envelope.{k} missing")
-    for k in ("wall_top_m", "close_m", "face_m", "z_margin_m", "min_area_m2"):
+    for k in ("wall_top_m", "close_m", "face_m", "z_margin_m", "min_area_m2", "parapet_max_m"):
         if not (isinstance(env[k], (int, float)) and math.isfinite(env[k]) and env[k] >= 0):
             raise ScenePrepareError(f"envelope.{k} must be a finite number >= 0")
     env["_re"] = [re.compile(p) for p in env["families"]]
@@ -155,18 +165,30 @@ def _place(o, c, foot, env, slabs_here, base, top):
     d = foot.boundary.distance(pt)
     near = foot.covers(pt) or d < env["face_m"]
     if d < env["face_m"] and base - env["z_margin_m"] <= zc <= top + env["z_margin_m"]:
-        return "face"
-    if near and any(base + env["z_margin_m"] < s["z"][1] <= z0 + env["z_margin_m"] for s in slabs_here) \
-            and not any(s["z"][0] >= zc for s in slabs_here):
-        return "roof"
+        return "face", None
+    under = [s for s in slabs_here if base + env["z_margin_m"] < s["z"][1] <= z0 + env["z_margin_m"]]
+    if near and under and not any(s["z"][0] >= zc for s in slabs_here):
+        return "roof", max(under, key=lambda s: s["z"][1])
     if foot.covers(pt):
-        return "inside"
-    return "out"
+        return "inside", None
+    return "out", None
 
 
-def _apply(rule, place):
+def _parapet_top(slab, walls, wtree, env):
+    """Top of the parapet around the roof `slab`: the highest envelope wall touching the slab outline whose top is
+    above the roof and at most parapet_max_m above it (a taller wall is a storey wall, not a parapet); None if none."""
+    s_top = slab["z"][1]
+    ring = slab["_poly"].boundary.buffer(env["close_m"])
+    tops = [walls[i]["z"][1] for i in wtree.query(ring) if walls[i]["_poly"].intersects(ring)
+            and s_top < walls[i]["z"][1] <= s_top + env["parapet_max_m"]]
+    return max(tops) if tops else None
+
+
+def _apply(rule, place, hidden=False):
     if rule.get("decide"):
         return "UNCLASSIFIED"
+    if hidden and place == "roof" and "below_parapet" in rule:
+        return rule["below_parapet"]
     return rule["layer"] if "layer" in rule else rule["by_place"][place]
 
 
@@ -209,20 +231,26 @@ def classify(dump: dict, rules: dict) -> dict:
             from shapely.geometry import Point
             near_w = [walls[i]["z"][1] for i in wtree.query(Point(c).buffer(env["wall_top_m"]))]
             top = max(near_w) if near_w else gtop
-        place = _place(o, c, foot, env, _slabs_at(c, slabs, tree), base, top)
-        layer, rule_ref, conf, why = "UNCLASSIFIED", None, "none", "no family or material rule matched"
+        place, roof_slab = _place(o, c, foot, env, _slabs_at(c, slabs, tree), base, top)
+        ptop = _parapet_top(roof_slab, walls, wtree, env) if roof_slab is not None and wtree is not None else None
+        hidden = ptop is not None and o["z"][1] <= ptop
+        layer, rule_ref, conf, why, flag = "UNCLASSIFIED", None, "none", "no family or material rule matched", None
         for i, r in enumerate(rules.get("rules", [])):
-            if r["_re"].search(o["family"]):
-                layer, rule_ref, conf = _apply(r, place), f"rules[{i}]", "name"
+            if r["_re"].search(o["family"]) and o["z"][0] - base >= r.get("min_z0_above_base_m", -math.inf):
+                layer, rule_ref, conf = _apply(r, place, hidden), f"rules[{i}]", "name"
                 why = r.get("why") if r.get("decide") else None
+                fl = r.get("flag")
+                if fl and place in fl.get("places", PLACES):
+                    flag = fl
                 break
         else:
             for i, r in enumerate(rules.get("material_rules", [])):
                 if any(r["_re"].search(m) for m in o.get("materials") or []):
-                    layer, rule_ref, conf, why = _apply(r, place), f"material_rules[{i}]", "material", None
+                    layer, rule_ref, conf, why = _apply(r, place, hidden), f"material_rules[{i}]", "material", None
                     break
         rec = {"name": o["name"], "family": o["family"], "layer": layer, "place": place, "rule": rule_ref,
                "confidence": conf, "materials": o.get("materials", []), "tris": o.get("tris", 0),
+               "parapet_top": ptop, "flag": flag["key"] if flag else None,
                "bbox": [round(v, 3) for v in (min(x for x, _ in o["hull"]), min(y for _, y in o["hull"]), o["z"][0],
                                               max(x for x, _ in o["hull"]), max(y for _, y in o["hull"]), o["z"][1])]}
         if layer == "UNCLASSIFIED":
@@ -242,11 +270,23 @@ def classify(dump: dict, rules: dict) -> dict:
         layers.append({"id": la["id"], "max_layer": la["max_layer"], "ru": la["ru"], "color": la["color"],
                        "count": len(mine), "tris": sum(o["tris"] or 0 for o in mine), "bbox": bb,
                        "families": [{"family": f, "count": n} for f, n in sorted(fam.items(), key=lambda t: (-t[1], t[0]))]})
+    flags = {}
+    for r in rules.get("rules", []):
+        if r.get("flag"):
+            flags.setdefault(r["flag"]["key"], {"key": r["flag"]["key"], "ru": r["flag"]["ru"], "count": 0,
+                                                "layers": {}, "families": {}})
+    for o in out_objs:
+        if o["flag"]:
+            f = flags[o["flag"]]
+            f["count"] += 1
+            f["layers"][o["layer"]] = f["layers"].get(o["layer"], 0) + 1
+            f["families"][o["family"]] = f["families"].get(o["family"], 0) + 1
     return {"schema": "agr-scene-census/1", "status": "proposed", "source": dump.get("source"),
             "source_sha256": dump.get("sha256"), "rules": rules.get("_path"), "rules_sha256": rules.get("_sha256"),
             "envelope": {"area_m2": round(foot.area, 2), "parts": len(getattr(foot, "geoms", [foot])),
                          "base_z": base, "top_z": gtop, "objects": len(env_objs)},
-            "layers": layers, "objects": out_objs, "dropped": dropped, "unclassified": unclassified}
+            "layers": layers, "flags": list(flags.values()), "objects": out_objs, "dropped": dropped,
+            "unclassified": unclassified}
 
 
 def census_markdown(census: dict, rules: dict) -> str:
@@ -264,6 +304,13 @@ def census_markdown(census: dict, rules: dict) -> str:
             fams += f"; … ещё {len(la['families']) - 12}"
         bb = "—" if not la["bbox"] else " ".join(f"{v:g}" for v in la["bbox"])
         lines.append(f"| {la['max_layer']} | {la['ru']} | {la['count']} | {len(la['families'])} | {la['tris']} | {bb} | {fams} |")
+    if census.get("flags"):
+        ru = {la["id"]: la["max_layer"] for la in census["layers"]}
+        lines += ["", "## Отмечено на листе (решение по умолчанию, Артём может переложить в Max)", "",
+                  "| Метка | Что | Объектов | Куда легли |", "|---|---|---:|---|"]
+        for k, f in enumerate(census["flags"], 1):
+            lay = ", ".join(f"{ru[l]} {n}" for l, n in sorted(f["layers"].items(), key=lambda t: -t[1])) or "—"
+            lines.append(f"| {k} | {f['ru']} | {f['count']} | {lay} |")
     if census["unclassified"]:
         lines += ["", "## 00_РЕШИТЬ_ЧЕЛОВЕКУ", ""]
         lines += [f"- `{u['name']}` ({u['family']})" for u in census["unclassified"]]
@@ -314,8 +361,9 @@ def _font(size, bold=False):
     return ImageFont.load_default()
 
 
-def _plan_image(census, size, only=None, box=None):
-    """Plan view of object bboxes coloured by layer (fallback when there are no Blender renders)."""
+def _plan_image(census, size, only=None, box=None, highlight=None):
+    """Plan view of object bboxes coloured by layer (fallback when there are no Blender renders); with `highlight`
+    (a flag key) the other objects are light grey and the flagged ones keep their layer colour with a red outline."""
     from PIL import Image, ImageDraw
     col = {la["id"]: tuple(la["color"]) for la in census["layers"]}
     objs = [o for o in census["objects"] if only is None or o["layer"] in only]
@@ -326,11 +374,15 @@ def _plan_image(census, size, only=None, box=None):
     s = min((w - 20) / max(box[2] - box[0], 1e-6), (h - 20) / max(box[3] - box[1], 1e-6))
     img = Image.new("RGB", size, (255, 255, 255))
     d = ImageDraw.Draw(img)
-    for o in sorted(objs, key=lambda o: o["bbox"][5]):
+    hot = highlight is not None
+    for o in sorted(objs, key=lambda o: (hot and o.get("flag") == highlight, o["bbox"][5])):
         b = o["bbox"]
         x0, x1 = 10 + (b[0] - box[0]) * s, 10 + (b[3] - box[0]) * s
         y0, y1 = h - 10 - (b[4] - box[1]) * s, h - 10 - (b[1] - box[1]) * s
-        d.rectangle([x0, y0, max(x1, x0 + 1), max(y1, y0 + 1)], fill=col[o["layer"]])
+        mine = hot and o.get("flag") == highlight
+        fill = col[o["layer"]] if not hot or mine else (225, 225, 225)
+        d.rectangle([x0, y0, max(x1, x0 + 1), max(y1, y0 + 1)], fill=fill,
+                    outline=(230, 0, 0) if mine else None, width=2 if mine else 1)
     return img
 
 
@@ -343,7 +395,8 @@ def closeup_layers(census, n=4):
 def make_sheet(census, out_png, renders=None, title=""):
     from PIL import Image, ImageDraw
     renders = renders or {}
-    W, H = 2400, 1500
+    flags = [f for f in census.get("flags", []) if f["count"]]
+    W, H = 2400, 1500 + (560 if flags else 0)
     sheet = Image.new("RGB", (W, H), (255, 255, 255))
     d = ImageDraw.Draw(sheet)
     d.text((30, 20), title or "Шаг 0: раскладка исходника по слоям — ПРЕДЛОЖЕНИЕ для приёмки", fill=(0, 0, 0), font=_font(34, True))
@@ -373,6 +426,25 @@ def make_sheet(census, out_png, renders=None, title=""):
         sheet.paste(im, (x, 1090))
         d.rectangle([x, 1060, x + 30, 1084], fill=tuple(names[lid]["color"]), outline=(0, 0, 0))
         d.text((x + 40, 1058), f"Крупно: {names[lid]['max_layer']} ({names[lid]['count']})", fill=(0, 0, 0), font=_font(22, True))
+    if flags:
+        d.text((30, 1490), "Отмечено на проверку (решение по умолчанию; в плане красная обводка, остальное серым):",
+               fill=(200, 0, 0), font=_font(26, True))
+        fw = (W - 60 - 20 * (len(flags) - 1)) // len(flags)
+        for k, f in enumerate(flags):
+            x = 30 + k * (fw + 20)
+            lay = ", ".join(f"{names[l]['max_layer']} {n}" for l, n in sorted(f["layers"].items(), key=lambda t: -t[1]))
+            d.text((x, 1530), f"{k + 1}. {f['count']} шт.: {lay}", fill=(0, 0, 0), font=_font(20, True))
+            words, line, ty = f["ru"].split(), "", 1558
+            for wd in words:  # wrap the Russian label to the panel width
+                if d.textlength(line + " " + wd, font=_font(18)) > fw and line:
+                    d.text((x, ty), line, fill=(70, 70, 70), font=_font(18))
+                    line, ty = wd, ty + 22
+                else:
+                    line = (line + " " + wd).strip()
+            d.text((x, ty), line, fill=(70, 70, 70), font=_font(18))
+            im = _plan_image(census, (fw, 360), highlight=f["key"])
+            sheet.paste(im, (x, 1630))
+            d.rectangle([x, 1630, x + fw - 1, 1989], outline=(200, 0, 0), width=2)
     sheet.save(out_png)
     return out_png
 
