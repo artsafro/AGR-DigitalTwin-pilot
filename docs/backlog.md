@@ -1,5 +1,7 @@
 # Backlog — unsolved decisions and missing stages
 
+Status: active (2026-11-24)
+
 Each item names its default owner (`ROLES.md`). Take one item per branch; move finished
 items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/conflicts.md`.
 

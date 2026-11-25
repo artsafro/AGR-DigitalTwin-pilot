@@ -52,6 +52,24 @@
    "stages_used": [],
    "new_code_lines": 0,
    "exit": 0
+  },
+  {
+   "etalon": "kpp1-v004",
+   "lane": "codex",
+   "date": "2026-11-25",
+   "first_failing_step": "sources-dwg",
+   "score": null,
+   "report": "G:/Мой диск/AGR-evidence/1608-kpp1-cold-r2/metrics.json",
+   "run": "G:/Мой диск/AGR-evidence/1608-kpp1-cold-r2",
+   "wall_s": 213.991,
+   "tokens_in": 1240429,
+   "tokens_out": 4837,
+   "questions": 1,
+   "stages_used": [
+    "sources-dwg"
+   ],
+   "new_code_lines": 0,
+   "exit": 0
   }
  ]
 }
