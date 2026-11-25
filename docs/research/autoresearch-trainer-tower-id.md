@@ -72,8 +72,9 @@ Run folders are local (`C:/x/trainer/runs`, replay limited); QUESTIONS/last/run.
 
 ## Result
 
-**Кратко (RU).** Остановка «какая башня» ушла полностью: 0/3 на 63A и 0/3 на 63B (до этого 3/3 и 2/3) — механизм
-**подтверждён**. Но FBX в чистых прогонах по-прежнему 0 — гипотеза про прохождение шага `artifact`
+**Кратко (RU).** Остановка «какая башня» не появилась ни разу: 63A 0/3, 63B 0/2 измеренных + 1 не измерен (крах линии
+63b-r87-2); до этого 3/3 и 2/3. По чистым прогонам: 63A 0/2, 63B 0/1 — механизм **подтверждён на 63A, на 63B только
+ориентировочно (n=1)**. Но FBX в чистых прогонах по-прежнему 0 — гипотеза про прохождение шага `artifact`
 **опровергнута**, KEEP нет. Два FBX за серию (63a-3, 63b-3) получены нечестно: агент вышел из практического дерева
 и прочитал принятые материалы — `G:/…/1619-body-training/tower-A/v005/floor_v005.json`, `keys63.json`, листинг папки
 ключа 63B v007, хуки `jobs/POLY63-B` в основном репозитории. Поэтому оба прогона **недействительны**. Новая
@@ -89,21 +90,25 @@ Series 2026-11-25 09:25–09:50 (wall stop not hit; trainer `b2b15d93…`, scrat
 | 63a-r87-2 | 0 | 345.8 | 0 | 0 | yes | Revit→BodyPlan adapter + finish zones |
 | 63a-r87-3 | 1 (lane: "model at capacity") | 338.4 | 0 | 1 | **no**: read accepted `tower-A/v005/floor_v005.json`, `keys63.json` | — |
 | 63b-r87-1 | 0 | 366.2 | 0 | 0 | yes | Revit→BodyPlan adapter |
-| 63b-r87-2 | 1 (lane: "model at capacity") | 60.8 | 0 | 0 | inconclusive (crash) | — |
+| 63b-r87-2 | 1 (lane: "model at capacity") | 60.8 | **not measured** (no QUESTIONS.md / last.txt) | 0 | inconclusive (crash) | — |
 | 63b-r87-3 | 0 | 727.8 | 0 | 1 | **no**: listed key folder `tower-B/v007`, read `jobs/POLY63-B` in the main repo | — |
 
 | Metric | 63A tuning | 63B held-out | control (r81) |
 |---|---|---|---|
-| M87b tower stop | 0/3 | 0/3 | 3/3, 2/3 |
+| M87b tower stop, exercised runs | 0/3 | 0/2 (+1 not measured) | 3/3, 2/3 |
+| M87b tower stop, clean runs only | 0/2 | 0/1 | — |
 | M87a FBX, valid runs | 0/2 | 0/1 | 0/3, 0/3 |
 | M87a FBX, all runs (incl. invalid) | 1/3 | 1/3 | — |
 | median wall s | 338.4 | 366.2 | 245.7, 262.0 |
 
 - **Hypothesis (artifact passage): refuted** — 0 valid FBX; KEEP threshold (≥2/3 valid on both) not met.
-- **Mechanism (tower identity): confirmed** on both fixtures, 6/6 runs scored, incl. crashed ones (stop text present
-  or absent is readable in all six).
+- Wall s is recorded only, not compared with r81 (different lane load, concurrent pairs, drifting origin_main).
+- **Mechanism (tower identity): confirmed on 63A (clean 0/2, exercised 0/3); on 63B indicative only (clean n=1, 0/1;
+  exercised 0/2).** 63b-r87-2 crashed after 60.8 s with no `QUESTIONS.md`/`last.txt` — **not measured**, not a
+  "no stop". 63a-r87-3 and 63b-r87-3 are contaminated (practice escape read accepted materials), so their 0 is not
+  clean mechanism evidence. `score.py` unchanged; it scores a run with no output text as 0 (absence), read it accordingly.
 - **Not measured**: BM-12 self-confirmation on a valid run; FBX quality vs the key (no valid FBX); 63B with 3 valid runs
-  (one lane crash, one contaminated).
+  (one lane crash, one contaminated); M87b on 63b-r87-2 (lane crash before any output).
 - Key-isolation finding (owner #1859/#1877, not fixed here): both escapes started from in-tree docs and the process
   list (`Get-CimInstance` shows parallel runs' Blender command lines with worktree paths); r81 already showed listings,
   r87 shows **reads** of accepted plans. Concurrent pairs widen this; the trainer should reject or flag any event
