@@ -161,7 +161,9 @@ def _producer_pkg(tmp, shape):
         record_export(pkg / OKS, source=str(master), top=3.5, metadata_path=pkg / 'export_meta.json', master=master)
     else:
         record_export(pkg / OKS, source='synthetic max scene', top=3.5)
-    record_export(pkg / GROUND, source='synthetic ground.json', top=0.2, address='Synthetic_Ground', profile='vpm')
+    # #1844: an NPM Ground is recorded with an explicit npm profile (ground_json_to_fbx.py build --profile npm);
+    # the former profile='vpm' here encoded the defect (a VPM record bound into the NPM ZIP).
+    record_export(pkg / GROUND, source='synthetic ground.json', top=0.2, address='Synthetic_Ground', profile='npm')
     return pkg
 
 

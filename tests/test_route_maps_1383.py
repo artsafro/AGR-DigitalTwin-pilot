@@ -160,8 +160,9 @@ def test_every_drawn_label_is_russian(name):
 def test_stage_without_command_is_drawn_dashed(name):
     events = _routes()[name]
     bare = [s["id"] for s in events["stages"] if not s.get("commands")]
-    # integration #1406 + #1404 + #1407: the Ground route got commands on every stage (zero..skirt, ucx,
-    # placement), so a route may have no bare stage left; then nothing is dashed.
+    # Ground has commands on zero..skirt, ucx and placement, but quads, npm and export stay command-less
+    # (agr vpm-to-npm does not convert Ground; the quads / export FBX transitions have no agr/dt command, D366),
+    # so those three stages are drawn dashed «Нет команды agr/dt».
     board = route_map.route_board(events, _contexts())
     dashed = [e for e in board.elements if e["type"] == "rectangle" and e["strokeStyle"] == "dashed"]
     assert len(dashed) == len(bare)

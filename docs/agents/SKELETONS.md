@@ -23,9 +23,14 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 
 ### `oks-vpm` — ОКС, ВПМ
 
+Trainer [D389]: in the existing Windows `workspace-write` sandbox, run `dwg_to_dxf.py --timeout 60`
+on a copy in a fresh workspace directory. Run `dxf_intake.py` on the hash-bound derivative before
+`plan_from_dxf.py extract`, even if AutoCAD ran in the workspace. On failure stop at `sources-dwg`;
+keep the receipt and console log, and do not escalate sandbox permissions or use a host fallback.
+
 | # | Этап | Что вызывает |
 |---|---|---|
-| 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`) |
+| 1 | `sources-dwg` приём чертежей | `tools/methods/body/plan_from_dxf.py` (после `dwg_to_dxf.py`); без Autodesk (Blender-only, тренажёр): сначала `uv run python tools/methods/body/dxf_intake.py SOURCE.dwg DERIVATIVE.dxf PROVENANCE.json NEW_INTAKE.json` — DXF принимается только с чеком `dwg-to-dxf/1`, привязанным SHA-256 к текущим DWG и DXF, `$INSUNITS`=мм; иначе стоп на `sources-dwg` (конвертеры не одобрены) [#1857] |
 | 2 | `inspect` паспорт, PartsList, Gate 1 | `agr inspect --manifest JOB.json` |
 | 3 | `body` бадик, окна, капсулы, крыша | Этап 1 (бадик с проёмами): `uv run agr body PLAN NEW_OUT` — общее ядро `tools/methods/body/body_lattice.py` (решётка BM-00, вход `schemas/BodyPlan.schema.json`: Revit `floor_from_dump.py`, DWG `plan_adapter_dwg.py`) [#1736]; этапы 2–4 — AGR Tools (`windowgen_core`, `capsule_core`, `roof_core`) [D250]; разбиение [D336]; Сетка бадика: [правила BM-01…BM-14](../research/body-modelling.md#5-правила) (#1618) |
 | 3a | `body` → вставка ограждения по измеренной оси парапета | [`agr railing`](../procedure/node-r3-fence-railing-gates.md#shared-headless-builder), отдельная геометрия, не приваривать к BODY [D336]; плоскость opacity только в лестнице бюджета НПМ |
@@ -34,7 +39,7 @@ Scenario cards keep the rules and evidence: [oks-vpm](../scenarios/oks-vpm.md),
 | 6 | `vpm-uv` UV ВПМ | `tools/blender/vpm_uv.py` [D320] |
 | 7 | `ucx-oks` коллизии | `adapters/max/agr_tools/ucx_core.py` |
 | 8 | `master-qa` мастер до экспорта | `tools/qa/master_topology.py` [D312] |
-| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152] |
+| 9 | `readback` экспорт и чтение | `tools/blender/fbx_readback.py`, `dt qa xview` [D152]; лист приёмки этапа 2 (изометрия + окно + капсула, каркас поверх Workbench): `tools/blender/stage2_review.py` [t_3820c6be] |
 | 10 | `verifier` проверка VLM перед показом Артёму (observe) | `tools/blender/verifier_views.py` (6 видов) → `tools/qa/verifier.py` → `verifier.json` [#1577] |
 | 11 | `geojson` GeoJSON | AGR Tools `export.geojson_write` → `agr validate FILE.geojson --profile vpm` (V011, [контракт](../research/elv-agent-vs-delivered.md#контракт-geojson)) |
 | 12 | `package-vpm` пакет | `agr package-vpm` → `package_core._write_zip`; STOP до ZIP без `export_meta` нового FBX и его readback. Для перекраски с выпуском ZIP указать оба владельца: R1 + рецепт job (АС.09: AC08 v010 через [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py)) и `agr package-vpm`; см. [маршрут ОКС ВПМ](../scenarios/oks-vpm.md#route-by-stage). |

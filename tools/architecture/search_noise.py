@@ -8,6 +8,10 @@ A fresh agent searches the repo with ripgrep, which reads the root `.ignore`. #1
   the job-root identity files (KEEP_NAMES), paths an open issue still uses (`live_paths` of
   docs/architecture/search-noise.yaml), skeleton.json folders (new work) and files a live surface reaches;
 - historical DOCS: every tracked docs/ file that no entry doc, scenario, route, skill or live code reaches.
+  Dated plan status overrides visibility. `--check-docs` validates the existing route index's ownership
+  table, plan headers and visibility; adding a path to the generated ignore block cannot waive ownership.
+- explicit search archive (#1885): exact reviewed files in the search-only section of docs/ARCHIVE.md.
+  These paths are never inputs to `--move-evidence`.
 "Live surface" (`live_closure`): the entry docs, routes/, docs/scenarios/, .agents/skills/ and the non-test code
 (tools/, src/, adapters/, schemas/, standards/), followed transitively through the files they name (markdown links,
 `backticked` paths, bare repo paths). Job files are leaves: a delivered job's report keeps nothing else alive.
@@ -21,10 +25,12 @@ import argparse
 import hashlib
 import json
 import os
+import posixpath
 import re
 import shutil
 import subprocess
 import sys
+from datetime import date
 from pathlib import Path
 
 if __package__ in (None, ""):
@@ -36,6 +42,14 @@ BEGIN = "# BEGIN historical-data (#1614, [D327]) - generated: search_noise.py --
 END = "# END historical-data"
 CONFIG = "docs/architecture/search-noise.yaml"
 CONTEXTS = "docs/architecture/contexts.yaml"
+DOC_INDEX = "docs/architecture/README.md"
+DOC_SECTION = "## Documentation ownership"
+DOC_TABLE = ("| Topic | Owner | Related |", "|---|---|---|")
+DOC_EXEMPT = frozenset({"docs/decisions.md", "docs/PROJECT_STATE.md"})
+ARCHIVE = "docs/ARCHIVE.md"
+ARCHIVE_SECTION = "## Hidden from search (still in the tree)"
+_INDEX_LINK = re.compile(r"\[[^\]\n]+\]\(([^()\s]+)\)")
+_PLAN_STATUS = re.compile(r"(active|done|superseded by (\S+)) \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)")
 MANIFEST = "EVIDENCE-MOVED.json"
 ENTRY_FILES = ("AGENTS.md", "CLAUDE.md", "GEMINI.md", "README.md", "GLOSSARY.md", "docs/PROJECT_STATE.md")
 ENTRY_DIRS = ("routes/", "docs/scenarios/", ".agents/skills/")
@@ -68,6 +82,33 @@ def tracked(root):
     return [p for p in files if (Path(root) / p).is_file()]
 
 
+def _doc_sections(text):
+    return ("\n" + text).partition("\n" + DOC_SECTION + "\n")
+
+
+def search_archive(root, files):
+    """Read the final search-only section, not the older tag-based archive inventory."""
+    fileset = set(files)
+    if ARCHIVE not in fileset:
+        return []
+    lines = (root / ARCHIVE).read_text(encoding="utf-8").splitlines()
+    if ARCHIVE_SECTION not in lines:
+        return []
+    out = set()
+    start = lines.index(ARCHIVE_SECTION) + 1
+    for n, line in enumerate(lines[start:], start + 1):
+        if not re.match(r"\s*(?:[-+*]|\d+[.)]|## )", line):
+            continue  # prose or a folder heading
+        row = re.fullmatch(r"- `([^`]+)` — (\S.*)", line)
+        if not row:
+            raise ValueError(f"{ARCHIVE}:{n}: expected an exact file row with a reason")
+        rel = row[1]
+        if rel not in fileset or rel in out or rel in {".ignore", ARCHIVE, CONFIG, CONTEXTS, DOC_INDEX, *ENTRY_FILES}:
+            raise ValueError(f"{ARCHIVE}:{n}: invalid or duplicate tracked archive path {rel!r}")
+        out.add(rel)
+    return sorted(out)
+
+
 def refs(root, rel, fileset, dirs):
     """Tracked files named by `rel`: link targets, backticked and bare repo paths, relative or from the root; a
     named directory keeps its README.md / INDEX.md."""
@@ -78,6 +119,12 @@ def refs(root, rel, fileset, dirs):
         text = path.read_text(encoding="utf-8")
     except (UnicodeDecodeError, OSError):
         return set()
+    if rel == DOC_INDEX:
+        # The ownership inventory is a lookup, not a dependency of every route or job.
+        text = _doc_sections(text)[0]
+    if rel == ARCHIVE:
+        # The search archive is also an inventory, not an inbound live reference.
+        text = ("\n" + text).partition("\n" + ARCHIVE_SECTION + "\n")[0]
     here, out = rel.rsplit("/", 1)[0] if "/" in rel else "", set()
     for m in _REF.finditer(text):
         raw = next(g for g in m.groups() if g).split("#")[0].split("?")[0].strip("'\"").rstrip(".,;:'\"")
@@ -131,9 +178,11 @@ def entry_named(root, files):
 
 
 def load_config(root, files):
-    """search-noise.yaml -> (kept {job: ru}, live_paths {path: ru}); malformed, unknown or missing entries raise."""
+    """Read kept jobs, live paths and the exact legacy doc exemption cut."""
     cfg = mini_yaml.load(Path(root) / CONFIG)
-    unknown = set(cfg) - {"kept_jobs", "live_paths"}
+    if not isinstance(cfg, dict):
+        raise ValueError(f"{CONFIG}: expected a mapping")
+    unknown = set(cfg) - {"kept_jobs", "live_paths", "legacy_hidden_docs"}
     if unknown:
         raise ValueError(f"{CONFIG}: unknown keys {sorted(unknown)}")
     kept, parts = {}, {}
@@ -153,7 +202,13 @@ def load_config(root, files):
         if path not in files and not any(f.startswith(path + "/") for f in files):
             raise ValueError(f"{CONFIG}: live_paths {path} holds no tracked file")
         parts[path] = ru
-    return kept, parts
+    legacy = cfg.get("legacy_hidden_docs", [])
+    if (not isinstance(legacy, list)
+            or any(not isinstance(p, str) or not p.startswith("docs/") or "\\" in p
+                   or posixpath.normpath(p) != p for p in legacy)
+            or len(set(legacy)) != len(legacy)):
+        raise ValueError(f"{CONFIG}: legacy_hidden_docs must list unique canonical docs paths")
+    return kept, parts, set(legacy)
 
 
 def job_folders(files):
@@ -200,11 +255,149 @@ def historical_docs(files, live, parts=()):
     return [f for f in files if f.startswith("docs/") and f not in live and not is_test(f) and not under(f, parts)]
 
 
+def _is_plan(rel):
+    name = posixpath.basename(rel)
+    return (rel == "docs/backlog.md" or rel.startswith("docs/plans/")
+            or (rel.startswith("docs/research/") and "roadmap" in name.lower()))
+
+
+def _json_pairs(pairs):
+    obj = dict(pairs)
+    if len(obj) != len(pairs):
+        raise ValueError("duplicate JSON keys")
+    return obj
+
+
+def plan_statuses(root, files):
+    """Read each plan once; malformed or unsupported plans are named rather than treated as inactive."""
+    statuses, successors, problems = {}, {}, []
+    fileset = set(files)
+    for rel in files:
+        if not _is_plan(rel):
+            continue
+        try:
+            path = root / rel
+            if path.suffix == ".md":
+                lines = path.read_text(encoding="utf-8").splitlines()
+                headers = [line for line in lines if line.strip()]
+                if (len(headers) < 2 or not headers[0].startswith("# ")
+                        or not headers[1].startswith("Status: ")
+                        or (len(headers) > 2 and headers[2].startswith("Status:"))):
+                    raise ValueError("expected one Status header after the title")
+                raw = headers[1].removeprefix("Status: ")
+            elif path.suffix == ".json":
+                obj = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_json_pairs)
+                if not isinstance(obj, dict) or not all(isinstance(obj.get(k), str) for k in ("status", "status_date")):
+                    raise ValueError("expected string status and status_date fields")
+                raw = f"{obj['status']} ({obj['status_date']})"
+            else:
+                raise ValueError("expected a Markdown or JSON plan")
+            match = _PLAN_STATUS.fullmatch(raw)
+            if not match:
+                raise ValueError("expected active, done or superseded by <repo path>, followed by (YYYY-MM-DD)")
+            status, successor, day = match.groups()
+            date.fromisoformat(day)
+            if successor and (successor == rel or successor not in fileset):
+                raise ValueError(f"replacement {successor} must be a different canonical tracked path")
+            if successor:
+                successors[rel] = successor
+            statuses[rel] = status
+        except (OSError, ValueError) as exc:
+            problems.append(f"{rel}: invalid plan status ({exc})")
+    seen = set()
+    for rel in successors:
+        chain = {}
+        current = rel
+        while current in successors and current not in seen:
+            if current in chain:
+                loop = list(chain)[chain[current]:]
+                problems.append(f"{current}: cyclic plan replacements: {' -> '.join([*loop, current])}")
+                break
+            chain[current] = len(chain)
+            current = successors[current]
+        seen.update(chain)
+    return statuses, problems
+
+
+def _ownership_rows(root, files):
+    """Read the final ownership table in the existing route index, or reject its exact malformed locator."""
+    path = root / DOC_INDEX
+    text = path.read_text(encoding="utf-8") if DOC_INDEX in files else ""
+    before, marker, section = _doc_sections(text)
+    if not marker or DOC_SECTION in before.splitlines() or DOC_SECTION in section.splitlines():
+        return {}, [f"{DOC_INDEX}: missing ownership table or duplicate heading"]
+    lines = [line for line in section.splitlines() if line.strip()]
+    if tuple(lines[:2]) != DOC_TABLE or len(lines) < 3:
+        return {}, [f"{DOC_INDEX}: empty ownership table or invalid columns"]
+    indexed, topics, problems = {}, set(), []
+    parent = posixpath.dirname(DOC_INDEX)
+    for line in lines[2:]:
+        row = re.fullmatch(r"\| ([a-z0-9][a-z0-9/-]*) \| (.+?) \|(.*?)\|", line)
+        if not row:
+            problems.append(f"{DOC_INDEX}: malformed ownership row: {line}")
+            continue
+        topic, owner, related = row.groups()
+        cells = [owner, *related.strip().split(", ")] if related.strip() else [owner]
+        if topic in topics:
+            problems.append(f"{DOC_INDEX}: duplicate topic {topic}")
+        topics.add(topic)
+        paths = []
+        for cell in cells:
+            link = _INDEX_LINK.fullmatch(cell)
+            if not link:
+                problems.append(f"{DOC_INDEX}: malformed ownership row for {topic}: {cell}")
+                paths.append(None)
+                continue
+            raw = link[1]
+            rel = posixpath.normpath(posixpath.join(parent, raw))
+            if not rel.startswith("docs/") or rel not in files or posixpath.relpath(rel, parent) != raw:
+                problems.append(f"{DOC_INDEX}: {raw}: not a canonical tracked docs path")
+                paths.append(None)
+            else:
+                paths.append(rel)
+        if paths[0]:
+            for rel in filter(None, paths):
+                if rel in indexed:
+                    problems.append(f"{rel}: multiple ownership rows")
+                indexed[rel] = paths[0]
+    return indexed, problems
+
+
+def generated_doc(rel, files):
+    """Route-map views belong to their tracked YAML source, not to a second owner row."""
+    route = re.fullmatch(r"(docs/architecture/[^/]+-route)(?:-owners\.md|(?:-scheme)?\.(?:svg|excalidraw))", rel)
+    if route:
+        return route[1] + ".events.yaml" in files
+    context = re.fullmatch(r"(docs/architecture/(?:[^/]+-)?contexts)\.(?:svg|excalidraw)", rel)
+    return bool(context and context[1] + ".yaml" in files)
+
+
+def docs_problems(root, st):
+    """Require an owner row or indexed companion with a direct owner reference, not just an ignore entry."""
+    files = set(st["files"])
+    indexed, problems = _ownership_rows(root, files)
+    problems.extend(st["plan_problems"])
+    ignore = root / ".ignore"
+    block = _parts(ignore.read_text(encoding="utf-8")) if ignore.is_file() else None
+    hidden = set(block[1].splitlines()) if block else set()
+    legacy = {f for f in st["legacy_docs"] & set(st["docs"]) if not _is_plan(f) and _pattern(f) in hidden}
+    for rel in sorted(files - indexed.keys() - legacy - DOC_EXEMPT):
+        if rel.startswith("docs/") and not generated_doc(rel, files):
+            problems.append(f"{rel}: missing ownership row in {DOC_INDEX}")
+    for rel, owner in indexed.items():
+        if rel != owner and owner not in refs(root, rel, files, set()):
+            problems.append(f"{rel}: must link to owner {owner}")
+    for rel, status in st["statuses"].items():
+        if (_pattern(rel) in hidden) != (status != "active"):
+            problems.append(f"{rel}: plan visibility does not match status; run search_noise.py --write-ignore")
+    return problems
+
+
 def _pattern(rel):
     return "/" + dg.GLOB_CHARS.sub(r"\\\1", rel).replace(" ", "\\ ")
 
 
-def render_block(data, docs):
+def render_block(data, docs, archive=()):
     lines, job = [BEGIN], None
     for rel in data:
         this = "/".join(rel.split("/")[:2])
@@ -214,9 +407,12 @@ def render_block(data, docs):
                          "agent search")
         lines.append(_pattern(rel))
     if docs:
-        lines.append("# HISTORICAL [D327] docs: not reached from an entry doc, scenario, route, skill or live code "
-                     "(#1614); files unchanged, hidden from agent search")
+        lines.append("# HISTORICAL [D327] docs: unreached docs (#1614) and inactive plans (#1856); hidden from agent search")
         lines.extend(_pattern(rel) for rel in docs)
+    extra = sorted(set(archive) - set(data) - set(docs))
+    if extra:
+        lines.append("# Search-only archive (#1885): exact tracked files listed in docs/ARCHIVE.md")
+        lines.extend(_pattern(rel) for rel in extra)
     lines.append(END)
     return "\n".join(lines) + "\n"
 
@@ -229,14 +425,14 @@ def _parts(text):
     return head, BEGIN + block + END + "\n", tail[1:] if tail.startswith("\n") else tail
 
 
-def block_problems(root, data, docs):
+def block_problems(root, data, docs, archive=()):
     path = Path(root) / ".ignore"
     text = path.read_text(encoding="utf-8") if path.is_file() else ""
     parts = _parts(text)
     if parts is None:
         return [f".ignore: no single historical-data block ({len(data)} data files, {len(docs)} docs unhidden); "
                 "run search_noise.py --write-ignore"]
-    want = render_block(data, docs)
+    want = render_block(data, docs, archive)
     if parts[1] == want:
         return []
     have = {ln for ln in parts[1].splitlines() if ln.startswith("/")}
@@ -244,19 +440,22 @@ def block_problems(root, data, docs):
     if have - need:
         return [f".ignore: historical-data block hides live or gone paths {sorted(have - need)[:5]} "
                 f"({len(have - need)}); run search_noise.py --write-ignore"]
+    missing = {_pattern(rel) for rel in archive} - have
+    if missing:
+        return [f".ignore: {len(missing)} explicit archive rules missing; run search_noise.py --write-ignore"]
     return []
 
 
-def pending(root, data, docs):
+def pending(root, data, docs, archive=()):
     """Historical paths not yet in the block: a new unreached doc or new job data stays visible (never hidden by
     surprise) until the next --write-ignore; reported, not a failure."""
     path = Path(root) / ".ignore"
     parts = _parts(path.read_text(encoding="utf-8")) if path.is_file() else None
     have = {ln for ln in parts[1].splitlines() if ln.startswith("/")} if parts else set()
-    return sorted(ln for ln in render_block(data, docs).splitlines() if ln.startswith("/") and ln not in have)
+    return sorted(ln for ln in render_block(data, docs, archive).splitlines() if ln.startswith("/") and ln not in have)
 
 
-def write_block(root, data, docs):
+def write_block(root, data, docs, archive=()):
     path = Path(root) / ".ignore"
     text = path.read_text(encoding="utf-8") if path.is_file() else ""
     parts = _parts(text)
@@ -264,8 +463,14 @@ def write_block(root, data, docs):
         raise ValueError(".ignore: broken historical-data block (BEGIN/END); fix it by hand")
     head, _, tail = parts or (text + ("\n" if text and not text.endswith("\n") else ""), "", "")
     tmp = path.with_name(".ignore.partial")
-    tmp.write_text(head + render_block(data, docs) + tail, encoding="utf-8", newline="\n")
-    tmp.replace(path)
+    stream = tmp.open("x", encoding="utf-8", newline="\n")
+    try:
+        with stream:
+            stream.write(head + render_block(data, docs, archive) + tail)
+        tmp.replace(path)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
 
 
 def sha256(path):
@@ -429,11 +634,24 @@ def state(root):
     files = tracked(root)
     contexts = mini_yaml.load(Path(root) / CONTEXTS)
     finished = dg.finished_jobs(root, contexts)
-    kept, parts = load_config(root, files)
+    kept, parts, legacy = load_config(root, files)
     live = live_closure(root, files)
+    statuses, plan_problems = plan_statuses(root, files)
+    live.update(rel for rel, status in statuses.items() if status == "active")
+    inactive = {rel for rel, status in statuses.items() if status != "active"}
+    live.difference_update(inactive)
     data = historical_job_data(root, files, finished, parts, live)
+    archive = search_archive(root, files)
+    if archive:
+        named = entry_named(root, files)
+        # The archive's own old tag inventory may name its evidence. Entry links, unlike
+        # those inventory pointers, must stay visible when a path is adopted again.
+        for rel in archive:
+            if rel in named or statuses.get(rel) == "active" or under(rel, parts) or rel.startswith(ENTRY_DIRS):
+                raise ValueError(f"{ARCHIVE}: {rel} is explicitly live and cannot be archived")
     return {"files": files, "contexts": contexts, "finished": finished, "kept": kept, "parts": parts, "live": live,
-            "data": data, "docs": historical_docs(files, live, parts)}
+            "data": data, "docs": sorted(set(historical_docs(files, live, parts)) | inactive),
+            "archive": archive, "legacy_docs": legacy, "statuses": statuses, "plan_problems": plan_problems}
 
 
 def hidden_scripts_per_job(root):
@@ -469,6 +687,7 @@ def table(st, root):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Agent-search noise (#1614): historical data/docs block + measure")
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    ap.add_argument("--check-docs", action="store_true", help="check doc ownership, plan headers and plan visibility")
     ap.add_argument("--write-ignore", action="store_true", help="regenerate the historical-data block of .ignore")
     ap.add_argument("--measure", action="store_true", help="print the files visible to rg --files (JSON)")
     ap.add_argument("--table", action="store_true", help="print the Russian job classification table")
@@ -477,12 +696,21 @@ def main(argv=None):
     ap.add_argument("--verify-evidence", action="store_true", help="check every manifest row against its copy")
     args = ap.parse_args(argv)
     try:
+        if args.check_docs:
+            if args.write_ignore or args.move_evidence:
+                raise ValueError("--check-docs is read-only; run write options separately")
+            problems = docs_problems(args.root, state(args.root))
+            for problem in problems:
+                print(f"PROBLEM {problem}")
+            print(f"search_noise docs: {len(problems)} problems")
+            return 1 if problems else 0
         if args.measure:
             print(json.dumps(measure(args.root), indent=1))
             return 0
         st = state(args.root)
         if args.candidates or args.move_evidence:
-            move, kept = move_candidates(args.root, st["files"], st["data"])
+            archive = set(st["archive"])
+            move, kept = move_candidates(args.root, st["files"], [f for f in st["data"] if f not in archive])
             if args.candidates:
                 print(json.dumps({"move": move, "kept_named_elsewhere": kept}, indent=1, ensure_ascii=False))
             if args.move_evidence:
@@ -496,19 +724,20 @@ def main(argv=None):
             print(f"evidence: {n - len(bad)}/{n} copies verified")
             if bad or n == 0:
                 return 1
+        blocks = st["data"], st["docs"], st["archive"]
         if args.write_ignore:
-            write_block(args.root, st["data"], st["docs"])
+            write_block(args.root, *blocks)
         if args.table:
             print(table(st, args.root))
         problems = classification_problems(st["files"], st["finished"], st["kept"], st["parts"]) \
-            + block_problems(args.root, st["data"], st["docs"]) + manifest_problems(args.root, st["files"])
+            + block_problems(args.root, *blocks) + manifest_problems(args.root, st["files"])
     except (OSError, ValueError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     for p in problems:
         print(f"PROBLEM {p}")
     print(f"search_noise: {len(st['data'])} historical data files, {len(st['docs'])} historical docs, "
-          f"{len(pending(args.root, st['data'], st['docs']))} pending (visible until --write-ignore), "
+          f"{len(st['archive'])} explicit archive files, {len(pending(args.root, *blocks))} pending, "
           f"{len(problems)} problems")
     return 1 if problems else 0
 
