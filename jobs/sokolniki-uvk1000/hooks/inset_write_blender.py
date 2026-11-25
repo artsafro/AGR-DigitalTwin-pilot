@@ -7,7 +7,7 @@ body_v006.blend + body_v006_quad.fbx (quad review copy; triangulation is the del
     blender44 -b --factory-startup --python jobs/sokolniki-uvk1000/hooks/inset_write_blender.py -- \
         BODY.blend INSETS_MESHES.json NEW_OUT_DIR [TAG=v006]
 
-v007 [D384]: BODY.blend is the roof-well body (volume_body.py with body_config_v007.json), TAG v007.
+v007 [D410]: BODY.blend is the roof-well body (volume_body.py with body_config_v007.json), TAG v007.
 
 Writes NEW_OUT_DIR/blender_write.json: per object verts/faces/materials and, for every v005 body object, the
 sha256 of its world vertex coordinates + face indices before and after (equal = body untouched).
@@ -158,7 +158,7 @@ def render(argv):
 
 def main(argv):
     body_blend, src, out = argv[:3]
-    tag = argv[3] if len(argv) > 3 else "v006"  # v007 [D384]: the body is the v007 roof-well build
+    tag = argv[3] if len(argv) > 3 else "v006"  # v007 [D410]: the body is the v007 roof-well build
     if os.path.exists(os.path.join(out, "body_%s.blend" % tag)):
         print("refused: output exists", file=sys.stderr)
         sys.exit(2)

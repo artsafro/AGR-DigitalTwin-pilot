@@ -49,7 +49,7 @@ def pane(me, w):
 
 
 def relief(w):
-    """[D384] Pyramid relief of a vertical decor panel ('Панель фасадная 2 Фигурная'): plan normal n (horizontal,
+    """[D410] Pyramid relief of a vertical decor panel ('Панель фасадная 2 Фигурная'): plan normal n (horizontal,
     toward the apex), in-plane horizontal v, the panel rect (v0..v1, z0..z1), the back plane t_back, the rim front
     t_front (max t at the four rect corners), the apex (mean of the vertices within 3 mm of the max t). Coordinates:
     P = origin + v * V + t * N in plan, z absolute."""

@@ -4,7 +4,7 @@ Pattern: n/a | new-case: quad inset families from Revit oriented boxes (inset_ob
 cage, roof mesh, glass canopies, lamellas (accent panels RAL 8023) and the F05 outer glazing with its own ends
 closing the gap to the body face. The body is not read for geometry except the D06/D07 face line and the F05 mouth
 (body_config_v005.json `contour_cut` rectangles); nothing of the body is written.
-v007 [D384]: + relief decor panels (pyramid solids, mitred corners), F05 piers and ground-floor glazing, window
+v007 [D410]: + relief decor panels (pyramid solids, mitred corners), F05 piers and ground-floor glazing, window
 flashings and roof hatches; the pergolas are the cage standing on the roof wells of the v007 body.
 
     uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py REVIT_OBB.json VOLUME_LINES.json NEW_OUT_DIR \
@@ -601,7 +601,7 @@ def _line_x(p, d, q, e):
 
 
 def mitre_ends(reliefs, joint, reach=0.6, cos_max=0.9, z_min=0.1):
-    """[D384] Corner panels: Revit runs two non-parallel panels into the same corner (their rim boxes overlap). Each
+    """[D410] Corner panels: Revit runs two non-parallel panels into the same corner (their rim boxes overlap). Each
     such end gets a mitre - the end v at the back plane and at the rim front from the intersections of the two
     panels' back lines and front lines - pulled back by joint / 2 along the panel, so the two end faces stay apart.
     Returns per panel {"vb": [v0, v1], "vf": [v0, v1]} (back / front v of both ends) and the mitre count."""
@@ -642,7 +642,7 @@ def mitre_ends(reliefs, joint, reach=0.6, cos_max=0.9, z_min=0.1):
 
 
 def relief_panel(mesh, r, mat, top_min=0.05, margin=0.02, joint=0.0, ends=None):
-    """[D384] Closed pyramid relief solid of one decor panel (10 quads, all planar): back quad, 4 rim quads from the
+    """[D410] Closed pyramid relief solid of one decor panel (10 quads, all planar): back quad, 4 rim quads from the
     back plane to the front rim, 4 facets from the rim to the apex truncated by a homothety about the apex (top side
     `top_min`), and the top quad. The rect shrinks by `joint` / 2 per side (abutting panels never share a face);
     `ends` (mitre_ends) gives the mitred back / front v of a corner end. Raises if the apex is not inside the rim by
@@ -680,7 +680,7 @@ def relief_panel(mesh, r, mat, top_min=0.05, margin=0.02, joint=0.0, ends=None):
 
 
 def flashing_quad(mesh, center, axes, half, mat):
-    """[D384] One quad on the upper face of a thin sloped sheet (window flashing), normal up."""
+    """[D410] One quad on the upper face of a thin sloped sheet (window flashing), normal up."""
     a = [_mul(_unit(axes[i]), half[i]) for i in range(3)]
     up = a[2] if a[2][2] >= 0 else _mul(a[2], -1)
     c = _add(center, up)
@@ -703,7 +703,7 @@ def _box_sz(obj, a, t, n):
 
 
 def f05_ground(objs, vl, g, sill):
-    """[D384] F05 ground floor: piers (columns) and the glazing between them, in the frame of the body face `edge`.
+    """[D410] F05 ground floor: piers (columns) and the glazing between them, in the frame of the body face `edge`.
 
     Piers = exterior-wall pieces standing 0..7.5 m within `pier_out` of the face line, grouped by station (gap <
     `pier_gap_m`); one box per pier: Revit station range and front, back `embed_m` behind the face. Glazing = Revit

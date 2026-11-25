@@ -172,7 +172,7 @@ def test_views_outward_normal_and_joined_edges():
     assert math.isclose(f1['n'][1], -1.0)  # south face of a CCW ring looks to -y
 
 
-# ---- v007 [D384] -----------------------------------------------------------------------------------------------
+# ---- v007 [D410] -----------------------------------------------------------------------------------------------
 def _closed(mesh):
     cnt = {}
     for f in mesh.faces:

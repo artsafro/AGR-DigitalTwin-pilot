@@ -40,10 +40,10 @@ DEFAULT_CFG = {
     "agreed_edge_clamps": {},   # [D378] (3): name -> agreed narrowing at the edge end, m (22daf24 0.268)
     "edge_clamp_tol_m": 0.005,
     "seam_weld_m": 0.001,       # #1802: mate ends must coincide within 1 mm (was 5 cm -> silent slit)
-    # [D384] roof well: volume -> {"deck_z", "parapet_m", "parapet_m_by_edge": {edge: m}}; the top cap becomes a
+    # [D410] roof well: volume -> {"deck_z", "parapet_m", "parapet_m_by_edge": {edge: m}}; the top cap becomes a
     # parapet top band + inner well walls + a deck at deck_z (the outer walls and openings are not touched)
     "roof_wells": {},
-    "base_by_volume": {},       # [D384] volume -> new base z (a volume standing on a dropped deck, e.g. H on D)
+    "base_by_volume": {},       # [D410] volume -> new base z (a volume standing on a dropped deck, e.g. H on D)
 }
 
 
@@ -212,7 +212,7 @@ def plans_from_volume_lines(vl, cfg=None):
 
 
 def _roof_well(vn, V, spec, edges):
-    """[D384] roof well record of one volume: deck below the top, inside the parapet (validated, edge xy kept)."""
+    """[D410] roof well record of one volume: deck below the top, inside the parapet (validated, edge xy kept)."""
     levels = V["levels"]
     deck = spec.get("deck_z")
     if not (_finite(deck) and levels[-2] < deck < levels[-1]):
@@ -558,7 +558,7 @@ def add_caps(core, body, plan, bottom=False):
         if not up and not bottom:
             continue
         if up and plan.get("roof_well"):
-            continue  # [D384] the top is the parapet band + well (add_roof_well, after the window planes)
+            continue  # [D410] the top is the parapet band + well (add_roof_well, after the window planes)
         ring = [idx.one((p[1], p[2], z), "cap at z=%.3f" % z) for p in pts]
         if not up:
             ring = ring[::-1]
@@ -568,7 +568,7 @@ def add_caps(core, body, plan, bottom=False):
 
 
 def add_roof_well(core, body, plan, local=()):
-    """[D384] Roof well instead of the flat top cap: parapet top band (outer ring stations -> inner offset ring, one
+    """[D410] Roof well instead of the flat top cap: parapet top band (outer ring stations -> inner offset ring, one
     quad per station segment), inner well walls down to `deck_z` (one quad per segment, facing the well) and the
     deck n-gon. Built from the ring stations like the cap - the outer walls, reveals and window planes are not
     touched. The parapet depth is `parapet_m`, or the edge's value when the segment lies on a listed edge; a

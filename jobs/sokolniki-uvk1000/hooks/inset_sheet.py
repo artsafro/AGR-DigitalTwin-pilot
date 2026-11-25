@@ -190,7 +190,7 @@ def sheet(render_dir, vw, build_dir, dec, pdf):
     return len(pages)
 
 
-V007_HOW = {  # [D384] decor prefix -> v007 element count from insets_report.json (None = not an inset)
+V007_HOW = {  # [D410] decor prefix -> v007 element count from insets_report.json (None = not an inset)
     "ADSK_КолоннаНесущая_Труба": lambda r: r["merged_runs"]["cage_column"]["boxes"],
     "ADSK_КаркасНесущий_Труба": lambda r: r["merged_runs"]["cage_beam"]["boxes"],
     "Базовая стена ADSK_Сетка_кровля": lambda r: r["families"]["mesh"]["faces"],
@@ -228,7 +228,7 @@ def census_rows(dec, cfg, rep):
 
 
 def sheet_v007(a):
-    """[D384] v007 sheet: summary, table 1 (census), facades v006 | v007 | Revit, close-ups, iso."""
+    """[D410] v007 sheet: summary, table 1 (census), facades v006 | v007 | Revit, close-ups, iso."""
     from PIL import Image, ImageDraw, ImageFont
     W, H = 2480, 1754
     f_t, f_b, f_s = ImageFont.truetype(FONT_B, 40), ImageFont.truetype(FONT, 26), ImageFont.truetype(FONT, 21)
@@ -246,7 +246,7 @@ def sheet_v007(a):
         im = Image.new("RGB", (W, H), "white")
         d = ImageDraw.Draw(im)
         d.text((60, 40), title, font=f_t, fill="black")
-        d.text((60, H - 50), "Сокольники УВК 1000, #1784, шаг 3 v007 [D384]: колодцы кровель + вставки. Ветка "
+        d.text((60, H - 50), "Сокольники УВК 1000, #1784, шаг 3 v007 [D410]: колодцы кровель + вставки. Ветка "
                "job/sokolniki-step3-insets, PR #1833, карточка t_416ef473. Лист %d" % (len(pages) + 1), font=f_s,
                fill="#666")
         pages.append(im)
@@ -256,7 +256,7 @@ def sheet_v007(a):
     g = fam["f05_ground"]
     im, d = page("Сокольники v007: колодцы кровель, перголы, колонны F05, объёмные панели — итог")
     rows = [
-        "Решение Артёма 2026-11-24 ~19:55 «Принимаю рекомендации» [D384]: тело v005 меняется ТОЛЬКО внутри парапетов кровель",
+        "Решение Артёма 2026-11-24 ~19:55 «Принимаю рекомендации» [D410]: тело v005 меняется ТОЛЬКО внутри парапетов кровель",
         "S/N/D — площадки опущены до отметок Revit, стальные перголы стоят свободно; фасады, парапеты и проёмы не менялись.",
         "Колодцы (решётка тела, без ремонта сетки): " + "; ".join(
             "%s %.2f → площадка %.2f м" % (vn, w["top_z"], w["deck_z"]) for vn, w in sorted(wells.items()))
@@ -292,7 +292,7 @@ def sheet_v007(a):
         % (xv["totals"]["overlapping_faces"], xv["totals"]["overlapping_vertices"], xv["totals"]["bowtie_vertices"],
            "PASS" if xv["passed"] else "FAIL"),
         "Проверки в 3ds Max (нативные): не измерены — Max не запускался, сборка и рендеры в Blender 4.4 без окна.",
-        "147 реек (BM)_ADSK_Брус — интерьерный экран, вне [D384]; перила — отдельная карточка.",
+        "147 реек (BM)_ADSK_Брус — интерьерный экран, вне [D410]; перила — отдельная карточка.",
         "",
         "Лист 2 — таблица 1 (перепись Revit). Фасады v006 | v007 | Revit: листы 3–%d; затем крупные планы и изометрия."
         % (2 + len(vw["facades"])),
@@ -332,7 +332,7 @@ def sheet_v007(a):
             d.text((60, y), tag, font=f_b, fill="black")
             im.paste(t2, (60, y + 34))
             y += avail_h + 40
-    lab = ("v006 (отклонён 2026-11-24)", "v007 = колодцы кровель + вставки [D384]", "Revit FBX (sokolniki_ar_r23_v1)")
+    lab = ("v006 (отклонён 2026-11-24)", "v007 = колодцы кровель + вставки [D410]", "Revit FBX (sokolniki_ar_r23_v1)")
     for f in vw["facades"]:
         triple("%s (рёбра %s): v006 | v007 | Revit — один вид и масштаб" % (f["id"], ", ".join(f["edges"])),
                [os.path.join(a.prev_dir, "v006_%s.png" % f["id"]), os.path.join(a.render_dir, "v007_%s.png" % f["id"]),
@@ -600,7 +600,7 @@ def sheet_v009(a):
     im, d = page("Сокольники: тело v006 — прорезаны недостающие проёмы (решение Артёма 2026-11-25, %s)" % a.decision)
     txt = [
         "Тело v005 было глухим там, где в Revit окна (F01: три ряда окон против гладкой стены). Тело v006 построено заново",
-        "методом решётки [D373] общим ядром tools/methods/body/volume_body.py (без ремонта сетки): тот же v005 + колодцы [D384],",
+        "методом решётки [D373] общим ядром tools/methods/body/volume_body.py (без ремонта сетки): тот же v005 + колодцы [D410],",
         "плюс %d новых проёмов из списка Revit (разбиение v004, план sokolniki-v002): каждый проём = снятая ячейка + откосы"
         % len(orp["rects"]),
         "на глубину стекла Revit (мин. 0,08 м; входные ниши глубже 1 м — откос 0,95 м, предел ядра < 1 м). Края проёма",
@@ -822,7 +822,7 @@ def _w_ring_dist(p, ring):
 
 
 def well_diff(m5, m7, cfg, vl):
-    """[D384] proof that the roof wells changed nothing outside the wells (face sets of two volume_body.py builds,
+    """[D410] proof that the roof wells changed nothing outside the wells (face sets of two volume_body.py builds,
     1 mm keys). Well volume: v005 - v007 = exactly the flat top cap, every added face on the top or inside the
     parapet between deck and top; re-based volume (H): only base vertices move, plan kept, onto the host deck inside
     its well; any other volume: no change. `outside_diff` = 0 is the pass."""
@@ -902,7 +902,7 @@ def main(argv=None):
     p.add_argument("dump")
     p.add_argument("volume_lines")
     p.add_argument("out")
-    p = sub.add_parser("welldiff", help="[D384] roof wells: nothing changed outside the wells (exit 1 if it did)")
+    p = sub.add_parser("welldiff", help="[D410] roof wells: nothing changed outside the wells (exit 1 if it did)")
     for k in ("meshes_v005", "meshes_v007", "body_config", "volume_lines", "out"):
         p.add_argument(k)
     p = sub.add_parser("sheet8", help="v008 (plan #1896): v007 | v008 | Revit sheet with the plan-verdict table")
@@ -912,7 +912,7 @@ def main(argv=None):
     for k in ("render_dir", "prev_dirs", "views", "build_dir", "openings_report", "body_report", "pdf"):
         p.add_argument(k)
     p.add_argument("--decision", default="D-row pending")
-    p = sub.add_parser("sheet7", help="[D384] v006 | v007 | Revit sheet with table 1 and close-ups")
+    p = sub.add_parser("sheet7", help="[D410] v006 | v007 | Revit sheet with table 1 and close-ups")
     for k in ("render_dir", "prev_dir", "closeup_dir", "views", "build_dir", "body_dir", "decor", "pdf"):
         p.add_argument(k)
     p.add_argument("--config", default=os.path.join(JOB, "insets_config.json"))

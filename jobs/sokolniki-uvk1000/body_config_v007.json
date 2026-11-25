@@ -1,5 +1,5 @@
 {
- "_comment": "[D384] Artem 2026-11-24 ~19:55: v007 = the accepted v005 lattice + roof wells inside the parapets of S/N/D (decks dropped to the Revit roof levels so the steel pergolas stand free); facades, parapets and openings unchanged. Everything else is the [D378] v005 config. Synthetic: none.",
+ "_comment": "[D410] Artem 2026-11-24 ~19:55: v007 = the accepted v005 lattice + roof wells inside the parapets of S/N/D (decks dropped to the Revit roof levels so the steel pergolas stand free); facades, parapets and openings unchanged. Everything else is the [D378] v005 config. Synthetic: none.",
  "extra_rectangles": [
   {
    "name": "F05-glazing-lower [D378]",

@@ -1,6 +1,6 @@
 """Body v006 openings (#1784, [D408]): Revit windows / doors / curtain glass with no body opening -> lattice rects.
 
-The accepted body (v005 lattice + [D384] wells) is blind where Revit has fill (F01: three rows vs a plain wall). This hook
+The accepted body (v005 lattice + [D410] wells) is blind where Revit has fill (F01: three rows vs a plain wall). This hook
 projects every planned inset window / door / curtain-glass object of the split (plus the stemalit spandrels of the same
 curtain walls, plan: texture on the opening plane) onto the facade edges of the volume-lines, keeps the ones in the
 facade plane (depth <= max_depth_m) that no built rectangle covers, joins touching curtain panels into one opening and
@@ -278,7 +278,7 @@ def derive(dump_objs, plan, vl, body_cfg, cfg=None):
             dep = sorted(i["depth"] for i in glass)[len(glass) // 2]
             rv = round(min(cfg["reveal_max_m"], max(cfg["reveal_min_m"], dep)), 2)
             well = wells.get(f["volume"])
-            if well and z1 > well["deck_z"]:  # [D384] a window plane above the deck must stay in front of the well wall
+            if well and z1 > well["deck_z"]:  # [D410] a window plane above the deck must stay in front of the well wall
                 par = float(well.get("parapet_m_by_edge", {}).get(k, well["parapet_m"]))
                 if rv >= par - 0.05:
                     z1 = math.floor(well["deck_z"] / cfg["snap_m"] + 1e-9) * cfg["snap_m"]
