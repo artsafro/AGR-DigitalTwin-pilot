@@ -6,6 +6,9 @@ Ground + contiguous 01..20 OKS. Missing Ground is never manufactured. Explicit
 
 Export binding (#1637, #1650) is shared with AGR Tools in export_meta.py.
 The writer checks bound member bytes before publishing the final ZIP name.
+#1844: a record declaring profile vpm is not binding evidence for an archive member, even with a matching
+SHA-256 or as the selected address record; it is listed in export_binding.excluded_records and each member it
+claims is a problem. Records without a profile (or 'unknown') still bind as before.
 """
 import argparse
 import json
@@ -15,7 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from adapters.max.agr_tools import package_core
-from adapters.max.agr_tools.export_meta import address_meta_path, export_binding, export_records, load_meta
+from adapters.max.agr_tools.export_meta import (address_meta_path, export_binding, export_records, load_meta,
+                                                split_by_profile, wrong_profile_problems)
 
 
 def main(argv=None):
@@ -34,8 +38,12 @@ def main(argv=None):
     if len(archives) != 1:
         raise ValueError('expected exactly one NPM territorial code/address archive')
     archive = archives[0]
-    binding, bind_problems = export_binding(pkg, archive['members'], export_records(pkg, meta_path))
-    problems = list(archive['problems']) + bind_problems
+    # #1844: only NPM or genuinely unprofiled (legacy) records bind; a VPM record is reported, never evidence.
+    records, excluded = split_by_profile(export_records(pkg, meta_path), 'npm')
+    binding, bind_problems = export_binding(pkg, archive['members'], records)
+    if excluded:
+        binding['excluded_records'] = excluded
+    problems = list(archive['problems']) + bind_problems + wrong_profile_problems(archive['members'], excluded, 'npm')
     if problems and not a.allow_incomplete:
         raise ValueError('; '.join(problems) + '; --allow-incomplete is diagnostic only')
     target = pkg.parent / archive['name']
