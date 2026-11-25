@@ -177,6 +177,21 @@ def test_elv_marked_not_delivered(rel):
     assert "geometry accepted, not delivered [#1441]" in _text(rel)
 
 
+LIVE_IMPORTS_RULE = (
+    "Before hiding or archiving a `jobs/` path, run `uv run pytest -q tests/test_live_route_imports.py`. "
+    "The fresh-process runtime guard must show no live route loads Python from that path; if the affected "
+    "route is not covered, add its runtime import probe first. Static search and duplicate checks alone do "
+    "not prove that lazy or path-based imports are gone. Explicit job data inputs are not Python dependencies.")
+
+
+def test_live_route_imports_rule_survives_the_move():
+    """r1 P1-1: the hide/archive rule from the old SKELETONS.md is kept verbatim on the index or stage file."""
+    flat = " ".join(re.sub(r"\s+", " ", _text(rel)) for rel in
+                    ("docs/agents/SKELETONS.md", "docs/agents/SKELETONS-stages.md"))
+    assert LIVE_IMPORTS_RULE in flat
+    assert (ROOT / "tests/test_live_route_imports.py").is_file()
+
+
 def test_psu275_is_not_a_body_etalon():
     row = next(ln for ln in _text("docs/cases.md").splitlines() if ln.startswith("| PSU275"))
     assert "before the lattice method [D373]" in row
