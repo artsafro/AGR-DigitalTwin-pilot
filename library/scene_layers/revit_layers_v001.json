@@ -18,6 +18,8 @@
     "families": ["Наружн", "^Системная панель", "импост", "Окно", "Дверь"],
     "slabs": ["^Перекрытие", "^Базовая крыша"],
     "wall_top": "Наружн|^Системная панель|импост|Окно|Дверь",
+    "thick_wall": "^(Базовая стена|Стена).*Наружн",
+    "position_note": "Keep footprint facade and uncovered roof hits. Recover setbacks from closed envelope rings at the object's centre height. A matching exterior wall whose hull intersects a level ring can reach the facade even when its centre is >= face_m away.",
     "wall_top_m": 1.5,
     "close_m": 0.5,
     "face_m": 0.8,

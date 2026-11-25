@@ -194,8 +194,13 @@ def stepped_dump(setback=10, thickness=0.3):
 
 @pytest.mark.parametrize("thickness", [0.3, 1.6, 1.8])
 def test_stepped_facade_and_controls(rules, thickness):
-    objs = {o["name"]: (o["place"], o["layer"]) for o in sp.classify(stepped_dump(thickness=thickness), rules)["objects"]}
+    rows = sp.classify(stepped_dump(thickness=thickness), rules)["objects"]
+    objs = {o["name"]: (o["place"], o["layer"]) for o in rows}
     assert {objs[f"Базовая стена Наружная tower [{i}]"] for i in range(4)} == {("face", "BODY")}
+    if thickness > 0.3:
+        thick_walls = [o for o in rows if o["name"].startswith("Базовая стена Наружная tower")]
+        assert {o["place_basis"] for o in thick_walls} == {"level_ring_wall_reaches_boundary"}
+        assert all(o["face_distance_m"] == pytest.approx(thickness / 2) for o in thick_walls)
     for prefix, layer in (("WB_Окно", "WINDOWS"), ("импост 25х100", "CURTAIN_WALL"),
                           ("Системная панель Cтеклопак", "CURTAIN_WALL")):
         assert objs[f"{prefix} [501]"] == ("face", layer)
@@ -418,6 +423,7 @@ def test_kpp1_family_rules_and_generics_still_decided(rules):
     (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "min_z0_above_base_m": float("nan")}), "min_z0"),
     (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "flag": {"key": "k"}}), "flag"),
     (lambda r: r["envelope"].pop("parapet_max_m"), "parapet_max_m"),
+    (lambda r: r["envelope"].update(thick_wall="["), "thick_wall"),
 ])
 def test_invalid_new_rule_keys_are_errors(tmp_path, mutate, msg):
     data = json.loads(RULES.read_text(encoding="utf-8"))
