@@ -1,0 +1,1063 @@
+{
+ "schema": "r101-receipt/1",
+ "summary": {
+  "complete_repeats": 3,
+  "e1_dev_m": {
+   "median": 0.5396,
+   "min": 0.5396,
+   "max": 0.5396
+  },
+  "baseline_dev_m_median": {
+   "r99-C1": 4.0647,
+   "r99-C2": 40.7395,
+   "r99-C3": 4.0647,
+   "r99-D1": 4.0647,
+   "r99-D2": 4.0005,
+   "r99-D3": 4.0647
+  },
+  "e1_pass": 0,
+  "heldout": "not_exercised",
+  "input_parity_after": true,
+  "wall_s": 57.1,
+  "repeat_wall_s": [
+   20.8,
+   17.2,
+   16.4
+  ]
+ },
+ "repeats": [
+  {
+   "plan_counts": {
+    "A-WALL-": 394,
+    "A-GLAZ-": 98,
+    "S-STRS-": 79
+   },
+   "facade_top_m": 8.650000000000011,
+   "mark_max_m": 9.5,
+   "mark_offset_mode": [
+    [
+     830.0,
+     80
+    ],
+    [
+     -170.0,
+     16
+    ],
+    [
+     1550.0,
+     1
+    ]
+   ],
+   "calibration": {
+    "accepted_vs_key": {
+     "status": "pass",
+     "max_corner_dev_m": 0.0,
+     "tol_m": 0.1
+    },
+    "rejected_vs_key": {
+     "status": "fail",
+     "max_corner_dev_m": 3.8005,
+     "tol_m": 0.1
+    }
+   },
+   "variants": {
+    "E1": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.5396,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    },
+    "P1_no_stairs": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0005,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -4.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       12.67502310950884,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    },
+    "P2_top_from_marks": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.85,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": 0.85
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       9.5
+      ]
+     ]
+    },
+    "P3_no_glazing": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.5396,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    }
+   },
+   "runs": {
+    "r99-C1": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": 0.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": 0.25
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 0.25,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": 0.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": 0.25
+      }
+     }
+    },
+    "r99-C2": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 40.7395,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 40.7395,
+      "y_min": 5.355,
+      "z_min": 0.0,
+      "x_max": 36.4748,
+      "y_max": 5.355,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 36.4748,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 12.63,
+       "y_min": 2.78,
+       "z_min": 0.0,
+       "x_max": 36.4748,
+       "y_max": 5.355,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-C3": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.0,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-D1": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.0,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-D2": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0005,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": 0.0,
+      "x_max": -4.0005,
+      "y_max": -0.0,
+      "z_max": -0.741
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 0.741,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": 0.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.741
+      }
+     }
+    },
+    "r99-D3": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.1,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": 0.25
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.1,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.1,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": 0.25
+      }
+     }
+    }
+   },
+   "stairs_box_used": true,
+   "wall_s": 20.8
+  },
+  {
+   "plan_counts": {
+    "A-WALL-": 394,
+    "A-GLAZ-": 98,
+    "S-STRS-": 79
+   },
+   "facade_top_m": 8.650000000000011,
+   "mark_max_m": 9.5,
+   "mark_offset_mode": [
+    [
+     830.0,
+     80
+    ],
+    [
+     -170.0,
+     16
+    ],
+    [
+     1550.0,
+     1
+    ]
+   ],
+   "calibration": {
+    "accepted_vs_key": {
+     "status": "pass",
+     "max_corner_dev_m": 0.0,
+     "tol_m": 0.1
+    },
+    "rejected_vs_key": {
+     "status": "fail",
+     "max_corner_dev_m": 3.8005,
+     "tol_m": 0.1
+    }
+   },
+   "variants": {
+    "E1": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.5396,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    },
+    "P1_no_stairs": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0005,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -4.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       12.67502310950884,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    },
+    "P2_top_from_marks": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.85,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": 0.85
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       9.5
+      ]
+     ]
+    },
+    "P3_no_glazing": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.5396,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    }
+   },
+   "runs": {
+    "r99-C1": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": 0.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": 0.25
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 0.25,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": 0.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": 0.25
+      }
+     }
+    },
+    "r99-C2": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 40.7395,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 40.7395,
+      "y_min": 5.355,
+      "z_min": 0.0,
+      "x_max": 36.4748,
+      "y_max": 5.355,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 36.4748,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 12.63,
+       "y_min": 2.78,
+       "z_min": 0.0,
+       "x_max": 36.4748,
+       "y_max": 5.355,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-C3": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.0,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-D1": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.0,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-D2": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0005,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": 0.0,
+      "x_max": -4.0005,
+      "y_max": -0.0,
+      "z_max": -0.741
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 0.741,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": 0.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.741
+      }
+     }
+    },
+    "r99-D3": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.1,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": 0.25
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.1,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.1,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": 0.25
+      }
+     }
+    }
+   },
+   "stairs_box_used": true,
+   "wall_s": 17.2
+  },
+  {
+   "plan_counts": {
+    "A-WALL-": 394,
+    "A-GLAZ-": 98,
+    "S-STRS-": 79
+   },
+   "facade_top_m": 8.650000000000011,
+   "mark_max_m": 9.5,
+   "mark_offset_mode": [
+    [
+     830.0,
+     80
+    ],
+    [
+     -170.0,
+     16
+    ],
+    [
+     1550.0,
+     1
+    ]
+   ],
+   "calibration": {
+    "accepted_vs_key": {
+     "status": "pass",
+     "max_corner_dev_m": 0.0,
+     "tol_m": 0.1
+    },
+    "rejected_vs_key": {
+     "status": "fail",
+     "max_corner_dev_m": 3.8005,
+     "tol_m": 0.1
+    }
+   },
+   "variants": {
+    "E1": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.5396,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    },
+    "P1_no_stairs": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0005,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -4.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       12.67502310950884,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    },
+    "P2_top_from_marks": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.85,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": 0.85
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       9.5
+      ]
+     ]
+    },
+    "P3_no_glazing": {
+     "step": {
+      "status": "fail",
+      "max_corner_dev_m": 0.5396,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": -0.5396,
+      "y_min": -0.0311,
+      "z_min": 0.0,
+      "x_max": -0.0005,
+      "y_max": 0.0004,
+      "z_max": -0.0
+     },
+     "box": [
+      [
+       -15.724586032490249,
+       -6.416122968461581,
+       0.0
+      ],
+      [
+       16.675023109508807,
+       6.6750000000002,
+       8.650000000000011
+      ]
+     ]
+    }
+   },
+   "runs": {
+    "r99-C1": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": 0.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": 0.25
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 0.25,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": 0.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": 0.25
+      }
+     }
+    },
+    "r99-C2": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 40.7395,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 40.7395,
+      "y_min": 5.355,
+      "z_min": 0.0,
+      "x_max": 36.4748,
+      "y_max": 5.355,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 36.4748,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 12.63,
+       "y_min": 2.78,
+       "z_min": 0.0,
+       "x_max": 36.4748,
+       "y_max": 5.355,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-C3": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.0,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-D1": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.0,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": -0.0
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.0,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.0
+      }
+     }
+    },
+    "r99-D2": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0005,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": 0.0,
+      "x_max": -4.0005,
+      "y_max": -0.0,
+      "z_max": -0.741
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 0.741,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": 0.0,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": -0.741
+      }
+     }
+    },
+    "r99-D3": {
+     "baseline": {
+      "status": "fail",
+      "max_corner_dev_m": 4.0647,
+      "tol_m": 0.1
+     },
+     "faces": {
+      "x_min": 0.2,
+      "y_min": 0.0,
+      "z_min": -1.1,
+      "x_max": -4.0647,
+      "y_max": -0.0,
+      "z_max": 0.25
+     },
+     "with_stair_box": {
+      "step": {
+       "status": "fail",
+       "max_corner_dev_m": 1.1,
+       "tol_m": 0.1
+      },
+      "faces": {
+       "x_min": 0.2,
+       "y_min": 0.0,
+       "z_min": -1.1,
+       "x_max": -0.0005,
+       "y_max": -0.0,
+       "z_max": 0.25
+      }
+     }
+    }
+   },
+   "stairs_box_used": true,
+   "wall_s": 16.4
+  }
+ ],
+ "heldout": {
+  "recover": {
+   "recover_fixes": 2,
+   "recover_errors": 0
+  },
+  "e1_counts": {},
+  "key_box": [
+   [
+    -3.029376983642578,
+    -1.2190004587173462,
+    -2.0465455055236816
+   ],
+   [
+    3.0293807983398438,
+    1.2190001010894775,
+    2.550208568572998
+   ]
+  ],
+  "layers_seen": [
+   "0",
+   "A-GLAZ",
+   "AC_text",
+   "PDF2_Геометрия",
+   "PDF5_Геометрия",
+   "PDF_Стены.АР",
+   "PDF_Чертеж.АР",
+   "POZ",
+   "_0",
+   "_Изм.10",
+   "ac_vid",
+   "so_dim",
+   "СПДС_ДВЕРИ",
+   "СПДС_НЕПЕЧАТНЫЙ",
+   "СПДС_ОСИ",
+   "СПДС_ПОМЕЩЕНИЯ",
+   "СПДС_РАЗМЕРЫ",
+   "СПДС_СИМВОЛЫ",
+   "СПДС_СТЕНЫ",
+   "СПДС_ТАБЛИЦЫ",
+   "площадь"
+  ],
+  "status": "not_exercised",
+  "reason": "no A-WALL-* entities: rule E1 has no input on this drawing (SPDS / PDF-import layers)"
+ },
+ "manifest_sha256": "1604102733159f655758099e763aaef624824a0ea4a1b209945f91df51c40595",
+ "measure_sha256": "7b49322f2496b4ef4b9ca831e37044856413a83afef8bc9a7e3f7cefa88cd494"
+}
