@@ -2,6 +2,7 @@
 
 Unit tests run on a synthetic `revit-fbx-dump/1` (known families and positions); the integration test builds a
 small synthetic FBX in Blender 4.4 and runs the whole command (skipped when Blender 4.4 is not installed).
+new-case: proposed scene split, stepped-envelope and same-source census audit.
 """
 import hashlib
 import json
@@ -460,7 +461,7 @@ def test_cli_refuses_dump_of_another_source(tmp_path):
     assert not (tmp_path / "o").exists()
 
 
-def test_cli_dump_only_path_writes_census(tmp_path):
+def test_cli_dump_only_path_writes_census(tmp_path, rules):
     src = tmp_path / "a.fbx"
     src.write_bytes(b"fbx")
     d = synthetic_dump()
@@ -468,11 +469,17 @@ def test_cli_dump_only_path_writes_census(tmp_path):
     dump = tmp_path / "dump.json"
     dump.write_text(json.dumps(d), encoding="utf-8")
     out = tmp_path / "o"
-    r = _cli("prepare", src, "--out", out, "--dump", dump, "--no-blend")
+    ref = tmp_path / "compare-input.json"
+    ref.write_text(json.dumps(reference_census(sp.classify(d, rules))), encoding="utf-8")
+    r = _cli("prepare", src, "--out", out, "--dump", dump, "--no-blend", "--compare", ref)
     assert r.returncode == 0, r.stderr
     census = json.loads((out / "census.json").read_text(encoding="utf-8"))
     assert census["schema"] == "agr-scene-census/1" and census["unclassified"] == []
     assert (out / "census.md").is_file() and (out / "sheet.png").is_file()
+    report = json.loads((out / "compare.json").read_bytes())
+    assert report["schema"] == "agr-scene-compare/1"
+    assert report["reference_sha256"] == hashlib.sha256(ref.read_bytes()).hexdigest()
+    assert report["objects_matched"] == len(d["objects"])
     assert not Path(str(out) + ".partial").exists()
 
 
