@@ -422,6 +422,47 @@ def run(*argv):
     return subprocess.run([sys.executable, *map(str, argv)], capture_output=True, text=True, cwd=str(ROOT))
 
 
+def test_sparse_cover_ids_publish_dense_udim_table(tmp_path):
+    from PIL import Image
+
+    spec_path, spec = make_spec(tmp_path)
+    dxf = tmp_path / "site.dxf"
+    doc = ezdxf.readfile(dxf)
+    third = doc.modelspace().add_hatch()
+    third.paths.add_polyline_path([(12, 12), (16, 12), (16, 16), (12, 16)], is_closed=True)
+    third.bgcolor = (10, 20, 30)
+    doc.saveas(dxf)
+    spec["dxf"]["sha256"] = gs.sha256(dxf)
+    lawn, rubber = spec["covers"]
+    lawn["id"], rubber["id"] = 3, 7
+    spec.update(base_id=3, covers=[dict(id=12, name="Stone", hatches=[third.dxf.handle]), rubber, lawn])
+    spec["materials"] = {"library": str(tmp_path), "decision": "synthetic",
+                         "by_cover": {str(i): {"diffuse": f"map{i}.png"} for i in (3, 7, 12)}}
+    for i in (3, 7, 12):
+        Image.new("RGB", (2, 2), (i, i + 1, i + 2)).save(tmp_path / f"map{i}.png")
+    spec_path.write_text(json.dumps(spec), encoding="utf-8")
+    before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
+    out = tmp_path / "out"
+    r = run(SITE, spec_path, out)
+    assert r.returncode == 0, r.stderr or r.stdout
+    rows = json.loads((out / "ground-udim.json").read_text(encoding="utf-8"))["tiles"]
+    markdown = (out / "ground-udim.md").read_text(encoding="utf-8")
+    expected = {}
+    for row, cid, name, tile in zip(rows, (3, 7, 12), ("Lawn", "Rubber", "Stone"), (1001, 1002, 1003), strict=True):
+        slot = f"ID{cid:02d}_{name}"
+        material = f"M_SYN_Ground_{slot}"
+        texture = f"T_SYN_Ground_Diffuse_{slot}.{tile}.png"
+        assert row == {"udim": tile, "id": cid, "slot": slot, "material": material, "diffuse": texture}
+        assert f"| {tile} | {cid} | {slot} | {material} | {texture} |" in markdown
+        assert gs.read_mtl(out / "SM_SYN_Ground.mtl")[material] == texture
+        with Image.open(out / texture) as image:
+            assert list(image.getdata()) == [(cid, cid + 1, cid + 2)] * 4
+        expected[material] = [tile]
+    for obj in ("ground-flat.obj", "SM_SYN_Ground.obj"):
+        assert gs.read_obj(out / obj)["tiles"] == expected
+    assert {p.name: p.read_bytes() for p in tmp_path.iterdir() if p.is_file()} == before
+
+
 def test_cli_fresh_process_builds_and_reads_back(tmp_path):
     spec, _ = make_spec(tmp_path)
     before = {p.name: p.read_bytes() for p in tmp_path.iterdir()}
