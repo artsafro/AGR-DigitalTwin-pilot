@@ -1,0 +1,891 @@
+{
+  "r83_blob_sha256": "bb491e49af6da060a49b94bb32e5997fdf17443afbb01498c3b7e0ecd02b3bae",
+  "probe_sha256": "591c6b90b49bbe4082b3d61a71cc7afe2959c8bf268568d400afc6bcd9218bf9",
+  "rows": {
+    "tuning": {
+      "kpp1-v004-codex-r83-C1": {
+        "native": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "exact_anchor": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          },
+          "origin": "native"
+        },
+        "stale_format": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "rebound_format": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "wrong_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "missing_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      },
+      "kpp1-v004-codex-r83-C2": {
+        "native": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "exact_anchor": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          },
+          "origin": "native"
+        },
+        "stale_format": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "rebound_format": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "wrong_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "missing_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      },
+      "kpp1-v004-codex-r83-C3": {
+        "native": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "exact_anchor": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          },
+          "origin": "native"
+        },
+        "stale_format": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "rebound_format": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "wrong_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "missing_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      }
+    },
+    "held_out": {
+      "g22-k2-stage1-codex-r83-C3": {
+        "native": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "exact_anchor": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          },
+          "origin": "native"
+        },
+        "stale_format": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "rebound_format": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "wrong_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "missing_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      },
+      "g22-k2-stage1-codex-r83-C4": {
+        "native": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "exact_anchor": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          },
+          "origin": "native"
+        },
+        "stale_format": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "rebound_format": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "wrong_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "missing_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      },
+      "g22-k2-stage1-codex-r83-C5": {
+        "native": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "exact_anchor": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          },
+          "origin": "native"
+        },
+        "stale_format": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "rebound_format": {
+          "B": 1,
+          "C": 1,
+          "expected": 1,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 1
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "wrong_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        },
+        "missing_file": {
+          "B": 1,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 1,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": {
+            "built/QUESTIONS.md": 1,
+            "built/parts.json": 0
+          },
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      }
+    },
+    "historical_negative": {
+      "g22-k2-stage1-codex-r83-B1": {
+        "native": {
+          "B": 0,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      },
+      "g22-k2-stage1-codex-r83-B2": {
+        "native": {
+          "B": 0,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      },
+      "g22-k2-stage1-codex-r83-B3": {
+        "native": {
+          "B": 0,
+          "C": 0,
+          "expected": 0,
+          "delta_correct": 0,
+          "changes_from_native": {
+            "built/QUESTIONS.md": 0,
+            "built/parts.json": 0
+          },
+          "changes_from_anchor": "not_exercised",
+          "violations": {
+            "self_confirmed": 0,
+            "built_products": 0,
+            "new_code_lines": 0
+          }
+        }
+      }
+    }
+  },
+  "cells": {
+    "tuning": {
+      "native": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "exact_anchor": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "stale_format": {
+        "paired": [
+          1,
+          1,
+          1
+        ],
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "rebound_format": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "wrong_file": {
+        "paired": [
+          1,
+          1,
+          1
+        ],
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "missing_file": {
+        "paired": [
+          1,
+          1,
+          1
+        ],
+        "median": 1,
+        "min": 1,
+        "max": 1
+      }
+    },
+    "held_out": {
+      "native": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "exact_anchor": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "stale_format": {
+        "paired": [
+          1,
+          1,
+          1
+        ],
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "rebound_format": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      },
+      "wrong_file": {
+        "paired": [
+          1,
+          1,
+          1
+        ],
+        "median": 1,
+        "min": 1,
+        "max": 1
+      },
+      "missing_file": {
+        "paired": [
+          1,
+          1,
+          1
+        ],
+        "median": 1,
+        "min": 1,
+        "max": 1
+      }
+    },
+    "historical_negative": {
+      "native": {
+        "paired": [
+          0,
+          0,
+          0
+        ],
+        "median": 0,
+        "min": 0,
+        "max": 0
+      }
+    }
+  },
+  "run_status": "complete",
+  "first_pair_s": 0.3845677000063006,
+  "wall_s": 1.5555658000230324
+}

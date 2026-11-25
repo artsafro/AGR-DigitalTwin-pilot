@@ -18,3 +18,16 @@ Test a necessary step before an operator can answer Gate 1: the request identifi
 `uv run --frozen python docs/research/trainer-gate1-identity-r84.py --runs C:/x/trainer/runs --manifest docs/research/trainer-gate1-identity-r84-manifest.json` (fresh process, read-only; stdout contains results; timing may stop after first pair). Run `... --selftest` for the synthetic red/green witness. The retained comparator is a research receipt, not a product candidate.
 
 ## Round log
+
+**Кратко. Гипотеза о проверке запроса подтверждена; прохождение Gate 1 и `artifact` не измерено.**
+На трёх черновиках KPP1 и трёх отложенных G22 сверка двух хешей сохранила все 6 исходных запросов с верными хешами.
+Проверка #83 принимала запрос даже после добавления одного перевода строки к JSON, подмены или удаления файлового
+хеша из вопросов (18/18 специально внесённых дефектов). Сверка двух хешей отвергла все 18/18 и снова приняла все
+6/6 копий после обновления файлового хеша; хеш содержания не менялся. Подтверждение пользователя по-прежнему необходимо.
+
+- Frozen experiment: `bfcfdd60`; `uv run --frozen` on Python 3.14.7 / Pydantic 2.13.5. R83 was loaded from its pinned Git blob; fetch `origin/research/autoresearch-standing-83` if the blob is absent. Replay inputs are local; the manifest is public to the next lane but replay is limited to workstations with the original runs. The manifest pins every file read (including `QUESTIONS.md`, not individually pinned in r83), and the replay compares all hashes originally recorded in r83 against it before scoring.
+- First pair 0.385 s × 9 = 3.46 s projected, below the 120 s cap; full series 1.556 s, `run_status=complete` (pair series, excludes manifest preflight). No new candidate after freeze. RED: baseline alias failed the approval-only assertion; GREEN: four selftest assertions. Original input pre/post manifests match; no violations across the nine readbacks or their variants.
+- Read `trainer-gate1-identity-r84-receipt.json` for paired rows. On **each** of tuning and held out, clean B/C = 3/3 vs 3/3, rebound = 3/3 vs 3/3, and each of the three planted negatives = 3/3 vs 0/3 classified as complete. Paired correctness delta on each planted-negative cell: `[1,1,1]`, median 1, spread [1,1]; clean and rebound `[0,0,0]`, spread [0,0]. Historical negative G22 B/C = 0/3 vs 0/3 with median delta 0, spread [0,0]. These are paired mechanical readbacks of nine independently generated r83 drafts/runs, not nine new practice runs.
+- The JSON receipt counts changed files separately by input and state (a zero count means `not_exercised` for that input). Exact anchor: 0 JSON / 0 questions (all native); stale formatting: 1 JSON / 0 questions; wrong/missing file token: 0 JSON / 1 questions; rebound: 1 JSON / 1 questions. All other files are unchanged and not exercised. Historical negatives were not injected; no results on policy, semantic scope, rejected architecture, FBX or user acceptance.
+
+**Would change (OBSERVE, not applied):** use both identities in the practice handoff scorer so an operator can distinguish an outdated file from an outdated proposal; never use either hash as evidence of approval itself. Next, calibrate the source-backed content of draft PartsLists against a valid reviewed reference, and measure an actual pass only after the existing #81 decision.
