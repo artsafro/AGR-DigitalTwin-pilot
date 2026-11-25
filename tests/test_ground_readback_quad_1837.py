@@ -109,7 +109,7 @@ def tile_exports(tmp_path_factory):
     swapped = {**data, 'uv': [
         [[u + shift, v] for u, v in face] for face, shift in zip(data['uv'], [1, -1])
     ]}
-    return tmp, data, _build(tmp, 'atlas-looking-name', data, '--profile', 'vpm'), _build(
+    return tmp, data, _build(tmp, '0001_Decoy_Ground', data, '--profile', 'vpm'), _build(
         tmp, 'swapped', swapped, '--profile', 'vpm')
 
 
