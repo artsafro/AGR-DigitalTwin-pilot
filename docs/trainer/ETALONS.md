@@ -40,6 +40,40 @@ uv run agr trainer ledger --add NEW.json --lane codex --run NEW_DIR --date YYYY-
 - Правило held-out (#1803): изменение, сделанное по провалу на `tuning`-эталоне, перепроверяется на `held_out`-эталоне.
   Сейчас `tuning`: kpp1-v004, g22-k2-stage1, 63a-stage1. `held_out`: 63b-stage1 (полный) и остальные.
 
+## Windows `sources-dwg`
+
+Use the in-sandbox route [D389] for DWG inputs. This procedure assumes a cold
+`workspace-write` session has already been prepared; the legacy `agr trainer run`
+command is not that Windows sandbox launcher. The session owner holds the shared
+AutoCAD batch lock (`dcc_batch.py`, `acad`) for the attempt. Use AutoCAD 2025 Core
+Console, one drawing at a time, with the source pinned by SHA-256 and a fresh,
+single-owner output directory with an absolute ASCII path (no spaces)
+inside the existing `workspace-write` sandbox. For example, with the prepared
+workspace Python and `SOURCE.dwg` the frozen source copy:
+
+```text
+.venv/Scripts/python.exe tools/methods/body/dwg_to_dxf.py SOURCE.dwg tmp/r1/L01.dxf tmp/r1/L01.json --workdir tmp/r1 --copy-name working.dwg --timeout 60
+.venv/Scripts/python.exe tools/methods/body/dxf_intake.py SOURCE.dwg tmp/r1/L01.dxf tmp/r1/L01.json tmp/r1/intake.json
+```
+
+Run intake only after converter exit 0. Before `plan_from_dxf.py extract`, require
+intake exit 0 on the same unmodified bytes: `dwg-to-dxf/1` with matching DWG and
+DXF SHA-256, complete ASCII DXF with terminal ENDSEC/EOF, strict parser readback,
+nonempty model space and `$INSUNITS=4` (mm). Conversion and intake are not stage
+passes by themselves; extraction still needs explicit source-layer and level mapping.
+
+On timeout or any nonzero exit, stop at `sources-dwg`. Keep the converter receipt,
+script and console log (or the CLI error if launch/preflight produced no receipt).
+Record the source hash, executable/version from the log when available, native
+outcome, elapsed/deadline and observed DXF size. Missing DXF and malformed DXF are
+different failures: do not use or repair a timed-out output, and do not treat a
+header-only check as strict intake (#1866 owns the separate converter false pass).
+A timeout has no vendor exit code. Escalate the diagnostics to the operator, not
+the sandbox permissions. The operator can run a separately locked, same-byte
+host **control** to compare behavior; it is not trainer output or authorization
+for the cold agent to run AutoCAD outside the sandbox. Never open the original
+DWG or reuse accepted assets from a previous run.
+
 ## Банк эталонов
 
 | id | объект | сценарий | статус | прогон | split | ключ (принято) | отклонено |

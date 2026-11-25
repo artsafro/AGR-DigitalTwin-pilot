@@ -22,6 +22,9 @@ Guarantees (each has a test in tests/methods/test_dwg_to_dxf.py):
   Anything else is ``fail`` with the reason and exit 3; never a pass.
 - Nothing is overwritten: the DXF, the copy, the script and the log must not exist (exit 4, nothing
   written). No two of source, copy, script, log, DXF and receipt are the same file (exit 4).
+- A timeout is an explicit refusal, not a native exit code. The receipt records the deadline,
+  elapsed console time, captured output, post-run hashes and any observed (unusable) DXF size.
+  Trainer callers must also pass the DXF through ``dxf_intake.py`` before plan extraction.
 - A missing source, a source that is not ``.dwg``, an output that is not ``.dxf``, a missing
   accoreconsole (outside ``--dry-run``), a non-finite or non-positive timeout, and a path AutoCAD
   would read from the script that is not plain ASCII without spaces or ``;"`` are errors naming them
@@ -39,6 +42,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -121,12 +126,11 @@ def _decode(raw) -> str:
         return ""
     if isinstance(raw, str):
         return raw
-    for enc in ("utf-16-le", "utf-8"):
-        try:
-            return raw.decode(enc)
-        except UnicodeDecodeError:
-            continue
-    return raw.decode("latin-1")
+    if raw.startswith((b"\xff\xfe", b"\xfe\xff")):
+        return raw.decode("utf-16", errors="replace")
+    if b"\0" in raw:
+        return raw.decode("utf-16-le", errors="replace")
+    return raw.decode("utf-8-sig", errors="replace")
 
 
 def _is_dxf(path: Path) -> bool:
@@ -136,7 +140,24 @@ def _is_dxf(path: Path) -> bool:
     return tokens[:2] == ["0", "SECTION"]
 
 
-def run(p: dict, runner=subprocess.run) -> dict:
+def _run_console(command, timeout, workdir):
+    # Windows subprocess.run kills and waits for its own child on timeout. Do not use
+    # PIPEs: draining them can wait indefinitely for other processes holding write handles.
+    with tempfile.TemporaryFile(dir=workdir) as stdout, tempfile.TemporaryFile(dir=workdir) as stderr:
+        try:
+            proc = subprocess.run(command, stdout=stdout, stderr=stderr, timeout=timeout, check=False)
+        except subprocess.TimeoutExpired as exc:
+            stdout.seek(0)
+            stderr.seek(0)
+            exc.output, exc.stderr = stdout.read(), stderr.read()
+            raise
+        stdout.seek(0)
+        stderr.seek(0)
+        proc.stdout, proc.stderr = stdout.read(), stderr.read()
+        return proc
+
+
+def run(p: dict, runner=None) -> dict:
     """Copy, check the copy hash, write the script, run the console, check and hash the DXF."""
     source, copy, script, log, dxf = (Path(p["source"]["path"]), Path(p["copy"]), Path(p["script_path"]),
                                       Path(p["log"]), Path(p["dxf"]))
@@ -154,39 +175,58 @@ def run(p: dict, runner=subprocess.run) -> dict:
         return receipt
     with open(script, "x", encoding="ascii", newline="") as f:
         f.write(p["script"])
-    try:
-        proc = runner(p["command"], capture_output=True, timeout=p["timeout_s"], check=False)
-    except subprocess.TimeoutExpired:
-        receipt["reason"] = f"accoreconsole timed out after {p['timeout_s']} s"
-        return receipt
-    with open(log, "x", encoding="utf-8", newline="\n") as f:
-        f.write(_decode(proc.stdout) + "\n--- stderr ---\n" + _decode(proc.stderr))
-    receipt["returncode"] = proc.returncode
-    after = _sha256(source)
-    receipt["source_sha256_after"] = after
-    copy_after = _sha256(copy)
-    receipt["copy"]["sha256_after"] = copy_after
     problems = []
-    if proc.returncode != 0:
-        problems.append(f"accoreconsole exit code {proc.returncode}")
-    if after != p["source"]["sha256"]:
-        problems.append("the source changed during the run")
-    if copy_after != copy_sha:
-        problems.append("the copy changed during the run")
-    if not dxf.is_file() or dxf.stat().st_size == 0:
+    started = time.monotonic()
+    outcome = "exited"
+    with open(log, "x", encoding="utf-8", newline="\n") as f:
+        try:
+            proc = (_run_console(p["command"], p["timeout_s"], copy.parent) if runner is None else
+                    runner(p["command"], capture_output=True, timeout=p["timeout_s"], check=False))
+        except subprocess.TimeoutExpired as exc:
+            outcome = "timeout"
+            problems.append(f"accoreconsole timed out after {p['timeout_s']} s; no DXF completion verified")
+            stdout, stderr = exc.stdout, exc.stderr
+        except OSError as exc:
+            outcome = "launch_error"
+            problems.append(f"accoreconsole could not run: {exc}")
+            stdout, stderr = None, str(exc)
+        else:
+            stdout, stderr = proc.stdout, proc.stderr
+            receipt["returncode"] = proc.returncode
+            if proc.returncode != 0:
+                problems.append(f"accoreconsole exit code {proc.returncode}")
+        receipt.update(console_outcome=outcome, timeout_s=p["timeout_s"],
+                       console_elapsed_s=round(time.monotonic() - started, 3))
+        f.write(_decode(stdout) + "\n--- stderr ---\n" + _decode(stderr))
+    for label, path, expected, record, key in (
+        ("source", source, p["source"]["sha256"], receipt, "source_sha256_after"),
+        ("copy", copy, copy_sha, receipt["copy"], "sha256_after"),
+    ):
+        try:
+            record[key] = _sha256(path)
+        except OSError as exc:
+            problems.append(f"could not recheck {label} hash: {exc}")
+        else:
+            if record[key] != expected:
+                problems.append(f"the {label} changed during the run")
+    size = dxf.stat().st_size if dxf.is_file() else None
+    receipt["dxf_bytes_observed"] = size
+    if not size:
         problems.append(f"no DXF written at {dxf}")
-    else:
-        receipt["dxf"] = {"path": str(dxf), "sha256": _sha256(dxf), "bytes": dxf.stat().st_size}
-        if not _is_dxf(dxf):
-            problems.append(f"{dxf.name} does not start with a DXF SECTION header")
+    elif not problems and not _is_dxf(dxf):
+        problems.append(f"{dxf.name} does not start with a DXF SECTION header")
     if problems:
         receipt["reason"] = "; ".join(problems)
+        receipt["action"] = ("Stop at sources-dwg; do not extract a plan. Preserve this receipt and console log; "
+                             "ask the operator to check the AutoCAD runtime. Retry only in a new directory "
+                             "with the same sandbox and source hash.")
     else:
+        receipt["dxf"] = {"path": str(dxf), "sha256": _sha256(dxf), "bytes": size}
         receipt["status"] = "pass"
     return receipt
 
 
-def main(argv=None, runner=subprocess.run) -> int:
+def main(argv=None, runner=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("source", type=Path)
     parser.add_argument("dxf", type=Path)
@@ -217,6 +257,8 @@ def main(argv=None, runner=subprocess.run) -> int:
     publish_text(Path(p["receipt"]), json.dumps(receipt, ensure_ascii=False, indent=1))
     if receipt["status"] != "pass":
         print(f"DWG_TO_DXF fail: {receipt['reason']}", file=sys.stderr)
+        if "action" in receipt:
+            print(f"{receipt['action']} Log: {receipt['log']}", file=sys.stderr)
         return 3
     print(json.dumps({"status": "pass", "dxf": receipt["dxf"]}, ensure_ascii=False))
     return 0

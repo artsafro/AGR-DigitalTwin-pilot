@@ -67,6 +67,15 @@ def test_d389_row_recorded_once():
     assert len(rows) == 1 and "AutoCAD Core Console" in rows[0] and "3ds Max" in rows[0]
 
 
+def test_dwg_practice_prompt_requires_intake_and_stops_on_failure():
+    entries = {e["id"]: e for e in bank()["etalons"]}
+    text = T.task_text(entries["kpp1-v004"], Path("i"), Path("o"))
+    assert "--timeout 60" in text
+    assert text.index("dxf_intake.py") < text.index("plan_from_dxf.py")
+    assert "stop at sources-dwg" in text and "do not escalate" in text
+    assert "dxf_intake.py" not in T.task_text(entries["g22-k2-stage1"], Path("i"), Path("o"))
+
+
 def test_task_text_refuses_a_leaking_task():
     e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
     e["task"] += " Compare with k2_v002r1_body_quad.fbx."
