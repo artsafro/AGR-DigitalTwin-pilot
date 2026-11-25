@@ -57,6 +57,186 @@ def _git_add(root):
     subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
 
 
+DOC_INDEX = "docs/architecture/README.md"
+DOC_TABLE = """## Documentation ownership
+
+| Topic | Owner | Related |
+|---|---|---|
+| index | [Architecture](README.md) | |
+| guide | [Guide](../guide.md) | |
+| contexts | [Contexts](contexts.yaml) | |
+| search | [Search config](search-noise.yaml) | |
+"""
+
+
+def _docs_repo(tmp_path, files=None, *, index=DOC_TABLE, historical=""):
+    return _repo(tmp_path, {DOC_INDEX: index, "docs/guide.md": "# Guide\n", **(files or {})},
+                 config=CONFIG + historical)
+
+
+def _check_docs(root, capsys):
+    code = sn.main(["--root", str(root), "--check-docs"])
+    return code, capsys.readouterr().out
+
+
+def test_docs_guard_rejects_unindexed_docs_then_recovers(tmp_path, capsys):
+    root = _docs_repo(tmp_path, {"docs/unindexed.md": "# Synthetic unstated ownership\n"})
+    sn.write_block(root, [], ["docs/unindexed.md"])
+    before = (root / ".ignore").read_bytes()
+    partial = root / ".ignore.partial"
+    partial.hardlink_to(root / "docs/unindexed.md")
+    source = partial.read_bytes()
+    for _ in range(2):
+        code, out = _check_docs(root, capsys)
+        assert code == 1
+        assert "docs/unindexed.md: missing ownership row" in out
+        assert (root / ".ignore").read_bytes() == before
+        assert partial.read_bytes() == source
+    (root / DOC_INDEX).write_text(DOC_TABLE + "| new | [New](../unindexed.md) | |\n", encoding="utf-8")
+    assert _check_docs(root, capsys)[0] == 0
+    assert sn.main(["--root", str(root), "--check-docs", "--write-ignore"]) == 2
+    assert partial.read_bytes() == source
+
+
+@pytest.mark.parametrize(("index", "expected"), [
+    ("", "missing ownership table"),
+    (DOC_TABLE.split("| index")[0], "empty ownership table"),
+    (DOC_TABLE + "| guide | [Other](../other.md) | |\n", "duplicate topic guide"),
+    (DOC_TABLE + "| other | [Guide](../guide.md) | |\n", "docs/guide.md: multiple ownership rows"),
+    (DOC_TABLE + "| stale | [Stale](../gone.md) | |\n", "../gone.md: not a canonical tracked docs path"),
+    (DOC_TABLE + "| alias | [Guide](.././guide.md) | |\n", ".././guide.md: not a canonical tracked docs path"),
+    (DOC_TABLE + "| alias | [Guide](../Guide.md) | |\n", "../Guide.md: not a canonical tracked docs path"),
+    (DOC_TABLE + "| partial | [Other](../other.md)\n", "malformed ownership row"),
+])
+def test_docs_guard_rejects_ambiguous_or_invalid_index(tmp_path, capsys, index, expected):
+    root = _docs_repo(tmp_path, {"docs/other.md": "# Other\n"}, index=index)
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and expected in out
+
+
+def test_docs_guard_requires_companion_link(tmp_path, capsys):
+    root = _docs_repo(tmp_path, {"docs/companion.md": "# Companion\n\n[Owner](guide.md)\n"},
+                      index=DOC_TABLE.replace("[Guide](../guide.md) | |",
+                                              "[Guide](../guide.md) | [Companion](../companion.md) |"))
+    assert _check_docs(root, capsys)[0] == 0
+    (root / "docs/companion.md").write_text("# Companion\n\n[Decoy](plans/../gone.md)\n", encoding="utf-8")
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and "docs/companion.md: must link to owner docs/guide.md" in out
+
+
+def test_docs_guard_frozen_history_does_not_exempt_revived_docs(tmp_path, capsys):
+    root = _docs_repo(tmp_path, {"docs/old.md": "# Historical\n", "docs/decisions.md": "# Ledger\n"},
+                      historical="legacy_hidden_docs:\n  - docs/old.md\n")
+    sn.write_block(root, [], ["docs/old.md"])
+    assert _check_docs(root, capsys)[0] == 0
+    (root / "AGENTS.md").write_text("Read `docs/old.md`.\n", encoding="utf-8")
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and "docs/old.md: missing ownership row" in out
+
+
+def test_docs_inventory_links_do_not_change_search_liveness(tmp_path):
+    root = _docs_repo(tmp_path, {"docs/old.md": "# Old\nRead `jobs/DONE/report.json`.",
+                                 "jobs/DONE/report.json": "{}",
+                                 "AGENTS.md": "Read `docs/architecture/README.md`."},
+                      index=DOC_TABLE + "| old | [Old](../old.md) | |\n")
+    st = sn.state(root)
+    assert {DOC_INDEX}.issubset(st["live"])
+    assert "docs/old.md" in st["docs"] and "jobs/DONE/report.json" in st["data"]
+
+
+@needs_rg
+def test_plan_status_controls_search_visibility(tmp_path, capsys):
+    plans = {
+        "docs/backlog.md": "# Backlog\n\nStatus: active (2026-11-24)\n",
+        "docs/plans/active.md": "# Active\n\nStatus: active (2026-11-24)\n",
+        "docs/plans/done.md": "# Done\n\nStatus: done (2026-11-24)\n",
+        "docs/research/old-roadmap.md": "# Roadmap\n\nStatus: superseded by docs/backlog.md (2026-11-24)\n",
+        "docs/plans/catalog.json": '{"status": "active", "status_date": "2026-11-24"}\n',
+    }
+    names = [p.rsplit("/", 1)[-1].split(".")[0] for p in plans]
+    root = _docs_repo(tmp_path, {**plans, "AGENTS.md": "Read `docs/plans/done.md` and `docs/research/old-roadmap.md`."},
+                      index=DOC_TABLE + "".join(f"| {n} | [Plan](../{p[5:]}) | |\n" for n, p in zip(names, plans)))
+    st = sn.state(root)
+    sn.write_block(root, st["data"], st["docs"])
+    assert _check_docs(root, capsys)[0] == 0
+    assert set(plans) & _rg(root) == {"docs/backlog.md", "docs/plans/active.md", "docs/plans/catalog.json"}
+    (root / "docs/plans/done.md").write_text(plans["docs/plans/done.md"].replace("done (", "active ("), encoding="utf-8")
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and "docs/plans/done.md: plan visibility does not match status" in out
+    st = sn.state(root)
+    sn.write_block(root, st["data"], st["docs"])
+    assert "docs/plans/done.md" in _rg(root)
+    assert _check_docs(root, capsys)[0] == 0
+
+
+@pytest.mark.parametrize("header", [
+    f"Status: {status} ({day})"
+    for status in ("active", "done", "later", "NaN", "inf", "")
+    for day in ("2026-02-29", "2026-11-24", "2026-11-2", "")
+    if (status, day) not in {("active", "2026-11-24"), ("done", "2026-11-24")}
+] + ["", "Intro\n\nStatus: active (2026-11-24)", "Status: active", "Status: superseded by docs/gone.md (2026-11-24)",
+     "Status: superseded by docs/plans/bad.md (2026-11-24)",
+     "Status: superseded by docs/./guide.md (2026-11-24)",
+     "Status: active (2026-11-24)\nStatus: done (2026-11-24)"])
+def test_docs_guard_rejects_bad_plan_status(tmp_path, capsys, header):
+    root = _docs_repo(tmp_path, {"docs/plans/bad.md": f"# Bad\n\n{header}\n",
+                                 "docs/backlog.md": "# Backlog\n\nStatus: active (2026-11-24)\n"},
+                      index=DOC_TABLE + "| bad | [Bad](../plans/bad.md) | |\n| backlog | [Backlog](../backlog.md) | |\n")
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and "docs/plans/bad.md: invalid plan status" in out
+    assert "docs/backlog.md:" not in out
+
+
+@pytest.mark.parametrize(("path", "text"), [
+    ("docs/plans/gap.txt", "Status: active (2026-11-24)"),
+    ("docs/plans/catalog.json", '{}'),
+    ("docs/plans/catalog.json", '{"status":"active","status_date":NaN}'),
+    ("docs/plans/catalog.json", '{"status":"invalid","status":"active","status_date":"2026-11-24"}'),
+])
+def test_docs_guard_rejects_bad_machine_plan(tmp_path, capsys, path, text):
+    root = _docs_repo(tmp_path, {path: text}, index=DOC_TABLE + f"| new | [New](../{path[5:]}) | |\n")
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and f"{path}: invalid plan status" in out
+
+
+def test_real_docs_ownership_guard(capsys):
+    code, out = _check_docs(ROOT, capsys)
+    assert code == 0, out
+
+
+def test_docs_guard_fresh_process_refuses_cyclic_replacements(tmp_path):
+    root = _docs_repo(tmp_path, {
+        "docs/plans/a.md": "# A\n\nStatus: superseded by docs/plans/b.md (2026-11-24)\n",
+        "docs/plans/b.md": "# B\n\nStatus: superseded by docs/plans/a.md (2026-11-24)\n",
+    }, index=DOC_TABLE + "| a | [A](../plans/a.md) | |\n| b | [B](../plans/b.md) | |\n")
+    st = sn.state(root)
+    sn.write_block(root, st["data"], st["docs"])
+    check = subprocess.run([sys.executable, str(ROOT / "tools/architecture/search_noise.py"), "--root", str(root),
+                            "--check-docs"], cwd=root, capture_output=True, text=True)
+    assert check.returncode == 1 and "cyclic plan replacements" in check.stdout
+
+
+def test_real_docs_ownership_review_contract():
+    review = (ROOT / "docs/agents/REVIEW_CHECKLIST.md").read_text(encoding="utf-8")
+    template = (ROOT / ".github/pull_request_template.md").read_text(encoding="utf-8")
+    ledger = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
+    assert "New file rationale:" in review and "changes requested (P1)" in review
+    assert "New file rationale:" in template and "existing owner" in template
+    assert "[D386]" in review and ledger.count("| D386 |") == 1
+
+
+def test_docs_guard_exempts_route_views_only_with_source(tmp_path, capsys):
+    files = {
+        "docs/architecture/ground-route.events.yaml": "scope: synthetic\n",
+        "docs/architecture/ground-route-owners.md": "# Generated ground view\n",
+        "docs/architecture/missing-route-owners.md": "# Not a generated view\n",
+    }
+    root = _docs_repo(tmp_path, files, index=DOC_TABLE + "| ground | [Ground](ground-route.events.yaml) | |\n")
+    code, out = _check_docs(root, capsys)
+    assert code == 1 and "docs/architecture/missing-route-owners.md: missing ownership row" in out
+    assert "docs/architecture/ground-route-owners.md:" not in out
+
+
 def _rg(root):
     out = subprocess.run([RG, "--files", "--path-separator", "/"], cwd=root, capture_output=True, text=True).stdout
     return set(out.splitlines())
@@ -84,7 +264,7 @@ def test_real_repo_hidden_sets_respect_live_paths_and_entry_docs(real):
     assert not [f for f in hidden if sn.under(f, real["parts"])]
     assert not [f for f in hidden if f in real["live"]]
     assert not [f for f in real["data"] if f.lower().endswith(dg.SCRIPT_SUFFIXES)]
-    assert {"docs/plans/manual-mode-no-ai.md", "jobs/KPP1/STATE.md", "jobs/KPP1/LESSONS.md",
+    assert {"docs/backlog.md", "jobs/KPP1/STATE.md", "jobs/KPP1/LESSONS.md",
             "docs/agents/SKELETONS.md", "docs/decisions.md"}.isdisjoint(hidden)
 
 
@@ -96,8 +276,9 @@ def test_real_repo_rg_hides_historical_data_and_docs_and_keeps_live(real):
     # docs from parallel PRs landed after #1706 and this test failed on them.
     waiting = {p.lstrip("/") for p in sn.pending(ROOT, real["data"], real["docs"])}
     assert not ((set(real["data"]) | set(real["docs"])) - waiting) & listed
-    assert {"jobs/KPP1/STATE.md", "docs/plans/manual-mode-no-ai.md", "jobs/VATUTINO-SITE/maf/site-schedule.json",
+    assert {"jobs/KPP1/STATE.md", "docs/backlog.md", "jobs/VATUTINO-SITE/maf/site-schedule.json",
             "jobs/KPP1/quad-1372/REPORT.md", "routes/revit-intake.md"} <= listed
+    assert set(real["statuses"]) & listed == {p for p, status in real["statuses"].items() if status == "active"}
 
 
 @needs_rg

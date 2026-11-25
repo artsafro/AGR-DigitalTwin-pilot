@@ -362,7 +362,7 @@
 # HISTORICAL [D327] jobs/vyatskaya-tow02: data of a delivered job (#1614); files unchanged, hidden from agent search
 /jobs/vyatskaya-tow02/pipeline/spec-v002.json
 /jobs/vyatskaya-tow02/pipeline/spec.report.json
-# HISTORICAL [D327] docs: not reached from an entry doc, scenario, route, skill or live code (#1614); files unchanged, hidden from agent search
+# HISTORICAL [D327] docs: unreached docs (#1614) and inactive plans (#1856); hidden from agent search
 /docs/architecture/contexts.excalidraw
 /docs/architecture/evidence-1593.txt
 /docs/architecture/npm-oks-route.excalidraw
@@ -541,6 +541,11 @@
 /docs/methods/windows-glazing/RESULTS.md
 /docs/methods/windows-glazing/SHA256SUMS
 /docs/methods/windows-glazing/WHEN.md
+/docs/plans/425-maf-route-2026-11.md
+/docs/plans/agr-mcp.md
+/docs/plans/agr-tools-suite.md
+/docs/plans/flora-426-route-2026-11.md
+/docs/plans/manual-mode-no-ai.md
 /docs/plans/system-audit-1298.md
 /docs/procedure/evidence/1445/verification.md
 /docs/qa/archive-diff-1536.md
@@ -652,6 +657,7 @@
 /docs/research/brick-seams-1510/bake-parity.json
 /docs/research/brick-seams-1510/code-hashes.json
 /docs/research/brick-seams-1510/synthetic-readback.json
+/docs/research/capability-roadmap.md
 /docs/research/checker-mutation-corpus.json
 /docs/research/checker-mutation-results.json
 /docs/research/conference-evals-practice.md
@@ -665,7 +671,6 @@
 /docs/research/fbx-polygon-stream-consumption-boundary.md
 /docs/research/finish-crops-1366.md
 /docs/research/full-suite-wall-time-601s-vs-4000s.md
-/docs/research/geojson-d220-customer-files.md
 /docs/research/geojson-fno-code-type-boundary.md
 /docs/research/geojson-surrogate-report-encoding-boundary.md
 /docs/research/harness2-executor-controls.md

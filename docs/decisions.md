@@ -375,3 +375,4 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 [ground-gap-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6274902891
 [agr-tools-090-acceptance-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1506#issuecomment-6915458337
 [package-route-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1673#issuecomment-6974056175
+| D386 | 2026-11-24 | Documentation has one registered owner per topic. Index each new file or link it to its listed owner; give every plan a dated status and hide done or superseded plans from agent search. A PR that adds a file must name the owner checked and explain why it was not extended. | `docs/architecture/README.md`, `docs/agents/REVIEW_CHECKLIST.md` | Artem «Да норм», 2026-11-24 ~23:20, issue #1856 |

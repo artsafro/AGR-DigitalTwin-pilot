@@ -8,6 +8,9 @@ confidence. Current checklist: this file. Historical source: `archive/2026-11:do
    or is it honestly marked `new-case` in the module docstring and PR body (author receipt verified per
    [WORKFLOW.md#before-requesting-review-author](WORKFLOW.md#before-requesting-review-author))?
    Does the change stay inside its issue and list what is not done?
+   **Why a new file? [D386]** For each added file or module, the PR must include `New file rationale:` naming
+   the existing owner checked (use the [docs ownership table](../architecture/README.md#documentation-ownership)
+   for documentation) and explaining why it could not be extended. Missing owner or reason = changes requested (P1).
 2. **Invention.** Is there anything in the code or its output that the spec and the inputs do
    not support — guessed levels, made-up geometry, a silent fallback that hides a failure?
 3. **Evidence.** Did the checker or the tests pass **with numbers**, run by the reviewer?

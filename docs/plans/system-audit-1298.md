@@ -1,5 +1,7 @@
 # System audit, stage 0: repos, slices, template, merge procedure (#1298)
 
+Status: done (2026-11-24)
+
 Plan only. Nothing in this document moves, edits or deletes a file; neither do the slice cards it defines.
 Sequence set by Artem (2026-11-13): **compact the system → improve → second compaction = first decent MVP →
 only then the automated self-improvement loop** (weekly calibrator starts after the audit).
