@@ -220,6 +220,19 @@ def test_stepped_facade_probe(rules, setback):
     assert [objs[f"WB_Окно [{i}]"] for i in (502, 503, 504)] == ["INTERIOR_OUT", "INTERIOR_OUT", "WINDOWS"]
 
 
+def test_stepped_facade_preserves_existing_exterior_and_roof_wall(rules):
+    d = stepped_dump()
+    d["objects"] += [
+        # Set-back shell must not suppress a known exterior on the original footprint.
+        box("Панель фасадная over podium edge", 20, 0, 21, 0.2, 11.9, 12.4),
+        # Uncovered terrace side of the upper ring: preserve the roof-wall/parapet rule.
+        box("Базовая стена ADSK_Внутренняя_Г terrace wall", 20, 9.7, 21, 9.9, 12, 14),
+    ]
+    objs = {o["name"]: (o["place"], o["layer"]) for o in sp.classify(d, rules)["objects"]}
+    assert objs["Панель фасадная over podium edge"] == ("face", "DECOR")
+    assert objs["Базовая стена ADSK_Внутренняя_Г terrace wall"] == ("roof", "BODY")
+
+
 def test_census_markdown_has_one_row_per_layer(rules):
     md = sp.census_markdown(sp.classify(synthetic_dump(), rules), rules)
     for la in rules["layers"]:
