@@ -1,0 +1,45 @@
+{
+  "bank": "docs/trainer/etalons.json",
+  "blender": "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe",
+  "kpp_key": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx",
+  "kpp_dirs": {
+    "C1": "C:/x/trainer/runs/kpp1-v004-codex-r95-C1/built",
+    "C2": "C:/x/trainer/runs/kpp1-v004-codex-r95-C2/built",
+    "C3": "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built"
+  },
+  "kpp_files": {
+    "C1": [
+      "C:/x/trainer/runs/kpp1-v004-codex-r95-C1/built/body/body.fbx"
+    ],
+    "C2": [
+      "C:/x/trainer/runs/kpp1-v004-codex-r95-C2/built/body-band0/body.fbx",
+      "C:/x/trainer/runs/kpp1-v004-codex-r95-C2/built/body-band1/body.fbx"
+    ],
+    "C3": [
+      "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built/body_stage/body.fbx",
+      "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built/body_stage_v2/body.fbx",
+      "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built/upper_body/body.fbx"
+    ]
+  },
+  "tower": {
+    "v004": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx",
+    "v005": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v005.fbx",
+    "v006": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v006.fbx",
+    "v007": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx"
+  },
+  "sha256": {
+    "docs/trainer/etalons.json": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v005.fbx": "a387a459a7d2be6c967e533778da37cc560cc532fe94ed470a72d850fc524fd7",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v006.fbx": "b2b26d4448798b1174dfce9b1c7ad1386fd6acc78ce9635553e0e7ed7ba4a455",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "C:/x/trainer/runs/kpp1-v004-codex-r95-C1/built/body/body.fbx": "a7c67e20d9b392a5a44108d5cc4689abe014c637294d8b0ba074fa9dfbe04267",
+    "C:/x/trainer/runs/kpp1-v004-codex-r95-C2/built/body-band0/body.fbx": "1e2fd1477d4291a9fe8e31e1fecd3d66ae4017c86b7d8a9050fde2a6df7d1b2f",
+    "C:/x/trainer/runs/kpp1-v004-codex-r95-C2/built/body-band1/body.fbx": "79b1474625f004a085c6ae788f4ad4cfd2d42643f50c2a273c3ebec4dac6460c",
+    "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built/body_stage/body.fbx": "575b8723d25d52b7211a7a8ca6a1ee4d9210391ff32cb5f6e1a9bc03b346478b",
+    "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built/body_stage_v2/body.fbx": "041271fae470352f0d5ba2420c52127ab1e4a6823777661ffaf0d84112ab5bc4",
+    "C:/x/trainer/runs/kpp1-v004-codex-r95-C3/built/upper_body/body.fbx": "8788000d778604a32ac9e331827dfeca084403ada84113cffa0c7c4a44d74aa6"
+  }
+}
