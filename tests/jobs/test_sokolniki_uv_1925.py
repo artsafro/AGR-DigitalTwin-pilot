@@ -1,4 +1,4 @@
-"""Sokolniki #1925 step 4: finish zones, UV report table and the uv_config.json spec.
+"""Sokolniki #1925 step 4 [D411]: finish zones, UV report table and the uv_config.json spec.
 
 Pattern: n/a | new-case: tests of jobs/sokolniki-uvk1000/hooks/inset_build.py (body_finish, ring_relation),
 inset_sheet.py (uv_rows) and uv_config.json against the shared atlas spec validator (no DCC).
