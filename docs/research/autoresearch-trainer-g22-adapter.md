@@ -109,3 +109,62 @@ uv run --frozen python docs/research/trainer-g22-adapter-r97/analyze.py AUDIT.py
 Replay is limited: the run folders `C:/x/trainer/runs/g22-k2-stage1-codex-r97-*` are local. Evidence hashes go to
 `G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/SHA256SUMS.txt`. Fresh-agent runs are not deterministic: a replay
 re-measures the series, it does not rescore a dump.
+
+## Result (series 2026-11-25 20:24–20:33, 6/6 runs, no budget stop)
+
+**Итог (RU).** Гипотеза H97 — **inconclusive**: в зачёт C 1/3 против B 0/3. Порог ≥ 2/3 не пройден, но C > B, так
+что гипотеза не опровергнута. Сам механизм работает:
+- с адаптером в `tools/methods/body` все 3/3 прогона C запустили его по новому пути, ни разу не выйдя из практики, и
+  каждый собрал типовое тело;
+- в B адаптера нет. Два прогона закончились без FBX. Третий (B1) собрал FBX, но только прочитав скрытые hooks в чужом
+  worktree (8 выходов по E93), поэтому не засчитан.
+
+Две из трёх побед C потеряны так же, как в #95: агент оставил в `built/` второй FBX (одноэтажный модуль или пилот), и
+оценщик отказывается выбирать («several FBX»). Отдельно оценённые (не в зачёт) типовые тела C1/C3 проходят artifact,
+bounds, topology и form (p95 1,3–1,4 см) и останавливаются на `form_v2` (4 из 29 проверок), как и засчитанный C2.
+Следующий шаг после artifact на G22 — `form_v2`.
+
+| Arm | n | FBX in built/ | artifact pass (scorer) | **M97 counted** | E93 escapes | adapter run (promoted path) | first_failing_step |
+|---|---|---|---|---|---|---|---|
+| B (base e01aafc9) | 3 | 1/3 | 1/3 | **0/3** | 1/3 (B1: 8 paths, hidden hooks in another worktree) | 0/3 | form_v2 (B1, escaped), artifact ×2 |
+| C (+ promoted adapter, tree 55b2ae49) | 3 | 3/3 | 1/3 | **1/3** | 0/3 | 3/3 (3/3) | form_v2 (C2), scorer refusal ×2 (C1, C3) |
+
+- **Contract check.** C ≥ 2/3 is false, so the hypothesis is not CONFIRMED. C ≤ B is false (1 > 0), so it is not
+  REFUTED. Result: **inconclusive**.
+- **Clean / injected / not measured.**
+  - Clean: 6 fresh-agent runs, all exit 0. Wall 87–168 s, input tokens 0.48–1.62 M (per run in `receipt.json`).
+  - Injected: none.
+  - Not measured: synthetic NPZ perturbation, collateral on 63A/63B/KPP1 trees, package/quality steps, isolation
+    beyond E93.
+- **Invariance.**
+  - The C tree differs from B by 2 added + 1 changed files: `git diff --stat` 3 files, +1276/−1.
+  - Scrubbed files: 10 per run in all 6 runs, so the scrub behaves the same in both arms.
+  - Both arms were scored by the same base scorer.
+- **Positive trigger witness reproduced.** B2/B3 end without FBX. B1 reaches the hidden hook outside its run.
+- **Offline accepted control (agent-free, informational).** From the C root:
+  - `floor_from_dump.py NPZ plan.json --openings` exits 0 and the BodyPlan has 0 schema errors;
+  - `agr body` writes one body FBX (9 floors, 45 openings, 4887 faces, 0 tris);
+  - the score gives artifact/bounds/topology pass, form fail p95 6.29 m (default arguments; the agents chose a
+    different floor setup and got p95 1.3 cm). This shows the mechanism, not the metric.
+- **Informational, not counted** (`informational.json`), explicit `--built FILE` scores:
+
+  | Run | FBX | first_failing_step | form p95 |
+  |---|---|---|---|
+  | C1 | typical | form_v2 | 0.0128 m |
+  | C1 | module | bounds | 22.75 m |
+  | C3 | typical | form_v2 | 0.0139 m |
+  | C3 | pilot | bounds | 22.75 m |
+
+Receipt: `docs/research/trainer-g22-adapter-r97/receipt.json` (sha256
+`ed000b3814607c602921b388b5bf3a689046f59a02f57f71b7eed8aa99db1e91`), `informational.json` (sha256
+`846639acbe7004d2919a858d9f16be33ce289187fa44e6aed94bc0a9b154bf94`), `series.log`. Evidence (run.json, score.json,
+events, built FBX, offline control): `G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/SHA256SUMS.txt` (sha256
+`847aeb38d84d59a3acef620d986c1a76b8b5f54d5bd1dddbddff9dc856a70cc5`, 112 files). Replay is limited: the run folders
+are local.
+
+**Kept changes:** none (OBSERVE). Proposals for the #1855 owner, not applied:
+1. Promote `floor_from_dump.py` + `module_build.py` from the G22 hooks to `tools/methods/body/`, and give the path in
+   SKELETONS row 3. This is the measured candidate (make_candidate.py, 2 path lines). It removed the G22 escape and made
+   an FBX in 3/3 runs. A real move needs its own PR with tests (the hooks have callers in jobs/garibaldi22).
+2. One-deliverable rule (same as #95 proposal 1): the scorer or task names a single deliverable path. On G22 it would
+   have counted C1/C3. This is now the shared blocker of KPP1 (#95) and G22 (#97).
