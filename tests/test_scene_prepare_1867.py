@@ -183,6 +183,82 @@ def test_compare_v007_family_by_family(rules):
     assert rows["Нет такой"]["count_match"] is False and rows["Нет такой"]["layers"] == {}
 
 
+def flagged_dump():
+    """synthetic_dump + the three spots flagged on the Sokolniki v002 sheet (orchestrator defaults 2026-11-25)."""
+    d = synthetic_dump()
+    d["objects"] += [
+        # (2) pergola pipe frame on the roof terrace under an upper slab -> place `inside`; ground pipe column stays out
+        box("Базовая крыша ADSK_Плоская_Покр_000000c", 6, 6, 9, 9, 7.0, 7.2),
+        box("ADSK_КаркасНесущий_Труба_ГОСТ 302 [301]", 6.5, 7.0, 8.5, 7.1, 4.0, 4.1),
+        box("ADSK_КолоннаНесущая_Труба_ГОСТ 3 [302]", 0.1, 5.0, 0.2, 5.1, 4.0, 4.15),
+        box("ADSK_КолоннаНесущая_Труба_ГОСТ 3 [303]", 7.0, 3.0, 7.1, 3.1, 0.0, 3.8),
+        # (3) interior walls standing on the roof: below the parapet top (4.2) -> hidden; above it -> body
+        box("Базовая стена ADSK_Внутренняя_Г_000000d", 2, 2, 2.2, 8, 4.0, 4.15),
+        box("Базовая стена ADSK_Внутренняя_Г_000000e", 3, 2, 3.2, 8, 4.0, 6.0),
+        # (1) curtain-wall mullion on the face
+        box("Прямоугольный импост 25х100 мм [304]", 1.0, 0.0, 1.1, 0.1, 0.5, 3.0),
+    ]
+    return d
+
+
+def test_pergola_pipes_go_with_the_pergola_and_ground_pipe_stays(rules):
+    layers = {o["name"]: o["layer"] for o in sp.classify(flagged_dump(), rules)["objects"]}
+    assert layers["ADSK_КаркасНесущий_Труба_ГОСТ 302 [301]"] == "ROOF_EQUIPMENT"
+    assert layers["ADSK_КолоннаНесущая_Труба_ГОСТ 3 [302]"] == "ROOF_EQUIPMENT"
+    assert layers["ADSK_КолоннаНесущая_Труба_ГОСТ 3 [303]"] == "INTERIOR_OUT"
+    assert layers["ADSK_КолоннаНесущая_Труба_ГОСТ 3 [103]"] == "ROOF_EQUIPMENT"
+
+
+def test_roof_interior_walls_split_by_parapet_top(rules):
+    objs = {o["name"]: o for o in sp.classify(flagged_dump(), rules)["objects"]}
+    low, high = objs["Базовая стена ADSK_Внутренняя_Г_000000d"], objs["Базовая стена ADSK_Внутренняя_Г_000000e"]
+    assert low["place"] == high["place"] == "roof"
+    assert low["layer"] == "INTERIOR_OUT" and low["parapet_top"] == pytest.approx(4.2)
+    assert high["layer"] == "BODY"
+
+
+def test_roof_wall_at_exact_parapet_top_is_hidden_and_without_parapet_is_body(rules):
+    d = flagged_dump()
+    d["objects"].append(box("Базовая стена ADSK_Внутренняя_Г_000000f", 4, 2, 4.2, 8, 4.0, 4.2))
+    objs = {o["name"]: o for o in sp.classify(d, rules)["objects"]}
+    assert objs["Базовая стена ADSK_Внутренняя_Г_000000f"]["layer"] == "INTERIOR_OUT"
+    # parapet higher than parapet_max_m above the roof is a storey wall, not a parapet -> no parapet -> BODY
+    d = flagged_dump()
+    for o in d["objects"]:
+        if "Наружная_уте_000000" in o["name"] and o["name"][-1] in "1234":
+            o["z"] = [0, 4.0 + rules["envelope"]["parapet_max_m"] + 0.01]
+    objs = {o["name"]: o for o in sp.classify(d, rules)["objects"]}
+    assert objs["Базовая стена ADSK_Внутренняя_Г_000000d"]["layer"] == "BODY"
+    assert objs["Базовая стена ADSK_Внутренняя_Г_000000d"]["parapet_top"] is None
+
+
+def test_flagged_spots_are_counted_for_the_sheet(rules):
+    census = sp.classify(flagged_dump(), rules)
+    flags = {f["key"]: f for f in census["flags"]}
+    assert set(flags) == {"mullions", "pergola_pipes", "roof_interior_walls"}
+    assert flags["mullions"]["layers"] == {"CURTAIN_WALL": 1}
+    assert flags["pergola_pipes"]["layers"] == {"ROOF_EQUIPMENT": 3}
+    assert flags["roof_interior_walls"]["layers"] == {"INTERIOR_OUT": 1, "BODY": 1}
+    assert all(f["ru"] for f in census["flags"])
+    md = sp.census_markdown(census, rules)
+    assert "## Отмечено на листе" in md
+
+
+@pytest.mark.parametrize("mutate,msg", [
+    (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "below_parapet": "NOPE"}), "NOPE"),
+    (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "min_z0_above_base_m": float("nan")}), "min_z0"),
+    (lambda r: r["rules"].append({"family": "X", "layer": "BODY", "flag": {"key": "k"}}), "flag"),
+    (lambda r: r["envelope"].pop("parapet_max_m"), "parapet_max_m"),
+])
+def test_invalid_new_rule_keys_are_errors(tmp_path, mutate, msg):
+    data = json.loads(RULES.read_text(encoding="utf-8"))
+    mutate(data)
+    p = tmp_path / "rules.json"
+    p.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(sp.ScenePrepareError, match=msg):
+        sp.load_rules(p)
+
+
 def _cli(*args):
     return subprocess.run([sys.executable, "-m", "dt_ai.intake.scene_prepare", *map(str, args)],
                           capture_output=True, text=True, encoding="utf-8", cwd=ROOT)
