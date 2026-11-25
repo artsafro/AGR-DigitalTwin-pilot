@@ -399,6 +399,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
+| research/autoresearch-trainer-named-deliverable | [research/autoresearch-trainer-named-deliverable.md](../research/autoresearch-trainer-named-deliverable.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
@@ -479,6 +480,9 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/telegram-3dsmax-chat-2026-11 | [research/telegram-3dsmax-chat-2026-11.md](../research/telegram-3dsmax-chat-2026-11.md) |  |
 | research/toolchain-smoke-2026-10-15 | [research/toolchain-smoke-2026-10-15.md](../research/toolchain-smoke-2026-10-15.md) |  |
 | research/tow02-hand-finish-face-diff | [research/tow02-hand-finish-face-diff.md](../research/tow02-hand-finish-face-diff.md) |  |
+| research/trainer-named-deliverable-r98/inputs-json | [research/trainer_named_deliverable_r98/inputs.json](../research/trainer_named_deliverable_r98/inputs.json) |  |
+| research/trainer-named-deliverable-r98/receipt-json | [research/trainer_named_deliverable_r98/receipt.json](../research/trainer_named_deliverable_r98/receipt.json) |  |
+| research/trainer-named-deliverable-r98/replay-py | [research/trainer_named_deliverable_r98/replay.py](../research/trainer_named_deliverable_r98/replay.py) |  |
 | research/trainer-tower-id-r87/calib-json | [research/trainer-tower-id-r87/calib.json](../research/trainer-tower-id-r87/calib.json) |  |
 | research/trainer-tower-id-r87/make-bank-py | [research/trainer-tower-id-r87/make_bank.py](../research/trainer-tower-id-r87/make_bank.py) |  |
 | research/trainer-tower-id-r87/result-json | [research/trainer-tower-id-r87/result.json](../research/trainer-tower-id-r87/result.json) |  |

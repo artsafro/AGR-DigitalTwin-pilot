@@ -1,5 +1,24 @@
 # Trainer named FBX delivery, standing #98 (OBSERVE)
 
+**Итог.** H98 подтверждена для передачи уже построенных моделей: в каждом из трёх повторов G22 `artifact` и новое чтение FBX прошли **3/3 вместо 1/3**. Оба ранее неоднозначных выхода сохранили промежуточные FBX. Явный путь не исправляет модель: следующий отказ у всех трёх — `form_v2`. На отдельном принятом эталоне 63A добавленный одноимённый FBX ломал выбор по папке, но явный путь сохранял оценку. Новый запуск агента не измерялся; изменения тренажёра не внедрялись.
+
+## Result
+
+| Fixture | Directory baseline | Named explicit path | Native parity |
+| --- | --- | --- | --- |
+| G22 C1 | Refused: two FBX | Artifact and readback pass | Exact stage/score parity with explicit oracle; p95 0.0128 m |
+| G22 C2 | Artifact and readback pass | Artifact and readback pass | Exact stage/score parity with the single-file directory; p95 0.0128 m |
+| G22 C3 | Refused: two FBX | Artifact and readback pass | Exact stage/score parity with explicit oracle; p95 0.0139 m |
+| G22 v002r1 accepted calibration | Clean score 0.8571; injected directory refused | Score 0.8571 | Exact stage/score parity, all three repeats |
+| G22 v001 rejected calibration | Clean score 0.5714; injected directory refused | Score 0.5714 | Exact stage/score parity, all three repeats; fails `form` |
+| 63A v005 accepted experimental hold-out | Clean score 0.8333; injected directory refused | Score 0.8333 | Exact stage/score parity, all three repeats |
+
+- **Hypothesis:** confirmed, limited to the staged file handoff. Three fresh readback repetitions, paired lift `[2, 2, 2]`, median +2 submissions out of 3, range `[2, 2]`. Each practice file's final score remained 0.7143 (`form_v2` fail). Directory refusals are not failed native readbacks; readback was not measured on those baseline arms.
+- **Run status:** complete, 244.310 s wall including final input verification. Round cumulative times 95.388 / 166.048 / 244.052 s, below the frozen 420 s cap. Preflight elapsed time is outside the measurement cap. Runtime-dependent replay stops inconclusive if its pilot leaves insufficient time under the frozen rule.
+- **Clean and injected evidence:** Each practice variant relocated exactly one path (+1/-1, zero changed file bytes), keeping 1 / 0 / 1 distinct intermediate FBX files for C1/C2/C3. No decoy was injected into those existing inventories (`not_exercised`). Each of the three calibration/transfer rows had exactly one added nested FBX and zero changed original bytes. Missing-root and copied-key refusals observed on all three repeats. The accepted reference self-comparisons are calibration, not practice submissions; `vlm` is `not_run`.
+- **Not measured:** compliance with the output-path instruction in a fresh agent run, rejected transfer on 63A (no rejection-labelled version in the trainer bank), KPP1 package transfer, VLM, real delivery acceptance. No production code or models changed. Recommend testing the exact root path with fresh agents before adopting the rule; package targets need an explicit separate ZIP binding because `--built FILE` does not select a ZIP.
+- **Replay limited:** existing per-input hashes pin the Drive FBX files and local Form-v2 key, sections and source; the executable hash pins the measured Blender 5.1 installation entry point. [Manifest](trainer_named_deliverable_r98/inputs.json), [native round receipt](trainer_named_deliverable_r98/receipt.json) (SHA-256 `c25325dc0a5e3793cdb246002fe52bd3930438cda74ba1cd57d9cb1999672073`), freeze `45d940dc`. Outputs are from fresh scorer working directories, not saved score dumps.
+
 ## Frozen contract
 
 Ledger and scorer: `c42d7fbc1097e10baf1db6747641b144e46109a8`; `artifact` 3/4, `sources-dwg` 1/4. These are first scoring failures, not execution-stop counts. #1855 and #1608 already have ledger rows: the texture fallback is inactive and form research stays closed. #95/#1917 own the FBX-first prompt, #96 studied explicit selection and KPP1 bounds, #97/#1928 own the G22 adapter, #1924/#1927 own trainer A/B, #1877 owns launch isolation. This round does not modify their work, generate geometry, or run a new agent.
