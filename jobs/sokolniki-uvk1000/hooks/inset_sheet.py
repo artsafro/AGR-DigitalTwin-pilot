@@ -562,6 +562,138 @@ def sheet_v008(a):
     return len(pages), rows
 
 
+def sheet_v009(a):
+    """Body v006 (#1784, Artem 2026-11-25): openings cut for the Revit fill; tables placed vs Revit, facades with new
+    openings v008 (body v005) | v009 (body v006) | Revit, iso."""
+    from PIL import Image, ImageDraw, ImageFont
+    W, H = 2480, 1754
+    f_t, f_b, f_s = ImageFont.truetype(FONT_B, 40), ImageFont.truetype(FONT, 26), ImageFont.truetype(FONT, 20)
+    ld = lambda p: json.load(open(p, encoding="utf-8"))  # noqa: E731
+    rep, xv = ld(os.path.join(a.build_dir, "insets_report.json")), ld(os.path.join(a.build_dir, "xview_quad.json"))
+    orp, br, vw = ld(a.openings_report), ld(a.body_report), ld(a.views)
+    dirs = [a.render_dir] + a.prev_dirs.split(";")
+
+    def find(name):
+        for dd in dirs:
+            p = os.path.join(dd, name)
+            if os.path.exists(p):
+                return p
+        raise FileNotFoundError(name)
+    pages = []
+
+    def page(title):
+        im = Image.new("RGB", (W, H), "white")
+        d = ImageDraw.Draw(im)
+        d.text((60, 40), title, font=f_t, fill="black")
+        d.text((60, H - 50), "Сокольники УВК 1000, #1784, тело v006 (проёмы) + сборка v009. Ветка job/sokolniki-step3-insets, "
+               "PR #1833, карточка t_416ef473. Лист %d" % (len(pages) + 1), font=f_s, fill="#666")
+        pages.append(im)
+        return im, d
+    bs = orp["by_status"]
+    bm = ld(os.path.join(a.build_dir, "body_meshes.json"))
+    body_tris = sum(len(fc["v"]) - 2 for v in bm.values() for fc in v["body"]["faces"])
+    vols = br["volumes"]
+    bad = {k: sum(v["body"][k] for v in vols.values()) for k in ("defect_cells", "non_manifold_edges",
+                                                                  "bowtie_vertices", "facade_triangles")}
+    placed = lambda c: bs.get(c, {}).get("in_body_opening", 0) + bs.get(c, {}).get("new_opening", 0)  # noqa: E731
+    total = lambda c: sum(bs.get(c, {}).values())  # noqa: E731
+    im, d = page("Сокольники: тело v006 — прорезаны недостающие проёмы (решение Артёма 2026-11-25, %s)" % a.decision)
+    txt = [
+        "Тело v005 было глухим там, где в Revit окна (F01: три ряда окон против гладкой стены). Тело v006 построено заново",
+        "методом решётки [D373] общим ядром tools/methods/body/volume_body.py (без ремонта сетки): тот же v005 + колодцы [D384],",
+        "плюс %d новых проёмов из списка Revit (разбиение v004, план sokolniki-v002): каждый проём = снятая ячейка + откосы"
+        % len(orp["rects"]),
+        "на глубину стекла Revit (мин. 0,08 м; входные ниши глубже 1 м — откос 0,95 м, предел ядра < 1 м). Края проёма",
+        "ложатся на уровни тела в пределах 0,20 м, иначе — местный подоконник / верх, значения на сетке 10 см; соседние",
+        "витражные панели (импост / ригель < 0,25 м) — один проём; угол фасада оставляет простенок 0,30 м; верх стены и",
+        "парапет колодца не вскрываются. Скрипт: jobs/sokolniki-uvk1000/hooks/body_openings.py (5-й хук скелета).",
+        "",
+        "Тело v006: замкнуто по всем уровням; дефектных ячеек %d, неманифолдных рёбер %d, «бабочек» %d, треугольников на"
+        % (bad["defect_cells"], bad["non_manifold_edges"], bad["bowtie_vertices"]),
+        "фасаде %d. Вставки v008 пересажены в новые проёмы (окна/двери/витражи — отдельные объекты, набор граней тело+вставки"
+        % bad["facade_triangles"],
+        "= тело v006: %s)." % ("совпадает" if rep["partition"]["multiset_equal"] else "НЕ СОВПАДАЕТ"),
+        "",
+        "Поставлено против Revit (центр элемента в проёме тела; F05 — вставки [D378]/v007):",
+        "• окна: %d из %d;  • двери: %d из %d (+ %d на F05 за пилонами — остекление-вставка);"
+        % (placed("win"), total("win"), placed("door"), total("door"), bs.get("door", {}).get("skip_facade", 0)),
+        "• стеклопакеты витражей: %d из %d в проёмах тела + %d на F05 вставками; стемалит (текстура на плоскости проёма): %d из %d"
+        % (placed("glass"), total("glass"), bs.get("glass", {}).get("skip_facade", 0), placed("stem"), total("stem")),
+        "   + %d на F05. Не поставлены — с причиной — в таблице на листе 2." % bs.get("stem", {}).get("skip_facade", 0),
+        "",
+        "Бюджет НПМ: тело %d + вставки %d = %d треугольников (план ~40 000); v008 было 26 609."
+        % (body_tris, rep["total"]["tris"], body_tris + rep["total"]["tris"]),
+        "xView NPM (вся сборка v009): перекрытых граней %d, вершин %d, «бабочек» %d — %s. Max не запускался: нативные проверки"
+        % (xv["totals"]["overlapping_faces"], xv["totals"]["overlapping_vertices"], xv["totals"]["bowtie_vertices"],
+           "PASS" if xv["passed"] else "FAIL"),
+        "Max — не измерены (Blender 4.4 без окна). Перила по-прежнему вне (t_086564bb). Синтетики нет.",
+    ]
+    y = 120
+    for r in txt:
+        d.text((60, y), r, font=f_b, fill="black")
+        y += 37
+    names = {"win": "окна", "door": "двери", "glass": "стеклопакеты витражей", "stem": "стемалит витражей"}
+    why = {"in_body_opening": "в проёме тела v005 (было)", "new_opening": "в новом проёме тела v006",
+           "skip_facade": "F05: витраж-вставка и остекление 1-го этажа [D378]/v007",
+           "hidden_by_seam": "за стыком объёмов (внутри здания / под кровлей S)",
+           "interior": "внутренний витраж, > 5 м за фасадом",
+           "recessed": "в нише глубже 1 м выше 1-го этажа — не прорезано",
+           "not_cut_conflict": "не прорезано: фрамуга над дверью, узкая полоса или конфликт с соседним проёмом (ниже)",
+           "trimmed_out": "проём урезан до уровней тела, центр элемента вне проёма",
+           "stemalit_alone": "стемалит без стекла рядом"}
+    im, d = page("Таблица: элементы Revit → проём тела v006 (счёт по объектам разбиения v004)")
+    y = 120
+    for x, h in zip((60, 520, 680), ("Класс", "шт.", "Статус")):
+        d.text((x, y), h, font=ImageFont.truetype(FONT_B, 24), fill="black")
+    y += 40
+    for c in ("win", "door", "glass", "stem"):
+        for st, n in sorted(bs.get(c, {}).items(), key=lambda kv: -kv[1]):
+            d.text((60, y), names[c], font=f_b, fill="black")
+            d.text((520, y), str(n), font=f_b, fill="black")
+            d.text((680, y), str(why.get(st, st)), font=f_b, fill="black" if st in ("in_body_opening", "new_opening",
+                                                                             "skip_facade") else "#c00")
+            y += 36
+        y += 12
+    y += 10
+    d.text((60, y), "Не прорезано (%d групп):" % len(orp["not_cut"]), font=ImageFont.truetype(FONT_B, 24), fill="black")
+    y += 36
+    for r in orp["not_cut"]:
+        d.text((60, y), "%s %s s %.2f–%.2f z %.2f–%.2f: %d эл., %s" % (r["facade"], r["edge"], r["rect"][0], r["rect"][1],
+                                                                    r["rect"][2], r["rect"][3], len(r["members"]),
+                                                                    r["reason"][:70]), font=f_s, fill="black")
+        y += 28
+    per = 40
+    for k in range(0, len(orp["rects"]), per):
+        im, d = page("Новые проёмы тела v006 (%d–%d из %d): фасад, ребро, s / z, м, элементов, откос"
+                     % (k + 1, min(k + per, len(orp["rects"])), len(orp["rects"])))
+        y = 115
+        for r in orp["rects"][k:k + per]:
+            d.text((60, y), "%s  %s  s %.2f–%.2f  z %.2f–%.2f  эл. %d (%s)  заполнение %.2f  откос %.2f м"
+                   % (r["name"], r["facade"], r["rect"][0], r["rect"][1], r["rect"][2], r["rect"][3], r["members"],
+                      "+".join(str(names.get(q, q)) for q in r["kinds"]), r["fill"], r["reveal_m"]), font=f_s, fill="black")
+            y += 37
+    lab = ("тело v005 (сборка v008)", "тело v006 (сборка v009)", "Revit FBX (sokolniki_ar_r23_v1)")
+    facs = sorted({r["facade"] for r in orp["rects"]} | {"F05"}, key=lambda s: int(s[1:]))
+    for f in [f for f in vw["facades"] if f["id"] in facs]:
+        im, d = page("%s (рёбра %s): тело v005 | тело v006 | Revit — один вид, масштаб и свет" % (f["id"], ", ".join(f["edges"])))
+        ts = [Image.open(find(n % f["id"])) for n in ("v008_%s.png", "v009_%s.png", "revit_%s.png")]
+        avail_h = (H - 230) // 3 - 40
+        sc = min((W - 120) / ts[0].width, avail_h / ts[0].height)
+        y = 110
+        for tag, t in zip(lab, ts):
+            d.text((60, y), tag, font=f_b, fill="black")
+            im.paste(t.resize((max(1, int(t.width * sc)), max(1, int(t.height * sc)))), (60, y + 34))
+            y += avail_h + 40
+    im, d = page("Изометрия: тело v005 | тело v006 | Revit")
+    tw = (W - 160) // 3
+    for i, (tag, nm) in enumerate(zip(lab, ("v008_iso.png", "v009_iso.png", "revit_iso.png"))):
+        t = Image.open(find(nm))
+        d.text((60 + i * (tw + 20), 120), tag, font=f_b, fill="black")
+        im.paste(t.resize((tw, int(t.height * tw / t.width))), (60 + i * (tw + 20), 160))
+    pages[0].save(a.pdf, save_all=True, append_images=pages[1:], resolution=150)
+    return len(pages), facs
+
+
 # ---- v007 census and roof-well proof (folded in: a job keeps at most 5 listed hooks [D324]) ----
 FACE_M = 0.8
 _ID = re.compile(r"(_[0-9a-f]{7}| \[\d+\]|\.\d{3})$")
@@ -776,12 +908,16 @@ def main(argv=None):
     p = sub.add_parser("sheet8", help="v008 (plan #1896): v007 | v008 | Revit sheet with the plan-verdict table")
     for k in ("render_dir", "prev_dirs", "views", "build_dir", "plan", "pdf"):
         p.add_argument(k)
+    p = sub.add_parser("sheet9", help="body v006 (#1784): new openings, placed vs Revit, v005 | v006 | Revit")
+    for k in ("render_dir", "prev_dirs", "views", "build_dir", "openings_report", "body_report", "pdf"):
+        p.add_argument(k)
+    p.add_argument("--decision", default="D-row pending")
     p = sub.add_parser("sheet7", help="[D384] v006 | v007 | Revit sheet with table 1 and close-ups")
     for k in ("render_dir", "prev_dir", "closeup_dir", "views", "build_dir", "body_dir", "decor", "pdf"):
         p.add_argument(k)
     p.add_argument("--config", default=os.path.join(JOB, "insets_config.json"))
     a = ap.parse_args(argv)
-    out = a.pdf if a.cmd in ("sheet", "sheet7", "sheet8") else a.out
+    out = a.pdf if a.cmd in ("sheet", "sheet7", "sheet8", "sheet9") else a.out
     if os.path.exists(out):
         print("refused: %s exists" % out, file=sys.stderr)
         return 2
@@ -806,6 +942,10 @@ def main(argv=None):
         with open(os.path.splitext(a.pdf)[0] + "_plan_table.json", "w", encoding="utf-8") as fh:
             json.dump(rows, fh, ensure_ascii=False, indent=1)
         print("SHEET", n, "pages", a.pdf, "deviations", sum(1 for r in rows if not r["ok"]))
+        return 0
+    elif a.cmd == "sheet9":
+        n, facs = sheet_v009(a)
+        print("SHEET", n, "pages", a.pdf, "facades", ",".join(facs))
         return 0
     elif a.cmd == "views":
         doc = views(json.load(open(a.volume_lines, encoding="utf-8")))

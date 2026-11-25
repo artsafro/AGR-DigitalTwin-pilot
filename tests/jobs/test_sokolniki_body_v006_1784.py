@@ -1,4 +1,4 @@
-"""Sokolniki #1784 body v006 [D408]: openings for the Revit fill the accepted body had none for.
+"""Sokolniki #1784 body v006 [D408], accepted with assembly v009 [D409]: openings for the Revit fill the accepted body had none for.
 
 Pattern: n/a | new-case: tests of jobs/sokolniki-uvk1000/hooks/body_openings.py against the shared lattice core
 tools/methods/body/volume_body.py (synthetic inputs, no Revit FBX, no DCC). Synthetic: all geometry below is made up.
@@ -128,3 +128,12 @@ def test_committed_config_is_the_v007_config_plus_generated_rects():
     assert all(0 < c6['reveal_m_by_name'][r['name']] < 1 for r in new)
     for k in ('roof_wells', 'base_by_volume', 'agreed_edge_clamps'):
         assert c6[k] == c7[k]
+
+
+def test_body_v006_hook_wired_and_acceptance_recorded():
+    """The job runs body_openings.py at body/before and README records Artem's acceptance [D409]."""
+    hooks = json.loads((D / 'skeleton.json').read_text(encoding='utf-8'))['hooks']
+    assert {'script': 'hooks/body_openings.py', 'stage': 'body', 'point': 'before'} in hooks
+    readme = (D / 'README.md').read_text(encoding='utf-8')
+    assert '**Accepted** by Artem 2026-11-25' in readme and '[D409]' in readme
+    assert '| D409 |' in (ROOT / 'docs/decisions.md').read_text(encoding='utf-8')

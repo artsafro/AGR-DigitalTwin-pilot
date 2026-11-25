@@ -2,6 +2,7 @@
   "scenario": "oks-npm",
   "config": {"profile": "NPM"},
   "hooks": [
+    {"script": "hooks/body_openings.py", "stage": "body", "point": "before"},
     {"script": "hooks/inset_obb_blender.py", "stage": "body", "point": "after"},
     {"script": "hooks/inset_build.py", "stage": "body", "point": "after"},
     {"script": "hooks/inset_write_blender.py", "stage": "body", "point": "after"},
