@@ -40,6 +40,15 @@ uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out
   mixed in one variant; an edited path that looks like the other scope is listed in `scope_warnings`.
 - The verdict is the evidence of a job lesson (`jobs/<ID>/LESSONS.md`, form situation / lesson / evidence,
   `jobs/_template/LESSONS.md`; `tools/qa/lessons_check.py` warns on a new lesson without evidence).
+- First real A/B (#1924, 2026-11-25, `origin/main` 54b63bab, codex / gpt-6.1-terra, g22-k2-stage1, INVARIANT):
+  the only edit is one phrase in `AGENTS.md` ("read `docs/agents/SKELETONS.md` FIRST (it lists every stage
+  command)"). Verdict `fixed`: old stopped at `artifact` (no FBX, 39 commands, 5 wrong-turns, 0.62 M input tokens);
+  new built `typical_candidate/body.fbx` and passed artifact / readback / bounds / topology / form, first failing
+  `form_v2` (36 commands, 6 wrong-turns, 1.68 M tokens), and also used `master-qa` and `readback`. First command:
+  old reads the scenario skill, new reads SKELETONS.md first. One sample per arm: LLM run-to-run variance is not
+  controlled, so this proves the A/B mechanism, not the edit. Report and arm records:
+  `G:/Мой диск/AGR-evidence/1924-trainer-ab/` (`ab.md`, `ab.json`, `old/`, `new/`, `SHA256SUMS.txt`;
+  `ab.json` sha256 8395028a84001fc6…).
 
 - `run` использует план записи #1608. Свежая сессия `codex exec --ephemeral --ignore-user-config` работает
   в отдельной папке: `git archive origin/main` распаковывается в новую папку, чистится, затем `git init` и
