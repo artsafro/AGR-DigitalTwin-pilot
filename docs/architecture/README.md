@@ -499,3 +499,6 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | sources/vyatskaya-tow02 | [sources/vyatskaya-tow02.md](../sources/vyatskaya-tow02.md) |  |
 | tools/max-scripts | [tools/max-scripts.md](../tools/max-scripts.md) |  |
 | tools/openings | [tools/openings.md](../tools/openings.md) |  |
+| trainer/etalons | [trainer/ETALONS.md](../trainer/ETALONS.md) |  |
+| trainer/etalons-json | [trainer/etalons.json](../trainer/etalons.json) |  |
+| trainer/ledger-json | [trainer/ledger.json](../trainer/ledger.json) |  |
