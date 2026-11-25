@@ -398,6 +398,10 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-trainer-explicit-fbx | [research/autoresearch-trainer-explicit-fbx.md](../research/autoresearch-trainer-explicit-fbx.md) | R96 OBSERVE contract and result |
+| research/trainer-explicit-fbx-r96/inputs | [research/trainer-explicit-fbx-r96/inputs.json](../research/trainer-explicit-fbx-r96/inputs.json) | R96 replay input manifest |
+| research/trainer-explicit-fbx-r96/receipt | [research/trainer-explicit-fbx-r96/receipt.json](../research/trainer-explicit-fbx-r96/receipt.json) | R96 repeated native readback |
+| research/trainer-explicit-fbx-r96/replay | [research/trainer-explicit-fbx-r96/replay.py](../research/trainer-explicit-fbx-r96/replay.py) | R96 offline driver |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
