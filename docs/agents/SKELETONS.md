@@ -125,9 +125,9 @@ material boundaries, singular UV metrics, texel bounds or native readback.
 Pilot: [Vatutino comparison](../research/maf-npm-to-vpm-1745.md),
 [`jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json`](../../jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json).
 
-### `oks-npm-lite` — ОКС, упрощённая НПМ
+### `oks-npm-lite` — ОКС, упрощённая НПМ (FROZEN)
 
-Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
+Заморожена до определения Артёмом на одну страницу [D404] (профиль/заказчик, что запекаем, бюджет полигонов и карт, нужна ли ВПМ-основа); агенты не должны её выдумывать. Нет карточки сценария: единственный этап `lite-route` — пробел; после решения пользователя ячейка берёт этапы `oks-npm`.
 
 ### `ground-npm` — Ground + МАФ + Флора, НПМ
 
@@ -362,7 +362,7 @@ sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job dat
 - `sintez-recipe` — один согласованный хук задания или работа у владельца; автоматической правки нет.
 - `sintez-sheet` — ручной лист по отчётам и замерам, общего генератора нет.
 - `brick-seams` — `agr brick-seams` недоступен: алгоритмы привязаны к источнику работы.
-- `lite-route` — у `oks-npm-lite` нет карточки и правила упрощения.
+- `lite-route` — `oks-npm-lite` заморожена [D404]; карточки и правила упрощения нет, пока Артём не определит её.
 - `zero` — нет команды границы и нуля проекта; читать ПЗУ / вертикальную планировку, спрашивать [D279].
 - `quads` — нет команды раскроя/спаривания для нового участка; `dt ground v015` повторяет только Ватутино.
 - `ground-textures` — нет общей команды ID/UV/текстур плоского Ground.

@@ -46,8 +46,9 @@
     },
     {
       "id": "oks-npm-lite",
-      "title": "OKS building, simplified NPM",
+      "title": "OKS building, simplified NPM (FROZEN - waits for Artem's definition [D404])",
       "status": "todo",
+      "note": "frozen - waits for Artem's definition [D404] (profile/customer, what is baked, poly+map budget, VPM base needed?); agents must not invent it",
       "card": null,
       "reads": ["docs/domain/requirements-2026.md", "docs/domain/npm-vpm.md", "docs/domain/areas/body.md", "docs/domain/areas/uv-atlas.md", "docs/procedure/TASK_TO_MODEL.md"]
     },
