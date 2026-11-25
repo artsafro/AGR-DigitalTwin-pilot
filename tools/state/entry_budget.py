@@ -176,13 +176,17 @@ def write_receipt(root, rels, card, output, counter=None):
 # A fresh agent on a production task reads, in this order (AGENTS.md "Any job", "Where things are",
 # "Rules for every task"; the `scenario` skill steps 1-3): AGENTS.md, PROJECT_STATE, SKELETONS.md and
 # its machine form, the scenario skill, scenarios.json, task-intake (preflight before the first
-# command), then the cell card, the cell `reads`, and the links of the card's «Read first» (or
+# command) and the check-level table it sends the agent to at intake (TASK_TO_MODEL.md#check-levels,
+# task-intake.md lines 22/39; review r1), then the cell card, the cell `reads`, and the links of the
+# card's «Read first» (or
 # «Entry») section. NPM/OKS cells add routes/npm-oks.md (AGENTS.md). Ground cells read one stage
 # skill (Ground / MAF / Flora), so they split into one target per stage. Links are followed one level
 # deep from the card; anything else is listed in `unfollowed` with its reason, never dropped silently.
 
+INTAKE_DOC = "docs/procedure/TASK_TO_MODEL.md"
 COMMON = ("AGENTS.md", "docs/PROJECT_STATE.md", "docs/agents/SKELETONS.md", "docs/agents/skeletons.json",
-          ".agents/skills/scenario/SKILL.md", "docs/scenarios/scenarios.json", "docs/agents/task-intake.md")
+          ".agents/skills/scenario/SKILL.md", "docs/scenarios/scenarios.json", "docs/agents/task-intake.md",
+          INTAKE_DOC)
 SCENARIOS = "docs/scenarios/scenarios.json"
 STAGE_SKILLS = {"ground": ".agents/skills/model-ground/SKILL.md", "maf": ".agents/skills/model-maf/SKILL.md",
                 "flora": ".agents/skills/model-flora/SKILL.md"}
@@ -395,15 +399,22 @@ def _norm(entry):
 
 
 def walker_report(obj, path_files, root):
-    """Classify every doc a walker read against an entry path; count contradictory ladder rows."""
+    """Classify every doc a walker read against an entry path; count contradictory ladder rows.
+
+    A repo file off the path lands in ``intake_off_path`` when any row with stage "intake" (case and
+    surrounding spaces ignored) read it - a pre-command read the path misses - else in ``beyond_path``
+    (read only at a later stage). The buckets are disjoint.
+    """
     root = Path(root).resolve()
     rows = [r for r in _rows(obj) if "docs_read" in r]
     if not rows:
         raise FailClosed("walker has no docs_read rows")
     on_path = set(path_files)
     buckets = {"on_path": set(), "beyond_path": set(), "outside_repo": set(), "missing": set()}
+    intake = set()
     unparsed, contradictory, on, unknown = 0, 0, 0, []
     for row in rows:
+        at_intake = isinstance(row.get("stage"), str) and row["stage"].strip().lower() == "intake"
         docs = row["docs_read"] if isinstance(row["docs_read"], list) else [row["docs_read"]]
         names = []
         for entry in docs:
@@ -418,8 +429,10 @@ def walker_report(obj, path_files, root):
             path = (root / name).resolve()
             if root not in path.parents or not path.exists():
                 buckets["missing" if root in path.parents else "outside_repo"].add(name)
+            elif path.relative_to(root).as_posix() in on_path:
+                buckets["on_path"].add(name)
             else:
-                buckets["on_path" if path.relative_to(root).as_posix() in on_path else "beyond_path"].add(name)
+                (intake if at_intake else buckets["beyond_path"]).add(name)
         status = row.get("status")
         if status is None:
             continue
@@ -428,6 +441,8 @@ def walker_report(obj, path_files, root):
         elif status == "contradictory":
             contradictory += 1
             on += bool(on_path & set(names))
+    buckets["beyond_path"] -= intake
+    buckets["intake_off_path"] = intake
     return {**{k: sorted(v) for k, v in buckets.items()}, "unparsed": unparsed,
             "contradictory_rows": contradictory, "contradictory_on_path": on, "unknown_status": unknown}
 
@@ -487,7 +502,8 @@ def _cells_main(args):
         return 1
     for tid, target in data["targets"].items():
         walk = [w["targets"][tid] for w in data.get("walkers", {}).values() if tid in w["targets"]]
-        extra = f"\tcontradictory_on_path {walk[0]['contradictory_on_path']}" if walk else ""
+        extra = (f"\tcontradictory_on_path {walk[0]['contradictory_on_path']}"
+                 f"\tintake_off_path {len(walk[0]['intake_off_path'])}") if walk else ""
         print(f"{tid}\t{target['files_count']} files\t{target['total_tokens']} tokens{extra}")
     print(f"wrote {args.output} (measured on {commit})")
     return 0

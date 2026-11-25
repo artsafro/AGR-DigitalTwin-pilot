@@ -8,8 +8,8 @@
     "sintez-fix": {
       "cell": "sintez-fix",
       "stage": null,
-      "files_count": 10,
-      "total_tokens": 38082,
+      "files_count": 11,
+      "total_tokens": 43378,
       "files": [
         {
           "path": "AGENTS.md",
@@ -45,6 +45,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/research/sintez-fix-1744.md",
@@ -73,8 +78,8 @@
     "vpm-to-npm": {
       "cell": "vpm-to-npm",
       "stage": null,
-      "files_count": 10,
-      "total_tokens": 33151,
+      "files_count": 11,
+      "total_tokens": 38447,
       "files": [
         {
           "path": "AGENTS.md",
@@ -110,6 +115,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/scenarios/vpm-to-npm.md",
@@ -138,8 +148,8 @@
     "maf-npm-to-vpm": {
       "cell": "maf-npm-to-vpm",
       "stage": null,
-      "files_count": 10,
-      "total_tokens": 38044,
+      "files_count": 11,
+      "total_tokens": 43340,
       "files": [
         {
           "path": "AGENTS.md",
@@ -175,6 +185,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/research/maf-npm-to-vpm-1745.md",
@@ -203,8 +218,8 @@
     "npm-to-vpm": {
       "cell": "npm-to-vpm",
       "stage": null,
-      "files_count": 12,
-      "total_tokens": 47145,
+      "files_count": 13,
+      "total_tokens": 52441,
       "files": [
         {
           "path": "AGENTS.md",
@@ -240,6 +255,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/scenarios/npm-to-vpm.md",
@@ -311,6 +331,11 @@
           "tokens": 1550
         },
         {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
+        },
+        {
           "path": "docs/scenarios/oks-vpm.md",
           "chars": 8603,
           "tokens": 2430
@@ -319,11 +344,6 @@
           "path": "docs/domain/requirements-2026.md",
           "chars": 56113,
           "tokens": 17286
-        },
-        {
-          "path": "docs/procedure/TASK_TO_MODEL.md",
-          "chars": 21975,
-          "tokens": 5296
         },
         {
           "path": "docs/domain/areas/body.md",
@@ -382,8 +402,8 @@
     "ground-npm:ground": {
       "cell": "ground-npm",
       "stage": "ground",
-      "files_count": 15,
-      "total_tokens": 76498,
+      "files_count": 16,
+      "total_tokens": 81794,
       "files": [
         {
           "path": "AGENTS.md",
@@ -419,6 +439,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/scenarios/ground-npm.md",
@@ -472,8 +497,8 @@
     "ground-npm:maf": {
       "cell": "ground-npm",
       "stage": "maf",
-      "files_count": 15,
-      "total_tokens": 76599,
+      "files_count": 16,
+      "total_tokens": 81895,
       "files": [
         {
           "path": "AGENTS.md",
@@ -509,6 +534,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/scenarios/ground-npm.md",
@@ -562,8 +592,8 @@
     "ground-npm:flora": {
       "cell": "ground-npm",
       "stage": "flora",
-      "files_count": 15,
-      "total_tokens": 77417,
+      "files_count": 16,
+      "total_tokens": 82713,
       "files": [
         {
           "path": "AGENTS.md",
@@ -599,6 +629,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/scenarios/ground-npm.md",
@@ -691,6 +726,11 @@
           "tokens": 1550
         },
         {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
+        },
+        {
           "path": "routes/npm-oks.md",
           "chars": 14455,
           "tokens": 3601
@@ -724,11 +764,6 @@
           "path": "docs/domain/areas/uv-atlas.md",
           "chars": 16556,
           "tokens": 4654
-        },
-        {
-          "path": "docs/procedure/TASK_TO_MODEL.md",
-          "chars": 21975,
-          "tokens": 5296
         }
       ],
       "unfollowed": [
@@ -791,6 +826,11 @@
           "tokens": 1550
         },
         {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
+        },
+        {
           "path": "routes/npm-oks.md",
           "chars": 14455,
           "tokens": 3601
@@ -814,11 +854,6 @@
           "path": "docs/domain/areas/uv-atlas.md",
           "chars": 16556,
           "tokens": 4654
-        },
-        {
-          "path": "docs/procedure/TASK_TO_MODEL.md",
-          "chars": 21975,
-          "tokens": 5296
         },
         {
           "path": "docs/domain/areas/derivation.md",
@@ -891,6 +926,11 @@
           "tokens": 1550
         },
         {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
+        },
+        {
           "path": "docs/scenarios/ground-vpm.md",
           "chars": 21422,
           "tokens": 5271
@@ -929,11 +969,6 @@
           "path": "docs/domain/npm-vpm.md",
           "chars": 10378,
           "tokens": 3362
-        },
-        {
-          "path": "docs/procedure/TASK_TO_MODEL.md",
-          "chars": 21975,
-          "tokens": 5296
         },
         {
           "path": "docs/procedure/node-r5-ground.md",
@@ -1030,6 +1065,11 @@
           "tokens": 1550
         },
         {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
+        },
+        {
           "path": "docs/scenarios/ground-vpm.md",
           "chars": 21422,
           "tokens": 5271
@@ -1068,11 +1108,6 @@
           "path": "docs/domain/npm-vpm.md",
           "chars": 10378,
           "tokens": 3362
-        },
-        {
-          "path": "docs/procedure/TASK_TO_MODEL.md",
-          "chars": 21975,
-          "tokens": 5296
         },
         {
           "path": "docs/procedure/node-r5-ground.md",
@@ -1174,6 +1209,11 @@
           "tokens": 1550
         },
         {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
+        },
+        {
           "path": "docs/scenarios/ground-vpm.md",
           "chars": 21422,
           "tokens": 5271
@@ -1212,11 +1252,6 @@
           "path": "docs/domain/npm-vpm.md",
           "chars": 10378,
           "tokens": 3362
-        },
-        {
-          "path": "docs/procedure/TASK_TO_MODEL.md",
-          "chars": 21975,
-          "tokens": 5296
         },
         {
           "path": "docs/procedure/node-r5-ground.md",
@@ -1279,8 +1314,8 @@
     "library-publish": {
       "cell": "library-publish",
       "stage": null,
-      "files_count": 11,
-      "total_tokens": 28778,
+      "files_count": 12,
+      "total_tokens": 34074,
       "files": [
         {
           "path": "AGENTS.md",
@@ -1316,6 +1351,11 @@
           "path": "docs/agents/task-intake.md",
           "chars": 6158,
           "tokens": 1550
+        },
+        {
+          "path": "docs/procedure/TASK_TO_MODEL.md",
+          "chars": 21975,
+          "tokens": 5296
         },
         {
           "path": "docs/scenarios/library-publish.md",
@@ -1377,6 +1417,7 @@
             "ROADMAP-v1",
             "agr"
           ],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 3,
@@ -1407,14 +1448,11 @@
           ],
           "beyond_path": [
             ".agents/skills/validate-delivery/SKILL.md",
-            "README.md",
-            "docs/decisions.md",
             "docs/domain/areas/package.md",
             "docs/domain/conflicts.md",
             "docs/procedure/node-r4-window-glazing.md",
             "docs/procedure/node-r6-oks-body-facade.md",
             "docs/research/body-modelling.md",
-            "docs/research/kpp1-cold-skeleton-1608.md",
             "docs/scenarios/vpm-to-npm.md",
             "docs/tools/openings.md",
             "jobs/KPP1/LESSONS.md",
@@ -1426,6 +1464,11 @@
             "G:/Мой"
           ],
           "missing": [],
+          "intake_off_path": [
+            "README.md",
+            "docs/decisions.md",
+            "docs/research/kpp1-cold-skeleton-1608.md"
+          ],
           "unparsed": 0,
           "contradictory_rows": 4,
           "contradictory_on_path": 4,
@@ -1457,11 +1500,13 @@
             "docs/scenarios/vpm-to-npm.md",
             "jobs/sokolniki-uvk1000/README.md",
             "standards/VPM_STANDARD.yaml",
-            "tools/derive/vpm_npm_core.py",
-            "tools/hooks/scenario_router.py"
+            "tools/derive/vpm_npm_core.py"
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [
+            "tools/hooks/scenario_router.py"
+          ],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 2,
@@ -1482,6 +1527,7 @@
             "docs/agents/task-intake.md",
             "docs/domain/areas/ground-surface.md",
             "docs/domain/requirements-2026.md",
+            "docs/procedure/TASK_TO_MODEL.md",
             "docs/scenarios/ground-npm.md",
             "docs/scenarios/scenarios.json",
             "jobs/VATUTINO-SITE/ground-v015-route-a-session-20261104.md"
@@ -1493,7 +1539,6 @@
             "docs/domain/conflicts.md",
             "docs/ground-site-1535.md",
             "docs/methods/ground-terrain/WHEN.md",
-            "docs/procedure/TASK_TO_MODEL.md",
             "docs/procedure/node-r5-ground.md",
             "docs/research/npm-atlas-padding-1331.md",
             "docs/scenarios/ground-vpm.md",
@@ -1504,6 +1549,7 @@
             "G:/Мой"
           ],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 2,
           "contradictory_on_path": 2,
@@ -1537,6 +1583,7 @@
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 5,
           "contradictory_on_path": 5,
@@ -1558,6 +1605,7 @@
             "docs/agents/task-intake.md",
             "docs/domain/areas/flora.md",
             "docs/domain/requirements-2026.md",
+            "docs/procedure/TASK_TO_MODEL.md",
             "docs/scenarios/ground-npm.md",
             "docs/scenarios/scenarios.json"
           ],
@@ -1574,7 +1622,6 @@
             "docs/library/outside-retrieval-1316.md",
             "docs/pipeline-flora-textures.md",
             "docs/plans/flora-426-route-2026-11.md",
-            "docs/procedure/TASK_TO_MODEL.md",
             "docs/procedure/node-r7-flora-star-planes.md",
             "docs/research/model-flora-dry-walk-2026-10-16.md",
             "jobs/VATUTINO-SITE/flora-route-a-v004.md",
@@ -1586,6 +1633,7 @@
             "G:/Мой"
           ],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 3,
@@ -1625,6 +1673,7 @@
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 8,
           "contradictory_on_path": 6,
@@ -1659,6 +1708,7 @@
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 8,
           "contradictory_on_path": 6,
@@ -1693,6 +1743,7 @@
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 8,
           "contradictory_on_path": 7,
@@ -1713,49 +1764,51 @@
             "docs/agents/task-intake.md",
             "docs/domain/areas/derivation.md",
             "docs/domain/areas/uv-atlas.md",
+            "docs/procedure/TASK_TO_MODEL.md",
             "docs/scenarios/scenarios.json",
             "docs/scenarios/vpm-to-npm.md"
           ],
           "beyond_path": [
-            ".agents/skills/validate-delivery/SKILL.md",
             "adapters/max/agr_tools/npm2vpm_core.py",
             "adapters/max/agr_tools/npm2vpm_max.py",
             "adapters/max/agr_tools/npm_max.py",
             "docs/agents/job_scripts_baseline.txt",
-            "docs/decisions.md",
-            "docs/domain/conflicts.md",
             "docs/experiments/npm.to_vpm.md",
-            "docs/procedure/TASK_TO_MODEL.md",
             "docs/research/bench-npm-derivation.md",
             "docs/research/maf-npm-to-vpm-1745.md",
             "docs/scenarios/ground-vpm.md",
-            "docs/scenarios/npm-to-vpm.md",
-            "docs/scenarios/oks-vpm.md",
             "jobs/G22/npm2vpm-1630/CHECKPOINT.md",
-            "jobs/G22/npm2vpm-1630/RESULT.md",
             "jobs/G22/npm2vpm-1630/RESUME.md",
             "jobs/G22/npm2vpm-1630/skeleton.json",
             "jobs/KPP1/delivered-1371/REPORT.md",
-            "jobs/KPP1/vpm-to-npm-1737/skeleton.json",
             "jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json",
-            "routes/npm-oks.md",
-            "schemas/ProjectPassport.schema.json",
             "src/dt_ai/cli/agr.py",
             "src/twinqa/npm_uv.py",
             "standards/NPM_STANDARD.yaml",
-            "tests/test_scenario_router.py",
             "tests/test_vpm_to_npm_1737.py",
             "tools/blender/vpm_to_npm_bl.py",
             "tools/derive/export_npm.py",
             "tools/derive/npm_atlas.py",
-            "tools/derive/vpm_npm_core.py",
-            "tools/derive/vpm_to_npm.py",
-            "tools/hooks/scenario_router.py"
+            "tools/derive/vpm_npm_core.py"
           ],
           "outside_repo": [
             "G:/Мой"
           ],
           "missing": [],
+          "intake_off_path": [
+            ".agents/skills/validate-delivery/SKILL.md",
+            "docs/decisions.md",
+            "docs/domain/conflicts.md",
+            "docs/scenarios/npm-to-vpm.md",
+            "docs/scenarios/oks-vpm.md",
+            "jobs/G22/npm2vpm-1630/RESULT.md",
+            "jobs/KPP1/vpm-to-npm-1737/skeleton.json",
+            "routes/npm-oks.md",
+            "schemas/ProjectPassport.schema.json",
+            "tests/test_scenario_router.py",
+            "tools/derive/vpm_to_npm.py",
+            "tools/hooks/scenario_router.py"
+          ],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 3,
@@ -1773,47 +1826,49 @@
             "docs/domain/areas/derivation.md",
             "docs/domain/areas/uv-atlas.md",
             "docs/experiments/npm.to_vpm.md",
+            "docs/procedure/TASK_TO_MODEL.md",
             "docs/scenarios/npm-to-vpm.md",
             "docs/scenarios/scenarios.json"
           ],
           "beyond_path": [
-            ".agents/skills/validate-delivery/SKILL.md",
             "adapters/max/agr_tools/npm2vpm_max.py",
             "adapters/max/agr_tools/npm_max.py",
             "docs/agents/job_scripts_baseline.txt",
-            "docs/decisions.md",
-            "docs/domain/conflicts.md",
-            "docs/procedure/TASK_TO_MODEL.md",
             "docs/research/bench-npm-derivation.md",
             "docs/research/maf-npm-to-vpm-1745.md",
             "docs/scenarios/ground-vpm.md",
-            "docs/scenarios/oks-vpm.md",
-            "docs/scenarios/vpm-to-npm.md",
             "jobs/G22/npm2vpm-1630/CHECKPOINT.md",
-            "jobs/G22/npm2vpm-1630/RESULT.md",
             "jobs/G22/npm2vpm-1630/RESUME.md",
             "jobs/G22/npm2vpm-1630/skeleton.json",
             "jobs/KPP1/delivered-1371/REPORT.md",
-            "jobs/KPP1/vpm-to-npm-1737/skeleton.json",
             "jobs/VATUTINO-SITE/maf-npm-to-vpm-1745/skeleton.json",
-            "routes/npm-oks.md",
-            "schemas/ProjectPassport.schema.json",
             "src/dt_ai/cli/agr.py",
             "src/twinqa/npm_uv.py",
             "standards/NPM_STANDARD.yaml",
-            "tests/test_scenario_router.py",
             "tests/test_vpm_to_npm_1737.py",
             "tools/blender/vpm_to_npm_bl.py",
             "tools/derive/export_npm.py",
             "tools/derive/npm_atlas.py",
-            "tools/derive/vpm_npm_core.py",
-            "tools/derive/vpm_to_npm.py",
-            "tools/hooks/scenario_router.py"
+            "tools/derive/vpm_npm_core.py"
           ],
           "outside_repo": [
             "G:/Мой"
           ],
           "missing": [],
+          "intake_off_path": [
+            ".agents/skills/validate-delivery/SKILL.md",
+            "docs/decisions.md",
+            "docs/domain/conflicts.md",
+            "docs/scenarios/oks-vpm.md",
+            "docs/scenarios/vpm-to-npm.md",
+            "jobs/G22/npm2vpm-1630/RESULT.md",
+            "jobs/KPP1/vpm-to-npm-1737/skeleton.json",
+            "routes/npm-oks.md",
+            "schemas/ProjectPassport.schema.json",
+            "tests/test_scenario_router.py",
+            "tools/derive/vpm_to_npm.py",
+            "tools/hooks/scenario_router.py"
+          ],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 3,
@@ -1842,6 +1897,7 @@
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 3,
@@ -1865,6 +1921,7 @@
           ],
           "outside_repo": [],
           "missing": [],
+          "intake_off_path": [],
           "unparsed": 0,
           "contradictory_rows": 3,
           "contradictory_on_path": 3,
@@ -1885,12 +1942,12 @@
             "docs/agents/task-intake.md",
             "docs/domain/areas/package.md",
             "docs/domain/areas/uv-atlas.md",
+            "docs/procedure/TASK_TO_MODEL.md",
             "docs/research/sintez-fix-1744.md",
             "docs/scenarios/scenarios.json"
           ],
           "beyond_path": [
             ".agents/skills/validate-delivery/SKILL.md",
-            "README.md",
             "adapters/max/agr_tools/package_core.py",
             "adapters/max/agr_tools/qa9_core.py",
             "docs/architecture/package-route-owners.md",
@@ -1898,7 +1955,6 @@
             "docs/decisions.md",
             "docs/domain/conflicts.md",
             "docs/domain/validation.md",
-            "docs/procedure/TASK_TO_MODEL.md",
             "docs/research/shared-packaging-1361.md",
             "docs/scenarios/ground-npm.md",
             "docs/scenarios/ground-vpm.md",
@@ -1928,6 +1984,9 @@
             "G:/Мой"
           ],
           "missing": [],
+          "intake_off_path": [
+            "README.md"
+          ],
           "unparsed": 0,
           "contradictory_rows": 5,
           "contradictory_on_path": 5,
