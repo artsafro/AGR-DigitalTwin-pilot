@@ -1,0 +1,2457 @@
+{
+  "schema": "r103-receipt/1",
+  "base": "d9af400c08852308f5f618c9bfc0547e067d82ce",
+  "prior": "d51167a2acdeda51429a3580eb9dda50cf6990ed",
+  "summary": {
+    "verdict": "refuted",
+    "run_status": "complete",
+    "repeats": 3,
+    "wall_s": 121.934,
+    "input_parity": true,
+    "P_union_median_abs_m": {
+      "x_min": 0.11,
+      "y_min": 0.0,
+      "z_min": 0.02,
+      "x_max": 0.0005,
+      "y_max": 0.0004,
+      "z_max": 0.0
+    },
+    "unreachable_faces_P": [
+      "x_min"
+    ],
+    "held_out": "not measured (no eligible independent etalon)"
+  },
+  "manifest": {
+    "inputs": {
+      "l03_dxf": [
+        "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l03.dxf",
+        "c631e672112fb6a12580c65c888c99304465747564ba54454ce75062124d7513"
+      ],
+      "l01_dxf": [
+        "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/l01.dxf",
+        "5d436743cf86576586eaec4614401ffe0f2be2b033c7df9a8529c9771af19442"
+      ],
+      "frame": [
+        "G:/Мой диск/AGR-evidence/1855-r101-bounds-source/contours.json",
+        "c4db08ebf71d03d4ae6a0d241195828a7ddbf4a8848f6ea0331b7dee9e86f658"
+      ],
+      "key": [
+        "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx",
+        "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8"
+      ],
+      "rejected": [
+        "G:/Мой диск/AGR-evidence/1609-kpp1-lattice-posts/step3/SM_Kpp_1.v004-lattice.fbx",
+        "9fac38468f43fcc978bdda1d90f5636bb2948de3b0bd8d14e7ced290a08023ca"
+      ],
+      "l02_dxf": [
+        "G:/Мой диск/AGR-evidence/1855-r103-bounds-reach/l02.dxf",
+        "c0176ba9faed16ea30af6f6c08cbd1db003db5a5545eb0913257938da1adbcd3"
+      ],
+      "blender": [
+        "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe",
+        "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5"
+      ],
+      "driver": [
+        "measure.py",
+        "4106480f6a6d4191c9d037763cfcb402476933b677c132cba3d7073467781d98"
+      ]
+    },
+    "code_git_lf": {
+      "tools/trainer/trainer.py": "b48f86ecd8f5626a6d39fdcee13bedd0574a29d7738561e48f695d55b95aad0e",
+      "tools/blender/fbx_readback.py": "09c9e9bcfbc75598dd483b39a2e48c3f23cc2be7719d85583d7cbd1a0f1e095b"
+    }
+  },
+  "repeats": [
+    {
+      "registration": {
+        "plan_spans_mm": {
+          "X": 27000.0,
+          "Y": 11000.0
+        },
+        "plan_ok": true,
+        "L01": [
+          {
+            "family": "X",
+            "axes": {
+              "1": -7.67018e-11,
+              "4": 26999.99999999992
+            },
+            "span_ok": true
+          },
+          {
+            "family": "X",
+            "axes": {
+              "4": 43955.34224337701,
+              "1": 70955.342243377
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "V": 81848.40604254993,
+              "A": 92848.40604254993
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "A": 102956.2394185578,
+              "V": 113956.2394185578
+            },
+            "span_ok": true
+          }
+        ],
+        "L02": [
+          {
+            "family": "X",
+            "axes": {
+              "1": 4767.083678816645,
+              "4": 31767.08367881664
+            },
+            "span_ok": true
+          },
+          {
+            "family": "X",
+            "axes": {
+              "4": 48722.42592219375,
+              "1": 75722.42592219374
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "A": 86670.81819716239,
+              "V": 97670.81819716239
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "V": 107335.8156187108,
+              "A": 118335.8156187108
+            },
+            "span_ok": true
+          }
+        ],
+        "ok": true
+      },
+      "calibration": {
+        "accepted_identity": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 3.8005,
+          "tol_m": 0.1
+        },
+        "ok": true
+      },
+      "key_faces_m": {
+        "x_min": -15.185,
+        "y_min": -6.385,
+        "z_min": -0.0,
+        "x_max": 16.6755,
+        "y_max": 6.6746,
+        "z_max": 8.65
+      },
+      "reach": {
+        "P": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0894,
+              "signed_m": -0.0894,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          }
+        },
+        "A": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-V50-О_АР_ПЭ_на"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DETL-GENF-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Стрелка - По умолчанию-1741382-О_АР_ПЭ_на отм_ 0_000 _М"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-1715347-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_Северный"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 П-1715348-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0294,
+              "signed_m": 0.0294,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GENM-____-OTLN",
+              "type": "INSERT",
+              "block": "Парапетный нащельник - Парапетный нащельник-1615397-О_АР_Ф_1"
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-V50-О_АР_ПЭ_на"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-1715347-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          }
+        },
+        "A-door": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DETL-GENF-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Стрелка - По умолчанию-1741382-О_АР_ПЭ_на отм_ 0_000 _М"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_Северный"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0294,
+              "signed_m": 0.0294,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GENM-____-OTLN",
+              "type": "INSERT",
+              "block": "Парапетный нащельник - Парапетный нащельник-1615397-О_АР_Ф_1"
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "plan_injected_wall": {
+          "abs_m": 0.0,
+          "signed_m": 0.0,
+          "sheet": "L03",
+          "view": "plan",
+          "layer": "A-WALL-____-MCUT",
+          "type": "LINE",
+          "block": ""
+        },
+        "plan_injected_iden": {
+          "abs_m": 0.11,
+          "signed_m": 0.11,
+          "sheet": "L03",
+          "view": "plan",
+          "layer": "A-GLAZ-CWMG-OTLN",
+          "type": "INSERT",
+          "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+        },
+        "facade_injected_glaz": {
+          "abs_m": 0.0,
+          "signed_m": -0.0,
+          "sheet": "L01",
+          "view": "view-X+",
+          "layer": "A-GLAZ-____-OTLN",
+          "type": "INSERT",
+          "block": "MEP_Окно_Витражное - Окно одностворчатое AGS68 в витраж-1715"
+        },
+        "facade_injected_source": {
+          "layer": "A-GLAZ-____-OTLN",
+          "type": "INSERT",
+          "view": "view-X+",
+          "bbox_mm": [
+            20198.1,
+            1323.0,
+            21132.1,
+            2877.0
+          ]
+        },
+        "clean_refilter_parity": true,
+        "ok": true
+      },
+      "counts": {
+        "L03": 2005,
+        "L01": 2610,
+        "L02": 2419
+      },
+      "wall_s": 40.124
+    },
+    {
+      "registration": {
+        "plan_spans_mm": {
+          "X": 27000.0,
+          "Y": 11000.0
+        },
+        "plan_ok": true,
+        "L01": [
+          {
+            "family": "X",
+            "axes": {
+              "1": -7.67018e-11,
+              "4": 26999.99999999992
+            },
+            "span_ok": true
+          },
+          {
+            "family": "X",
+            "axes": {
+              "4": 43955.34224337701,
+              "1": 70955.342243377
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "V": 81848.40604254993,
+              "A": 92848.40604254993
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "A": 102956.2394185578,
+              "V": 113956.2394185578
+            },
+            "span_ok": true
+          }
+        ],
+        "L02": [
+          {
+            "family": "X",
+            "axes": {
+              "1": 4767.083678816645,
+              "4": 31767.08367881664
+            },
+            "span_ok": true
+          },
+          {
+            "family": "X",
+            "axes": {
+              "4": 48722.42592219375,
+              "1": 75722.42592219374
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "A": 86670.81819716239,
+              "V": 97670.81819716239
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "V": 107335.8156187108,
+              "A": 118335.8156187108
+            },
+            "span_ok": true
+          }
+        ],
+        "ok": true
+      },
+      "calibration": {
+        "accepted_identity": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 3.8005,
+          "tol_m": 0.1
+        },
+        "ok": true
+      },
+      "key_faces_m": {
+        "x_min": -15.185,
+        "y_min": -6.385,
+        "z_min": -0.0,
+        "x_max": 16.6755,
+        "y_max": 6.6746,
+        "z_max": 8.65
+      },
+      "reach": {
+        "P": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0894,
+              "signed_m": -0.0894,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          }
+        },
+        "A": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-V50-О_АР_ПЭ_на"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DETL-GENF-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Стрелка - По умолчанию-1741382-О_АР_ПЭ_на отм_ 0_000 _М"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-1715347-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_Северный"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 П-1715348-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0294,
+              "signed_m": 0.0294,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GENM-____-OTLN",
+              "type": "INSERT",
+              "block": "Парапетный нащельник - Парапетный нащельник-1615397-О_АР_Ф_1"
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-V50-О_АР_ПЭ_на"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-1715347-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          }
+        },
+        "A-door": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DETL-GENF-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Стрелка - По умолчанию-1741382-О_АР_ПЭ_на отм_ 0_000 _М"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_Северный"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0294,
+              "signed_m": 0.0294,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GENM-____-OTLN",
+              "type": "INSERT",
+              "block": "Парапетный нащельник - Парапетный нащельник-1615397-О_АР_Ф_1"
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "plan_injected_wall": {
+          "abs_m": 0.0,
+          "signed_m": 0.0,
+          "sheet": "L03",
+          "view": "plan",
+          "layer": "A-WALL-____-MCUT",
+          "type": "LINE",
+          "block": ""
+        },
+        "plan_injected_iden": {
+          "abs_m": 0.11,
+          "signed_m": 0.11,
+          "sheet": "L03",
+          "view": "plan",
+          "layer": "A-GLAZ-CWMG-OTLN",
+          "type": "INSERT",
+          "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+        },
+        "facade_injected_glaz": {
+          "abs_m": 0.0,
+          "signed_m": -0.0,
+          "sheet": "L01",
+          "view": "view-X+",
+          "layer": "A-GLAZ-____-OTLN",
+          "type": "INSERT",
+          "block": "MEP_Окно_Витражное - Окно одностворчатое AGS68 в витраж-1715"
+        },
+        "facade_injected_source": {
+          "layer": "A-GLAZ-____-OTLN",
+          "type": "INSERT",
+          "view": "view-X+",
+          "bbox_mm": [
+            20198.1,
+            1323.0,
+            21132.1,
+            2877.0
+          ]
+        },
+        "clean_refilter_parity": true,
+        "ok": true
+      },
+      "counts": {
+        "L03": 2005,
+        "L01": 2610,
+        "L02": 2419
+      },
+      "wall_s": 40.919
+    },
+    {
+      "registration": {
+        "plan_spans_mm": {
+          "X": 27000.0,
+          "Y": 11000.0
+        },
+        "plan_ok": true,
+        "L01": [
+          {
+            "family": "X",
+            "axes": {
+              "1": -7.67018e-11,
+              "4": 26999.99999999992
+            },
+            "span_ok": true
+          },
+          {
+            "family": "X",
+            "axes": {
+              "4": 43955.34224337701,
+              "1": 70955.342243377
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "V": 81848.40604254993,
+              "A": 92848.40604254993
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "A": 102956.2394185578,
+              "V": 113956.2394185578
+            },
+            "span_ok": true
+          }
+        ],
+        "L02": [
+          {
+            "family": "X",
+            "axes": {
+              "1": 4767.083678816645,
+              "4": 31767.08367881664
+            },
+            "span_ok": true
+          },
+          {
+            "family": "X",
+            "axes": {
+              "4": 48722.42592219375,
+              "1": 75722.42592219374
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "A": 86670.81819716239,
+              "V": 97670.81819716239
+            },
+            "span_ok": true
+          },
+          {
+            "family": "Y",
+            "axes": {
+              "V": 107335.8156187108,
+              "A": 118335.8156187108
+            },
+            "span_ok": true
+          }
+        ],
+        "ok": true
+      },
+      "calibration": {
+        "accepted_identity": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 3.8005,
+          "tol_m": 0.1
+        },
+        "ok": true
+      },
+      "key_faces_m": {
+        "x_min": -15.185,
+        "y_min": -6.385,
+        "z_min": -0.0,
+        "x_max": 16.6755,
+        "y_max": 6.6746,
+        "z_max": 8.65
+      },
+      "reach": {
+        "P": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0894,
+              "signed_m": -0.0894,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "S-STRS-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            }
+          }
+        },
+        "A": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-V50-О_АР_ПЭ_на"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DETL-GENF-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Стрелка - По умолчанию-1741382-О_АР_ПЭ_на отм_ 0_000 _М"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-1715347-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_Северный"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 П-1715348-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0294,
+              "signed_m": 0.0294,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GENM-____-OTLN",
+              "type": "INSERT",
+              "block": "Парапетный нащельник - Парапетный нащельник-1615397-О_АР_Ф_1"
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.02,
+              "signed_m": -0.02,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-V50-О_АР_ПЭ_на"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DOOR-____-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Дверь_Однопольная_Стальная - 1000x2100 Л-1715347-О_АР_Ф"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          }
+        },
+        "A-door": {
+          "L03": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": null,
+              "status": "not_measured"
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-DETL-GENF-OTLN",
+              "type": "INSERT",
+              "block": "ADSK_Стрелка - По умолчанию-1741382-О_АР_ПЭ_на отм_ 0_000 _М"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": null,
+              "status": "not_measured"
+            }
+          },
+          "L01": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V18-О_АР_Ф_Южный"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-Y-",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L01",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_Северный"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L01",
+              "view": "view-Y+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          },
+          "L02": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-V19-О_АР_Ф_1-4 _"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-Y+",
+              "layer": "A-WALL-____-PATT",
+              "type": "HATCH",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0294,
+              "signed_m": 0.0294,
+              "sheet": "L02",
+              "view": "view-X+",
+              "layer": "A-GENM-____-OTLN",
+              "type": "INSERT",
+              "block": "Парапетный нащельник - Парапетный нащельник-1615397-О_АР_Ф_1"
+            }
+          },
+          "union": {
+            "x_min": {
+              "abs_m": 0.11,
+              "signed_m": 0.11,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-GLAZ-CWMG-OTLN",
+              "type": "INSERT",
+              "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+            },
+            "y_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L03",
+              "view": "plan",
+              "layer": "A-WALL-____-MCUT",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_min": {
+              "abs_m": 0.0,
+              "signed_m": 0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "x_max": {
+              "abs_m": 0.0005,
+              "signed_m": -0.0005,
+              "sheet": "L02",
+              "view": "view-X-",
+              "layer": "Поручни",
+              "type": "INSERT",
+              "block": "Ограждение - Ограждение-1728990-О_АР_Ф_4-1 _Цвет_"
+            },
+            "y_max": {
+              "abs_m": 0.0004,
+              "signed_m": 0.0004,
+              "sheet": "L02",
+              "view": "view-Y-",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            },
+            "z_max": {
+              "abs_m": 0.0,
+              "signed_m": -0.0,
+              "sheet": "L01",
+              "view": "view-X+",
+              "layer": "A-DETL-____-OTLN",
+              "type": "LINE",
+              "block": ""
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "plan_injected_wall": {
+          "abs_m": 0.0,
+          "signed_m": 0.0,
+          "sheet": "L03",
+          "view": "plan",
+          "layer": "A-WALL-____-MCUT",
+          "type": "LINE",
+          "block": ""
+        },
+        "plan_injected_iden": {
+          "abs_m": 0.11,
+          "signed_m": 0.11,
+          "sheet": "L03",
+          "view": "plan",
+          "layer": "A-GLAZ-CWMG-OTLN",
+          "type": "INSERT",
+          "block": "Прямоугольный импост - 200х75 мм _RAL 9016_-1856113-О_АР_ПЭ_"
+        },
+        "facade_injected_glaz": {
+          "abs_m": 0.0,
+          "signed_m": -0.0,
+          "sheet": "L01",
+          "view": "view-X+",
+          "layer": "A-GLAZ-____-OTLN",
+          "type": "INSERT",
+          "block": "MEP_Окно_Витражное - Окно одностворчатое AGS68 в витраж-1715"
+        },
+        "facade_injected_source": {
+          "layer": "A-GLAZ-____-OTLN",
+          "type": "INSERT",
+          "view": "view-X+",
+          "bbox_mm": [
+            20198.1,
+            1323.0,
+            21132.1,
+            2877.0
+          ]
+        },
+        "clean_refilter_parity": true,
+        "ok": true
+      },
+      "counts": {
+        "L03": 2005,
+        "L01": 2610,
+        "L02": 2419
+      },
+      "wall_s": 40.209
+    }
+  ]
+}
