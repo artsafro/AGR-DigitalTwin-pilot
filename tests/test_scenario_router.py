@@ -70,10 +70,11 @@ def test_model_entry_sequence(relative):
 def test_oks_vpm_route_policy():
     cell = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
     route = cell.split("## Route by stage", 1)[1].split("## Etalons", 1)[0]
-    for required in ("standard", "AGR Tools stages 1–4", "body", "windows", "roof",
-                     "after Gate 1", "Max is busy", "dt_ai.ops", "R14", "path: deviation",
-                     "all eight gates", "[D250]"):
+    # #1895: stage-1 body = lattice only [D373]/[D392]; D250/R14 stay only as history for the body
+    for required in ("agr body", "[D373]", "[D392]", "body", "windows", "roof", "after Gate 1", "R14",
+                     "path: deviation", "all eight gates", "[D250]", "AGR Tools stages 2–4"):
         assert required in route, required
+    assert "AGR Tools stages 1–4" not in route and "dt_ai.ops" not in route
     procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
     operations = next(line for line in procedure.splitlines() if line.startswith("| operations |"))
     assert "oks-vpm.md#route-by-stage" in operations

@@ -95,7 +95,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | agents/roles | [agents/ROLES.md](../agents/ROLES.md) |  |
 | agents/skeleton-harvest/2026-11-23 | [agents/skeleton-harvest/2026-11-23.md](../agents/skeleton-harvest/2026-11-23.md) |  |
 | agents/skeleton-template-json | [agents/skeleton.template.json](../agents/skeleton.template.json) |  |
-| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) |  |
+| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) | [agents/SKELETONS-stages.md](../agents/SKELETONS-stages.md) |
 | agents/skeletons-json | [agents/skeletons.json](../agents/skeletons.json) |  |
 | agents/task-intake | [agents/task-intake.md](../agents/task-intake.md) |  |
 | agents/triage-labels | [agents/triage-labels.md](../agents/triage-labels.md) |  |

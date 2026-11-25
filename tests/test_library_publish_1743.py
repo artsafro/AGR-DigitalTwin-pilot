@@ -672,7 +672,7 @@ def test_skeleton_cell_library_publish_has_the_six_stages():
         assert st["gap"] is None and "tools/library/publish.py" in st["owners"], sid
     cells = json.loads((ROOT / "docs/scenarios/scenarios.json").read_text(encoding="utf-8"))["cells"]
     assert any(c["id"] == "library-publish" and c["status"] == "ready" for c in cells)
-    assert "agr library publish" in (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    assert "agr library publish" in (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
 
 
 def test_decisions_rows_for_the_five_answers():

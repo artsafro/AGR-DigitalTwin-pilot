@@ -199,7 +199,7 @@ def check_job(root, job_dir, skeletons, nested=()):
         path = (job_dir / script).resolve()
         if path in library_paths:
             problems.append(f"{rel_job}: hooks[{i}] {script} is an imported library, not a runnable stage hook "
-                            "(docs/agents/SKELETONS.md#imported-library-exemptions)")
+                            "(docs/agents/SKELETONS-stages.md#imported-library-exemptions)")
         if not path.is_relative_to(hooks_root):
             problems.append(f"{rel_job}: hooks[{i}] {script} is not inside {contract['hooks_dir']}/")
         elif not path.is_file():
@@ -250,13 +250,43 @@ def check_repo(root, skeletons=None, baseline=None):
     return problems
 
 
+def cell_block(root, skeletons, cell):
+    """One-door entry block of one cell (#1895): trail, config keys, stages with command or gap.
+
+    Fails closed (ConfigError naming it) on an unknown cell, a cell without ``trail`` or a trail file that
+    is missing or escapes the repository; nothing is defaulted.
+    """
+    cells = skeletons["cells"]
+    if not isinstance(cell, str) or cell not in cells:
+        raise ConfigError(f"unknown cell {cell!r}; cells: {', '.join(sorted(cells))}")
+    spec = cells[cell]
+    trail = spec.get("trail")
+    root = Path(root).resolve()
+    path = (root / trail).resolve() if isinstance(trail, str) and trail.strip() else None
+    if path is None or root not in path.parents or not path.is_file():
+        raise ConfigError(f"{SKELETONS}: cell {cell} has no readable trail ({trail!r})")
+    lines = [f"cell {cell}" + (f" (activation: {spec['activation']})" if spec.get("activation") else ""),
+             f"trail: {trail}", f"config keys: {', '.join(spec['config_keys'])}"]
+    for i, sid in enumerate(spec["stages"], 1):
+        st = skeletons["stages"][sid]
+        what = f"GAP: {st['gap']}" if st["gap"] is not None else st["calls"]
+        lines.append(f"{i:>2}. {sid} - {what}")
+    lines.append("hooks: before/after on every stage, gap only on a GAP stage; at most "
+                 f"{skeletons['job_contract']['max_hooks']} per job [D324]; details docs/agents/SKELETONS-stages.md")
+    return "\n".join(lines) + "\n"
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Skeleton guard (#1546): jobs configure skeletons, never rebuild stages")
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     ap.add_argument("--job", default=None, help="check one job folder (relative to --root) that has skeleton.json")
+    ap.add_argument("--show", default=None, metavar="CELL", help="print the one-door entry block of CELL (#1895)")
     args = ap.parse_args(argv)
     try:
         skeletons = load_skeletons(args.root)
+        if args.show is not None:
+            sys.stdout.write(cell_block(args.root, skeletons, args.show))
+            return 0
         if args.job:
             job_dir = args.root / args.job
             if not (job_dir / skeletons["job_contract"]["config"]).is_file():

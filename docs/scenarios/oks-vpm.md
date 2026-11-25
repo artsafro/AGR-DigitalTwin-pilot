@@ -26,7 +26,7 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Texel | VPM diffuse 512–1706 px/m [D160]; AGR Tools grid 3.6 m per tile at 1000 px/m [D207] |
 | UDIM | body numbered per mesh from 1001 [D209]; all glass UVs in 1001, no maps on glass [D221] |
 | Windows | library first, types by form + size [D140]; families F100 / F73 / F58 [D204] |
-| Modelling split | inset elements vs texture parts, plinth per project, reason line in the job report [D336]; list: [SKELETONS.md](../agents/SKELETONS.md#oks-modelling-split-d336) |
+| Modelling split | inset elements vs texture parts, plinth per project, reason line in the job report [D336]; list: [SKELETONS.md](../agents/SKELETONS-stages.md#oks-modelling-split-d336) |
 | Topology | xView clean: vertices 2 mm = 0, faces 5 mm = 0 [D152]; continue loops and rings [D200] |
 | Decor | embed 10–20 mm into the facade [D199] |
 | Hand-off | a non-triangulated work FBX next to the ZIP [D198]; final export from Max or Blender, Max preferred [D212] |
@@ -38,23 +38,24 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Stage | Route today | Status |
 |---|---|---|
 | Source intake | skill `analyze-architectural-source`, 2D branch: [`dwg_to_dxf.py`](../../tools/methods/body/dwg_to_dxf.py) (Blender-only lane: hash-bound DXF derivative checked by [`dxf_intake.py`](../../tools/methods/body/dxf_intake.py), #1857) → [`plan_from_dxf.py`](../../tools/methods/body/plan_from_dxf.py) census/extract; facade schedule: [`facade_openings_from_dxf.py`](../../tools/methods/body/facade_openings_from_dxf.py) | explicit sheet maps/datums; rectangular facade outlines only, no inferred depth or world placement |
-| Body, windows, capsules, roof | **standard**: AGR Tools stages 1–4 (Max) [D250]; job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
+| Body (stage 1) | `uv run agr body PLAN NEW_OUT` — lattice only, every profile [D373], [D392] (core `tools/methods/body/body_lattice.py`); a bad mesh is rebuilt from a fixed plan, never repaired | lattice proven on training objects; no NPM body on a real object yet |
+| Windows, capsules, roof | AGR Tools stages 2–4 (Max, frozen at 1.1.x [D393]); job scripts in the etalons are precedent, not an automatic standard-route fallback | AGR Tools not yet run on a real building; etalons used job scripts |
 | Materials, UDIM, textures | AGR Tools stages 5–6; `tools/materials/` | partial; texel checked by V009 |
 | Recolour an accepted master | [R1 — colouring](../procedure/node-r1-colouring.md) + the job's approved recipe. AC09 owner: the AC08 v010 recipe via [`recipe_adapter.py`](../../jobs/TEC26-OKS/AC09/recipe_adapter.py) (`execute`); [`run_building.sh`](../../jobs/TEC26-OKS/AC09/run_building.sh) shows the recipe stages, but running it end to end would rebuild UV and deliver both profiles. See the [AC09 build report](../../jobs/TEC26-OKS/AC09/BUILD_REPORT.md). | First map the specified side to its IDs and texture on a copy. If the existing recipe cannot isolate that side, stop and ask; do not introduce a second recolour script. Read back vertices, IDs and UV against the accepted master and compare the finish with the approved source (AC09: slide 53). For a VPM ZIP request, name both owners in the plan: this AC08 v010 → AC09 recipe for recolour, and `agr package-vpm` (`package_core`) for ZIP after matching `export_meta` and readback; otherwise stop before ZIP. |
-| UCX | AGR Tools `ucx_core`; etalon `jobs/KPP1/scripts/` | job scripts, no Main UCX case accepted |
+| UCX | `agr ucx MODEL OUT Main` [D330] (`ucx_build` → FBX readback → `ucx10_core` gap check + V010); gap fix: AGR Tools `ucx.gap` in Max on an export copy | no Main UCX case accepted |
 | Master QA before export | `runtime.master_topology(nodes)` in AGR Tools; `uv run python tools/qa/master_topology.py MASTER.blend --out NEW.json` for agents (also work FBX / JSON inventory); run beside xView **before** delivery triangulation [D312] | n-gons fail; per-object triangle count/share reported; quads pass; checked Max export refuses a failed master before its triangle snapshot |
 | Export, readback | Max export [D212]; `tools/blender/fbx_readback.py`; `dt qa xview` | proven |
 | Package and checks | `agr package-vpm` ([`tools/derive/package_vpm.py`](../../tools/derive/package_vpm.py) → [`package_core.py`](../../adapters/max/agr_tools/package_core.py)); AGR Tools stage 9; `tools/qa/validate_package.py`; SINTEZ AGR Checker | **STOP before ZIP** without matching `export_meta` for the new FBX. Use the job's export recipe (AC08 v010 [sidecar example](../../jobs/TEC26-OKS/AC08/pilot-v010/export_meta.json), not metadata to copy) and export readback; unpack and read back the actual ZIP for package QA. Validator V001–V013 partial; no package has reached passed=true yet. |
 
-For body / windows / roof, **after Gate 1**, when **Max is busy**, the offline route
-(`dt_ai.ops` / [VARIANTS R14 kernel-prisms](../methods/building-body/VARIANTS.md)) is permitted only as
-`path: deviation` [D250]; whenever Max is held, any Max step may run in an agent-owned Blender instead [D255]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)
+The stage-1 body has no alternative route: the lattice [D373]; [D250] and VARIANTS R14 for the body are history
+[D392]. For windows / roof, **after Gate 1**, when **Max is held**, a Max step may run in an agent-owned Blender
+as `path: deviation` [D255]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)
 before continuing; all eight gates remain required, including before/after invariants, export readback,
 visual acceptance and final SINTEZ. This route permission is not Gate 1 approval or a waiver of a failed check.
 
 ## Etalons
 
-- `jobs/elv-tc-vpm` — VPM only from a Revit FBX + AGR booklet; accepted 2026-11-05; first passed=true attempt (D220).
+- `jobs/elv-tc-vpm` — VPM only from a Revit FBX + AGR booklet; accepted 2026-11-05 (geometry accepted, not delivered [#1441]); first passed=true attempt (D220).
 - `jobs/KPP1` — VPM + NPM v005, [case study](../agr/case_studies/KPP1_VPM_NPM_V005.md).
 - `jobs/PSU275` — [delivery v003](../agr/case_studies/PSU275_VPM_NPM_DELIVERY_V003.md).
 - `jobs/skug26-k5-ac` — AC screens texture, [case study](../agr/case_studies/SKUG26_K5_AC_SCREENS_VPM.md).

@@ -90,6 +90,13 @@ def command(root: Path, kind: str, step: str, args: list[str], blender: str | No
 
 def run(root: Path, ns) -> int:
     blender = getattr(ns, "blender", None)
+    entry = TABLES.get(ns.command, {}).get(ns.step)
+    if entry and entry[0] == "blender" and not blender and list(ns.args) in (["--help"], ["-h"], ["--", "--help"]):
+        # #1895: `--help` of a Blender step answers without Blender (live-trail smoke); the tool's own argument
+        # help still runs inside Blender (pass --blender or set DT_BLENDER).
+        print(f"dt {ns.command} {ns.step}: {entry[2]}\nRuns {entry[1]} inside Blender: pass --blender EXE or set "
+              f"DT_BLENDER; with Blender, --help prints the tool's own arguments.")
+        return 0
     try:
         host, script, args = _step(root, ns.command, ns.step, ns.args, blender)
     except ValueError as exc:

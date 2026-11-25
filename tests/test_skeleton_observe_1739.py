@@ -108,7 +108,7 @@ def test_skeleton_oks_npm_verifier():
 
 
 def test_skeleton_doc_rows():
-    doc = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    doc = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     npm = doc.split("### `oks-npm`", 1)[1].split("###", 1)[0]
     vpm = doc.split("### `oks-vpm`", 1)[1].split("###", 1)[0]
     for part in (npm, vpm):

@@ -39,4 +39,4 @@
 
 `G:/Мой диск/AGR-evidence/1745/v001/`: лист `segments.png`, этот отчёт, `texels.csv`, нативные измерения, раскладки A/B/C, диагностические архивы, четыре отчёта SINTEZ и `SHA256SUMS.txt`. Примеры отделок и схема выбора — исследование, не новые D-строки. Ни одного выданного пакета не меняли.
 
-`uv run agr maf-npm-to-vpm --plan` выводит зарегистрированный скелет, не выполняет конверсию и не выдаёт пропуск QA. [Маршрут и пробелы](../agents/SKELETONS.md#maf-npm-to-vpm--маф-нпм--впм) · [требования МАФ](../domain/areas/groundel-maf.md) · [UV и правила карт](../domain/uv-textures.md).
+`uv run agr maf-npm-to-vpm --plan` выводит зарегистрированный скелет, не выполняет конверсию и не выдаёт пропуск QA. [Маршрут и пробелы](../agents/SKELETONS-stages.md#maf-npm-to-vpm--маф-нпм--впм) · [требования МАФ](../domain/areas/groundel-maf.md) · [UV и правила карт](../domain/uv-textures.md).
