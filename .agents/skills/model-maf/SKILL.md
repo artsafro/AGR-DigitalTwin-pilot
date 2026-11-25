@@ -52,7 +52,7 @@ disagree. Lamps on lighting layers are MAF-24 geometry only.
 
 ### Step 2 — Pick from the library
 
-The entry point is the published catalogue `library/published/catalogue.json` (look up through `maf_unified.json`); the audited `library/maf/catalogue.json` is only the legacy record
+The entry point is the published catalogue `library/published/catalogue.json` (search index `library/assets/maf_unified.json`); the audited `library/maf/catalogue.json` is only the legacy record
 ([#183](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/183)). `spec_matches` are dimension-only
 candidates, `npm_matches` are NPM .blend candidates, and previews plus per-MAF .max/FBX paths sit outside git. A
 dimension candidate is not a match: compare the preview with the specification picture (construction, shape). Where
@@ -60,7 +60,7 @@ the catalogue does not reach (a new library scene, a missing entry): visual sele
 library scene `МАФы_Union_ALLin.max`, the way the user does it. The catalogue is a technical audit, not
 identification and not acceptance. When the catalogue does not reach, ask Artem first: he names the library object. Only when he cannot find it either does the agent search by specification / manufacturer on the web and send links for his approval — the photos must match the specification AND the DWG contour. No substitution [D164] («Нет замены модели.»).
 
-- Route: catalogue JSON lookup of `library/maf/catalogue.json` plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
+- Route: catalogue JSON lookup via the published index `library/assets/maf_unified.json` (from `library/published/catalogue.json`); `library/maf/catalogue.json` is the legacy record only; plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
 - Needs: headless for candidates; human for the visual choice when several candidates remain.
 - Done when: every spec row has a catalogue id (with the reason) or is listed for Step 3.
 
