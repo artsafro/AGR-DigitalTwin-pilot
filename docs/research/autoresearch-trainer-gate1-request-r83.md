@@ -7,6 +7,14 @@ standing #81, его не трогаю. #82 показал, что ни один
 Gate 1** (валидный `parts.json`, его `approval_sha256` в `QUESTIONS.md`, без самоподтверждения и без сборки),
 если в текст задачи добавить одну строку со ссылкой на штатный `Gate 1 handoff`. Ничего в бою не меняется.
 
+**Итог (дописан после замеров, контракт выше не менялся): гипотеза подтверждена.** С этой строкой полный
+запрос Gate 1 оставили 3 из 3 прогонов на КПП1 и 5 из 5 на отложенном G22. Без строки — 0 из 3 на каждом,
+плюс 0 из 3 в старых прогонах. Нарушений нет ни в одном из 14 прогонов. Оговорка: во время серии влили
+пакет PR, и main сдвинулся. Поэтому базовый G22 измерен только на новой ревизии `ba0ce9de`; для
+сопоставления на ней же есть 3 прогона кандидата. Сам шаг `artifact` эта строка не проходит, FBX
+по-прежнему нет. Она превращает «остановился ни с чем» в запрос с хешем, на который можно ответить.
+Черновики пока заглушки: 1–3 части.
+
 Status of this file: contract frozen BEFORE the first measured run (commit that adds this file).
 Results are appended below the `## Round log` line only.
 
@@ -88,3 +96,36 @@ Run folders live in `C:/x/trainer/runs/<etalon>-codex-r83-<variant><n>` (local t
 limited, same as #82). The receipt stores sha256 of `last.txt`, `run.json`, `prompt.txt` and every json.
 
 ## Round log
+
+Receipt: `docs/research/trainer-gate1-request-r83.json` (sha256 `77920fdcb3f3b4ce2dedbc61be324cb8757c74a4c377bf28f50e7d49d81f795d`),
+produced by `... score` from the pinned trainer worktree; selftest `pass: true` (witness 1, hash removed 0,
+FBX added 0 + violation, self-confirmed 0 + violation). Every run `exit 0`, no timeout.
+
+| Cell | Practice tree (`origin_main`) | M83 complete / runs | Violations | Wall s (trainer) |
+| --- | --- | --- | --- | --- |
+| historic B (KPP1, G22, 63A, 2026-11-24) | `c20ef4ef` | 0 / 3 | 0 | 244, 158, 332 |
+| KPP1 B1-B3 | `eab38756` | 0 / 3 | 0 | 144, 125, 105 |
+| KPP1 C1-C3 (tuning) | `eab38756` | **3 / 3** | 0 | 179, 158, 132 |
+| G22 C1-C2 (held-out) | `eab38756` | **2 / 2** | 0 | 97, 95 |
+| G22 C3-C5 (held-out) | `ba0ce9de` (drifted) | **3 / 3** | 0 | 138, 149, 124 |
+| G22 B1-B3 (held-out) | `ba0ce9de` (drifted) | 0 / 3 | 0 | 124, 188, 119 |
+
+- First measured pair KPP1 B1/C1: 179/229 s shell wall -> projected 10 x 204 s = 34 min <= 200 min, full
+  series run. Total shell wall of the 14 runs: 2 499 s.
+- Drift: the merge batch (PR #1859/#1863/#1865/#1862/#1864) moved `origin/main` from `eab38756` to
+  `ba0ce9de` during the G22 cell (it changed `docs/agents/SKELETONS.md` and `docs/scenarios/oks-vpm.md`).
+  Contract rule: drifted runs are marked, not discarded. To get a same-revision held-out pair I added
+  C4/C5 on `ba0ce9de` (new names, no rerun): G22 on `ba0ce9de` = B 0/3 vs C 3/3. G22 B on `eab38756`
+  is **not measured**.
+- Violations 0 in all 14 runs: no `gate1` set, no `status: confirmed`, no FBX/ZIP, 0 new code lines.
+- Content (observed, NOT part of M83): the drafts are placeholders - KPP1 2-3 parts (tier D), G22 1 part
+  (tier C), 3-5 questions each. M83 measures a complete, hash-bound request, not a good parts list.
+
+**Hypothesis result: confirmed** (KEEP rule holds: C 3/3 KPP1, C 5/5 G22 incl. 3/3 on one revision with
+B 0/3; B 0/3 each; violations 0). Caveat: G22 B was measured only on `ba0ce9de`.
+
+**Would change (OBSERVE, not applied):** append `CANDIDATE_LINE` to `task_text()` in
+`tools/trainer/trainer.py` (now on main via #1859), as a normal PR on #1855. It does not pass `artifact`;
+it turns the 0/3 "stopped with nothing to confirm" into a hash-bound request Artem (or #81's decision)
+can answer. Passing `artifact` still needs #81's decision on Gate 1/BM-12.
+
