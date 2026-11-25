@@ -44,6 +44,11 @@
 - `library-publish`: `intake` → `identify` → `name` → `qa` → `register` → `sheet`
 - `sintez-fix`: `checker` → `sintez-classify` → `sintez-recipe` → `sintez-uv-drift` → `sintez-recheck` → `sintez-sheet`
 
+Before hiding or archiving a `jobs/` path, run `uv run pytest -q tests/test_live_route_imports.py`.
+The fresh-process runtime guard must show no live route loads Python from that path; if the affected
+route is not covered, add its runtime import probe first. Static search and duplicate checks alone do
+not prove that lazy or path-based imports are gone. Explicit job data inputs are not Python dependencies.
+
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
 - `maf-segments` — ручная правка кругового профиля с замером отклонения и бюджета.

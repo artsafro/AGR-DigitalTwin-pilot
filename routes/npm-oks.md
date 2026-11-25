@@ -53,6 +53,9 @@ Recipes: accepted node recipes R1-R7 live in [NODE_RECIPES](../docs/procedure/NO
 | 7. Report / visual | `agr open-review STAGE_OUTPUT --open-approved` (copy in `C:/x/review-<job>/`, new Max 2026 process; Blender if Max busy [D255], #1740) | `tools/open_review_scene.py`; reads the Max live lock only, never the bridge; never interrupt Artem's render | Open scene + absolute path when Artem online; otherwise one side-by-side per item + overview at standard; no gratuitous renders |
 | 8. Checker / delivery decision | Existing installed SINTEZ route; `agr validate` does not add a `--checker` mode | Existing SINTEZ runner/installed checker; final AGR Tools-in-Max only when that required route is available | Final complete checker after human visual approval on the same export hashes; manual gates stay explicit |
 
+For the OKS trail, prepare the [Step 3 modelling-plan sheet](../docs/procedure/oks-modelling-plan.md)
+from the human-accepted Step 0 split and obtain picture acceptance before modelling.
+
 ### Branches by task [D292]
 
 The [route map](../docs/architecture/npm-oks-route.svg) draws these as branches inside a stage
@@ -95,7 +98,10 @@ Arguments after each single-step alias are forwarded unchanged, including `--hel
 | `agr ground ARGS` / `agr ground v015 ARGS` | `dt ground v015 ARGS` (frozen Vatutino record) |
 | `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0, then the NPM UV readback `python -m twinqa.npm_uv <exported FBX> <ATLAS>/npm_atlas.json` (#1580: every face inside its atlas region, 8 px padding; a fail exits 1). The export refuses faces that cross UDIM tiles (`--allow-cross-tile` = legacy move, listed in `export_npm_meta.json`) |
 
-For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --recipe-dir RECIPE --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.
+For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --master MASTER --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.
+For a procedural spec declaring `kpp_palette`, add `--kpp-spec KPP.json` to the atlas arguments.
+The default route loads only shared Python owners. For frozen benchmark replay only, the atlas accepts
+an explicit external `--recipe-dir` painter; checkout `jobs/` is not a recipe directory.
 `--then-npm` is reserved as the argument-group separator (exactly once); `--blender`
 must precede atlas arguments, or set `DT_BLENDER`. Paths are explicit; no inferred
 config or job flags, rollback, or second implementation. The facade preserves the caller's cwd;
