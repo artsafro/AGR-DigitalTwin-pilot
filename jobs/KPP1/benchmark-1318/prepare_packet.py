@@ -32,15 +32,7 @@ def main(out):
         if name.endswith('TASK.md') and not (ROOT/name).exists():
             continue  # missing in source repository, recorded below, never fabricate one
         copy(ROOT/name, out/'context'/name)
-    recipe = out/'jobs/TEC26-OKS/scripts'
-    # The historical master preparer still imports the export shim. Stage its
-    # owner too, without changing any already-frozen packet or its manifest.
-    copy(ROOT/'jobs/TEC26-OKS/scripts/export_safety.py', recipe/'export_safety.py')
-    copy(ROOT/'tools/derive/export_safety.py', out/'tools/derive/export_safety.py')
-    copy(ROOT/'jobs/KPP1/scripts/vpm_textures.json', out/'jobs/KPP1/scripts/vpm_textures.json')
-    copy(ROOT/'jobs/KPP1/benchmark-1318/recipe/make_textures.py', recipe/'make_textures.py')
-    copy(ROOT/'jobs/KPP1/rerun-1230/make_textures.py', recipe/'r1_painter.py')
-    copy(ROOT/'jobs/KPP1/rerun-1230/finishes.json', recipe/'finishes.json')
+    stage_replay_recipe(out)
     tex = json.loads((ROOT/'jobs/KPP1/rerun-1230/textures.json').read_text())
     spec = {'address': tex['address'], 'size_full': tex['size'], 'zero_m': 0,
         'source_ids': {}, 'finishes': {}}
@@ -55,6 +47,18 @@ def main(out):
         'missing_context': ['jobs/KPP1/TASK.md absent; issue #1318 and D280 define this authorized benchmark scope'],
         'synthetic': False, 'delivery_complete': False},indent=2))
     print('STAGED',out)
+
+
+def stage_replay_recipe(out):
+    recipe = out/'jobs/TEC26-OKS/scripts'
+    # The historical master preparer still imports the export shim. Stage its
+    # owner too, without changing any already-frozen packet or its manifest.
+    copy(ROOT/'jobs/TEC26-OKS/scripts/export_safety.py', recipe/'export_safety.py')
+    copy(ROOT/'tools/derive/export_safety.py', out/'tools/derive/export_safety.py')
+    copy(ROOT/'jobs/KPP1/scripts/vpm_textures.json', out/'jobs/KPP1/scripts/vpm_textures.json')
+    copy(ROOT/'jobs/KPP1/benchmark-1318/recipe/make_textures.py', recipe/'make_textures.py')
+    copy(ROOT/'jobs/KPP1/rerun-1230/make_textures.py', recipe/'r1_painter.py')
+    copy(ROOT/'jobs/KPP1/rerun-1230/finishes.json', recipe/'finishes.json')
 
 
 if __name__ == '__main__':

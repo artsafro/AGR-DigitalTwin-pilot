@@ -1,4 +1,5 @@
 """new-case: execute shared route import graphs before hiding any job code (#1902)."""
+from importlib.machinery import ModuleSpec
 import importlib.util
 import json
 from pathlib import Path
@@ -20,7 +21,8 @@ def job_origins(root, executed, modules):
         if mod is not None:
             candidates.update((getattr(mod, "__file__", None),
                                getattr(getattr(mod, "__spec__", None), "origin", None)))
-    paths = {Path(p).resolve() for p in candidates if p and Path(p).suffix in {".py", ".pyc", ".pyd", ".so"}}
+    paths = {Path(p).resolve() for p in candidates if p and str(p) not in {"built-in", "frozen"}
+             and not str(p).startswith("<")}
     return sorted(p.relative_to(jobs).as_posix() for p in paths if p.is_relative_to(jobs))
 
 
@@ -35,14 +37,14 @@ def watch_execution():
 def test_origin_guard_path_matrix(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     safe = tmp_path / "jobs-neighbour" / "safe.py"
-    for i in range(8):
-        job = tmp_path / "jobs" / f"Job{i}" / "probe.py"
+    for i, suffix in enumerate((".py", ".PY", ".pyc", ".pyw", ".pyd", ".so", ".loader", "")):
+        job = tmp_path / "jobs" / f"Job{i}" / f"probe{suffix}"
         mod = ModuleType(f"probe{i}")
-        mod.__spec__ = importlib.util.spec_from_file_location(mod.__name__, job)
+        mod.__spec__ = ModuleSpec(mod.__name__, loader=None, origin=str(job))
         origins = [safe, job, job.parent / ".." / job.parent.name / job.name, job.relative_to(tmp_path)]
         for order in (origins, origins[::-1]):
-            assert job_origins(tmp_path, order, [None, mod, mod]) == [f"Job{i}/probe.py"]
-        assert job_origins(tmp_path, [safe], [mod]) == [f"Job{i}/probe.py"]
+            assert job_origins(tmp_path, order, [None, mod, mod]) == [f"Job{i}/{job.name}"]
+        assert job_origins(tmp_path, [safe], [mod]) == [f"Job{i}/{job.name}"]
         assert job_origins(tmp_path, [safe], []) == []
     assert job_origins(tmp_path, [], []) == []
 

@@ -664,7 +664,8 @@ def test_atlas_fails_closed_and_writes_nothing(tmp_path, case):
     elif case == "out_inside_recipe":
         recipe = tmp_path / "external-recipe"
         recipe.mkdir()
-        (recipe / "make_textures.py").write_text("# Synthetic painter; not called.\n", encoding="utf-8")
+        (recipe / "make_textures.py").write_text(
+            "def make_full(*args):\n    raise AssertionError('painted before alias check')\n", encoding="utf-8")
         out = recipe / "new-atlas"
         extra = ["--recipe-dir", recipe]
     elif case == "index_zero":

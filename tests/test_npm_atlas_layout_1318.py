@@ -129,22 +129,13 @@ def test_external_replay_painter_is_loaded_without_writing_to_packet(packet, usa
     assert {p.name: p.read_bytes() for p in recipe.iterdir()} == before
 
 
-def test_fresh_benchmark_packet_stages_the_export_shim_and_owner(tmp_path, monkeypatch):
-    import hashlib
-
+def test_fresh_benchmark_packet_stages_the_export_shim_and_owner(tmp_path):
     spec = importlib.util.spec_from_file_location('prepare1318', ROOT / 'jobs/KPP1/benchmark-1318/prepare_packet.py')
     assert spec is not None and spec.loader is not None
     prepare = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(prepare)
-    source = tmp_path / 'source'
-    source.mkdir()
-    for name in ('SM_Kpp_1.fbx', '0000_Kpp_1_01.fbx', 'T_Kpp_1_001_Main_d_1.png', 'SHA256SUMS.txt'):
-        (source / name).write_bytes(b'synthetic staging fixture')
-    monkeypatch.setattr(prepare, 'SOURCE', source)
-    monkeypatch.setattr(prepare, 'EXPECTED', hashlib.sha256(b'synthetic staging fixture').hexdigest())
     out = tmp_path / 'packet'
-    # prepare_packet calls Git once to stamp the exact source revision.
-    prepare.main(out)
+    prepare.stage_replay_recipe(out)
     shim = out / 'jobs/TEC26-OKS/scripts/export_safety.py'
     owner = out / 'tools/derive/export_safety.py'
     result = subprocess.run([sys.executable, '-I', '-B', '-c',
