@@ -1,0 +1,433 @@
+{
+ "schema": "trainer-stop-census/1",
+ "labels_sha256": "57d10f02ee517e1cf17fbc6cdf4e6a3f052b174dbe389d6b3ec3ededdc8fcf5f",
+ "census_sha256": "94f557cecaf5a3501104626cf89577069d0c5da8574d814f1467453ecb16efe1",
+ "preds": {
+  "kpp1-v004-codex-20261124": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 0,
+   "geo_src": 1,
+   "geom_src": 0,
+   "open_scene": 1,
+   "unreadable_share": 0.001
+  },
+  "kpp1-v004-codex-r83-B1": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 0,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.003
+  },
+  "kpp1-v004-codex-r83-B2": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 1,
+   "finish_src": 1,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.001
+  },
+  "kpp1-v004-codex-r83-B3": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 1,
+   "finish_src": 0,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 0,
+   "unreadable_share": 0.003
+  },
+  "kpp1-v004-codex-r83-C1": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 1,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.0
+  },
+  "kpp1-v004-codex-r83-C2": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 1,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.002
+  },
+  "kpp1-v004-codex-r83-C3": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 0,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.001
+  },
+  "63a-stage1-codex-20261124": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 1,
+   "finish_src": 0,
+   "geo_src": 0,
+   "geom_src": 0,
+   "open_scene": 0,
+   "unreadable_share": 0.001
+  },
+  "g22-k2-stage1-codex-20261124": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 1,
+   "finish_src": 1,
+   "geo_src": 0,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.003
+  },
+  "g22-k2-stage1-codex-r83-B1": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 1,
+   "finish_src": 1,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 0,
+   "unreadable_share": 0.003
+  },
+  "g22-k2-stage1-codex-r83-B2": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 0,
+   "bm12": 1,
+   "finish_src": 1,
+   "geo_src": 0,
+   "geom_src": 0,
+   "open_scene": 1,
+   "unreadable_share": 0.004
+  },
+  "g22-k2-stage1-codex-r83-B3": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 1,
+   "geo_src": 0,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.001
+  },
+  "g22-k2-stage1-codex-r83-C1": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 0,
+   "geo_src": 1,
+   "geom_src": 0,
+   "open_scene": 1,
+   "unreadable_share": 0.003
+  },
+  "g22-k2-stage1-codex-r83-C2": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 1,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.001
+  },
+  "g22-k2-stage1-codex-r83-C3": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 0,
+   "geo_src": 0,
+   "geom_src": 0,
+   "open_scene": 0,
+   "unreadable_share": 0.753
+  },
+  "g22-k2-stage1-codex-r83-C4": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 0,
+   "geo_src": 1,
+   "geom_src": 0,
+   "open_scene": 1,
+   "unreadable_share": 0.001
+  },
+  "g22-k2-stage1-codex-r83-C5": {
+   "fbx": 0,
+   "handoff": "present",
+   "exit_stop": null,
+   "gate1": 1,
+   "bm12": 0,
+   "finish_src": 1,
+   "geo_src": 1,
+   "geom_src": 1,
+   "open_scene": 1,
+   "unreadable_share": 0.002
+  }
+ },
+ "score": {
+  "tuning": {
+   "micro_f1": 0.9688,
+   "tp": 31,
+   "fp": 0,
+   "fn": 2,
+   "per_label_agree": {
+    "fbx": [
+     7,
+     7
+    ],
+    "gate1": [
+     7,
+     7
+    ],
+    "bm12": [
+     6,
+     7
+    ],
+    "finish_src": [
+     6,
+     7
+    ],
+    "geo_src": [
+     7,
+     7
+    ],
+    "geom_src": [
+     7,
+     7
+    ],
+    "open_scene": [
+     7,
+     7
+    ]
+   }
+  },
+  "held_out": {
+   "micro_f1": 0.9,
+   "tp": 36,
+   "fp": 0,
+   "fn": 8,
+   "per_label_agree": {
+    "fbx": [
+     10,
+     10
+    ],
+    "gate1": [
+     10,
+     10
+    ],
+    "bm12": [
+     7,
+     9
+    ],
+    "finish_src": [
+     7,
+     10
+    ],
+    "geo_src": [
+     9,
+     9
+    ],
+    "geom_src": [
+     7,
+     9
+    ],
+    "open_scene": [
+     8,
+     9
+    ]
+   }
+  }
+ },
+ "baseline": {
+  "tuning": {
+   "micro_f1": 0.0,
+   "tp": 0,
+   "fp": 0,
+   "fn": 33,
+   "per_label_agree": {
+    "fbx": [
+     7,
+     7
+    ],
+    "gate1": [
+     0,
+     7
+    ],
+    "bm12": [
+     4,
+     7
+    ],
+    "finish_src": [
+     3,
+     7
+    ],
+    "geo_src": [
+     0,
+     7
+    ],
+    "geom_src": [
+     1,
+     7
+    ],
+    "open_scene": [
+     1,
+     7
+    ]
+   }
+  },
+  "held_out": {
+   "micro_f1": 0.0,
+   "tp": 0,
+   "fp": 0,
+   "fn": 44,
+   "per_label_agree": {
+    "fbx": [
+     10,
+     10
+    ],
+    "gate1": [
+     1,
+     10
+    ],
+    "bm12": [
+     3,
+     9
+    ],
+    "finish_src": [
+     1,
+     10
+    ],
+    "geo_src": [
+     4,
+     9
+    ],
+    "geom_src": [
+     2,
+     9
+    ],
+    "open_scene": [
+     1,
+     9
+    ]
+   }
+  }
+ },
+ "tally_pred": {
+  "fbx": 0,
+  "gate1": 16,
+  "bm12": 6,
+  "finish_src": 9,
+  "geo_src": 12,
+  "geom_src": 11,
+  "open_scene": 13
+ },
+ "perturbations": [
+  {
+   "name": "P1_add_fbx",
+   "run": "kpp1-v004-codex-r83-C1",
+   "field": "fbx",
+   "before": 0,
+   "after": 1,
+   "expected": 1,
+   "other_changed": {},
+   "ok": true
+  },
+  {
+   "name": "P2_no_questions",
+   "run": "kpp1-v004-codex-r83-C1",
+   "field": "handoff",
+   "before": "present",
+   "after": "missing",
+   "expected": "missing",
+   "other_changed": {
+    "gate1": [
+     1,
+     0
+    ],
+    "finish_src": [
+     1,
+     0
+    ],
+    "geo_src": [
+     1,
+     0
+    ],
+    "geom_src": [
+     1,
+     0
+    ],
+    "open_scene": [
+     1,
+     0
+    ]
+   },
+   "ok": true
+  },
+  {
+   "name": "P3_timeout",
+   "run": "g22-k2-stage1-codex-r83-C2",
+   "field": "exit_stop",
+   "before": null,
+   "after": "timeout",
+   "expected": "timeout",
+   "other_changed": {},
+   "ok": true
+  },
+  {
+   "name": "P4_gate1_approved",
+   "run": "kpp1-v004-codex-r83-C1",
+   "field": "gate1",
+   "before": 1,
+   "after": 0,
+   "expected": 0,
+   "other_changed": {},
+   "ok": true
+  }
+ ],
+ "preds_sha256": "87e167c9b0338584ff5261be18082e76403338c47c5812d579aecf09e8793a66",
+ "wall_s": 0.211
+}
