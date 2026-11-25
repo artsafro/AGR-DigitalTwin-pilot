@@ -117,7 +117,7 @@ def test_todo_cell_without_card_uses_reads(tmp_path):
 
 def test_card_without_read_first_section_is_reported(tmp_path):
     root = _repo(tmp_path, card_text="# card\n\n## Rules\n\n[x](../domain/req.md)\n")
-    path = eb.cell_path(root, "ground-npm", "ground")
+    path = eb.cell_path(root, "ground-npm")
     assert "docs/domain/req.md" not in path["files"]
     assert any(u["reason"] == "card has no Read first / Entry section" for u in path["unfollowed"])
 

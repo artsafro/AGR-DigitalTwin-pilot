@@ -11,11 +11,19 @@ each live file's tokens are estimated as ``ceil(tokens * live_chars / receipt_ch
 than 25 % since the receipt fails with "re-measure". Fail closed on an empty,
 partial, duplicated, out-of-tree or non-integer receipt and on a set without
 AGENTS.md and docs/PROJECT_STATE.md.
+
+``--cells`` (#1886) measures, for every cell of docs/scenarios/scenarios.json, the files a fresh
+agent reads from AGENTS.md to the first command (see the block above ``COMMON``) and, with
+``--walkers``, compares them with what the 2026-11-25 hygiene walkers actually read and counts
+their contradictory ladder rows on that path. It writes tests/fixtures/cold_entry/cells_baseline.json.
 """
 import argparse
+import hashlib
 import json
 import math
 import os
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -163,13 +171,341 @@ def write_receipt(root, rels, card, output, counter=None):
     return data
 
 
+# --- per-cell entry path to the first command (#1886) ---------------------------------------
+#
+# A fresh agent on a production task reads, in this order (AGENTS.md "Any job", "Where things are",
+# "Rules for every task"; the `scenario` skill steps 1-3): AGENTS.md, PROJECT_STATE, SKELETONS.md and
+# its machine form, the scenario skill, scenarios.json, task-intake (preflight before the first
+# command), then the cell card, the cell `reads`, and the links of the card's «Read first» (or
+# «Entry») section. NPM/OKS cells add routes/npm-oks.md (AGENTS.md). Ground cells read one stage
+# skill (Ground / MAF / Flora), so they split into one target per stage. Links are followed one level
+# deep from the card; anything else is listed in `unfollowed` with its reason, never dropped silently.
+
+COMMON = ("AGENTS.md", "docs/PROJECT_STATE.md", "docs/agents/SKELETONS.md", "docs/agents/skeletons.json",
+          ".agents/skills/scenario/SKILL.md", "docs/scenarios/scenarios.json", "docs/agents/task-intake.md")
+SCENARIOS = "docs/scenarios/scenarios.json"
+STAGE_SKILLS = {"ground": ".agents/skills/model-ground/SKILL.md", "maf": ".agents/skills/model-maf/SKILL.md",
+                "flora": ".agents/skills/model-flora/SKILL.md"}
+NPM_OKS_ROUTE = "routes/npm-oks.md"
+# Hygiene walkers of 2026-11-25 (G:/Мой диск/AGR-evidence/hygiene-20261125/w*.json) -> the targets they walked.
+WALKERS = {
+    "w01-oks-vpm": ["oks-vpm"], "w02-oks-npm": ["oks-npm"], "w03-oks-npm-lite": ["oks-npm-lite"],
+    "w04-npm-ground": ["ground-npm:ground"], "w05-npm-maf": ["ground-npm:maf"],
+    "w06-npm-flora": ["ground-npm:flora"],
+    "w07-vpm-ground-maf-flora": ["ground-vpm:ground", "ground-vpm:maf", "ground-vpm:flora"],
+    "w08-vpm-to-npm": ["vpm-to-npm", "npm-to-vpm"], "w09-maf-library-publish": ["maf-npm-to-vpm", "library-publish"],
+    "w10-sintez-package": ["sintez-fix"],
+}
+STATUSES = {"ready", "partial", "missing", "contradictory"}
+_SECTION = re.compile(r"^##\s+(Read first|Entry)\b.*$", re.M)
+_LINK = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
+_CODE = re.compile(r"`([^`\s]+)`")
+
+
+def _scenarios(root):
+    path = Path(root) / SCENARIOS
+    if not path.is_file():
+        raise FailClosed(f"partial: {SCENARIOS} missing")
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as exc:
+        raise FailClosed(f"unsupported {SCENARIOS}: {exc}") from exc
+    cells = data.get("cells") if isinstance(data, dict) else None
+    if not isinstance(cells, list) or not cells:
+        raise FailClosed(f"no cells in {SCENARIOS}")
+    out = {}
+    for cell in cells:
+        cid = cell.get("id") if isinstance(cell, dict) else None
+        if not isinstance(cid, str) or not cid:
+            raise FailClosed(f"cell without id in {SCENARIOS}")
+        if cid in out:
+            raise FailClosed(f"duplicate cell: {cid}")
+        out[cid] = cell
+    return out
+
+
+def _section(text):
+    match = _SECTION.search(text)
+    if not match:
+        return None
+    rest = text[match.end():]
+    end = re.search(r"^##\s", rest, re.M)
+    return rest[:end.start()] if end else rest
+
+
+def _follow(root, card_rel, ref, linked):
+    """Return (repo path, None) or (None, reason) for one reference in the card's entry section."""
+    target = ref.split("#", 1)[0]
+    if re.match(r"^[a-z]+://", ref):
+        return None, "url"
+    if any(ch in target for ch in "<>{}*"):
+        return None, "placeholder"
+    if re.match(r"^[A-Za-z]:[\\/]", target) or target.startswith(("/", "\\")):
+        return None, "outside repo"
+    if not target:
+        return None, "anchor only"
+    root = Path(root).resolve()
+    bases = [(root / card_rel).parent] if linked else [root, (root / card_rel).parent]
+    for base in bases:
+        path = (base / target).resolve()
+        if path != root and root not in path.parents:
+            continue
+        if path.is_file():
+            return path.relative_to(root).as_posix(), None
+        if path.is_dir():
+            return None, "directory"
+    inside = any(root in (b / target).resolve().parents for b in bases)
+    return None, "missing" if inside else "outside repo"
+
+
+def targets(root):
+    """Target ids: every cell, ground cells split per stage skill named in their card."""
+    out = []
+    for cid, cell in _scenarios(root).items():
+        stages = _card_stages(root, cell)
+        out.extend(f"{cid}:{stage}" for stage in stages) if len(stages) > 1 else out.append(cid)
+    return out
+
+
+def _card_stages(root, cell):
+    card = cell.get("card")
+    if not card:
+        return []
+    path = Path(root) / card
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    section = _section(text) or ""
+    return [stage for stage, skill in STAGE_SKILLS.items() if skill.rsplit("/", 2)[-2] in section]
+
+
+def cell_path(root, cell_id, stage=None):
+    """Ordered entry files for a cell (and stage) plus the references the walk could not follow."""
+    root = Path(root).resolve()
+    cells = _scenarios(root)
+    if cell_id not in cells:
+        raise FailClosed(f"unknown cell: {cell_id}")
+    if stage is not None and stage not in STAGE_SKILLS:
+        raise FailClosed(f"unknown stage: {stage}")
+    cell = cells[cell_id]
+    files, seen, unfollowed = [], set(), []
+
+    def add(rel, origin):
+        path = _resolve(root, rel, set())
+        if not path.is_file():
+            raise FailClosed(f"partial: entry file missing: {rel} (from {origin})")
+        rel = path.relative_to(root).as_posix()
+        if rel not in seen:
+            seen.add(rel)
+            files.append(rel)
+
+    for rel in COMMON:
+        add(rel, "COMMON")
+    card = cell.get("card")
+    if cell_id.startswith("oks-npm"):
+        add(NPM_OKS_ROUTE, "AGENTS.md: NPM/OKS route")
+    if card:
+        add(card, SCENARIOS)
+    else:
+        unfollowed.append({"ref": None, "from": SCENARIOS, "reason": "cell has no card"})
+    reads = cell.get("reads") or []
+    if not isinstance(reads, list):
+        raise FailClosed(f"reads of {cell_id} must be a list")
+    for rel in reads:
+        add(rel, f"{SCENARIOS} reads")
+    sources = [card] if card else []
+    if cell_id.startswith("oks-npm") and card != NPM_OKS_ROUTE:
+        sources.append(NPM_OKS_ROUTE)
+    stages = _card_stages(root, cell)
+    if len(stages) > 1 and stage is None:
+        raise FailClosed(f"stage required for {cell_id}: one of {stages}")
+    if stage is not None and stage not in stages:
+        raise FailClosed(f"card of {cell_id} names no skill for stage {stage}")
+    skip = {skill for name, skill in STAGE_SKILLS.items() if stage is not None and name != stage}
+    for source in sources:
+        section = _section(_text(root / source, source))
+        if section is None:
+            unfollowed.append({"ref": None, "from": source, "reason": "card has no Read first / Entry section"})
+            continue
+        refs = [(m.start(), m.group(1), True) for m in _LINK.finditer(section)]
+        refs += [(m.start(), m.group(1), False) for m in _CODE.finditer(section)
+                 if "/" in m.group(1) or "\\" in m.group(1)]
+        for _, ref, linked in sorted(refs):
+            rel, reason = _follow(root, source, ref, linked)
+            if reason:
+                unfollowed.append({"ref": ref, "from": source, "reason": reason})
+            elif rel not in skip:
+                add(rel, source)
+    return {"files": files, "unfollowed": unfollowed}
+
+
+def _sha(commit):
+    if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise FailClosed(f"commit must be a 40-hex sha: {commit!r}")
+    return commit
+
+
+def measure_cells(root, counter, commit, walkers=None):
+    """Measure every target's entry path; attach walker coverage when ``walkers`` is given."""
+    commit = _sha(commit)
+    root = Path(root).resolve()
+    data = {"schema": 1, "kind": "entry_budget_cells", "metric": "tokens from AGENTS.md to the first command",
+            "tokenizer": TOKENIZER, "measured_on": commit, "targets": {}}
+    for tid in targets(root):
+        cell, _, stage = tid.partition(":")
+        path = cell_path(root, cell, stage or None)
+        rows = []
+        for rel in path["files"]:
+            text = _text(root / rel, rel)
+            rows.append({"path": rel, "chars": len(text), "tokens": _count(counter(text), "tokens", rel)})
+        data["targets"][tid] = {"cell": cell, "stage": stage or None, "files_count": len(rows),
+                                "total_tokens": sum(r["tokens"] for r in rows), "files": rows,
+                                "unfollowed": path["unfollowed"]}
+    if walkers is not None:
+        data["walkers"] = {}
+        for name, (obj, digest) in walkers.items():
+            reports = {}
+            for tid in WALKERS[name]:
+                if tid not in data["targets"]:
+                    raise FailClosed(f"walker {name} maps to unknown target {tid}")
+                files = [f["path"] for f in data["targets"][tid]["files"]]
+                reports[tid] = walker_report(obj, files, root)
+            data["walkers"][name] = {"sha256": digest, "targets": reports}
+        missing = set(data["targets"]) - {t for w in data["walkers"].values() for t in w["targets"]}
+        if missing:
+            raise FailClosed(f"targets without a walker: {sorted(missing)}")
+    return data
+
+
+def _rows(obj):
+    if isinstance(obj, dict):
+        yield obj
+        for value in obj.values():
+            yield from _rows(value)
+    elif isinstance(obj, list):
+        for value in obj:
+            yield from _rows(value)
+
+
+def _norm(entry):
+    raw = entry.get("path") or entry.get("file") if isinstance(entry, dict) else entry
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    token = raw.strip().split()[0].replace("\\", "/").rstrip(",;")
+    token = re.sub(r":\d.*$", "", token.split("#", 1)[0])
+    return token[2:] if token.startswith("./") else token or None
+
+
+def walker_report(obj, path_files, root):
+    """Classify every doc a walker read against an entry path; count contradictory ladder rows."""
+    root = Path(root).resolve()
+    rows = [r for r in _rows(obj) if "docs_read" in r]
+    if not rows:
+        raise FailClosed("walker has no docs_read rows")
+    on_path = set(path_files)
+    buckets = {"on_path": set(), "beyond_path": set(), "outside_repo": set(), "missing": set()}
+    unparsed, contradictory, on, unknown = 0, 0, 0, []
+    for row in rows:
+        docs = row["docs_read"] if isinstance(row["docs_read"], list) else [row["docs_read"]]
+        names = []
+        for entry in docs:
+            name = _norm(entry)
+            if name is None:
+                unparsed += 1
+                continue
+            names.append(name)
+            if re.match(r"^[A-Za-z]:/", name) or name.startswith("/"):
+                buckets["outside_repo"].add(name)
+                continue
+            path = (root / name).resolve()
+            if root not in path.parents or not path.exists():
+                buckets["missing" if root in path.parents else "outside_repo"].add(name)
+            else:
+                buckets["on_path" if path.relative_to(root).as_posix() in on_path else "beyond_path"].add(name)
+        status = row.get("status")
+        if status is None:
+            continue
+        if status not in STATUSES:
+            unknown.append(status)
+        elif status == "contradictory":
+            contradictory += 1
+            on += bool(on_path & set(names))
+    return {**{k: sorted(v) for k, v in buckets.items()}, "unparsed": unparsed,
+            "contradictory_rows": contradictory, "contradictory_on_path": on, "unknown_status": unknown}
+
+
+def load_walkers(directory):
+    """Read every mapped walker JSON from ``directory``; an unmapped or missing walker fails closed."""
+    directory = Path(directory)
+    found = {p.stem: p for p in sorted(directory.glob("w*.json"))}
+    for name in found:
+        if name not in WALKERS:
+            raise FailClosed(f"unmapped walker: {name}")
+    out = {}
+    for name in WALKERS:
+        if name not in found:
+            raise FailClosed(f"partial: walker missing: {name}")
+        raw = found[name].read_bytes()
+        try:
+            out[name] = (json.loads(raw.decode("utf-8-sig")), hashlib.sha256(raw).hexdigest())
+        except ValueError as exc:
+            raise FailClosed(f"unsupported walker {name}: {exc}") from exc
+    return out
+
+
+def write_cells(root, output, counter, commit, walkers_dir=None):
+    """Measure and write the cells baseline atomically; refuse an output that is an input."""
+    root = Path(root).resolve()
+    output = Path(output).resolve()
+    inputs = set()
+    for tid in targets(root):
+        cell, _, stage = tid.partition(":")
+        inputs |= {os.path.normcase(str((root / rel).resolve())) for rel in cell_path(root, cell, stage or None)["files"]}
+    if walkers_dir is not None:
+        inputs |= {os.path.normcase(str(p.resolve())) for p in Path(walkers_dir).glob("w*.json")}
+    if os.path.normcase(str(output)) in inputs:
+        raise FailClosed(f"output path is an input: {output}")
+    walkers = load_walkers(walkers_dir) if walkers_dir is not None else None
+    data = measure_cells(root, counter, commit, walkers)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    partial = output.with_name(output.name + ".partial")
+    with partial.open("w", encoding="utf-8", newline="\n") as sink:
+        sink.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    os.replace(partial, output)
+    return data
+
+
+def _cells_main(args):
+    if args.output is None:
+        print("entry_budget: --cells needs --output", file=sys.stderr)
+        return 2
+    root = (args.root or ROOT).resolve()
+    commit = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True,
+                            text=True).stdout.strip()
+    try:
+        data = write_cells(root, args.output, _tiktoken_counter(), commit, args.walkers)
+    except FailClosed as exc:
+        print(f"entry_budget: {exc.reason}", file=sys.stderr)
+        return 1
+    for tid, target in data["targets"].items():
+        walk = [w["targets"][tid] for w in data.get("walkers", {}).values() if tid in w["targets"]]
+        extra = f"\tcontradictory_on_path {walk[0]['contradictory_on_path']}" if walk else ""
+        print(f"{tid}\t{target['files_count']} files\t{target['total_tokens']} tokens{extra}")
+    print(f"wrote {args.output} (measured on {commit})")
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Cold-entry token budget (tiktoken o200k_base, <= 10000).")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true", help="offline check against the receipt")
     mode.add_argument("--write", action="store_true", help="measure with tiktoken and rewrite the receipt")
+    mode.add_argument("--cells", action="store_true", help="measure every scenario cell's entry path (#1886)")
     parser.add_argument("--receipt", type=Path, default=RECEIPT)
+    parser.add_argument("--root", type=Path, help="--cells: repository to measure (default: this checkout)")
+    parser.add_argument("--walkers", type=Path, help="--cells: directory with the hygiene walker w*.json")
+    parser.add_argument("--output", type=Path, help="--cells: baseline JSON to write")
     args = parser.parse_args(argv)
+    if args.cells:
+        return _cells_main(args)
     try:
         if args.write:
             data = write_receipt(ROOT, list(ENTRY), CARD, args.receipt)
