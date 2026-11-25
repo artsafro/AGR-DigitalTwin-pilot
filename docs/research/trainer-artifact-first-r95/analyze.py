@@ -1,5 +1,7 @@
 """OBSERVE #95 analysis: per run artifact / first_failing_step / wall / tokens / E93 escapes / trigger witness.
 
+Pattern: new-case: docs/research/trainer-artifact-first-r95 - OBSERVE #95 trainer practice series (research only).
+
 git show origin/research/autoresearch-standing-93:docs/research/trainer-escape-r93/audit.py > AUDIT.py
 uv run --frozen python docs/research/trainer-artifact-first-r95/analyze.py AUDIT.py NEW_receipt.json
 

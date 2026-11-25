@@ -1,5 +1,7 @@
 """OBSERVE #95 series driver: 12 practice runs in the frozen order, 2 at a time, then agr trainer score each.
 
+Pattern: new-case: docs/research/trainer-artifact-first-r95 - OBSERVE #95 trainer practice series (research only).
+
 uv run --frozen python docs/research/trainer-artifact-first-r95/series.py BANK_C.json [--only NAME ...]
 Writes C:/x/trainer/runs/<etalon>-codex-r95-<arm><i>/ and <run>/score.json; log in C:/x/ev_t_04777f53/series.log.
 """

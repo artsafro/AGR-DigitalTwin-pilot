@@ -1,5 +1,7 @@
 """OBSERVE #95: scratch practice bank for arm C (one frozen sentence appended to the task of the two fixtures).
 
+Pattern: new-case: docs/research/trainer-artifact-first-r95 - OBSERVE #95 trainer practice series (research only).
+
 uv run --frozen python docs/research/trainer-artifact-first-r95/make_bank.py SRC_BANK.json NEW_BANK.json
 
 The git bank is never edited (owner #1855/#1861). Prints the SHA-256 of the source and the new bank.
