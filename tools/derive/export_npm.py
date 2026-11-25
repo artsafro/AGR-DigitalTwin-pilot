@@ -30,10 +30,13 @@ import importlib.util
 import json
 import math
 import os
+from pathlib import Path
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RECIPE = os.path.normpath(os.path.join(HERE, "..", "..", "jobs", "TEC26-OKS", "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from tools.derive.export_safety import require_udim_regions, validate_atlas  # noqa: E402
+
 _OWNER = os.path.normpath(os.path.join(HERE, "..", "..", "adapters", "max", "agr_tools", "udimtile_core.py"))
 _ownspec = importlib.util.spec_from_file_location("udimtile_core_export_npm", _OWNER)
 _udimtile = importlib.util.module_from_spec(_ownspec)
@@ -189,7 +192,7 @@ def parse(argv):
     ap.add_argument("--pivot", help="x,y of one shared origin for every FBX of a multi-OKS NPM package")
     ap.add_argument("--source-id", help="stable source identity across revisions (default: <address>.oks.<index>.master)")
     ap.add_argument("--keep-quads", action="store_true", help="untriangulated review copy (not a delivery)")
-    ap.add_argument("--recipe-dir", default=RECIPE, help="directory with export_safety.py")
+    ap.add_argument("--recipe-dir", help="legacy replay argument; export checks always use the shared owner")
     ap.add_argument("--allow-cross-tile", action="store_true",
                     help="legacy: move a face that crosses UDIM tiles into its centroid tile's region and list "
                          "every moved face in export_npm_meta.json (default: refuse, #1580)")
@@ -253,8 +256,6 @@ def main(argv):
     import bpy
     from mathutils import Matrix, Vector
     a = parse(argv)
-    sys.path.insert(0, a.recipe_dir)
-    from export_safety import require_udim_regions, validate_atlas
 
     out = os.path.abspath(a.out)
     meta_path = os.path.join(out, "..", "export_npm_meta.json")

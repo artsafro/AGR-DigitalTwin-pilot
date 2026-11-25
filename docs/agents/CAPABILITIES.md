@@ -450,7 +450,8 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
   <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
   (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
   (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
-  `tools/derive/fbx_parity.py`. Texture painters still come from `jobs/TEC26-OKS/scripts` (`--recipe-dir`).
+  `tools/derive/fbx_parity.py`. Finish validation, painting and export preflight live in `tools/derive/`.
+  A procedural spec with `kpp_palette` takes explicit `--kpp-spec KPP.json`; this is data, not job code.
 - WORKING (2026-11-09, Blender 5.1): replayed on TEC26 AC08 pilot-v010 (accepted recipe) and AC09 build-v001 against the
   job scripts: atlas PNG + JSON byte-identical (also to the recorded accepted outputs), VPM ZIP byte-identical (also
   to the recorded ZIPs), NPM FBX readback-identical (geometry, UV, materials, embedded pixels; FBX bytes differ only
