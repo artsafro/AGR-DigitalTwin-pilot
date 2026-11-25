@@ -67,6 +67,24 @@ def test_d389_row_recorded_once():
     assert len(rows) == 1 and "AutoCAD Core Console" in rows[0] and "3ds Max" in rows[0]
 
 
+def test_task_text_states_practice_self_gates_d391():
+    """[D391]: practice runs self-confirm Gate 1 / BM-12 with a hash-bound, labelled record; not acceptance."""
+    for e in bank()["etalons"]:
+        if not e["practice_ready"]:
+            continue
+        text = T.task_text(e, Path("C:/x/in"), Path("C:/x/out"))
+        assert "[D391]" in text and "gate1=practice-self" in text and "bm12=practice-self" in text
+        assert "approval_sha256" in text and "not acceptance" in text and "agr trainer run" in text
+        # r81 finding: 6/6 agents reported `review` is not a PartsList status (draft|confirmed)
+        assert "status draft" in text and "status review" not in text
+
+
+def test_d391_row_recorded_once():
+    rows = [ln for ln in (T.ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines()
+            if ln.startswith("| D391 |")]
+    assert len(rows) == 1 and "gate1=practice-self" in rows[0] and "Real jobs" in rows[0]
+
+
 def test_dwg_practice_prompt_requires_intake_and_stops_on_failure():
     entries = {e["id"]: e for e in bank()["etalons"]}
     text = T.task_text(entries["kpp1-v004"], Path("i"), Path("o"))

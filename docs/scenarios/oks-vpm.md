@@ -46,6 +46,9 @@ external PNG UDIM sets. Ground, MAF and Flora of the same site are the `ground-v
 | Export, readback | Max export [D212]; `tools/blender/fbx_readback.py`; `dt qa xview` | proven |
 | Package and checks | `agr package-vpm` ([`tools/derive/package_vpm.py`](../../tools/derive/package_vpm.py) → [`package_core.py`](../../adapters/max/agr_tools/package_core.py)); AGR Tools stage 9; `tools/qa/validate_package.py`; SINTEZ AGR Checker | **STOP before ZIP** without matching `export_meta` for the new FBX. Use the job's export recipe (AC08 v010 [sidecar example](../../jobs/TEC26-OKS/AC08/pilot-v010/export_meta.json), not metadata to copy) and export readback; unpack and read back the actual ZIP for package QA. Validator V001–V013 partial; no package has reached passed=true yet. |
 
+For the OKS trail, prepare the [Step 3 modelling-plan sheet](../procedure/oks-modelling-plan.md)
+from the human-accepted Step 0 split and obtain picture acceptance before modelling.
+
 For body / windows / roof, **after Gate 1**, when **Max is busy**, the offline route
 (`dt_ai.ops` / [VARIANTS R14 kernel-prisms](../methods/building-body/VARIANTS.md)) is permitted only as
 `path: deviation` [D250]; whenever Max is held, any Max step may run in an agent-owned Blender instead [D255]. Append the [deviation log](../procedure/TASK_TO_MODEL.md#free-path-and-deviation-log)

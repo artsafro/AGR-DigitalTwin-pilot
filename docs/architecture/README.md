@@ -397,6 +397,8 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
+| research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
@@ -476,6 +478,11 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/telegram-3dsmax-chat-2026-11 | [research/telegram-3dsmax-chat-2026-11.md](../research/telegram-3dsmax-chat-2026-11.md) |  |
 | research/toolchain-smoke-2026-10-15 | [research/toolchain-smoke-2026-10-15.md](../research/toolchain-smoke-2026-10-15.md) |  |
 | research/tow02-hand-finish-face-diff | [research/tow02-hand-finish-face-diff.md](../research/tow02-hand-finish-face-diff.md) |  |
+| research/trainer-tower-id-r87/calib-json | [research/trainer-tower-id-r87/calib.json](../research/trainer-tower-id-r87/calib.json) |  |
+| research/trainer-tower-id-r87/make-bank-py | [research/trainer-tower-id-r87/make_bank.py](../research/trainer-tower-id-r87/make_bank.py) |  |
+| research/trainer-tower-id-r87/result-json | [research/trainer-tower-id-r87/result.json](../research/trainer-tower-id-r87/result.json) |  |
+| research/trainer-tower-id-r87/score-py | [research/trainer-tower-id-r87/score.py](../research/trainer-tower-id-r87/score.py) |  |
+| research/trainer-tower-id-r87/series-sh | [research/trainer-tower-id-r87/series.sh](../research/trainer-tower-id-r87/series.sh) |  |
 | research/ucx-etalon-analysis | [research/ucx-etalon-analysis.md](../research/ucx-etalon-analysis.md) |  |
 | research/ucx-etalon-audit-2026-10-15-json | [research/ucx-etalon-audit-2026-10-15.json](../research/ucx-etalon-audit-2026-10-15.json) |  |
 | research/vatutino-ground-80deg-step-source | [research/vatutino-ground-80deg-step-source.md](../research/vatutino-ground-80deg-step-source.md) |  |
