@@ -14,6 +14,12 @@ git restore --source archive/2026-11 -- <path>       # bring a file or folder ba
 
 Run `git fetch origin tag archive/2026-11` first if the tag is missing locally.
 
+## Hygiene cleanup rule (2026-11-25)
+
+- Cleanup hides paths from agent search through the search-noise generator (`tools/architecture/search_noise.py` -> `.ignore`) and lists them here; git keeps them. Physical deletion only after a trainer before/after measurement; hygiene batch 2 is the only deletion now. Cleanup batches go one PR at a time [D395].
+- The 164 paths the hygiene auditors disagree on (`G:/Мой диск/AGR-evidence/hygiene-20261125/PLAN-ru-conflicts.csv`) stay keep until the owner of the trail decides [D396].
+- The old OKS body route (hygiene batch 4) is archived only after the lattice has built an NPM body on at least one object [D392].
+
 ## Jobs (`jobs/<folder>/`)
 
 | Folder | Status and pointer |
