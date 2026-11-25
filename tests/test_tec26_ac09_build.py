@@ -48,3 +48,14 @@ def test_ac09_missing_finish_is_error(adapter):
 def test_ac09_unknown_stage_is_error(adapter):
     with pytest.raises(ValueError, match='unsupported'):
         adapter.execute('unknown.py', [])
+
+
+def test_ac09_shim_override_reaches_owner_without_leaking(adapter):
+    """#1902 r1 P1-1: the adapter patches the job shim; the owner must honour it, the shared route must not."""
+    from tools.derive import finish_map as owner
+    data = json.loads((BUILD / 'vpm_textures.json').read_text(encoding='utf-8'))
+    kpp = adapter.fm.load_kpp()
+    assert adapter.fm.validate_spec(copy.deepcopy(data), kpp)
+    assert owner.validate_legend is not adapter.fm.validate_legend
+    with pytest.raises(ValueError, match='Interior'):
+        owner.validate_spec(copy.deepcopy(data), kpp)

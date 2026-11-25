@@ -98,7 +98,10 @@ Arguments after each single-step alias are forwarded unchanged, including `--hel
 | `agr ground ARGS` / `agr ground v015 ARGS` | `dt ground v015 ARGS` (frozen Vatutino record) |
 | `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS` | `dt derive atlas ATLAS_ARGS`, then `dt derive [--blender BLENDER] npm NPM_ARGS` only on exit 0, then the NPM UV readback `python -m twinqa.npm_uv <exported FBX> <ATLAS>/npm_atlas.json` (#1580: every face inside its atlas region, 8 px padding; a fail exits 1). The export refuses faces that cross UDIM tiles (`--allow-cross-tile` = legacy move, listed in `export_npm_meta.json`) |
 
-For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --recipe-dir RECIPE --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.
+For an authorized packet: `uv run agr vpm-to-npm --blender BLENDER SPEC NEW_ATLAS --master MASTER --then-npm MASTER SPEC NEW_ATLAS NEW_EXPORT PREFIX`.
+For a procedural spec declaring `kpp_palette`, add `--kpp-spec KPP.json` to the atlas arguments.
+The default route loads only shared Python owners. For frozen benchmark replay only, the atlas accepts
+an explicit external `--recipe-dir` painter; checkout `jobs/` is not a recipe directory.
 `--then-npm` is reserved as the argument-group separator (exactly once); `--blender`
 must precede atlas arguments, or set `DT_BLENDER`. Paths are explicit; no inferred
 config or job flags, rollback, or second implementation. The facade preserves the caller's cwd;
