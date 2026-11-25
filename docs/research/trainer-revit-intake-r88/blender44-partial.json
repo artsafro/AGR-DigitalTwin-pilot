@@ -1,0 +1,92 @@
+{
+  "revision": "08015022acc2a140994eeb188444f68a4388c15c",
+  "code_sha256": {
+    "tools/methods/body/body_lattice.py": "eb5982694e07d280562077d1a04091041afc84461ae524ede20fb7853fd62c49",
+    "schemas/BodyPlan.schema.json": "9a150841de29c5f192822ecac577179e0d7f76a9c3d15d6adc06bd46881c537f",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": "c2eb4f8542c8401e36e4cf8509c836b1cc1045655a0ca74448bcf01022f2fbd1",
+    "jobs/garibaldi22/body-training-1619/hooks/revit_floor_dump.py": "3f4ce8aa53285949cca333be9738a862232093de65a1916f8e728103f32c9a83",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": "246c04ac7da6771eca5f1a13d5e1ac38e06ca8237b77a8a5f5ee5162f1405194"
+  },
+  "inputs_sha256": {
+    "STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7"
+  },
+  "rows": [
+    {
+      "fixture": "63A",
+      "iteration": 1,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "6ed8d9184f6fcedbcdef1b27c9fc89b00ffdb53d",
+      "baseline_origin": "73bf58902ef4926420beb396b7614697bbb42e97",
+      "baseline_run_sha256": "02e90b54eeb0f753b3f08760bd261ddc9d8fa027328e3fae6d88c7dd02fbe502",
+      "baseline_adapter_exists": false,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "crop": {
+        "exit": null,
+        "wall_s": 60.363,
+        "log_tail": [
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0423\u0442\u0435\u043f\u043b\u0438\u0442\u0435\u043b\u044c 120_\u0428\u0442_6288eb8' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 (\u0424\u041c) \u041a\u041b\u041f-10 140 (\u0423\u041c\u0412-_2fa1181' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0410\u0420_3D_\u0421\u0422\u0415_\u0412\u043b\u043e\u0436\u0435\u043d\u043d\u043e\u0435_\u041e\u0442\u043a\u043e\u0441_\u0412\u0435\u0440\u0442_R_f548396' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0428\u0442_\u0444\u0430\u0441\u0430\u0434 135 135 \u043a\u0438_31a8f3d' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 +100 100 _d5d499d' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 250 250 \u0444_8c9ac0a' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0410\u0420_3D_\u0421\u0422\u0415_\u0412\u043b\u043e\u0436\u0435\u043d\u043d\u043e\u0435_\u041e\u0442\u043a\u043e\u0441_\u0413\u043e\u0440_\u0412_d7fb3a8' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0428\u0442_\u0444\u0430\u0441\u0430\u0434 135 135 \u043a\u0438_c6e89c9' had invalid material indices, those were reset to first material"
+        ],
+        "log_sha256": "72597fbf93a1b83ea13a7cc678538bb4bf57f9fb9227dd0770911ff5660a2ace"
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 1,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "837470836d2b062a61c59a833853e09de14ac02a",
+      "baseline_origin": "73bf58902ef4926420beb396b7614697bbb42e97",
+      "baseline_run_sha256": "610de9b242e9273c1645137e94fbc988fbb775ec4483029c59358b30aae002ee",
+      "baseline_adapter_exists": false,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "crop": {
+        "exit": null,
+        "wall_s": 60.43,
+        "log_tail": [
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 250 250 \u043a_d58e8cd' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 250 250 \u043a_77b1c28' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0431\u0430\u0448\u043d\u044f 16 \u0412\u0435\u043d\u0442\u0444\u0430\u0441_95627f9' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 250_\u0410\u041a_R_ea71df2' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 250 250 \u0444_9b1c8a0' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0412\u0435\u043d\u0442\u0444\u0430\u0441\u0430\u0434 250 250 \u043a_0a744ac' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0411\u0430\u0437\u043e\u0432\u0430\u044f \u0441\u0442\u0435\u043d\u0430 \u0428\u0442_\u0444\u0430\u0441\u0430\u0434 135 135 \u0431\u0435_e2e3427' had invalid material indices, those were reset to first material",
+          "WARNING: mesh '\u0410\u0420_3D_\u0421\u0422\u0415_\u0412\u043b\u043e\u0436\u0435\u043d\u043d\u043e\u0435_\u041e\u0442\u043a\u043e\u0441_\u0413\u043e\u0440_\u0412_9aa3809' had invalid material indices, those were reset to first material"
+        ],
+        "log_sha256": "bf3aaaaa0334cb6eb3af689376565d8a23124c873278bbf458ea218f61e43c13"
+      }
+    }
+  ],
+  "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.3",
+  "blender": {
+    "exit": 0,
+    "wall_s": 0.358,
+    "log_tail": [
+      "Blender 4.4.0",
+      "\tbuild date: 2025-03-18",
+      "\tbuild time: 03:22:03",
+      "\tbuild commit date: 2025-03-17"
+    ],
+    "log_sha256": "00c6b91befe0b1d3529650513ef0bf408158031ec3d23ceb6d55adc27540db76"
+  },
+  "blender_sha256": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5",
+  "synthetic_empty": {
+    "exit": 1,
+    "wall_s": 0.272,
+    "log_tail": [
+      "no window objects: check --keys"
+    ],
+    "log_sha256": "ffc753e77a3fe2e6b699dd89e2207b9d4e7cb32c5d927888785a7bf4c62a3730",
+    "crop_sha256": "ec1e48b6a3209ad0339b1011a588bb5f8811a7381da7aef8407daaa068d0aaa3",
+    "emitted": false
+  }
+}

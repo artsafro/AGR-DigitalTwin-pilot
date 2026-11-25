@@ -1,0 +1,192 @@
+{
+  "revision": "08015022acc2a140994eeb188444f68a4388c15c",
+  "code_sha256": {
+    "tools/methods/body/body_lattice.py": "eb5982694e07d280562077d1a04091041afc84461ae524ede20fb7853fd62c49",
+    "schemas/BodyPlan.schema.json": "9a150841de29c5f192822ecac577179e0d7f76a9c3d15d6adc06bd46881c537f",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": "c2eb4f8542c8401e36e4cf8509c836b1cc1045655a0ca74448bcf01022f2fbd1",
+    "jobs/garibaldi22/body-training-1619/hooks/revit_floor_dump.py": "3f4ce8aa53285949cca333be9738a862232093de65a1916f8e728103f32c9a83",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": "246c04ac7da6771eca5f1a13d5e1ac38e06ca8237b77a8a5f5ee5162f1405194"
+  },
+  "inputs_sha256": {
+    "STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7"
+  },
+  "rows": [
+    {
+      "fixture": "63A",
+      "iteration": 1,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "6ed8d9184f6fcedbcdef1b27c9fc89b00ffdb53d",
+      "baseline_origin": "73bf58902ef4926420beb396b7614697bbb42e97",
+      "baseline_run_sha256": "02e90b54eeb0f753b3f08760bd261ddc9d8fa027328e3fae6d88c7dd02fbe502",
+      "baseline_adapter_exists": false,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "crop": {
+        "exit": 11,
+        "wall_s": 15.051,
+        "log_tail": [
+          "Error   : EXCEPTION_ACCESS_VIOLATION",
+          "Address : 0x00007FF633142509",
+          "Module  : blender.exe",
+          "Thread  : 0004d804",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "Writing: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17a2ab96\\.r88-replay\\temp\\blender.crash.txt"
+        ],
+        "log_sha256": "9cd669da2fb67ed1f18fdf2d6de8cdd896290eebadbe8184bf11010fc920c4a2"
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 1,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "837470836d2b062a61c59a833853e09de14ac02a",
+      "baseline_origin": "73bf58902ef4926420beb396b7614697bbb42e97",
+      "baseline_run_sha256": "610de9b242e9273c1645137e94fbc988fbb775ec4483029c59358b30aae002ee",
+      "baseline_adapter_exists": false,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "crop": {
+        "exit": 11,
+        "wall_s": 15.985,
+        "log_tail": [
+          "Error   : EXCEPTION_ACCESS_VIOLATION",
+          "Address : 0x00007FF633142509",
+          "Module  : blender.exe",
+          "Thread  : 0004ea98",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "Writing: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17a2ab96\\.r88-replay\\temp\\blender.crash.txt"
+        ],
+        "log_sha256": "9d12f418d3efd0228b6a6c1762e97a4bde330ae8042fc7af32ee7ad671e2c30c"
+      }
+    },
+    {
+      "fixture": "63A",
+      "iteration": 2,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "74689c283ab2efcf9f5d9152032be71dc38cf1de",
+      "baseline_origin": "cbd62fda4cd8bae336d4a2951087f9e30215ee3c",
+      "baseline_run_sha256": "ec4540b174b659af9c2066f485f000d15f61688b47d183b18a4d36219096e142",
+      "baseline_adapter_exists": false,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "crop": {
+        "exit": 11,
+        "wall_s": 18.003,
+        "log_tail": [
+          "Error   : EXCEPTION_ACCESS_VIOLATION",
+          "Address : 0x00007FF633142509",
+          "Module  : blender.exe",
+          "Thread  : 0004d160",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "Writing: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17a2ab96\\.r88-replay\\temp\\blender.crash.txt"
+        ],
+        "log_sha256": "b7afb6bada80db8bb742f7ab2b8715822226e40eb1f267530f0f2feb732274b8"
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 2,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "799a0b1dc4ed22d4c84c16543c5fa44e3f83f1bc",
+      "baseline_origin": "cbd62fda4cd8bae336d4a2951087f9e30215ee3c",
+      "baseline_run_sha256": "5ea949da2827e1dc950c2a645fa92b749f08c96318e5f43d72245e11b6f7ae21",
+      "baseline_adapter_exists": false,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "crop": {
+        "exit": 11,
+        "wall_s": 27.787,
+        "log_tail": [
+          "Error   : EXCEPTION_ACCESS_VIOLATION",
+          "Address : 0x00007FF63314257F",
+          "Module  : blender.exe",
+          "Thread  : 0004e260",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "Writing: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17a2ab96\\.r88-replay\\temp\\blender.crash.txt"
+        ],
+        "log_sha256": "48572c230cf86d459edc9e74e9a4f07bd9362160e4c5912ff97c25748594edc2"
+      }
+    },
+    {
+      "fixture": "63A",
+      "iteration": 3,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "c5622c14c8aa86ebfa9a3914b223724ec02d0c0c",
+      "baseline_origin": "08015022acc2a140994eeb188444f68a4388c15c",
+      "baseline_run_sha256": "3cd3860900673d60d71b976b9c9baa3578de7f68c76839cd13495b2df447c0a8",
+      "baseline_adapter_exists": false,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "crop": {
+        "exit": 11,
+        "wall_s": 16.61,
+        "log_tail": [
+          "Error   : EXCEPTION_ACCESS_VIOLATION",
+          "Address : 0x00007FF633142509",
+          "Module  : blender.exe",
+          "Thread  : 0004af30",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "Writing: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17a2ab96\\.r88-replay\\temp\\blender.crash.txt"
+        ],
+        "log_sha256": "bbc86e7a00851fc5956d787414f305eceb231b811dba7355773eb96e9971cb13"
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 3,
+      "baseline": 0,
+      "candidate": null,
+      "baseline_snapshot": "9a8c4c6483394c6a65601d6afa758598ed0517e9",
+      "baseline_origin": "08015022acc2a140994eeb188444f68a4388c15c",
+      "baseline_run_sha256": "896677521b38442f3aa5f5be93ec0af5001b6fce726d7f0bf803f28d2de9d3f4",
+      "baseline_adapter_exists": false,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "crop": {
+        "exit": 11,
+        "wall_s": 13.954,
+        "log_tail": [
+          "Error   : EXCEPTION_ACCESS_VIOLATION",
+          "Address : 0x00007FF633142509",
+          "Module  : blender.exe",
+          "Thread  : 0004b380",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "Writing: C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_17a2ab96\\.r88-replay\\temp\\blender.crash.txt"
+        ],
+        "log_sha256": "5c8faa84d2581d3aa4ba65e648e6b43ea20601c132e8c68941936860ffff5149"
+      }
+    }
+  ],
+  "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.3",
+  "blender": {
+    "exit": 0,
+    "wall_s": 0.396,
+    "log_tail": [
+      "\tbuild hash: ec6e62d40fa9",
+      "\tbuild branch: blender-v5.1-release",
+      "\tbuild platform: Windows",
+      "\tbuild type: Release",
+      "\tbuild c flags:  -Wall -Werror=implicit-function-declaration -Werror=return-type -Wno-tautological-compare -Wno-unknown-pragmas -Wno-char-subscripts -Wstrict-prototypes -Wmissing-prototypes -Wunused-parameter -Wundef -Wundef-prefix -Werror=unguarded-availability-new /W3 -Wno-c++98-compat -Wno-old-style-cast -Wno-unsafe-buffer-usage -Wno-missing-prototypes -Wno-sign-conversion -Wno-missing-field-initializers -Wno-extra-semi -Wno-language-extension-token -Wno-implicit-float-conversion -Wno-c++98-compat-pedantic -Wno-implicit-int-float-conversion -Wno-double-promotion -Wno-pre-c++17-compat -Wno-shorten-64-to-32 -Wno-c++98-compat-local-type-template-args -Wno-reserved-identifier -Wno-cast-align -Wno-documentation -Wno-disabled-macro-expansion -Wno-extra-semi-stmt -Wno-zero-as-null-pointer-constant -Wno-float-conversion -Wno-reserved-macro-identifier -Wno-cast-function-type-strict -Wno-float-equal -Wno-implicit-int-conversion -Wno-shadow -Wno-shadow-field-in-constructor -Wno-cast-qual -Wno-pre-c++14-compat -Wno-global-constructors -Wno-switch-enum -Wno-exit-time-destructors -Wno-ctad-maybe-unsupported -Wno-undefined-func-template -Wno-c++98-compat-extra-semi -Wno-cast-function-type -Wno-nullability-extension -Wno-shadow-field -Wno-conditional-uninitialized -Wno-unused-parameter -Wno-suggest-destructor-override -Wno-shadow-uncaptured-local -Wno-unused-macros -Wno-covered-switch-default -Wno-signed-enum-bitfield -Wno-declaration-after-statement -Wno-implicit-fallthrough -Wno-non-virtual-dtor -Wno-nested-anon-types -Wno-gnu-zero-variadic-macro-arguments -Wno-unreachable-code-break -Wno-inconsistent-missing-destructor-override -Wno-format-pedantic -Wno-nonportable-system-include-path -Wno-undef -Wno-ignored-qualifiers -Wno-used-but-marked-unused -Wno-header-hygiene -Wno-char-subscripts -Wno-unreachable-code-return -Wno-unused-template -Wno-gnu-anonymous-struct -Wno-deprecated-copy-with-user-provided-dtor -Wno-inconsistent-missing-override -Wno-unreachable-code -Wno-deprecated-dynamic-exception-spec -Wno-bad-function-cast -Wno-microsoft-enum-value -Wno-deprecated-copy-with-user-provided-copy -Wno-zero-length-array -Wno-unused-function -Wno-pedantic -Wno-deprecated-copy-with-dtor -Wno-documentation-unknown-command -Wno-undefined-reinterpret-cast -Wno-format-nonliteral -Wno-comma -Wno-documentation-deprecated-sync -Wno-shift-sign-overflow -Wno-pre-c++17-compat-pedantic -Wno-c++98-compat-unnamed-type-template-args -Wno-sign-compare -Wno-format -Wno-c++98-compat-bind-to-temporary-copy -Wno-enum-enum-conversion -Wno-anon-enum-enum-conversion -Wno-range-loop-bind-reference -Wno-enum-float-conversion -Wno-keyword-macro -Wno-deprecated-copy -Wno-unused-member-function -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-documentation-html -Wno-gnu-redeclared-enum -Wno-deprecated-declarations -Wno-overloaded-virtual -Wno-c++98-c++11-compat-binary-literal -Wno-deprecated-redundant-constexpr-static-def -Wno-missing-braces -Wno-c99-extensions -Wno-strict-prototypes -Wno-unreachable-code-loop-increment -Wno-gnu-case-range -Wno-duplicate-enum -Wno-null-pointer-subtraction -Wno-deprecated-literal-operator -Wno-newline-eof -Wno-microsoft-cast -Wno-date-time -Wno-delete-non-abstract-non-virtual-dtor -Wno-unused-private-field -Wno-flexible-array-extensions -Wno-string-conversion -Wno-final-dtor-non-final-class -Wno-microsoft-unqualified-friend -Wno-invalid-noreturn -Wno-invalid-utf8 -Wno-four-char-constants -Wno-parentheses -Wno-pessimizing-move -Wno-deprecated-non-prototype -Wno-bitfield-enum-conversion -Wno-unused-lambda-capture -Wno-shadow-field-in-constructor-modified -Wno-switch-default -Wno-nan-infinity-disabled -Wno-pre-c11-compat /DWIN32 /D_WINDOWS  /MP /nologo /J /Gy /Gd /showFilenames -Wno-unused-command-line-argument -Wno-microsoft-enum-forward-reference /clang:-funsigned-char /clang:-fno-strict-aliasing /clang:-ffp-contract=off -march=x86-64-v2 ",
+      "\tbuild c++ flags:  -Wall -Wno-tautological-compare -Wno-unknown-pragmas -Wno-char-subscripts -Wno-overloaded-virtual -Wno-sign-compare -Wno-invalid-offsetof -Wno-suggest-override -Wundef -Wundef-prefix -Wunused-parameter -Wmismatched-tags -Werror=unguarded-availability-new /W3 -Wno-c++98-compat -Wno-old-style-cast -Wno-unsafe-buffer-usage -Wno-missing-prototypes -Wno-sign-conversion -Wno-missing-field-initializers -Wno-extra-semi -Wno-language-extension-token -Wno-implicit-float-conversion -Wno-c++98-compat-pedantic -Wno-implicit-int-float-conversion -Wno-double-promotion -Wno-pre-c++17-compat -Wno-shorten-64-to-32 -Wno-c++98-compat-local-type-template-args -Wno-reserved-identifier -Wno-cast-align -Wno-documentation -Wno-disabled-macro-expansion -Wno-extra-semi-stmt -Wno-zero-as-null-pointer-constant -Wno-float-conversion -Wno-reserved-macro-identifier -Wno-cast-function-type-strict -Wno-float-equal -Wno-implicit-int-conversion -Wno-shadow -Wno-shadow-field-in-constructor -Wno-cast-qual -Wno-pre-c++14-compat -Wno-global-constructors -Wno-switch-enum -Wno-exit-time-destructors -Wno-ctad-maybe-unsupported -Wno-undefined-func-template -Wno-c++98-compat-extra-semi -Wno-cast-function-type -Wno-nullability-extension -Wno-shadow-field -Wno-conditional-uninitialized -Wno-unused-parameter -Wno-suggest-destructor-override -Wno-shadow-uncaptured-local -Wno-unused-macros -Wno-covered-switch-default -Wno-signed-enum-bitfield -Wno-declaration-after-statement -Wno-implicit-fallthrough -Wno-non-virtual-dtor -Wno-nested-anon-types -Wno-gnu-zero-variadic-macro-arguments -Wno-unreachable-code-break -Wno-inconsistent-missing-destructor-override -Wno-format-pedantic -Wno-nonportable-system-include-path -Wno-undef -Wno-ignored-qualifiers -Wno-used-but-marked-unused -Wno-header-hygiene -Wno-char-subscripts -Wno-unreachable-code-return -Wno-unused-template -Wno-gnu-anonymous-struct -Wno-deprecated-copy-with-user-provided-dtor -Wno-inconsistent-missing-override -Wno-unreachable-code -Wno-deprecated-dynamic-exception-spec -Wno-bad-function-cast -Wno-microsoft-enum-value -Wno-deprecated-copy-with-user-provided-copy -Wno-zero-length-array -Wno-unused-function -Wno-pedantic -Wno-deprecated-copy-with-dtor -Wno-documentation-unknown-command -Wno-undefined-reinterpret-cast -Wno-format-nonliteral -Wno-comma -Wno-documentation-deprecated-sync -Wno-shift-sign-overflow -Wno-pre-c++17-compat-pedantic -Wno-c++98-compat-unnamed-type-template-args -Wno-sign-compare -Wno-format -Wno-c++98-compat-bind-to-temporary-copy -Wno-enum-enum-conversion -Wno-anon-enum-enum-conversion -Wno-range-loop-bind-reference -Wno-enum-float-conversion -Wno-keyword-macro -Wno-deprecated-copy -Wno-unused-member-function -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-documentation-html -Wno-gnu-redeclared-enum -Wno-deprecated-declarations -Wno-overloaded-virtual -Wno-c++98-c++11-compat-binary-literal -Wno-deprecated-redundant-constexpr-static-def -Wno-missing-braces -Wno-c99-extensions -Wno-strict-prototypes -Wno-unreachable-code-loop-increment -Wno-gnu-case-range -Wno-duplicate-enum -Wno-null-pointer-subtraction -Wno-deprecated-literal-operator -Wno-newline-eof -Wno-microsoft-cast -Wno-date-time -Wno-delete-non-abstract-non-virtual-dtor -Wno-unused-private-field -Wno-flexible-array-extensions -Wno-string-conversion -Wno-final-dtor-non-final-class -Wno-microsoft-unqualified-friend -Wno-invalid-noreturn -Wno-invalid-utf8 -Wno-four-char-constants -Wno-parentheses -Wno-pessimizing-move -Wno-deprecated-non-prototype -Wno-bitfield-enum-conversion -Wno-unused-lambda-capture -Wno-shadow-field-in-constructor-modified -Wno-switch-default -Wno-nan-infinity-disabled -Wno-pre-c11-compat /DWIN32 /D_WINDOWS   /EHsc  /Gy /MP /nologo /J /Gd /showFilenames /EHsc -Wno-unused-command-line-argument -Wno-microsoft-enum-forward-reference /clang:-funsigned-char /clang:-fno-strict-aliasing /clang:-ffp-contract=off -march=x86-64-v2 ",
+      "\tbuild link flags: /MACHINE:X64  /SUBSYSTEM:CONSOLE /STACK:2097152 /ignore:4049 /ignore:4217 /ignore:4221",
+      "\tbuild system: CMake"
+    ],
+    "log_sha256": "a6c389381135b07e03380275f7b990251bb94e856a17700eff340bec06af3537"
+  },
+  "blender_sha256": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+  "synthetic_empty": {
+    "exit": 1,
+    "wall_s": 0.308,
+    "log_tail": [
+      "no window objects: check --keys"
+    ],
+    "log_sha256": "ffc753e77a3fe2e6b699dd89e2207b9d4e7cb32c5d927888785a7bf4c62a3730",
+    "crop_sha256": "ec1e48b6a3209ad0339b1011a588bb5f8811a7381da7aef8407daaa068d0aaa3",
+    "emitted": false
+  },
+  "first_pair_wall_s": 31.46,
+  "source_parity": true,
+  "status": "finished",
+  "series_wall_s": 108.842
+}
