@@ -22,7 +22,8 @@ uv run python tools/methods/body/modelling_plan.py SPLIT.json ACCEPTED.fbx RECIP
    before modelling. `modelling_plan.json` carries the exact input hashes, per-row
    object names (including omissions), reasons, and the PNG SHA-256. Exit 0, a
    `pending_picture_acceptance` status, and preview `draft_unaccepted_split` are all
-   **not** modelling approval. Record the approval separately against the exact hashes.
+   **not** modelling approval. Record the approval separately against the exact hashes
+   (first case: Sokolniki plan sokolniki-v002 on split v004, accepted [D406]).
 
 ## Input contract
 
