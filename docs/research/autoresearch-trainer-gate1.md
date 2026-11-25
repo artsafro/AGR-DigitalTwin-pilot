@@ -8,7 +8,24 @@
 Измерение не запущено: способ пройти Gate 1 без пользователя — это изменение правила пользовательского гейта,
 нужен ответ Артёма (вопрос ниже). Контракт заморожен до любого замера.
 
-Status: **contract frozen, blocked on user decision; no measurement, no code change.** Hypothesis result: not yet measured.
+Status: **user decision received ([D391], Artem 2026-11-25 ~09:00); candidate frozen (amendment below) before measuring.**
+Hypothesis result: see "Result" (filled after the series).
+
+## Amendment A1 (2026-11-25, frozen BEFORE any M81 run)
+
+- Decision: [D391] (`docs/decisions.md`; D390 is taken by `feat/issue-1867-scene-prepare`).
+- **Candidate = the `Practice gates [D391]` paragraph of `task_text`** in `tools/trainer/trainer.py`
+  (file SHA-256 `65c02ce9e0e96eb0f0cb76d7ed062ab3d47c50380506f5456842c08a4e213a53` at the measurement commit).
+  It replaces "or stop" only for Gate 1 / BM-12; parts.json stays `status: review`, `gate1` empty (no fake approval),
+  the label `gate1=practice-self` + file SHA-256 + `approval_sha256()` goes to `QUESTIONS.md`.
+- **Held-out 63b-stage1** is `practice_ready: false` in the committed bank ("practice not scheduled in v0; held-out for
+  changes made on 63A/G22"). The committed bank stays untouched; runs use a scratch copy
+  `C:/x/ev_t_bd71dc55/bank_63b_heldout.json` (SHA-256 `610c9789…` pre-fill → final `496c3bea69f51995d7bf9a93d71ab9594035b9514252ecc981bf8990951523b8`) where only 63b gets `practice_ready: true`
+  and its key `sha256` filled from the file (needed by `bank_problems`; the key is never in the prompt — `task_text`
+  leak check + secret-token grep of events).
+- Practice tree = `origin/main` at launch (recorded per run in `run.json:origin_main`).
+- Run order: pairs (63a_i, 63b_i) concurrently, i = 1..3, `--timeout-s 1800`. Per-run artifact = any `*.fbx` in `built/`.
+- Not measured here: KPP1 / G22 (no new runs; r83 runs belong to #83), scoring steps after `artifact` are secondary.
 
 ## Preflight (measured, read-only)
 
