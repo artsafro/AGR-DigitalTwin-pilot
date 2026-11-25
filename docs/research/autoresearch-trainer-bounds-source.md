@@ -76,8 +76,9 @@ and Blender 5.1.
 западнее стены). Отложенный AC08 — `not_exercised`: в его DWG нет слоёв `A-WALL-*` (слои СПДС / PDF-импорт), так
 что о переносе правила ничего не сказано (**not measured**). Улучшения продукта нет, KEEP нет.
 
-Что измерено (receipt `trainer_bounds_r101/receipt.json`, SHA-256
-`d4b08afccb449223ba5e7fbab3708077e394dcc824247fb81f6061a70ff96654`; 3/3 repeats, all values identical, paired
+Что измерено (receipt `trainer_bounds_r101/receipt.json`, Git LF SHA-256
+`2c683fc639b06cb5af3c5947b3421d4b54909e2b96fe32b8113edfdb6e6dc81e` (working-copy CRLF
+`d4b08afccb449223ba5e7fbab3708077e394dcc824247fb81f6061a70ff96654`, Drive copy `series1/receipt.json`); 3/3 repeats, all values identical, paired
 spread 0; series wall 57.1 s, repeats 20.8 / 17.2 / 16.4 s; no budget stop; input parity before and after = true):
 
 | Variant (KPP1, native `bounds_step`) | max dev, m | x_min | y_min | z_min | x_max | y_max | z_max |
