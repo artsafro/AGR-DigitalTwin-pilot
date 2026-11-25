@@ -166,6 +166,60 @@ def test_place_thresholds_are_exact(rules):
     assert places["Панель фасадная 2 Фигурная [202]"] == "face"
 
 
+def stepped_dump(setback=10, thickness=0.3):
+    """Synthetic podium and set-back tower with independent closed wall rings."""
+    d = flagged_dump()
+    for o in d["objects"]:
+        o["hull"] = [[x - 80, y] for x, y in o["hull"]]
+    for tag, lo, hi, z0, z1, t in (
+        ("podium", 0, 40, 0, 12, 0.3), ("tower", setback, 40 - setback, 12, 18, thickness),
+    ):
+        for side, bounds in enumerate(((lo, lo, hi, lo + t), (lo, hi - t, hi, hi),
+                                       (lo, lo, lo + t, hi), (hi - t, lo, hi, hi))):
+            d["objects"].append(box(f"Базовая стена Наружная {tag} [{side}]", *bounds, z0, z1))
+        d["objects"].append(box(f"Базовая крыша {tag}", lo, lo, hi, hi, z1 - 0.2, z1))
+    x = 20
+    for prefix in ("WB_Окно", "импост 25х100", "Системная панель Cтеклопак"):
+        d["objects"].append(box(f"{prefix} [501]", x, setback, x + 1, setback + 0.2, 14, 16))
+    d["objects"] += [
+        box("WB_Окно [502]", x, setback, x + 1, setback + 0.2, 8, 10),
+        box("WB_Окно [503]", x, 19, x + 1, 20, 14, 16),
+        box("WB_Окно [504]", x, 0, x + 1, 0.2, 8, 10),
+        box("Люк terrace", x, 1, x + 1, 2, 12, 12.5),
+        box("Панель фасадная thick-wall centroid", x, setback + thickness / 2 - 0.05,
+            x + 1, setback + thickness / 2 + 0.05, 14, 16),
+    ]
+    return d
+
+
+@pytest.mark.parametrize("thickness", [0.3, 1.6, 1.8])
+def test_stepped_facade_and_controls(rules, thickness):
+    objs = {o["name"]: (o["place"], o["layer"]) for o in sp.classify(stepped_dump(thickness=thickness), rules)["objects"]}
+    assert {objs[f"Базовая стена Наружная tower [{i}]"] for i in range(4)} == {("face", "BODY")}
+    for prefix, layer in (("WB_Окно", "WINDOWS"), ("импост 25х100", "CURTAIN_WALL"),
+                          ("Системная панель Cтеклопак", "CURTAIN_WALL")):
+        assert objs[f"{prefix} [501]"] == ("face", layer)
+    assert objs["WB_Окно [502]"] == objs["WB_Окно [503]"] == ("inside", "INTERIOR_OUT")
+    assert objs["WB_Окно [504]"] == ("face", "WINDOWS")
+    assert objs["Люк terrace"] == ("roof", "ROOF_EQUIPMENT")
+    assert objs["Панель фасадная thick-wall centroid"][0] == ("face" if thickness == 0.3 else "inside")
+    assert objs["Базовая стена ADSK_Внутренняя_Г_000000d"] == ("roof", "INTERIOR_OUT")
+    assert objs["Базовая стена ADSK_Внутренняя_Г_000000e"] == ("roof", "BODY")
+    assert objs["ADSK_КаркасНесущий_Труба_ГОСТ 302 [301]"] == ("inside", "ROOF_EQUIPMENT")
+
+
+@pytest.mark.parametrize("setback", range(3, 15))
+def test_stepped_facade_probe(rules, setback):
+    d = stepped_dump(setback=setback)
+    for o in d["objects"]:
+        o["hull"] = [[150 - y, x + 100] for x, y in o["hull"]]  # rotate and translate the whole fixture
+    d["objects"].reverse()
+    objs = {o["name"]: o["layer"] for o in sp.classify(d, rules)["objects"]}
+    assert [objs[f"{p} [501]"] for p in ("WB_Окно", "импост 25х100", "Системная панель Cтеклопак")] == [
+        "WINDOWS", "CURTAIN_WALL", "CURTAIN_WALL"]
+    assert [objs[f"WB_Окно [{i}]"] for i in (502, 503, 504)] == ["INTERIOR_OUT", "INTERIOR_OUT", "WINDOWS"]
+
+
 def test_census_markdown_has_one_row_per_layer(rules):
     md = sp.census_markdown(sp.classify(synthetic_dump(), rules), rules)
     for la in rules["layers"]:
@@ -173,14 +227,82 @@ def test_census_markdown_has_one_row_per_layer(rules):
     assert "Неклассифицировано: 0" in md
 
 
+def reference_census(census):
+    return {"schema": "revit-census/1", "source_sha256": census["source_sha256"], "objects": [
+        {k: o[k] for k in ("name", "family", "place", "bbox")} for o in reversed(census["objects"])
+    ]}
+
+
 def test_compare_v007_family_by_family(rules):
     census = sp.classify(synthetic_dump(), rules)
-    v007 = {"schema": "revit-census/1", "families": [
-        {"family": "Базовая стена ADSK_Наружная_уте", "count": 5},
-        {"family": "Нет такой", "count": 2}]}
-    rows = {r["family"]: r for r in sp.compare_census(census, v007)}
-    assert rows["Базовая стена ADSK_Наружная_уте"]["count_match"] is True
-    assert rows["Нет такой"]["count_match"] is False and rows["Нет такой"]["layers"] == {}
+    comparison = sp.compare_census(census, reference_census(census))
+    rows = {r["family"]: r for r in comparison["families"]}
+    assert comparison["objects_matched"] == len(census["objects"])
+    wall = rows["Базовая стена ADSK_Наружная_уте"]
+    assert wall["count_match"] is True and wall["layers"] == {"BODY": 4, "SITE": 1}
+
+
+def test_compare_v007_explains_each_exterior_to_interior_shift(rules):
+    census = sp.classify(stepped_dump(), rules)
+    v007 = reference_census(census)
+    expected = {"WB_Окно [502]": "face", "WB_Окно [503]": "roof",
+                "Базовая стена ADSK_Внутренняя_Г_000000d": "roof"}
+    for old in v007["objects"]:
+        old["place"] = expected.get(old["name"], old["place"])
+    # Include all actual face/roof→09 rows, even when the geometric place did not change.
+    names = {o["name"]: o for o in census["objects"]}
+    expected.update({o["name"]: o["place"] for o in census["objects"] if o["layer"] == "INTERIOR_OUT"
+                     and o["place"] in {"face", "roof"}})
+    comparison = sp.compare_census(census, v007)
+    shifts = comparison["face_or_roof_to_interior"]
+    assert {r["name"]: r["v007_place"] for r in shifts} == expected
+    assert len(shifts) == len(expected)
+    md = sp.compare_markdown(comparison, rules)
+    for row in shifts:
+        name = row["name"]
+        assert row["step0_place"] == names[name]["place"]
+        assert row["step0_layer"] == "INTERIOR_OUT" and row["bbox"] == names[name]["bbox"]
+        assert row["rule"] and row["reason"] and name in md
+
+
+@pytest.mark.parametrize("case,diagnostic", [
+    ("wrong schema", "revit-census/1"), ("stale hash", "source_sha256"),
+    ("empty", "no objects"), ("missing", "inventory mismatch"),
+    ("duplicate", "duplicate"), ("alternate name", "inventory mismatch"),
+    ("bad place", "place"), ("NaN bbox", "bbox"), ("relocated bbox", "bbox"),
+])
+def test_cli_rejects_bad_reference_before_writing(rules, tmp_path, case, diagnostic):
+    src, dump_path, compare_path, out = (tmp_path / n for n in ("case.fbx", "dump.json", "old.json", "fresh"))
+    src.write_bytes(b"synthetic dump-only test")
+    dump = synthetic_dump()
+    dump["sha256"] = hashlib.sha256(src.read_bytes()).hexdigest()
+    dump_path.write_text(json.dumps(dump), encoding="utf-8")
+    ref = reference_census(sp.classify(dump, rules))
+    rows = ref["objects"]
+    if case == "wrong schema":
+        ref["schema"] = "revit-census/2"
+    elif case == "stale hash":
+        ref["source_sha256"] = "0" * 64
+    elif case == "empty":
+        rows.clear()
+    elif case == "missing":
+        rows.pop()
+    elif case == "duplicate":
+        rows.append(rows[0])
+    elif case == "alternate name":
+        rows[0]["name"] += ".001"
+    elif case == "bad place":
+        rows[0]["place"] = "Face"
+    elif case == "NaN bbox":
+        rows[0]["bbox"][0] = math.nan
+    else:
+        rows[0]["bbox"][0] -= 1
+    compare_path.write_text(json.dumps(ref), encoding="utf-8")
+    result = _cli("prepare", str(src), "--out", str(out), "--dump", str(dump_path),
+                  "--compare", str(compare_path), "--no-blend")
+    assert result.returncode == 2 and diagnostic in result.stderr
+    assert not out.exists() and not out.with_suffix(".partial").exists()
+    assert src.read_bytes() == b"synthetic dump-only test"
 
 
 def flagged_dump():
