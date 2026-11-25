@@ -343,3 +343,40 @@ This list does not repeat files hidden by the earlier historical data, docs or d
 ### `tests/fixtures/`
 
 - `tests/fixtures/pi_guard_smoke_task.txt` — Historical smoke prompt; not the maintained guard test driver.
+
+### Batch B4 (#1932): pre-lattice BODY
+The stage-1 BODY route is superseded by the lattice [D373], [D392]. Sokolniki NPM body v006 was accepted
+[D409] (PR #1833), fulfilling the archive condition. Exact B4 paths below remain at their original
+locations; search visibility is the only change to them. Retained consumers are listed in PR evidence.
+
+#### Body experiments
+
+- `experiments/body-gn-full-snap-edge-locator-rerun/drive.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+- `experiments/body-gn-full-snap-edge-locator-rerun/probe6.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+- `experiments/body-gn-full-snap-edge-locator-rerun/probe7.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+- `experiments/body-gn-full-snap-edge-locator-rerun/run8.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+
+#### Job evidence
+
+- `jobs/KPP1/benchmark-1318/summary.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/KPP1/benchmark-1318/telemetry.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/KPP1/rerun-1230/xview-npm-r1-v002.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/OBR22-K02/body-shell-adapter-verification.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/OBR22-K02/body-shell-from-exterior-adapter.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/OBR22-K02/exterior-adapter-verification.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/PSU275/body-shell-vpm-adapter.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/PSU275/oks/tanks/vpm_textures.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/PSU275/oks/transformer/vpm_textures.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+
+#### Regression tests
+
+- `tests/jobs/test_kpp1_quad_master_v003_1563.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/jobs/test_kpp1_quad_union_zones_1372.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_contours.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_optimization.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_seam_compaction_1381.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r3.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r4.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r6.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r7.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_stage2.py` — Historical comparators; still tracked and runnable by pytest.

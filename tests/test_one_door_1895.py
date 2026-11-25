@@ -207,7 +207,8 @@ def test_npm_lite_freeze_survives_the_one_door_split(path, section_start, sectio
 
 def test_psu275_is_not_a_body_etalon():
     row = next(ln for ln in _text("docs/cases.md").splitlines() if ln.startswith("| PSU275"))
-    assert "before the lattice method [D373]" in row
+    assert "superseded by the lattice [D373]" in row
+    assert "not a current body etalon" in row
 
 
 def test_committed_after_fixtures_are_consistent():

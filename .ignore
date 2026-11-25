@@ -737,6 +737,10 @@
 /docs/experiments/tow02-hand-finish-face-diff.md
 /docs/research/ifc-intake-src-contract.md
 /docs/research/job-artifact-name-contract.md
+/experiments/body-gn-full-snap-edge-locator-rerun/drive.py
+/experiments/body-gn-full-snap-edge-locator-rerun/probe6.py
+/experiments/body-gn-full-snap-edge-locator-rerun/probe7.py
+/experiments/body-gn-full-snap-edge-locator-rerun/run8.py
 /experiments/fbxmaps-1760/native_smoke.py
 /jobs/4bk-k3-course-grid-1326/numerical-repair-checkpoint-v166.json
 /jobs/4bk-k3-course-grid-1326/repair-checkpoint-v026.json
@@ -841,4 +845,14 @@
 /tests/data/ground-v015-strict-corner.json
 /tests/data/ground-v015-strict-taper.json
 /tests/fixtures/pi_guard_smoke_task.txt
+/tests/jobs/test_kpp1_quad_master_v003_1563.py
+/tests/jobs/test_kpp1_quad_union_zones_1372.py
+/tests/test_body_contours.py
+/tests/test_body_optimization.py
+/tests/test_body_seam_compaction_1381.py
+/tests/test_body_training_1619_r3.py
+/tests/test_body_training_1619_r4.py
+/tests/test_body_training_1619_r6.py
+/tests/test_body_training_1619_r7.py
+/tests/test_body_training_1619_stage2.py
 # END historical-data
