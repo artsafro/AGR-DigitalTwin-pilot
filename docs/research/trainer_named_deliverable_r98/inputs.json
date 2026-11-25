@@ -1,0 +1,19 @@
+{
+  "base": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+  "files": {
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "C:/x/t_563a40f7/key/heldout-key-v001.json": "843197137db10cdc51417b73df2c7d60ca5badc38e0f45b0ea2e2cfb93832c75",
+    "C:/x/t_563a40f7/key/heldout-sections-v001.json": "270e83dedbbae38099913640b4825c823457b3abe85f62cff295de223afed78d",
+    "C:/x/ev_1619/g22_k2_src.npz": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v002r1_body_quad.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v001_body_quad.fbx": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a"
+  },
+  "r97_root": "G:/Мой диск/AGR-evidence/1855-r97-g22-adapter",
+  "r97_seal": "847aeb38d84d59a3acef620d986c1a76b8b5f54d5bd1dddbddff9dc856a70cc5",
+  "r97": {
+    "C1": {"typical": "d024fd1d5df6fceb69677c54e8c218843340440f2a8962231b3daa19b64a9561", "module": "c74148d00c3805c806f14c443bad9f7790b41538dc7f9f515f0f5451eae9dc4d"},
+    "C2": {"typical": "223f5bf0c562775d2847ed3e1b6c7a6b0d055d33711f541543ed8f33f73ed6be"},
+    "C3": {"typical": "79920aaffdb3951a6208d0dd1161efb3af0861d1681312923eba9c0d24a33cda", "pilot": "dca6c6e4a3f301f99f33372121723d013ec285d7c1cee3c82a8a102fe3362850"}
+  }
+}
