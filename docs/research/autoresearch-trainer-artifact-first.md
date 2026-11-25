@@ -68,6 +68,42 @@ Score report SHA-256 `ad78c80d…696f`. Scratch: `C:/x/ev_t_04777f53/` (replay l
 Replay: `uv run --frozen python docs/research/trainer-artifact-first-r95/make_bank.py docs/trainer/etalons.json NEW.json`
 (must print `51c6e51e…ed3a`), then the run/score commands in `receipt.json` (written after the series).
 
-## Result
+## Result (series 2026-11-25 14:07–14:34, 12/12 runs, practice tree `afc930ea`, no budget stop)
 
-(filled after the series)
+**Итог (RU).** Гипотеза H95 — **inconclusive** (порог не пройден, но и не опровергнута). На KPP1 фраза работает как
+механизм: FBX появился в 3/3 прогонах C против 0/3 в B. Но засчитан только 1/3: в двух прогонах агент записал
+несколько FBX (по поясам), и оценщик отказывается выбирать («several FBX»). На контрольном G22 0/3 против 0/3:
+агент не находит адаптер NPZ→BodyPlan (он лежит в скрытых hooks). Единственный FBX по G22 (C3) получен через
+выход из практики к скрытому `floor_from_dump.py` в основном checkout, поэтому прогон засчитан как провал. Каждый
+FBX по KPP1, оценённый отдельно (не в зачёт), останавливается на `bounds`: тело 0..3,3/3,9 м против 8,65 м у ключа,
+плюс элемент на 4 м к востоку.
+
+| Fixture | Arm | FBX in built/ | M95 artifact (counted) | E93 escapes | first_failing_step |
+|---|---|---|---|---|---|
+| kpp1-v004 (tuning) | B | 0/3 | 0/3 | 0/3 | artifact ×3 |
+| kpp1-v004 (tuning) | C | 3/3 | **1/3** | 0/3 | bounds (C1, 5.35 m); C2/C3 scorer refusal: 2 and 3 FBX |
+| g22-k2-stage1 (held-out) | B | 0/3 | 0/3 | 1/3 (B2: 8 paths, hidden adapter in a checkout) | artifact ×3 |
+| g22-k2-stage1 (held-out) | C | 1/3 | 0/3 | 1/3 (C3: 5 paths, same adapter; its 2 FBX not counted) | artifact ×2, scorer refusal ×1 |
+
+- Contract check: C ≥ 2/3 on both fixtures is false (1/3, 0/3), so the hypothesis is not CONFIRMED. C ≤ B on both is
+  false (KPP1 1 > 0), so it is not REFUTED. Result = **inconclusive**. Escapes: C 1 = B 1.
+- Positive trigger witness: KPP1 B 3/3 ended without FBX after writing later-stage questions. B1 last.txt:
+  contour `provisional`, top level not given. G22 B 3/3: no NPZ→BodyPlan adapter in the tree.
+- Not counted (informational, `receipt.json` → `informational_not_counted`): the 5 FBX from KPP1 C2/C3, each scored
+  with `--built FILE`, give `bounds` 5/5 (form p95 3.95–4.76 m). Not measured: the effect on 63A/63B (#87–#92 own
+  it), package, form after bounds.
+- Wall per run: 103–374 s, input tokens 0.56–2.75 M (per-run values in `receipt.json`).
+
+Receipt: `docs/research/trainer-artifact-first-r95/receipt.json` (SHA-256 in the PR / backlog). Run folders
+`C:/x/trainer/runs/*-codex-r95-*` (local; replay limited). Replay of the table:
+`git show origin/research/autoresearch-standing-93:docs/research/trainer-escape-r93/audit.py > AUDIT.py` then
+`uv run --frozen python docs/research/trainer-artifact-first-r95/analyze.py AUDIT.py NEW.json`. The full series:
+`uv run --frozen python docs/research/trainer-artifact-first-r95/series.py <bank_C>`.
+
+**Kept changes:** none (OBSERVE). Proposals for the #1855 owner, not applied:
+1. One-deliverable rule: the scorer or the task text should name a single path for the deliverable FBX, e.g.
+   `built/deliverable.fbx`. Two of the three KPP1 C runs did make an FBX and were lost to the "several FBX" refusal.
+2. The band stack for the DWG route: no shared step merges `plan_band<k>` bodies into one FBX, so the agents wrote
+   one FBX per band.
+3. Levels from the DWG: the KPP1 stop after artifact is `bounds` (height). No shared tool reads level marks from
+   L01, and B1 stopped on exactly that.
