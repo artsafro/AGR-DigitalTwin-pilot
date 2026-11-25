@@ -97,7 +97,7 @@ limited, same as #82). The receipt stores sha256 of `last.txt`, `run.json`, `pro
 
 ## Round log
 
-Receipt: `docs/research/trainer-gate1-request-r83.json` (sha256 `77920fdcb3f3b4ce2dedbc61be324cb8757c74a4c377bf28f50e7d49d81f795d`),
+Receipt: `docs/research/trainer-gate1-request-r83.json` (working-copy CRLF sha256 `77920fdc...f795d`, Git LF sha256 `8f4a522b0366227ae1ccf4b3c782a17f932b2a148de01f8b62d55d5733a841de`),
 produced by `... score` from the pinned trainer worktree; selftest `pass: true` (witness 1, hash removed 0,
 FBX added 0 + violation, self-confirmed 0 + violation). Every run `exit 0`, no timeout.
 
