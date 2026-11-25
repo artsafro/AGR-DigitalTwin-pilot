@@ -1,0 +1,1371 @@
+{
+  "revision": "08015022acc2a140994eeb188444f68a4388c15c",
+  "code_sha256": {
+    "tools/methods/body/body_lattice.py": "eb5982694e07d280562077d1a04091041afc84461ae524ede20fb7853fd62c49",
+    "schemas/BodyPlan.schema.json": "9a150841de29c5f192822ecac577179e0d7f76a9c3d15d6adc06bd46881c537f",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": "c2eb4f8542c8401e36e4cf8509c836b1cc1045655a0ca74448bcf01022f2fbd1",
+    "jobs/garibaldi22/body-training-1619/hooks/revit_floor_dump.py": "3f4ce8aa53285949cca333be9738a862232093de65a1916f8e728103f32c9a83",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": "246c04ac7da6771eca5f1a13d5e1ac38e06ca8237b77a8a5f5ee5162f1405194"
+  },
+  "native_cropper_sha256": "11b6462575bd67a90ae6178beb3699cc716ec4dac81671712b8d11bef590d72a",
+  "keys_sha256": "e13538180229859286c41275df69e86c130b2e944ddb688e07d5cf0712bae11e",
+  "keys": {
+    "walls": [
+      "Базовая стена"
+    ],
+    "windows": [
+      "Окн_Окн_",
+      "Окн_ББлок_"
+    ],
+    "baskets": [
+      "Корзина для кондиционера"
+    ]
+  },
+  "inputs_sha256": {
+    "STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7"
+  },
+  "rows": [
+    {
+      "fixture": "63A",
+      "iteration": 1,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "baseline": 0,
+      "candidate": 1,
+      "crop": {
+        "exit": 0,
+        "wall_s": 38.708,
+        "log_tail": [
+          "DUMPED objects 9795 tris 1676862",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "FBX import of 'STLB-04_RR_AR.fbx' took 15.1 s",
+          "",
+          "Blender quit"
+        ],
+        "log_sha256": "0aa35efb6e831f014307e2eb53a333766b93e60a57a8b45246dcd46f2b8d6c2c"
+      },
+      "crop_sha256": "d431aee1d401e402e275ff4b0d7d4a0514fc2ff57c7e471f1b953e0cdadd0b97",
+      "triangles": 1676862,
+      "objects": 9795,
+      "classes_default": {
+        "None": 6666,
+        "walls": 3112,
+        "baskets": 17
+      },
+      "classes_candidate": {
+        "None": 5936,
+        "walls": 3112,
+        "windows": 730,
+        "baskets": 17
+      },
+      "baseline_run": {
+        "exit": 0,
+        "wall_s": 2.069,
+        "log_tail": [
+          "{\"contour_vertices\": 126, \"cuts\": 72, \"windows_ref\": 36, \"windows_used\": 36, \"insets\": 0, \"perimeter_m\": 136.571, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.25, 0.27, 0.31, 0.32, 0.33, 0.34, 0.35]} step 3.15 floors 12 head 1.95"
+        ],
+        "log_sha256": "4b16bc19b344770e06f23b787aead1fe12b8b08e0eea01e09fb5a3b94f1656bd",
+        "raw_plan_sha256": "9507b5517dc64c3546e7c36560ef3577dd92daca0f055d7f4c486e6e8060dd12",
+        "aligned_jambs": [],
+        "plan_sha256": "9507b5517dc64c3546e7c36560ef3577dd92daca0f055d7f4c486e6e8060dd12",
+        "plan_counts": {
+          "contour_vertices": 126,
+          "cuts": 72,
+          "windows_ref": 36,
+          "windows_used": 36,
+          "insets": 0,
+          "perimeter_m": 136.571,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.25,
+            0.27,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35
+          ]
+        },
+        "windows": 36,
+        "reveal_pos": 36,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "validation_error": "ring not closed: level 0 breaks at s=44.565 (loop ends, not an opening)"
+      },
+      "candidate_run": {
+        "exit": 0,
+        "wall_s": 2.343,
+        "log_tail": [
+          "{\"contour_vertices\": 126, \"cuts\": 72, \"windows_ref\": 36, \"windows_used\": 36, \"insets\": 0, \"perimeter_m\": 136.571, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.25, 0.27, 0.31, 0.32, 0.33, 0.34, 0.35]} step 3.15 floors 12 head 1.95"
+        ],
+        "log_sha256": "4b16bc19b344770e06f23b787aead1fe12b8b08e0eea01e09fb5a3b94f1656bd",
+        "raw_plan_sha256": "9507b5517dc64c3546e7c36560ef3577dd92daca0f055d7f4c486e6e8060dd12",
+        "aligned_jambs": [
+          {
+            "ring": 0,
+            "window": 10,
+            "endpoint": 1,
+            "from_m": 45.8006,
+            "to_m": 45.80077935112969
+          },
+          {
+            "ring": 0,
+            "window": 20,
+            "endpoint": 1,
+            "from_m": 49.4361,
+            "to_m": 49.43626752816967
+          },
+          {
+            "ring": 0,
+            "window": 20,
+            "endpoint": 2,
+            "from_m": 51.8361,
+            "to_m": 51.836202535623
+          },
+          {
+            "ring": 0,
+            "window": 21,
+            "endpoint": 1,
+            "from_m": 42.1651,
+            "to_m": 42.1652923165524
+          },
+          {
+            "ring": 0,
+            "window": 21,
+            "endpoint": 2,
+            "from_m": 44.5651,
+            "to_m": 44.56522732400573
+          },
+          {
+            "ring": 0,
+            "window": 22,
+            "endpoint": 1,
+            "from_m": 5.7971,
+            "to_m": 5.797148349356662
+          },
+          {
+            "ring": 0,
+            "window": 22,
+            "endpoint": 2,
+            "from_m": 8.1971,
+            "to_m": 8.197199832137814
+          },
+          {
+            "ring": 0,
+            "window": 23,
+            "endpoint": 2,
+            "from_m": 30.7424,
+            "to_m": 30.742412576856996
+          },
+          {
+            "ring": 0,
+            "window": 29,
+            "endpoint": 1,
+            "from_m": 39.6514,
+            "to_m": 39.65150109947315
+          },
+          {
+            "ring": 0,
+            "window": 29,
+            "endpoint": 2,
+            "from_m": 41.0614,
+            "to_m": 41.06144748143242
+          },
+          {
+            "ring": 0,
+            "window": 30,
+            "endpoint": 1,
+            "from_m": 2.8236,
+            "to_m": 2.8235940307635916
+          },
+          {
+            "ring": 0,
+            "window": 31,
+            "endpoint": 1,
+            "from_m": 61.7272,
+            "to_m": 61.72738278207264
+          },
+          {
+            "ring": 0,
+            "window": 32,
+            "endpoint": 1,
+            "from_m": 32.366,
+            "to_m": 32.36601147000322
+          },
+          {
+            "ring": 0,
+            "window": 32,
+            "endpoint": 2,
+            "from_m": 33.776,
+            "to_m": 33.775979203676584
+          },
+          {
+            "ring": 0,
+            "window": 33,
+            "endpoint": 1,
+            "from_m": 58.4596,
+            "to_m": 58.45971413394157
+          }
+        ],
+        "raw_arm_parity": true,
+        "plan_sha256": "4a6237059fbac2aab8194a72ba5ba0d900d73f6c80679f2f31f71589f9e476ee",
+        "plan_counts": {
+          "contour_vertices": 126,
+          "cuts": 72,
+          "windows_ref": 36,
+          "windows_used": 36,
+          "insets": 0,
+          "perimeter_m": 136.571,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.25,
+            0.27,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35
+          ]
+        },
+        "windows": 36,
+        "reveal_pos": 36,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "rings": [
+          {
+            "points": 183,
+            "perimeter_m": 136.571,
+            "closure": {
+              "levels": 3,
+              "closed_levels": 3,
+              "stations": 183,
+              "continuous_stations": 183,
+              "gaps_in_openings": 21
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 1,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "baseline": 0,
+      "candidate": 1,
+      "crop": {
+        "exit": 0,
+        "wall_s": 40.657,
+        "log_tail": [
+          "DUMPED objects 5370 tris 1142968",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "FBX import of 'STLB-04_RR_AR.fbx' took 14.7 s",
+          "",
+          "Blender quit"
+        ],
+        "log_sha256": "99261a34539c051a24016f08a6f7b279bcb405ccde80c043e5d6fca9d23e49c3"
+      },
+      "crop_sha256": "24683089381dbfbc5f4c3a3b30ff869b996820c372627b5f497a5f0ecf9fa590",
+      "triangles": 1142968,
+      "objects": 5370,
+      "classes_default": {
+        "None": 2990,
+        "walls": 2346,
+        "baskets": 34
+      },
+      "classes_candidate": {
+        "None": 2433,
+        "walls": 2346,
+        "windows": 557,
+        "baskets": 34
+      },
+      "baseline_run": {
+        "exit": 0,
+        "wall_s": 2.493,
+        "log_tail": [
+          "{\"contour_vertices\": 173, \"cuts\": 66, \"windows_ref\": 33, \"windows_used\": 33, \"insets\": 0, \"perimeter_m\": 156.278, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.11, 0.25, 0.31, 0.35, 0.5]} step 3.15 floors 6 head 1.97"
+        ],
+        "log_sha256": "ffcff895f5ba654fb2dbe624b63ac4b498d80e3b63e52b58a2cfec9fef801b73",
+        "raw_plan_sha256": "0ae7b2c9e9a9408f5a832481dfbb4631e0a09c3d4fd18be17e28c57096cae265",
+        "aligned_jambs": [],
+        "plan_sha256": "0ae7b2c9e9a9408f5a832481dfbb4631e0a09c3d4fd18be17e28c57096cae265",
+        "plan_counts": {
+          "contour_vertices": 173,
+          "cuts": 66,
+          "windows_ref": 33,
+          "windows_used": 33,
+          "insets": 0,
+          "perimeter_m": 156.278,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.11,
+            0.25,
+            0.31,
+            0.35,
+            0.5
+          ]
+        },
+        "windows": 33,
+        "reveal_pos": 33,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "validation_error": "ring not closed: level 0 breaks at s=17.554 (loop ends, not an opening)"
+      },
+      "candidate_run": {
+        "exit": 0,
+        "wall_s": 2.513,
+        "log_tail": [
+          "{\"contour_vertices\": 173, \"cuts\": 66, \"windows_ref\": 33, \"windows_used\": 33, \"insets\": 0, \"perimeter_m\": 156.278, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.11, 0.25, 0.31, 0.35, 0.5]} step 3.15 floors 6 head 1.97"
+        ],
+        "log_sha256": "ffcff895f5ba654fb2dbe624b63ac4b498d80e3b63e52b58a2cfec9fef801b73",
+        "raw_plan_sha256": "0ae7b2c9e9a9408f5a832481dfbb4631e0a09c3d4fd18be17e28c57096cae265",
+        "aligned_jambs": [
+          {
+            "ring": 0,
+            "window": 12,
+            "endpoint": 2,
+            "from_m": 27.3804,
+            "to_m": 27.380544352048137
+          },
+          {
+            "ring": 0,
+            "window": 15,
+            "endpoint": 2,
+            "from_m": 2.5157,
+            "to_m": 2.5156165615693427
+          },
+          {
+            "ring": 0,
+            "window": 21,
+            "endpoint": 2,
+            "from_m": 17.5541,
+            "to_m": 17.55421107804795
+          },
+          {
+            "ring": 0,
+            "window": 24,
+            "endpoint": 1,
+            "from_m": 7.7455,
+            "to_m": 7.745571402410064
+          },
+          {
+            "ring": 0,
+            "window": 24,
+            "endpoint": 2,
+            "from_m": 9.6555,
+            "to_m": 9.655474672211966
+          },
+          {
+            "ring": 0,
+            "window": 25,
+            "endpoint": 1,
+            "from_m": 18.4672,
+            "to_m": 18.467305743691973
+          },
+          {
+            "ring": 0,
+            "window": 27,
+            "endpoint": 1,
+            "from_m": 28.1935,
+            "to_m": 28.193661598978533
+          }
+        ],
+        "raw_arm_parity": true,
+        "plan_sha256": "cd927ee2cd758879249132964639cc78e96c2a11921f14539ca254e8790b2ec6",
+        "plan_counts": {
+          "contour_vertices": 173,
+          "cuts": 66,
+          "windows_ref": 33,
+          "windows_used": 33,
+          "insets": 0,
+          "perimeter_m": 156.278,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.11,
+            0.25,
+            0.31,
+            0.35,
+            0.5
+          ]
+        },
+        "windows": 33,
+        "reveal_pos": 33,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "rings": [
+          {
+            "points": 232,
+            "perimeter_m": 156.279,
+            "closure": {
+              "levels": 3,
+              "closed_levels": 3,
+              "stations": 232,
+              "continuous_stations": 232,
+              "gaps_in_openings": 21
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "63A",
+      "iteration": 2,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "baseline": 0,
+      "candidate": 1,
+      "crop": {
+        "exit": 0,
+        "wall_s": 35.429,
+        "log_tail": [
+          "DUMPED objects 9795 tris 1676862",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "FBX import of 'STLB-04_RR_AR.fbx' took 12.2 s",
+          "",
+          "Blender quit"
+        ],
+        "log_sha256": "1a8caee84d9a8a3119bd979e69a43a1eca47dde706488656db05fe6c4991d2df"
+      },
+      "crop_sha256": "dd63e9a2f7db8fff5270c61daf435daa26dbc36c8db2dd624f0cf70a07842541",
+      "triangles": 1676862,
+      "objects": 9795,
+      "classes_default": {
+        "walls": 3112,
+        "None": 6666,
+        "baskets": 17
+      },
+      "classes_candidate": {
+        "walls": 3112,
+        "None": 5936,
+        "windows": 730,
+        "baskets": 17
+      },
+      "baseline_run": {
+        "exit": 0,
+        "wall_s": 2.191,
+        "log_tail": [
+          "{\"contour_vertices\": 126, \"cuts\": 72, \"windows_ref\": 36, \"windows_used\": 36, \"insets\": 0, \"perimeter_m\": 136.571, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.25, 0.27, 0.31, 0.32, 0.33, 0.34, 0.35]} step 3.15 floors 12 head 1.95"
+        ],
+        "log_sha256": "4b16bc19b344770e06f23b787aead1fe12b8b08e0eea01e09fb5a3b94f1656bd",
+        "raw_plan_sha256": "11734f234160f0e9860e79d3eb6a43b7009599bc6fbc194600f1a734dc141430",
+        "aligned_jambs": [],
+        "plan_sha256": "11734f234160f0e9860e79d3eb6a43b7009599bc6fbc194600f1a734dc141430",
+        "plan_counts": {
+          "contour_vertices": 126,
+          "cuts": 72,
+          "windows_ref": 36,
+          "windows_used": 36,
+          "insets": 0,
+          "perimeter_m": 136.571,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.25,
+            0.27,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35
+          ]
+        },
+        "windows": 36,
+        "reveal_pos": 36,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "validation_error": "ring not closed: level 0 breaks at s=44.565 (loop ends, not an opening)"
+      },
+      "candidate_run": {
+        "exit": 0,
+        "wall_s": 1.999,
+        "log_tail": [
+          "{\"contour_vertices\": 126, \"cuts\": 72, \"windows_ref\": 36, \"windows_used\": 36, \"insets\": 0, \"perimeter_m\": 136.571, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.25, 0.27, 0.31, 0.32, 0.33, 0.34, 0.35]} step 3.15 floors 12 head 1.95"
+        ],
+        "log_sha256": "4b16bc19b344770e06f23b787aead1fe12b8b08e0eea01e09fb5a3b94f1656bd",
+        "raw_plan_sha256": "11734f234160f0e9860e79d3eb6a43b7009599bc6fbc194600f1a734dc141430",
+        "aligned_jambs": [
+          {
+            "ring": 0,
+            "window": 5,
+            "endpoint": 1,
+            "from_m": 49.4361,
+            "to_m": 49.43626752816967
+          },
+          {
+            "ring": 0,
+            "window": 5,
+            "endpoint": 2,
+            "from_m": 51.8361,
+            "to_m": 51.836202535623
+          },
+          {
+            "ring": 0,
+            "window": 6,
+            "endpoint": 1,
+            "from_m": 42.1651,
+            "to_m": 42.1652923165524
+          },
+          {
+            "ring": 0,
+            "window": 6,
+            "endpoint": 2,
+            "from_m": 44.5651,
+            "to_m": 44.56522732400573
+          },
+          {
+            "ring": 0,
+            "window": 7,
+            "endpoint": 1,
+            "from_m": 5.7971,
+            "to_m": 5.797148349356662
+          },
+          {
+            "ring": 0,
+            "window": 7,
+            "endpoint": 2,
+            "from_m": 8.1971,
+            "to_m": 8.197199832137814
+          },
+          {
+            "ring": 0,
+            "window": 13,
+            "endpoint": 2,
+            "from_m": 30.7424,
+            "to_m": 30.742412576856996
+          },
+          {
+            "ring": 0,
+            "window": 15,
+            "endpoint": 1,
+            "from_m": 39.6514,
+            "to_m": 39.65150109947315
+          },
+          {
+            "ring": 0,
+            "window": 15,
+            "endpoint": 2,
+            "from_m": 41.0614,
+            "to_m": 41.06144748143242
+          },
+          {
+            "ring": 0,
+            "window": 16,
+            "endpoint": 1,
+            "from_m": 2.8236,
+            "to_m": 2.8235940307635916
+          },
+          {
+            "ring": 0,
+            "window": 17,
+            "endpoint": 1,
+            "from_m": 61.7272,
+            "to_m": 61.72738278207264
+          },
+          {
+            "ring": 0,
+            "window": 18,
+            "endpoint": 1,
+            "from_m": 32.366,
+            "to_m": 32.36601147000322
+          },
+          {
+            "ring": 0,
+            "window": 18,
+            "endpoint": 2,
+            "from_m": 33.776,
+            "to_m": 33.775979203676584
+          },
+          {
+            "ring": 0,
+            "window": 19,
+            "endpoint": 1,
+            "from_m": 58.4596,
+            "to_m": 58.45971413394157
+          },
+          {
+            "ring": 0,
+            "window": 27,
+            "endpoint": 1,
+            "from_m": 45.8006,
+            "to_m": 45.80077935112969
+          }
+        ],
+        "raw_arm_parity": true,
+        "plan_sha256": "82080b49294ca98b17d648da020f658a578bc797ba689561b931e140382f45a6",
+        "plan_counts": {
+          "contour_vertices": 126,
+          "cuts": 72,
+          "windows_ref": 36,
+          "windows_used": 36,
+          "insets": 0,
+          "perimeter_m": 136.571,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.25,
+            0.27,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35
+          ]
+        },
+        "windows": 36,
+        "reveal_pos": 36,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "rings": [
+          {
+            "points": 183,
+            "perimeter_m": 136.571,
+            "closure": {
+              "levels": 3,
+              "closed_levels": 3,
+              "stations": 183,
+              "continuous_stations": 183,
+              "gaps_in_openings": 21
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 2,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "baseline": 0,
+      "candidate": 1,
+      "crop": {
+        "exit": 0,
+        "wall_s": 35.889,
+        "log_tail": [
+          "DUMPED objects 5370 tris 1142968",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "FBX import of 'STLB-04_RR_AR.fbx' took 19.0 s",
+          "",
+          "Blender quit"
+        ],
+        "log_sha256": "ae49b2f671a1cbaa5f241aa2daaf954ea128018008880acefa394ed2fcc851e5"
+      },
+      "crop_sha256": "b929fdd54ebc86a1d4da8b643069336c4802c262a9552a5e37ccd6e04eca1cd2",
+      "triangles": 1142968,
+      "objects": 5370,
+      "classes_default": {
+        "None": 2990,
+        "walls": 2346,
+        "baskets": 34
+      },
+      "classes_candidate": {
+        "None": 2433,
+        "windows": 557,
+        "walls": 2346,
+        "baskets": 34
+      },
+      "baseline_run": {
+        "exit": 0,
+        "wall_s": 1.986,
+        "log_tail": [
+          "{\"contour_vertices\": 173, \"cuts\": 66, \"windows_ref\": 33, \"windows_used\": 33, \"insets\": 0, \"perimeter_m\": 156.278, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.11, 0.25, 0.31, 0.35, 0.5]} step 3.15 floors 6 head 1.97"
+        ],
+        "log_sha256": "ffcff895f5ba654fb2dbe624b63ac4b498d80e3b63e52b58a2cfec9fef801b73",
+        "raw_plan_sha256": "dad269ada00e5f051d847c4507626508d017a04147f6ec891510b7f4d835722c",
+        "aligned_jambs": [],
+        "plan_sha256": "dad269ada00e5f051d847c4507626508d017a04147f6ec891510b7f4d835722c",
+        "plan_counts": {
+          "contour_vertices": 173,
+          "cuts": 66,
+          "windows_ref": 33,
+          "windows_used": 33,
+          "insets": 0,
+          "perimeter_m": 156.278,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.11,
+            0.25,
+            0.31,
+            0.35,
+            0.5
+          ]
+        },
+        "windows": 33,
+        "reveal_pos": 33,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "validation_error": "ring not closed: level 0 breaks at s=17.554 (loop ends, not an opening)"
+      },
+      "candidate_run": {
+        "exit": 0,
+        "wall_s": 2.087,
+        "log_tail": [
+          "{\"contour_vertices\": 173, \"cuts\": 66, \"windows_ref\": 33, \"windows_used\": 33, \"insets\": 0, \"perimeter_m\": 156.278, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.11, 0.25, 0.31, 0.35, 0.5]} step 3.15 floors 6 head 1.97"
+        ],
+        "log_sha256": "ffcff895f5ba654fb2dbe624b63ac4b498d80e3b63e52b58a2cfec9fef801b73",
+        "raw_plan_sha256": "dad269ada00e5f051d847c4507626508d017a04147f6ec891510b7f4d835722c",
+        "aligned_jambs": [
+          {
+            "ring": 0,
+            "window": 15,
+            "endpoint": 2,
+            "from_m": 17.5541,
+            "to_m": 17.55421107804795
+          },
+          {
+            "ring": 0,
+            "window": 20,
+            "endpoint": 1,
+            "from_m": 18.4672,
+            "to_m": 18.467305743691973
+          },
+          {
+            "ring": 0,
+            "window": 22,
+            "endpoint": 1,
+            "from_m": 7.7455,
+            "to_m": 7.745571402410064
+          },
+          {
+            "ring": 0,
+            "window": 22,
+            "endpoint": 2,
+            "from_m": 9.6555,
+            "to_m": 9.655474672211966
+          },
+          {
+            "ring": 0,
+            "window": 29,
+            "endpoint": 1,
+            "from_m": 28.1935,
+            "to_m": 28.193661598978533
+          },
+          {
+            "ring": 0,
+            "window": 31,
+            "endpoint": 2,
+            "from_m": 27.3804,
+            "to_m": 27.380544352048137
+          },
+          {
+            "ring": 0,
+            "window": 32,
+            "endpoint": 2,
+            "from_m": 2.5157,
+            "to_m": 2.5156165615693427
+          }
+        ],
+        "raw_arm_parity": true,
+        "plan_sha256": "93227992564bb5de969541ef49f08dea87f1cba65a5a1c426b694acf76cd4f17",
+        "plan_counts": {
+          "contour_vertices": 173,
+          "cuts": 66,
+          "windows_ref": 33,
+          "windows_used": 33,
+          "insets": 0,
+          "perimeter_m": 156.278,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.11,
+            0.25,
+            0.31,
+            0.35,
+            0.5
+          ]
+        },
+        "windows": 33,
+        "reveal_pos": 33,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "rings": [
+          {
+            "points": 232,
+            "perimeter_m": 156.279,
+            "closure": {
+              "levels": 3,
+              "closed_levels": 3,
+              "stations": 232,
+              "continuous_stations": 232,
+              "gaps_in_openings": 21
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "63A",
+      "iteration": 3,
+      "xy_m": "79.0,61.8,121.6,97.6",
+      "baseline": 0,
+      "candidate": 1,
+      "crop": {
+        "exit": 0,
+        "wall_s": 36.478,
+        "log_tail": [
+          "DUMPED objects 9795 tris 1676862",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "FBX import of 'STLB-04_RR_AR.fbx' took 10.2 s",
+          "",
+          "Blender quit"
+        ],
+        "log_sha256": "9f50a2027eb2a74bb08c0ad8b9a8c01d28fc5a9ac2668f127b34a7b5c0880e02"
+      },
+      "crop_sha256": "4e99e7ec2c958241040caf6590f09e96b4d7cb0e26690d9bd5b72a2bde09d5be",
+      "triangles": 1676862,
+      "objects": 9795,
+      "classes_default": {
+        "walls": 3112,
+        "None": 6666,
+        "baskets": 17
+      },
+      "classes_candidate": {
+        "walls": 3112,
+        "None": 5936,
+        "windows": 730,
+        "baskets": 17
+      },
+      "baseline_run": {
+        "exit": 0,
+        "wall_s": 2.307,
+        "log_tail": [
+          "{\"contour_vertices\": 126, \"cuts\": 72, \"windows_ref\": 36, \"windows_used\": 36, \"insets\": 0, \"perimeter_m\": 136.571, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.25, 0.27, 0.31, 0.32, 0.33, 0.34, 0.35]} step 3.15 floors 12 head 1.95"
+        ],
+        "log_sha256": "4b16bc19b344770e06f23b787aead1fe12b8b08e0eea01e09fb5a3b94f1656bd",
+        "raw_plan_sha256": "ed18e32bb472987b6e36c3858536554ccd5ef6987b2f6bd8e0402e4bfd4751e5",
+        "aligned_jambs": [],
+        "plan_sha256": "ed18e32bb472987b6e36c3858536554ccd5ef6987b2f6bd8e0402e4bfd4751e5",
+        "plan_counts": {
+          "contour_vertices": 126,
+          "cuts": 72,
+          "windows_ref": 36,
+          "windows_used": 36,
+          "insets": 0,
+          "perimeter_m": 136.571,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.25,
+            0.27,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35
+          ]
+        },
+        "windows": 36,
+        "reveal_pos": 36,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "validation_error": "ring not closed: level 0 breaks at s=44.565 (loop ends, not an opening)"
+      },
+      "candidate_run": {
+        "exit": 0,
+        "wall_s": 2.249,
+        "log_tail": [
+          "{\"contour_vertices\": 126, \"cuts\": 72, \"windows_ref\": 36, \"windows_used\": 36, \"insets\": 0, \"perimeter_m\": 136.571, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.25, 0.27, 0.31, 0.32, 0.33, 0.34, 0.35]} step 3.15 floors 12 head 1.95"
+        ],
+        "log_sha256": "4b16bc19b344770e06f23b787aead1fe12b8b08e0eea01e09fb5a3b94f1656bd",
+        "raw_plan_sha256": "ed18e32bb472987b6e36c3858536554ccd5ef6987b2f6bd8e0402e4bfd4751e5",
+        "aligned_jambs": [
+          {
+            "ring": 0,
+            "window": 1,
+            "endpoint": 1,
+            "from_m": 39.6514,
+            "to_m": 39.65150109947315
+          },
+          {
+            "ring": 0,
+            "window": 1,
+            "endpoint": 2,
+            "from_m": 41.0614,
+            "to_m": 41.06144748143242
+          },
+          {
+            "ring": 0,
+            "window": 2,
+            "endpoint": 1,
+            "from_m": 2.8236,
+            "to_m": 2.8235940307635916
+          },
+          {
+            "ring": 0,
+            "window": 3,
+            "endpoint": 1,
+            "from_m": 32.366,
+            "to_m": 32.36601147000322
+          },
+          {
+            "ring": 0,
+            "window": 3,
+            "endpoint": 2,
+            "from_m": 33.776,
+            "to_m": 33.775979203676584
+          },
+          {
+            "ring": 0,
+            "window": 23,
+            "endpoint": 1,
+            "from_m": 49.4361,
+            "to_m": 49.43626752816967
+          },
+          {
+            "ring": 0,
+            "window": 23,
+            "endpoint": 2,
+            "from_m": 51.8361,
+            "to_m": 51.836202535623
+          },
+          {
+            "ring": 0,
+            "window": 24,
+            "endpoint": 1,
+            "from_m": 5.7971,
+            "to_m": 5.797148349356662
+          },
+          {
+            "ring": 0,
+            "window": 24,
+            "endpoint": 2,
+            "from_m": 8.1971,
+            "to_m": 8.197199832137814
+          },
+          {
+            "ring": 0,
+            "window": 25,
+            "endpoint": 2,
+            "from_m": 30.7424,
+            "to_m": 30.742412576856996
+          },
+          {
+            "ring": 0,
+            "window": 30,
+            "endpoint": 1,
+            "from_m": 45.8006,
+            "to_m": 45.80077935112969
+          },
+          {
+            "ring": 0,
+            "window": 31,
+            "endpoint": 1,
+            "from_m": 61.7272,
+            "to_m": 61.72738278207264
+          },
+          {
+            "ring": 0,
+            "window": 32,
+            "endpoint": 1,
+            "from_m": 58.4596,
+            "to_m": 58.45971413394157
+          },
+          {
+            "ring": 0,
+            "window": 35,
+            "endpoint": 1,
+            "from_m": 42.1651,
+            "to_m": 42.1652923165524
+          },
+          {
+            "ring": 0,
+            "window": 35,
+            "endpoint": 2,
+            "from_m": 44.5651,
+            "to_m": 44.56522732400573
+          }
+        ],
+        "raw_arm_parity": true,
+        "plan_sha256": "2f4b3fb44f735ccd59d68c10c3adcfd0ebb37d0bfbb972b1ce1d0ff423853004",
+        "plan_counts": {
+          "contour_vertices": 126,
+          "cuts": 72,
+          "windows_ref": 36,
+          "windows_used": 36,
+          "insets": 0,
+          "perimeter_m": 136.571,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.25,
+            0.27,
+            0.31,
+            0.32,
+            0.33,
+            0.34,
+            0.35
+          ]
+        },
+        "windows": 36,
+        "reveal_pos": 36,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "rings": [
+          {
+            "points": 183,
+            "perimeter_m": 136.571,
+            "closure": {
+              "levels": 3,
+              "closed_levels": 3,
+              "stations": 183,
+              "continuous_stations": 183,
+              "gaps_in_openings": 21
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fixture": "63B",
+      "iteration": 3,
+      "xy_m": "53.3,-1.4,98.4,36.0",
+      "baseline": 0,
+      "candidate": 1,
+      "crop": {
+        "exit": 0,
+        "wall_s": 28.808,
+        "log_tail": [
+          "DUMPED objects 5370 tris 1142968",
+          "Blender 5.1.2 (hash ec6e62d40fa9 built 2026-05-19 01:37:34)",
+          "FBX import of 'STLB-04_RR_AR.fbx' took 13.9 s",
+          "",
+          "Blender quit"
+        ],
+        "log_sha256": "aac5aaf19f60971b75ae03088ddd1a7cb39a928a73f0f07ed0b914caccace328"
+      },
+      "crop_sha256": "b52e5cdfd45ff6c18b29a500a518b38fe7336db42a2fcf5630c5f3ad5ed4a28e",
+      "triangles": 1142968,
+      "objects": 5370,
+      "classes_default": {
+        "walls": 2346,
+        "None": 2990,
+        "baskets": 34
+      },
+      "classes_candidate": {
+        "walls": 2346,
+        "None": 2433,
+        "windows": 557,
+        "baskets": 34
+      },
+      "baseline_run": {
+        "exit": 0,
+        "wall_s": 1.912,
+        "log_tail": [
+          "{\"contour_vertices\": 173, \"cuts\": 66, \"windows_ref\": 33, \"windows_used\": 33, \"insets\": 0, \"perimeter_m\": 156.278, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.11, 0.25, 0.31, 0.35, 0.5]} step 3.15 floors 6 head 1.97"
+        ],
+        "log_sha256": "ffcff895f5ba654fb2dbe624b63ac4b498d80e3b63e52b58a2cfec9fef801b73",
+        "raw_plan_sha256": "307ae5ae484caf7d19ab8ef8f62cfdff716bfda6384ad3642002591a3a1a7d0e",
+        "aligned_jambs": [],
+        "plan_sha256": "307ae5ae484caf7d19ab8ef8f62cfdff716bfda6384ad3642002591a3a1a7d0e",
+        "plan_counts": {
+          "contour_vertices": 173,
+          "cuts": 66,
+          "windows_ref": 33,
+          "windows_used": 33,
+          "insets": 0,
+          "perimeter_m": 156.278,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.11,
+            0.25,
+            0.31,
+            0.35,
+            0.5
+          ]
+        },
+        "windows": 33,
+        "reveal_pos": 33,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "validation_error": "ring not closed: level 0 breaks at s=17.554 (loop ends, not an opening)"
+      },
+      "candidate_run": {
+        "exit": 0,
+        "wall_s": 1.861,
+        "log_tail": [
+          "{\"contour_vertices\": 173, \"cuts\": 66, \"windows_ref\": 33, \"windows_used\": 33, \"insets\": 0, \"perimeter_m\": 156.278, \"objects_clipped\": 0, \"deferred\": 0, \"reveal_m\": [0.11, 0.25, 0.31, 0.35, 0.5]} step 3.15 floors 6 head 1.97"
+        ],
+        "log_sha256": "ffcff895f5ba654fb2dbe624b63ac4b498d80e3b63e52b58a2cfec9fef801b73",
+        "raw_plan_sha256": "307ae5ae484caf7d19ab8ef8f62cfdff716bfda6384ad3642002591a3a1a7d0e",
+        "aligned_jambs": [
+          {
+            "ring": 0,
+            "window": 5,
+            "endpoint": 2,
+            "from_m": 27.3804,
+            "to_m": 27.380544352048137
+          },
+          {
+            "ring": 0,
+            "window": 6,
+            "endpoint": 2,
+            "from_m": 2.5157,
+            "to_m": 2.5156165615693427
+          },
+          {
+            "ring": 0,
+            "window": 17,
+            "endpoint": 2,
+            "from_m": 17.5541,
+            "to_m": 17.55421107804795
+          },
+          {
+            "ring": 0,
+            "window": 24,
+            "endpoint": 1,
+            "from_m": 7.7455,
+            "to_m": 7.745571402410064
+          },
+          {
+            "ring": 0,
+            "window": 24,
+            "endpoint": 2,
+            "from_m": 9.6555,
+            "to_m": 9.655474672211966
+          },
+          {
+            "ring": 0,
+            "window": 28,
+            "endpoint": 1,
+            "from_m": 28.1935,
+            "to_m": 28.193661598978533
+          },
+          {
+            "ring": 0,
+            "window": 32,
+            "endpoint": 1,
+            "from_m": 18.4672,
+            "to_m": 18.467305743691973
+          }
+        ],
+        "raw_arm_parity": true,
+        "plan_sha256": "9bf3c171e358bf110ca9e6e5ea720f481103cd2f6fa022c266ee0203e3730382",
+        "plan_counts": {
+          "contour_vertices": 173,
+          "cuts": 66,
+          "windows_ref": 33,
+          "windows_used": 33,
+          "insets": 0,
+          "perimeter_m": 156.278,
+          "objects_clipped": 0,
+          "deferred": 0,
+          "reveal_m": [
+            0.11,
+            0.25,
+            0.31,
+            0.35,
+            0.5
+          ]
+        },
+        "windows": 33,
+        "reveal_pos": 33,
+        "dropped": 0,
+        "dropped_reasons": [],
+        "rings": [
+          {
+            "points": 232,
+            "perimeter_m": 156.279,
+            "closure": {
+              "levels": 3,
+              "closed_levels": 3,
+              "stations": 232,
+              "continuous_stations": 232,
+              "gaps_in_openings": 21
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.3",
+  "blender": {
+    "exit": 0,
+    "wall_s": 0.18,
+    "log_tail": [
+      "\tbuild platform: Windows",
+      "\tbuild type: Release",
+      "\tbuild c flags:  -Wall -Werror=implicit-function-declaration -Werror=return-type -Wno-tautological-compare -Wno-unknown-pragmas -Wno-char-subscripts -Wstrict-prototypes -Wmissing-prototypes -Wunused-parameter -Wundef -Wundef-prefix -Werror=unguarded-availability-new /W3 -Wno-c++98-compat -Wno-old-style-cast -Wno-unsafe-buffer-usage -Wno-missing-prototypes -Wno-sign-conversion -Wno-missing-field-initializers -Wno-extra-semi -Wno-language-extension-token -Wno-implicit-float-conversion -Wno-c++98-compat-pedantic -Wno-implicit-int-float-conversion -Wno-double-promotion -Wno-pre-c++17-compat -Wno-shorten-64-to-32 -Wno-c++98-compat-local-type-template-args -Wno-reserved-identifier -Wno-cast-align -Wno-documentation -Wno-disabled-macro-expansion -Wno-extra-semi-stmt -Wno-zero-as-null-pointer-constant -Wno-float-conversion -Wno-reserved-macro-identifier -Wno-cast-function-type-strict -Wno-float-equal -Wno-implicit-int-conversion -Wno-shadow -Wno-shadow-field-in-constructor -Wno-cast-qual -Wno-pre-c++14-compat -Wno-global-constructors -Wno-switch-enum -Wno-exit-time-destructors -Wno-ctad-maybe-unsupported -Wno-undefined-func-template -Wno-c++98-compat-extra-semi -Wno-cast-function-type -Wno-nullability-extension -Wno-shadow-field -Wno-conditional-uninitialized -Wno-unused-parameter -Wno-suggest-destructor-override -Wno-shadow-uncaptured-local -Wno-unused-macros -Wno-covered-switch-default -Wno-signed-enum-bitfield -Wno-declaration-after-statement -Wno-implicit-fallthrough -Wno-non-virtual-dtor -Wno-nested-anon-types -Wno-gnu-zero-variadic-macro-arguments -Wno-unreachable-code-break -Wno-inconsistent-missing-destructor-override -Wno-format-pedantic -Wno-nonportable-system-include-path -Wno-undef -Wno-ignored-qualifiers -Wno-used-but-marked-unused -Wno-header-hygiene -Wno-char-subscripts -Wno-unreachable-code-return -Wno-unused-template -Wno-gnu-anonymous-struct -Wno-deprecated-copy-with-user-provided-dtor -Wno-inconsistent-missing-override -Wno-unreachable-code -Wno-deprecated-dynamic-exception-spec -Wno-bad-function-cast -Wno-microsoft-enum-value -Wno-deprecated-copy-with-user-provided-copy -Wno-zero-length-array -Wno-unused-function -Wno-pedantic -Wno-deprecated-copy-with-dtor -Wno-documentation-unknown-command -Wno-undefined-reinterpret-cast -Wno-format-nonliteral -Wno-comma -Wno-documentation-deprecated-sync -Wno-shift-sign-overflow -Wno-pre-c++17-compat-pedantic -Wno-c++98-compat-unnamed-type-template-args -Wno-sign-compare -Wno-format -Wno-c++98-compat-bind-to-temporary-copy -Wno-enum-enum-conversion -Wno-anon-enum-enum-conversion -Wno-range-loop-bind-reference -Wno-enum-float-conversion -Wno-keyword-macro -Wno-deprecated-copy -Wno-unused-member-function -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-documentation-html -Wno-gnu-redeclared-enum -Wno-deprecated-declarations -Wno-overloaded-virtual -Wno-c++98-c++11-compat-binary-literal -Wno-deprecated-redundant-constexpr-static-def -Wno-missing-braces -Wno-c99-extensions -Wno-strict-prototypes -Wno-unreachable-code-loop-increment -Wno-gnu-case-range -Wno-duplicate-enum -Wno-null-pointer-subtraction -Wno-deprecated-literal-operator -Wno-newline-eof -Wno-microsoft-cast -Wno-date-time -Wno-delete-non-abstract-non-virtual-dtor -Wno-unused-private-field -Wno-flexible-array-extensions -Wno-string-conversion -Wno-final-dtor-non-final-class -Wno-microsoft-unqualified-friend -Wno-invalid-noreturn -Wno-invalid-utf8 -Wno-four-char-constants -Wno-parentheses -Wno-pessimizing-move -Wno-deprecated-non-prototype -Wno-bitfield-enum-conversion -Wno-unused-lambda-capture -Wno-shadow-field-in-constructor-modified -Wno-switch-default -Wno-nan-infinity-disabled -Wno-pre-c11-compat /DWIN32 /D_WINDOWS  /MP /nologo /J /Gy /Gd /showFilenames -Wno-unused-command-line-argument -Wno-microsoft-enum-forward-reference /clang:-funsigned-char /clang:-fno-strict-aliasing /clang:-ffp-contract=off -march=x86-64-v2 ",
+      "\tbuild c++ flags:  -Wall -Wno-tautological-compare -Wno-unknown-pragmas -Wno-char-subscripts -Wno-overloaded-virtual -Wno-sign-compare -Wno-invalid-offsetof -Wno-suggest-override -Wundef -Wundef-prefix -Wunused-parameter -Wmismatched-tags -Werror=unguarded-availability-new /W3 -Wno-c++98-compat -Wno-old-style-cast -Wno-unsafe-buffer-usage -Wno-missing-prototypes -Wno-sign-conversion -Wno-missing-field-initializers -Wno-extra-semi -Wno-language-extension-token -Wno-implicit-float-conversion -Wno-c++98-compat-pedantic -Wno-implicit-int-float-conversion -Wno-double-promotion -Wno-pre-c++17-compat -Wno-shorten-64-to-32 -Wno-c++98-compat-local-type-template-args -Wno-reserved-identifier -Wno-cast-align -Wno-documentation -Wno-disabled-macro-expansion -Wno-extra-semi-stmt -Wno-zero-as-null-pointer-constant -Wno-float-conversion -Wno-reserved-macro-identifier -Wno-cast-function-type-strict -Wno-float-equal -Wno-implicit-int-conversion -Wno-shadow -Wno-shadow-field-in-constructor -Wno-cast-qual -Wno-pre-c++14-compat -Wno-global-constructors -Wno-switch-enum -Wno-exit-time-destructors -Wno-ctad-maybe-unsupported -Wno-undefined-func-template -Wno-c++98-compat-extra-semi -Wno-cast-function-type -Wno-nullability-extension -Wno-shadow-field -Wno-conditional-uninitialized -Wno-unused-parameter -Wno-suggest-destructor-override -Wno-shadow-uncaptured-local -Wno-unused-macros -Wno-covered-switch-default -Wno-signed-enum-bitfield -Wno-declaration-after-statement -Wno-implicit-fallthrough -Wno-non-virtual-dtor -Wno-nested-anon-types -Wno-gnu-zero-variadic-macro-arguments -Wno-unreachable-code-break -Wno-inconsistent-missing-destructor-override -Wno-format-pedantic -Wno-nonportable-system-include-path -Wno-undef -Wno-ignored-qualifiers -Wno-used-but-marked-unused -Wno-header-hygiene -Wno-char-subscripts -Wno-unreachable-code-return -Wno-unused-template -Wno-gnu-anonymous-struct -Wno-deprecated-copy-with-user-provided-dtor -Wno-inconsistent-missing-override -Wno-unreachable-code -Wno-deprecated-dynamic-exception-spec -Wno-bad-function-cast -Wno-microsoft-enum-value -Wno-deprecated-copy-with-user-provided-copy -Wno-zero-length-array -Wno-unused-function -Wno-pedantic -Wno-deprecated-copy-with-dtor -Wno-documentation-unknown-command -Wno-undefined-reinterpret-cast -Wno-format-nonliteral -Wno-comma -Wno-documentation-deprecated-sync -Wno-shift-sign-overflow -Wno-pre-c++17-compat-pedantic -Wno-c++98-compat-unnamed-type-template-args -Wno-sign-compare -Wno-format -Wno-c++98-compat-bind-to-temporary-copy -Wno-enum-enum-conversion -Wno-anon-enum-enum-conversion -Wno-range-loop-bind-reference -Wno-enum-float-conversion -Wno-keyword-macro -Wno-deprecated-copy -Wno-unused-member-function -Wno-missing-noreturn -Wno-missing-variable-declarations -Wno-documentation-html -Wno-gnu-redeclared-enum -Wno-deprecated-declarations -Wno-overloaded-virtual -Wno-c++98-c++11-compat-binary-literal -Wno-deprecated-redundant-constexpr-static-def -Wno-missing-braces -Wno-c99-extensions -Wno-strict-prototypes -Wno-unreachable-code-loop-increment -Wno-gnu-case-range -Wno-duplicate-enum -Wno-null-pointer-subtraction -Wno-deprecated-literal-operator -Wno-newline-eof -Wno-microsoft-cast -Wno-date-time -Wno-delete-non-abstract-non-virtual-dtor -Wno-unused-private-field -Wno-flexible-array-extensions -Wno-string-conversion -Wno-final-dtor-non-final-class -Wno-microsoft-unqualified-friend -Wno-invalid-noreturn -Wno-invalid-utf8 -Wno-four-char-constants -Wno-parentheses -Wno-pessimizing-move -Wno-deprecated-non-prototype -Wno-bitfield-enum-conversion -Wno-unused-lambda-capture -Wno-shadow-field-in-constructor-modified -Wno-switch-default -Wno-nan-infinity-disabled -Wno-pre-c11-compat /DWIN32 /D_WINDOWS   /EHsc  /Gy /MP /nologo /J /Gd /showFilenames /EHsc -Wno-unused-command-line-argument -Wno-microsoft-enum-forward-reference /clang:-funsigned-char /clang:-fno-strict-aliasing /clang:-ffp-contract=off -march=x86-64-v2 ",
+      "\tbuild link flags: /MACHINE:X64  /SUBSYSTEM:CONSOLE /STACK:2097152 /ignore:4049 /ignore:4217 /ignore:4221",
+      "\tbuild system: CMake"
+    ],
+    "log_sha256": "a6c389381135b07e03380275f7b990251bb94e856a17700eff340bec06af3537"
+  },
+  "blender_sha256": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+  "synthetic_empty": {
+    "exit": 1,
+    "wall_s": 0.633,
+    "log_tail": [
+      "no window objects: check --keys"
+    ],
+    "log_sha256": "ffc753e77a3fe2e6b699dd89e2207b9d4e7cb32c5d927888785a7bf4c62a3730",
+    "crop_sha256": "ec1e48b6a3209ad0339b1011a588bb5f8811a7381da7aef8407daaa068d0aaa3",
+    "emitted": false
+  },
+  "first_pair_wall_s": 89.705,
+  "source_parity": true,
+  "status": "finished",
+  "series_wall_s": 244.433,
+  "controls": {
+    "synthetic": {
+      "near": {
+        "changes": [
+          {
+            "ring": 0,
+            "window": 0,
+            "endpoint": 2,
+            "from_m": 3.99985,
+            "to_m": 4.0
+          }
+        ],
+        "before": {
+          "error": "ring not closed: level 0 breaks at s=4.000 (loop ends, not an opening)"
+        },
+        "after": {
+          "closure": [
+            {
+              "points": 5,
+              "perimeter_m": 16.0,
+              "closure": {
+                "levels": 4,
+                "closed_levels": 4,
+                "stations": 5,
+                "continuous_stations": 5,
+                "gaps_in_openings": 0
+              }
+            }
+          ]
+        }
+      },
+      "far": {
+        "changes": [],
+        "before": {
+          "closure": [
+            {
+              "points": 6,
+              "perimeter_m": 16.0,
+              "closure": {
+                "levels": 4,
+                "closed_levels": 4,
+                "stations": 6,
+                "continuous_stations": 6,
+                "gaps_in_openings": 0
+              }
+            }
+          ]
+        },
+        "after": {
+          "closure": [
+            {
+              "points": 6,
+              "perimeter_m": 16.0,
+              "closure": {
+                "levels": 4,
+                "closed_levels": 4,
+                "stations": 6,
+                "continuous_stations": 6,
+                "gaps_in_openings": 0
+              }
+            }
+          ]
+        }
+      },
+      "overlap": {
+        "changes": [
+          {
+            "ring": 0,
+            "window": 0,
+            "endpoint": 2,
+            "from_m": 3.99985,
+            "to_m": 4.0
+          },
+          {
+            "ring": 0,
+            "window": 1,
+            "endpoint": 2,
+            "from_m": 3.99985,
+            "to_m": 4.0
+          }
+        ],
+        "before": {
+          "error": "windows (0, 2, 3.99985, 0, 1, 0.2) and [0, 2, 3.99985, 0, 1, 0.2] overlap"
+        },
+        "after": {
+          "error": "windows (0, 2, 4.0, 0, 1, 0.2) and [0, 2, 4.0, 0, 1, 0.2] overlap"
+        }
+      }
+    },
+    "g22": {
+      "native": {
+        "changes": [],
+        "equal": true,
+        "before": {
+          "closure": [
+            {
+              "points": 143,
+              "perimeter_m": 230.621,
+              "closure": {
+                "levels": 3,
+                "closed_levels": 3,
+                "stations": 143,
+                "continuous_stations": 143,
+                "gaps_in_openings": 4
+              }
+            }
+          ]
+        },
+        "after": {
+          "closure": [
+            {
+              "points": 143,
+              "perimeter_m": 230.621,
+              "closure": {
+                "levels": 3,
+                "closed_levels": 3,
+                "stations": 143,
+                "continuous_stations": 143,
+                "gaps_in_openings": 4
+              }
+            }
+          ]
+        }
+      },
+      "injected": {
+        "changes": [
+          {
+            "ring": 0,
+            "window": 45,
+            "endpoint": 2,
+            "from_m": 0.7020404300117162,
+            "to_m": 0.7021904300117162
+          }
+        ],
+        "before": {
+          "error": "ring not closed: level 0 breaks at s=0.702 (loop ends, not an opening)"
+        },
+        "after": {
+          "closure": [
+            {
+              "points": 144,
+              "perimeter_m": 230.621,
+              "closure": {
+                "levels": 3,
+                "closed_levels": 3,
+                "stations": 144,
+                "continuous_stations": 144,
+                "gaps_in_openings": 4
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "g22_sha256": "6a6599168dddfcc7c4af79f0439ccdde609e463c373ed62a908b9224a4a833f9",
+  "original_source_parity": true,
+  "replay_base": "e5a275c8bad74e9f91f875c098477d3a6530b984",
+  "candidate_sha256": "51fac9c597732a26a853a7ea12124b212db61a35ac98e6c9a0b7fa36e4100d5c"
+}

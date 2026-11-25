@@ -9,3 +9,18 @@ Use #89 pinned `e5a275c8bad74e9f91f875c098477d3a6530b984` harness, code at `0801
 Three fresh pairs per tower, one confirmation series, zero additional candidates, median and range of paired gain per tower. Keep threshold: baseline 0/3 and candidate 3/3 both towers, guard/parity satisfied, no new unexplained defects. Deterministic refusal refutes the handoff hypothesis; missing required measurements leave confirmation inconclusive. Even a sub-step pass does not establish artifact passage/architectural fidelity, or warrant a production change without another-site control and review. Stop at min(480 s, 5 × first 63A/63B pair); crop cap 60 s, adapter cap 30 s. No edits to production paths, packages, keys, gates, tolerance or other cards. Fresh headless import of a staged FBX copy in metres; no scene acceptance requested for this diagnostic.
 
 Replay: `uv run --frozen python docs/research/trainer-revit-jamb-r90/replay.py tmp/r90-fresh` (new output directory; conditional time budget above). Replay limited to accessible pinned source, G22 reference, tower map and installed Blender. Receipt records exact variant and pre/post source hashes.
+
+## Result — confirmed for BodyPlan only; no production KEEP
+
+| Tower | Baseline | Aligned | Paired gain median (range) | Changed jambs per run | Max shift, mm |
+| --- | --- | --- | --- | --- | --- |
+| 63A | 0/3 | 3/3 | 1 (1–1) | [15, 15, 15] | 0.1923 |
+| 63B | 0/3 | 3/3 | 1 (1–1) | [7, 7, 7] | 0.1616 |
+
+Six fresh native crops and six independently executed adapter pairs; paired unmodified plans were byte-identical. Independent field comparison of all six pairs verified no changes outside aligned jambs/cuts. Source FBX, staged copy, map and keys rechecked. The unchanged schema and builder accepted all aligned plans, with ring/vertical continuity recorded in the receipt. Status `finished`; first pair 89.705 s, series 244.433 s. Synthetic near witness RED→GREEN; far control unchanged and passed; overlapping opening remained refused. G22 original passed in both arms (zero changes, trigger `not_exercised`); injected G22 copy changed exactly one endpoint by 0.15 mm and passed the unchanged builder. No Artem-rejected model was rescored. Fresh-agent `artifact`, opening fidelity against the accepted tower plans, visual QA, native FBX export and other-site native trigger are **not measured**. This is not a delivery or a production change.
+
+Candidate SHA-256 `51fac9c597732a26a853a7ea12124b212db61a35ac98e6c9a0b7fa36e4100d5c`; receipt [`trainer-revit-jamb-r90/receipt.json`](trainer-revit-jamb-r90/receipt.json), SHA-256 `78cdf3426a5df73d313fca76b85159072974709aea63d094b2bc6157b67f6266`. Replay limited as above. Raw arm outputs are in ignored worktree scratch; the pinned inputs and replay recreate them.
+
+Affected tests: `uv run --frozen pytest -q tests/test_body_lattice_1736.py tests/test_body_training_1619.py tests/test_body_training_1619_stage2.py` — 89 passed. `uv run --frozen python docs/research/trainer-revit-jamb-r90/replay.py --regression` — expected RED before variant, GREEN after. `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 559 passed, `repo_guards: GREEN` (measured code unchanged by receipt-only commit).
+
+Full suite: deferred to merge batch (rule 68).
