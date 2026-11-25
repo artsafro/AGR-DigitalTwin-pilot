@@ -1,0 +1,280 @@
+{
+  "hypothesis": "refuted",
+  "run_status": "complete",
+  "wall_s": 19.352,
+  "python": "3.14.7",
+  "records": {
+    "kpp1-v004-codex-20261124": {
+      "kind": "native-clean",
+      "authored_sha256": "81eea996a8b0f31d263e6077d7a2d49876af991e5d5dd28850dc20dfa05c1e8b",
+      "questions": 3,
+      "newlines": 8,
+      "non_ascii": 985,
+      "pairs": [
+        {
+          "default": {
+            "changed": 985,
+            "wall_s": 0.878,
+            "sha256": "29f5b85ba9284136550ea8d75fd5089e554d95a1e999d108b613d487f1575934",
+            "question_count": 3,
+            "newline_count": 8,
+            "native_match": false
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.75,
+            "sha256": "81eea996a8b0f31d263e6077d7a2d49876af991e5d5dd28850dc20dfa05c1e8b",
+            "question_count": 3,
+            "newline_count": 8,
+            "native_match": true
+          }
+        },
+        {
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.828,
+            "sha256": "81eea996a8b0f31d263e6077d7a2d49876af991e5d5dd28850dc20dfa05c1e8b",
+            "question_count": 3,
+            "newline_count": 8,
+            "native_match": true
+          },
+          "default": {
+            "changed": 985,
+            "wall_s": 0.723,
+            "sha256": "29f5b85ba9284136550ea8d75fd5089e554d95a1e999d108b613d487f1575934",
+            "question_count": 3,
+            "newline_count": 8,
+            "native_match": false
+          }
+        },
+        {
+          "default": {
+            "changed": 985,
+            "wall_s": 0.779,
+            "sha256": "29f5b85ba9284136550ea8d75fd5089e554d95a1e999d108b613d487f1575934",
+            "question_count": 3,
+            "newline_count": 8,
+            "native_match": false
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.707,
+            "sha256": "81eea996a8b0f31d263e6077d7a2d49876af991e5d5dd28850dc20dfa05c1e8b",
+            "question_count": 3,
+            "newline_count": 8,
+            "native_match": true
+          }
+        }
+      ],
+      "paired_gain_median": 985,
+      "paired_gain_range": [
+        985,
+        985
+      ]
+    },
+    "g22-k2-stage1-codex-r83-C3": {
+      "kind": "native-damaged",
+      "authored_sha256": "aca83d0101c4f28df2222552565e97b5d4756d62f58c66655322628fdacc1dc7",
+      "questions": 8,
+      "newlines": 15,
+      "non_ascii": 1097,
+      "pairs": [
+        {
+          "default": {
+            "changed": 1097,
+            "wall_s": 0.88,
+            "sha256": "0b660d9342193391a77dd87d6f376f204ae17c103574d09667cdd63df409d074",
+            "question_count": 8,
+            "newline_count": 15,
+            "native_match": false
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.8,
+            "sha256": "aca83d0101c4f28df2222552565e97b5d4756d62f58c66655322628fdacc1dc7",
+            "question_count": 8,
+            "newline_count": 15,
+            "native_match": false
+          }
+        },
+        {
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.784,
+            "sha256": "aca83d0101c4f28df2222552565e97b5d4756d62f58c66655322628fdacc1dc7",
+            "question_count": 8,
+            "newline_count": 15,
+            "native_match": false
+          },
+          "default": {
+            "changed": 1097,
+            "wall_s": 0.846,
+            "sha256": "0b660d9342193391a77dd87d6f376f204ae17c103574d09667cdd63df409d074",
+            "question_count": 8,
+            "newline_count": 15,
+            "native_match": false
+          }
+        },
+        {
+          "default": {
+            "changed": 1097,
+            "wall_s": 0.729,
+            "sha256": "0b660d9342193391a77dd87d6f376f204ae17c103574d09667cdd63df409d074",
+            "question_count": 8,
+            "newline_count": 15,
+            "native_match": false
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.792,
+            "sha256": "aca83d0101c4f28df2222552565e97b5d4756d62f58c66655322628fdacc1dc7",
+            "question_count": 8,
+            "newline_count": 15,
+            "native_match": false
+          }
+        }
+      ],
+      "paired_gain_median": 1097,
+      "paired_gain_range": [
+        1097,
+        1097
+      ]
+    },
+    "ascii": {
+      "kind": "injected",
+      "authored_sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+      "questions": 2,
+      "newlines": 2,
+      "non_ascii": 0,
+      "pairs": [
+        {
+          "default": {
+            "changed": 0,
+            "wall_s": 0.693,
+            "sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+            "question_count": 2,
+            "newline_count": 2,
+            "native_match": null
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.815,
+            "sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+            "question_count": 2,
+            "newline_count": 2,
+            "native_match": null
+          }
+        },
+        {
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.836,
+            "sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+            "question_count": 2,
+            "newline_count": 2,
+            "native_match": null
+          },
+          "default": {
+            "changed": 0,
+            "wall_s": 0.938,
+            "sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+            "question_count": 2,
+            "newline_count": 2,
+            "native_match": null
+          }
+        },
+        {
+          "default": {
+            "changed": 0,
+            "wall_s": 0.714,
+            "sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+            "question_count": 2,
+            "newline_count": 2,
+            "native_match": null
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.787,
+            "sha256": "a2a71ae924e88fffc284b13d2c3e61b2c679c27f2162dbce893dde4de563e691",
+            "question_count": 2,
+            "newline_count": 2,
+            "native_match": null
+          }
+        }
+      ],
+      "paired_gain_median": 0,
+      "paired_gain_range": [
+        0,
+        0
+      ]
+    },
+    "mixed-script": {
+      "kind": "injected",
+      "authored_sha256": "c211b0db2261c5168bfd6fadaa16354ea605ec0b93c33324d223fc90195cd3d4",
+      "questions": 3,
+      "newlines": 10,
+      "non_ascii": 989,
+      "pairs": [
+        {
+          "default": {
+            "changed": 989,
+            "wall_s": 0.941,
+            "sha256": "d6b45e4258d01ff83a447968923d6238ca147bee9c700164470dee907e37c5f6",
+            "question_count": 3,
+            "newline_count": 10,
+            "native_match": null
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.832,
+            "sha256": "c211b0db2261c5168bfd6fadaa16354ea605ec0b93c33324d223fc90195cd3d4",
+            "question_count": 3,
+            "newline_count": 10,
+            "native_match": null
+          }
+        },
+        {
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.86,
+            "sha256": "c211b0db2261c5168bfd6fadaa16354ea605ec0b93c33324d223fc90195cd3d4",
+            "question_count": 3,
+            "newline_count": 10,
+            "native_match": null
+          },
+          "default": {
+            "changed": 989,
+            "wall_s": 0.886,
+            "sha256": "d6b45e4258d01ff83a447968923d6238ca147bee9c700164470dee907e37c5f6",
+            "question_count": 3,
+            "newline_count": 10,
+            "native_match": null
+          }
+        },
+        {
+          "default": {
+            "changed": 989,
+            "wall_s": 0.817,
+            "sha256": "d6b45e4258d01ff83a447968923d6238ca147bee9c700164470dee907e37c5f6",
+            "question_count": 3,
+            "newline_count": 10,
+            "native_match": null
+          },
+          "utf8": {
+            "changed": 0,
+            "wall_s": 0.7,
+            "sha256": "c211b0db2261c5168bfd6fadaa16354ea605ec0b93c33324d223fc90195cd3d4",
+            "question_count": 3,
+            "newline_count": 10,
+            "native_match": null
+          }
+        }
+      ],
+      "paired_gain_median": 989,
+      "paired_gain_range": [
+        989,
+        989
+      ]
+    }
+  }
+}
