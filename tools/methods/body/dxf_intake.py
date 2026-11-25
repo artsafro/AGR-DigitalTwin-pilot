@@ -22,7 +22,7 @@ Provenance forms:
 
 Guarantees (each has a test in tests/methods/test_dxf_intake_1857.py):
 - ``status`` is ``pass`` only when the provenance binds both current hashes, the DWG starts with the
-  ``AC10`` magic, the DXF parses, did not change while read, has ``$INSUNITS`` = 4 (millimetres, what
+  ``AC10`` magic, the ASCII DXF ends in ENDSEC/EOF, parses, did not change while read, has ``$INSUNITS`` = 4 (millimetres, what
   ``plan_from_dxf.py`` assumes) and a non-empty model space. Otherwise ``fail`` with ``reason`` and
   ``action`` (exit 3); a fail receipt has no ``inputs``, plan or body. Never a pass by default.
   ``passed`` is always ``false``: the intake is one gate, never a stage or model verdict.
@@ -176,6 +176,14 @@ def verify_dxf_derivative(source: Path, dxf: Path, provenance: Path) -> dict:
         record["provenance"].update(_bind(prov, dwg_sha, dxf_sha))
         import ezdxf
         try:
+            # ezdxf can read a file with complete sections but a missing EOF marker.
+            # The authorized DXFOUT lane emits ASCII, with both closing tags on their own lines.
+            with dxf.open("rb") as f:
+                f.seek(max(0, f.seek(0, 2) - 256))
+                tail = f.read().rstrip().splitlines()
+            if [line.strip() for line in tail[-4:]] != [b"0", b"ENDSEC", b"0", b"EOF"]:
+                raise Unverified(f"DXF {dxf} does not parse as a complete DXF: missing terminal 0/EOF or ENDSEC",
+                                 FORWARD_PATH)
             doc = ezdxf.readfile(dxf)
         except (OSError, ezdxf.DXFError, UnicodeDecodeError) as exc:
             raise Unverified(f"DXF {dxf} does not parse: {exc}"[:400], FORWARD_PATH) from exc

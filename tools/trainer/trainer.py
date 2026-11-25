@@ -261,6 +261,12 @@ def task_text(e, inputs_dir, out_dir):
               "folder and continue with the documented default or stop. Do not commit or push.",
               "DCC [D389]: AutoCAD Core Console (accoreconsole, headless DWG->DXF via the skeleton's converter)",
               "and Blender are allowed; live 3ds Max is NOT available in a practice run."]
+    if any(Path(s["path"]).suffix.lower() == ".dwg" for s in e["sources"]):
+        lines += ["For sources-dwg use dwg_to_dxf.py with --timeout 60 on an isolated DWG copy, with a new",
+                  "ASCII work directory and output paths inside the workspace. Run one console at a time.",
+                  "Run dxf_intake.py with the source, DXF and dwg-to-dxf/1 receipt before plan_from_dxf.py.",
+                  "On any conversion or intake failure, stop at sources-dwg; retain the receipt and log,",
+                  "report the source hash and reason, and do not escalate or launch a host fallback."]
     text = "\n".join(lines) + "\n"
     leaks = [t for t in secret_tokens(e) if t in text]
     if leaks:
