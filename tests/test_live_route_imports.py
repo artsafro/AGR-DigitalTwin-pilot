@@ -86,12 +86,20 @@ def probe_route(route, tmp):
     # No scene APIs: crossing into scene work instead of the real refusal is a test error.
     sys.modules.update(bpy=ModuleType("bpy"), bmesh=ModuleType("bmesh"), mathutils=mathutils)
 
-    if route == "oks-npm":
+    if route in {"oks-npm", "oks-npm-copied"}:
         master, stale = tmp / "master.blend", tmp / "other.blend"
         master.write_bytes(b"synthetic revision A")
         stale.write_bytes(b"synthetic revision B")
         spec, atlas, out = tmp / "spec.json", tmp / "atlas", tmp / "npm" / "fbx"
-        spec.write_text(json.dumps(synthetic_spec()), encoding="utf-8")
+        doc = synthetic_spec()
+        atlas_options = []
+        if route == "oks-npm-copied":
+            from PIL import Image
+
+            Image.new("RGB", (8, 8), (30, 50, 70)).save(tmp / "panel.png")
+            doc["finishes"]["Panel"] = {"udim": 1001, "diffuse": "panel.png"}
+            atlas_options.append("--copied-udims")
+        spec.write_text(json.dumps(doc), encoding="utf-8")
         steps = []
 
         def python_spawn(argv, **kwargs):
@@ -112,7 +120,7 @@ def probe_route(route, tmp):
                                                 "log": "synthetic import probe", "returncode": 1})
 
         argv = ["vpm-to-npm", "--blender", sys.executable, str(spec), str(atlas), "--master", str(master),
-                "--then-npm", str(stale), str(spec), str(atlas), str(out)]
+                *atlas_options, "--then-npm", str(stale), str(spec), str(atlas), str(out)]
         with patch.object(subprocess, "run", python_spawn), patch.object(shared_tools, "run_blender", blender_spawn):
             assert agr.main(argv) == 1
         assert steps == ["atlas", "npm"]
@@ -147,7 +155,7 @@ def fresh_probe(mode, path):
                           capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=60)
 
 
-@pytest.mark.parametrize("route", ["oks-npm", "ground-npm", "oks-vpm-body"])
+@pytest.mark.parametrize("route", ["oks-npm", "oks-npm-copied", "ground-npm", "oks-vpm-body"])
 def test_live_route_has_no_job_origins(route, tmp_path):
     result = fresh_probe(route, tmp_path)
     assert result.returncode == 0, result.stdout + result.stderr

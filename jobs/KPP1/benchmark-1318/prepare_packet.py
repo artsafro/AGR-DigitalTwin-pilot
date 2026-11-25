@@ -33,8 +33,10 @@ def main(out):
             continue  # missing in source repository, recorded below, never fabricate one
         copy(ROOT/name, out/'context'/name)
     recipe = out/'jobs/TEC26-OKS/scripts'
-    for name in ('finish_map.py','export_safety.py'):
-        copy(ROOT/'jobs/TEC26-OKS/scripts'/name, recipe/name)
+    # The historical master preparer still imports the export shim. Stage its
+    # owner too, without changing any already-frozen packet or its manifest.
+    copy(ROOT/'jobs/TEC26-OKS/scripts/export_safety.py', recipe/'export_safety.py')
+    copy(ROOT/'tools/derive/export_safety.py', out/'tools/derive/export_safety.py')
     copy(ROOT/'jobs/KPP1/scripts/vpm_textures.json', out/'jobs/KPP1/scripts/vpm_textures.json')
     copy(ROOT/'jobs/KPP1/benchmark-1318/recipe/make_textures.py', recipe/'make_textures.py')
     copy(ROOT/'jobs/KPP1/rerun-1230/make_textures.py', recipe/'r1_painter.py')

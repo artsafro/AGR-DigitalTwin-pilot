@@ -351,6 +351,11 @@ tools/architecture/search_noise.py`, regenerate `--write-ignore`, Russian job ta
 sees `--measure`, copies `--verify-evidence`. A new unreached doc or new job data stays visible until the next
 `--write-ignore` (reported as pending); the check fails only when the block hides a live or gone path.
 
+Before hiding or archiving a `jobs/` path, run `uv run pytest -q tests/test_live_route_imports.py`.
+The fresh-process runtime guard must show no live route loads Python from that path; if the affected
+route is not covered, add its runtime import probe first. Static search and duplicate checks alone do
+not prove that lazy or path-based imports are gone. Explicit job data inputs are not Python dependencies.
+
 ## Пробелы (нет общей реализации; по одной строке, реализация — отдельные задачи)
 
 

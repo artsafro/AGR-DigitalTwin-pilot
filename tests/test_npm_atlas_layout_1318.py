@@ -14,18 +14,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def packet(tmp_path):
     recipe = tmp_path / "recipe"
     recipe.mkdir()
-    (recipe / "finish_map.py").write_text('''from pathlib import Path
-import os
-def load_kpp(): return {}
-def validate_spec(spec, kpp): assert spec['finishes']
-def fresh_out_dir(out, inputs):
-    o = Path(out).resolve()
-    if any(o == Path(p).resolve() for p in inputs): raise ValueError('aliases input')
-    os.makedirs(out, exist_ok=False)
-''')
     (recipe / "make_textures.py").write_text("# Synthetic solid-only fixture; no painter called.\n")
     spec = tmp_path / "spec.json"
-    spec.write_text(json.dumps({"address": "Synthetic", "finishes": {
+    spec.write_text(json.dumps({"address": "Synthetic", "zero_m": 0,
+        "source_ids": {str(i+1): {"finish": f"f{i}"} for i in range(7)}, "finishes": {
         f"f{i}": {"udim": 1001+i, "kind": "placeholder", "rgb": [i, 2, 3]}
         for i in range(7)}}))
     return spec, recipe, tmp_path / "out"
@@ -108,6 +100,60 @@ def test_output_alias_input_not_written(packet):
     before=spec.read_bytes()
     assert run((spec,recipe,spec)).returncode != 0
     assert spec.read_bytes() == before
+
+
+@pytest.mark.parametrize('usable', [True, False], ids=['complete', 'missing-make-full'])
+def test_external_replay_painter_is_loaded_without_writing_to_packet(packet, usable):
+    from PIL import Image
+
+    spec, recipe, out = packet
+    doc = json.loads(spec.read_text())
+    doc['size_full'] = 16
+    doc['finishes']['f0'].update(kind='full', S=0.016)
+    spec.write_text(json.dumps(doc), encoding='utf-8')
+    (recipe / 'replay_pattern.py').write_text('PIXEL = (7, 13, 21)\n', encoding='utf-8')
+    painter = 'import numpy as np\nfrom replay_pattern import PIXEL\n'
+    if usable:
+        painter += ('def make_full(finish, size):\n'
+                    '    return np.full((size, size, 3), PIXEL, dtype=np.uint8), None, None, None\n')
+    (recipe / 'make_textures.py').write_text(painter, encoding='utf-8')
+    before = {p.name: p.read_bytes() for p in recipe.iterdir()}
+    result = run(packet)
+    if usable:
+        assert result.returncode == 0, result.stderr
+        with Image.open(out / 'T_Synthetic_001_Main_d_1.png') as diffuse:
+            assert diffuse.getpixel((17, 17)) == (7, 13, 21)
+    else:
+        assert result.returncode != 0 and 'missing make_full' in result.stderr
+        assert not out.exists()
+    assert {p.name: p.read_bytes() for p in recipe.iterdir()} == before
+
+
+def test_fresh_benchmark_packet_stages_the_export_shim_and_owner(tmp_path, monkeypatch):
+    import hashlib
+
+    spec = importlib.util.spec_from_file_location('prepare1318', ROOT / 'jobs/KPP1/benchmark-1318/prepare_packet.py')
+    assert spec is not None and spec.loader is not None
+    prepare = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(prepare)
+    source = tmp_path / 'source'
+    source.mkdir()
+    for name in ('SM_Kpp_1.fbx', '0000_Kpp_1_01.fbx', 'T_Kpp_1_001_Main_d_1.png', 'SHA256SUMS.txt'):
+        (source / name).write_bytes(b'synthetic staging fixture')
+    monkeypatch.setattr(prepare, 'SOURCE', source)
+    monkeypatch.setattr(prepare, 'EXPECTED', hashlib.sha256(b'synthetic staging fixture').hexdigest())
+    out = tmp_path / 'packet'
+    # prepare_packet calls Git once to stamp the exact source revision.
+    prepare.main(out)
+    shim = out / 'jobs/TEC26-OKS/scripts/export_safety.py'
+    owner = out / 'tools/derive/export_safety.py'
+    result = subprocess.run([sys.executable, '-I', '-B', '-c',
+                             'from pathlib import Path; import runpy, sys; '
+                             'f = runpy.run_path(sys.argv[1])["validate_atlas"]; '
+                             'assert Path(f.__code__.co_filename).resolve() == Path(sys.argv[2]).resolve()',
+                             str(shim), str(owner)],
+                            cwd=tmp_path, capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stderr
 
 
 def runner():
