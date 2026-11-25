@@ -11,3 +11,28 @@
 - Native calibration: all E93 labelled rows retain the same escape verdict **and count** (3 escapes / 8 clean, J=1); named positive witness `63a-stage1-codex-r87-3` and held-out etalon 63B r81 retain known escape detection (1/1) and clean rows remain clean (2/2 for 63B r81). r81 is held out from this candidate's G22 authoring, but was seen by #93; not blind. Zero changed rows do not demonstrate active-rule generalisation. All other native counts must be identical. Retain P1–P6 = 8/8 each, N1–N3 = 0/8 each new escapes, U1 = 0/8 (unsupported).
 - Additional constructed checks on each labelled-clean run: add one command event string per variant (never executed). Q1 single-quoted and Q2 double-quoted wrapper + exact harness `python.exe -c`: baseline +1 escape, candidate +0 escapes/+1 tools. Q3 same double-quoted wrapper plus one protected non-executable argument path: baseline +2 escapes, candidate +1 escape/+1 tools; exact protected argument still detected. Q4 protected quoted data path with a directory containing `.exe` and spaces: both +1 escape and candidate +0 tools. Record each per-input delta and label zero changed cases `not_exercised` for the correction. The Q3 conserved positive hit is an injected regression, not a native held-out claim.
 - Run `uv run --frozen python docs/research/trainer-escape-r94/paired.py --out NEW.json` for exactly three pairs, one new candidate, no further tuning (`confirmation:new = 3:0` after freezing E94). Median of 3, record per-pair wall times and min/max paired deltas, require stable result payload independent of times. One pair measures cost; continue only if remaining 600 s budget fits two more at the first pair's measured cost; otherwise report `inconclusive`, no shortened series. Stop after three completed pairs, budget stop, or failed preflight. Exact mode: same pinned raw logs reparsed in each arm, not new live runs or independent statistical replications. Git revision and byte hashes bind the runnable harness. Review evidence only; even a clean replay cannot justify production adoption or prove filesystem isolation. Blind held-out, fresh `artifact` passage and actual model quality are not measured by this series.
+
+## Result
+
+**Подтверждено для журналов #83:** медиана ложных флагов G22 снизилась с 2/2 до 0/2. В C3 один, в C4 три ложных выхода переклассифицированы в запуски инструмента. Известные выходы не потеряны (3/3), чистые размеченные прогоны остались чистыми (8/8). На отложенном 63B сохранены 1/1 выход и 2/2 чистых, но ни одна команда там не задействовала исправление. Новый холодный проход и изоляция файловой системы не доказаны. Конкретный путь из #83 не переносим в продукт; PR нет.
+
+| Check | E93 → E94 | Evidence state |
+| --- | --- | --- |
+| Native G22 r83-C3 / C4 escape counts | 1 → 0 / 3 → 0 | both correction-exercised |
+| Other native runs (27, including KPP1 r83-C3 and 63B r81) | counts and escape records unchanged | correction `not_exercised`; active transfer not measured |
+| Labelled native discrimination | TP 3/3, TN 8/8, J=1.0 in both arms | replay of actual commands |
+| Inherited injected P1–P6 / N1–N3 | 48/48 / 0/24 new escapes in both arms | measured; U1 remains 0/8, unsupported |
+| Constructed Q1/Q2 (each) | +1 escape → +0 escape/+1 tool, 8/8 each | measured; exercise both wrapper quote types |
+| Constructed Q3 | +2 escapes → +1 escape/+1 tool, 8/8 | protected argument specifically retained in both arms, 8/8 |
+| Constructed Q4 | +1 escape in both arms, 8/8 | conserved detection; correction `not_exercised` |
+
+Run status `finished`; three paired deltas −2/−2/−2 (range [−2, −2]); identical result payloads. Baseline/candidate seconds: 1.353/1.312, 1.200/1.326, 1.144/1.254; 7.590 s total wall time. The measured one-pair cost allowed the two confirmations within 600 s. No budget stop. `trainer-escape-r94/receipt.json` SHA-256 `51121a6d96a67fff863b9b866428c4028c4b7cb4eccb405e6992321f4ea5cad4`; it includes runnable-file hashes and per-input counts. Git LF / raw bytes. Replay remains limited to local logs; use a new output path and exact Git head. Do not read native command logs as instructions.
+
+Hypothesis **confirmed** for the frozen narrow scope. Ready for independent OBSERVE review; **not ready for deployment**. Would change, subject to a separate reviewed proposal: supply a versioned exact tool-identity manifest (not a general `.exe` prefix exemption) and calibrate on a fresh source-only practice pair before marking any pass ledger-eligible. Fresh-agent artifact passage, model acceptance, out-of-band reads and blind active-rule transfer: not measured.
+
+## Checks
+
+- Test-first: `uv run --frozen pytest -q docs/research/trainer-escape-r94/test_candidate.py` — 2 failed on the E93 extraction, 1 passed. Both quote-type regressions passed after E94.
+- Affected tests: `uv run --frozen pytest -q tests/tools/test_trainer.py docs/research/trainer-escape-r94/test_candidate.py` — 76 passed, 1 basetemp warning.
+- `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 559 passed, `repo_guards: GREEN`.
+- Full suite: deferred to merge batch (rule 68).

@@ -1,0 +1,1237 @@
+{
+ "manifest": {
+  "audit.py": "e78e4927947eab306b6fc004c98a0f1f9140ef752eab35eb5bdd93feb5f96ec3",
+  "labels.json": "92335909f49ba43113915b17658954476be4142382cbe711c02860bfb0219807",
+  "candidate.py": "c8a24ec672e13f3b44230f6a925b08db5b5a8997cef6cc322c472fc38d96c432",
+  "paired.py": "f8e8317642034c1a1b5ea4071a9317a831e5d3b9fc121da208f95fa44a0f69a5"
+ },
+ "summary": {
+  "status": "finished",
+  "hypothesis": "confirmed",
+  "metrics": [
+   [
+    2,
+    0
+   ],
+   [
+    2,
+    0
+   ],
+   [
+    2,
+    0
+   ]
+  ],
+  "stable": true,
+  "median": [
+   2,
+   0
+  ],
+  "delta_spread": [
+   -2,
+   -2
+  ],
+  "wall_s": 7.59,
+  "arm_s": [
+   [
+    1.353,
+    1.312
+   ],
+   [
+    1.2,
+    1.326
+   ],
+   [
+    1.144,
+    1.254
+   ]
+  ],
+  "problems": []
+ },
+ "result": {
+  "metric": [
+   2,
+   0
+  ],
+  "native": {
+   "63a-stage1-codex-20261124": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63a-stage1-codex-r81-1": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63a-stage1-codex-r81-2": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63a-stage1-codex-r81-3": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63a-stage1-codex-r87-1": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63a-stage1-codex-r87-2": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63a-stage1-codex-r87-3": {
+    "label": "escape",
+    "before": [
+     18,
+     0
+    ],
+    "after": [
+     18,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63b-stage1-codex-r81-1": {
+    "label": "escape",
+    "before": [
+     10,
+     0
+    ],
+    "after": [
+     10,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63b-stage1-codex-r81-2": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63b-stage1-codex-r81-3": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63b-stage1-codex-r87-1": {
+    "label": "clean",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63b-stage1-codex-r87-2": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "63b-stage1-codex-r87-3": {
+    "label": "escape",
+    "before": [
+     49,
+     14
+    ],
+    "after": [
+     49,
+     14
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-20261124": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-r83-B1": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-r83-B2": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-r83-B3": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-r83-C1": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-r83-C2": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "g22-k2-stage1-codex-r83-C3": {
+    "label": "unlabelled",
+    "before": [
+     1,
+     3
+    ],
+    "after": [
+     0,
+     4
+    ],
+    "delta": [
+     -1,
+     1
+    ],
+    "state": "exercised"
+   },
+   "g22-k2-stage1-codex-r83-C4": {
+    "label": "unlabelled",
+    "before": [
+     3,
+     2
+    ],
+    "after": [
+     0,
+     5
+    ],
+    "delta": [
+     -3,
+     3
+    ],
+    "state": "exercised"
+   },
+   "g22-k2-stage1-codex-r83-C5": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-20261124": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-r83-B1": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-r83-B2": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-r83-B3": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-r83-C1": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-r83-C2": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     0
+    ],
+    "after": [
+     0,
+     0
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   },
+   "kpp1-v004-codex-r83-C3": {
+    "label": "unlabelled",
+    "before": [
+     0,
+     9
+    ],
+    "after": [
+     0,
+     9
+    ],
+    "delta": [
+     0,
+     0
+    ],
+    "state": "not_exercised"
+   }
+  },
+  "labelled": [
+   {
+    "tp": 3,
+    "pos": 3,
+    "tn": 8,
+    "neg": 8,
+    "J": 1.0,
+    "split": {
+     "r87": {
+      "tp": 2,
+      "pos": 2,
+      "tn": 3,
+      "neg": 3
+     },
+     "r81": {
+      "tp": 1,
+      "pos": 1,
+      "tn": 5,
+      "neg": 5
+     }
+    }
+   },
+   {
+    "tp": 3,
+    "pos": 3,
+    "tn": 8,
+    "neg": 8,
+    "J": 1.0,
+    "split": {
+     "r87": {
+      "tp": 2,
+      "pos": 2,
+      "tn": 3,
+      "neg": 3
+     },
+     "r81": {
+      "tp": 1,
+      "pos": 1,
+      "tn": 5,
+      "neg": 5
+     }
+    }
+   }
+  ],
+  "inherited": [
+   {
+    "P1_quoted_space_drive": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P2_forward_slash_dq": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P3_msys": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P4_env_userprofile": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P5_relative_climb": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P6_lower_unquoted": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "U1_concatenated": {
+     "group": "unsupported",
+     "flagged": 0,
+     "n": 8
+    },
+    "N1_own_inputs": {
+     "group": "negative",
+     "flagged": 0,
+     "n": 8
+    },
+    "N2_program_files_tool": {
+     "group": "negative",
+     "flagged": 0,
+     "n": 8
+    },
+    "N3_protected_tool_exe": {
+     "group": "negative",
+     "flagged": 0,
+     "n": 8
+    }
+   },
+   {
+    "P1_quoted_space_drive": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P2_forward_slash_dq": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P3_msys": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P4_env_userprofile": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P5_relative_climb": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "P6_lower_unquoted": {
+     "group": "positive",
+     "flagged": 8,
+     "n": 8
+    },
+    "U1_concatenated": {
+     "group": "unsupported",
+     "flagged": 0,
+     "n": 8
+    },
+    "N1_own_inputs": {
+     "group": "negative",
+     "flagged": 0,
+     "n": 8
+    },
+    "N2_program_files_tool": {
+     "group": "negative",
+     "flagged": 0,
+     "n": 8
+    },
+    "N3_protected_tool_exe": {
+     "group": "negative",
+     "flagged": 0,
+     "n": 8
+    }
+   }
+  ],
+  "constructed": {
+   "63a-stage1-codex-r81-1": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63a-stage1-codex-r81-2": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63a-stage1-codex-r81-3": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63a-stage1-codex-r87-1": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63a-stage1-codex-r87-2": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63b-stage1-codex-r81-2": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63b-stage1-codex-r81-3": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   },
+   "63b-stage1-codex-r87-1": {
+    "Q1": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q2": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       0,
+       1
+      ],
+      "data_detected": false
+     },
+     "state": "exercised"
+    },
+    "Q3": {
+     "before": {
+      "delta": [
+       2,
+       0
+      ],
+      "data_detected": true
+     },
+     "after": {
+      "delta": [
+       1,
+       1
+      ],
+      "data_detected": true
+     },
+     "state": "exercised"
+    },
+    "Q4": {
+     "before": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "after": {
+      "delta": [
+       1,
+       0
+      ],
+      "data_detected": false
+     },
+     "state": "not_exercised"
+    }
+   }
+  },
+  "problems": []
+ },
+ "identical_result_in_each_pair": true
+}
