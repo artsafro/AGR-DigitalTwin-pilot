@@ -155,9 +155,9 @@ bounds, topology и form (p95 1,3–1,4 см) и останавливаются 
   | C3 | typical | form_v2 | 0.0139 m |
   | C3 | pilot | bounds | 22.75 m |
 
-Receipt: `docs/research/trainer-g22-adapter-r97/receipt.json` (sha256
-`ed000b3814607c602921b388b5bf3a689046f59a02f57f71b7eed8aa99db1e91`), `informational.json` (sha256
-`846639acbe7004d2919a858d9f16be33ce289187fa44e6aed94bc0a9b154bf94`), `series.log`. Evidence (run.json, score.json,
+Receipt: `docs/research/trainer-g22-adapter-r97/receipt.json` (Git LF SHA-256
+`a178ddb88973ae20eaa06889662f9a4c9dc38211d55ae5559a6e367024042392`), `informational.json` (Git LF SHA-256
+`7b3217dc4e1c2ccc9b32b3f926a88ffd9f5faffc32c9ebadc0a560d7c458f348`), `series.log`. Evidence (run.json, score.json,
 events, built FBX, offline control): `G:/Мой диск/AGR-evidence/1855-r97-g22-adapter/SHA256SUMS.txt` (sha256
 `847aeb38d84d59a3acef620d986c1a76b8b5f54d5bd1dddbddff9dc856a70cc5`, 112 files). Replay is limited: the run folders
 are local.
