@@ -48,6 +48,8 @@ Items listed under «Не трогать» are never changed «to make it work»
 ## Checklist
 
 Common:
+- Passport [D397]: the task's `jobs/<ID>/passport.json` (K1, `schemas/ProjectPassport.schema.json`) exists or is
+  created at intake, on every route, not only AGR Tools (supersedes the scope of [D247]).
 - Scope: what changes, what must NOT be touched (geometry, topology, UV, UCX, material IDs, names, other objects).
 - Etalon: «как у X» in numbers — which file, which parameters (texel, tile size, map types, naming, palette).
 - Inputs: which sheet / slide / file is the authority per item; which one wins on conflict (e.g. DWG `_R1` vs PDF).
