@@ -86,7 +86,7 @@ def ground_fbx(stem='X_Ground', tiles=(1001,), slots=(1,), *, mutate_uv=None, ma
 def ground_package(folder, tiles=(1001, 1002, 1003), slots=(2, 1, 2), **fbx_options):
     folder.mkdir()
     (folder / 'SM_X_Ground.fbx').write_bytes(ground_fbx(tiles=tiles, slots=slots, **fbx_options))
-    (folder / 'SM_X_Ground.geojson').write_text(good_geojson(), encoding='utf-8')
+    (folder / 'SM_X_Ground.geojson').write_bytes(good_geojson())
     for tile, slot in zip(tiles, slots):
         for role, colour in MAPS.items():
             (folder / f'T_X_Ground_{role}_{slot}.{tile}.png').write_bytes(_png(colour))
