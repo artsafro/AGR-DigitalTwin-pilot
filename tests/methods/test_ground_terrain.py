@@ -19,6 +19,28 @@ mm = _load("methods_metrics", TOOLS / "methods_metrics.py")
 gv = _load("methods_ground_variants", TOOLS / "ground" / "ground_variants.py")
 
 
+def test_batch_reads_drive_adapter_before_planning_writes(tmp_path, monkeypatch, capsys):
+    batch = _load("methods_ground_batch_1958", TOOLS / "ground" / "run_benchmarks.py")
+    expected = Path("G:/Мой диск/AGR-evidence/1146-flora-star/run-v003/inputs/paving_ground_inputs_v4.json")
+    payload = b"synthetic adapter"
+    monkeypatch.setattr(batch, "ADAPTER_SHA256", hashlib.sha256(payload).hexdigest())
+    reads = []
+    original = Path.read_bytes
+
+    def read(path):
+        reads.append(path)
+        return payload if path == expected else original(path)
+
+    monkeypatch.setattr(Path, "read_bytes", read)
+    (tmp_path / "cdt-4m").mkdir()
+    results = tmp_path / "results.jsonl"
+    assert batch.main(["--variant", "cdt", "--cell", "4", "--out", str(tmp_path),
+                       "--results", str(results)]) == 4
+    assert reads[0] == expected
+    assert "every build goes to a new folder" in capsys.readouterr().err
+    assert not results.exists()
+
+
 def plane(size=120, cell=10, hole=((40, 80), (40, 80)), z=10.0, dz=0.0, shift=(0.0, 0.0), bump=None):
     """Flat square plane of quads (split in two triangles); cells inside `hole` are left out."""
     n = size // cell

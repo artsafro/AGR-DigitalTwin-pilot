@@ -14,6 +14,16 @@ import pytest
 from PIL import Image
 
 
+def test_site_maf_inputs_use_published_library():
+    config = Path(__file__).resolve().parents[1] / "jobs/VATUTINO-SITE/maf/site-maf-set.config.json"
+    data = json.loads(config.read_text(encoding="utf-8"))
+    root = Path("G:/Мой диск/AGR-assets/maf/union_v001/fbx")
+    inputs = [Path(row["source_fbx"]) for row in data["positions"]]
+    assert len(inputs) == len(set(inputs)) == 13
+    assert {path.parent for path in inputs} == {root}
+    assert data["out_dir"].startswith("C:/")
+
+
 def test_real_maf_library_artifacts():
     manifest = os.environ.get("AGR_MAF_VERIFY_BUILT")
     if not manifest:

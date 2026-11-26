@@ -609,6 +609,17 @@ def test_benchmarks_list_four_objects_with_sha256_and_no_private_file_committed(
     assert not [p for p in tracked if p.lower().endswith((".fbx", ".zip", ".max", ".blend", ".png"))]
 
 
+def test_methods_benchmarks_use_verified_drive_references():
+    data = json.loads((ROOT / "benchmark/methods/benchmarks.json").read_text(encoding="utf-8"))
+    entries = {row["id"]: row for row in data["objects"]}
+    ac08 = entries["ac08"]
+    refs = [ac08["source"]["local_path"], ac08["source"]["fbx_local_path"],
+            entries["vatutino-ground"]["source"]["local_path"],
+            *(r["local_path"] for r in ac08["reference_pictures"].values())]
+    assert len(set(refs)) == 7
+    assert all(p.startswith("G:/Мой диск/AGR-") for p in refs), refs
+
+
 def test_docs_structure_six_classes():
     base = ROOT / "docs" / "methods"
     assert (base / "README.md").is_file()
