@@ -13,14 +13,14 @@ find the line for your question, then read that file. One line per tracked file.
 | `UV_RULES.md` | UV/texture reuse rules for NPM and VPM; NPM OKS exempt from Ground texel density | Laying out atlases/UDIM or judging NPM texture scale |
 | `geometry-quality.mdc` | Short always-apply rule card summarising GEOMETRY_RULES | Quick reminder of clean-quad BODY rules |
 | `uv-reuse.mdc` | Short always-apply rule card summarising UV_RULES | Quick reminder of atlas/UDIM reuse rules |
-| `ADAPTER_EXTRACTION.md` | Connect-quads operation (`dt_ai.geometry.connect`) extracted from Obr22: API, checks, transfer limits | Subdividing quads by max side length or reusing connect code |
-| `ADAPTER_REPORT.md` | AdapterReport contract: fields, required_checks_passed logic, delivery_passed always false | Writing or reading an operation report |
+| `ADAPTER_EXTRACTION.md` | Connect-quads operation (`dt_ai.geometry.connect`) extracted from Obr22: API, checks, transfer limits | Historical reference only: tracing the original Obr22 extraction and its transfer limits. |
+| `ADAPTER_REPORT.md` | AdapterReport contract: fields, required_checks_passed logic, delivery_passed always false | Historical reference only: interpreting the original adapter report; not a current report specification. |
 | `EXTERIOR_ADAPTER.md` | Exterior-surface prototype (`extract_exterior`): job contract, parameters, reproduction | Historical reproduction only; superseded for stage-1 BODY by [D373] |
 | `BODY_SHELL_ADAPTER.md` | BODY/Shell adapter: exterior quads → inward Shell with reveals, no inner faces; Obr22 only | Historical reproduction only; superseded for stage-1 BODY by [D373] |
 | `EXPERIENCE_CAPTURE.md` | Rule for recording a user-accepted result as a case study | User praises/accepts a result and a case must be written |
-| `READINESS_REPORT.md` | Readiness audit 2026-09-26: NPM vs VPM, norm conflicts, app readiness, skills registry | Checking historical readiness, NPM/VPM differences or source contradictions |
+| `READINESS_REPORT.md` | Readiness audit 2026-09-26: NPM vs VPM, norm conflicts, app readiness, skills registry | Historical reference only: tracing the 2026 readiness audit, not assessing current readiness. |
 | `sintez_checks_1.6.1.json` | SINTEZ AGR Checker 1.6.1 dissection (#429): 36 checks, 10 fixers, thresholds, 2026 VPM/NPM req_nums vs our checkers | Comparing our checks or thresholds with the SINTEZ AGR Checker |
-| `traceability.html` | HTML table rule → PDF page → verification method (single-line file) | Tracing a profile rule to its regulation PDF page |
+| `traceability.html` | HTML table rule → PDF page → verification method (single-line file) | Historical reference only: tracing the original rule-to-page map; use the domain sheets for current rules. |
 
 ## decisions
 
@@ -61,39 +61,39 @@ find the line for your question, then read that file. One line per tracked file.
 
 | File | What it is | Read it when |
 |---|---|---|
-| `inventory/README.md` | Tool inventory snapshot 2026-09-26: 73 tools, key findings (GeoAGR, SINTEZ, Octopus, BMAX) | Finding which installed tool already does a job |
-| `inventory/catalog.json` | Machine-readable tool catalog: status definitions, 73 tools, 162 path evidences | Looking up a tool ID (MAX-01, BL-01…) programmatically |
-| `inventory/catalog.csv` | Same tool catalog as CSV (id, application, purpose, status, limits…) | Filtering tools in a spreadsheet |
-| `inventory/catalog.html` | Searchable HTML view of the tool catalog | Browsing tools interactively |
+| `inventory/README.md` | Tool inventory snapshot 2026-09-26: 73 tools, key findings (GeoAGR, SINTEZ, Octopus, BMAX) | Historical reference only: interpreting the dated inventory, not choosing current tools. |
+| `inventory/catalog.json` | Machine-readable tool catalog: status definitions, 73 tools, 162 path evidences | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/catalog.csv` | Same tool catalog as CSV (id, application, purpose, status, limits…) | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/catalog.html` | Searchable HTML view of the tool catalog | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
 | `inventory/NPM_VPM_MAP.md` | Mermaid map of existing tools per NPM/VPM stage, with addenda | Choosing tools for a pipeline stage |
-| `inventory/stage-map.json` | Proposed stage → DT tasks → tool IDs → gate mapping | Mapping stages to tools and gates programmatically |
-| `inventory/INTEGRATION_PLAN.md` | Integration plan INT-001…INT-006 after inventory; proposal, not implemented | Planning integration of existing DCC tools |
+| `inventory/stage-map.json` | Proposed stage → DT tasks → tool IDs → gate mapping | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/INTEGRATION_PLAN.md` | Integration plan INT-001…INT-006 after inventory; proposal, not implemented | Historical reference only: tracing the original integration proposal, not planning current work. |
 | `inventory/GEOAGR_13_63_REVIEW.md` | GeoAGR 13.63 review: DLLs, ucx_check.exe, uvdilate.exe probes and limits | Using GeoAGR components, UCX check or UV dilation |
-| `inventory/geoagr-13.63-evidence.json` | Hashes, comparisons and synthetic probe results for GeoAGR 13.63 | Verifying GeoAGR review claims |
+| `inventory/geoagr-13.63-evidence.json` | Hashes, comparisons and synthetic probe results for GeoAGR 13.63 | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
 | `inventory/MSE_REVIEW.md` | Static MSE decryption review; GeoAGR, RizomUV Bridge, Decal Projector, RappaTools notes | Questions about encrypted MAXScript or those Max tools |
-| `inventory/mse-evidence.json` | QuickBMS decode evidence for installed MSE scripts | Verifying MSE review claims |
+| `inventory/mse-evidence.json` | QuickBMS decode evidence for installed MSE scripts | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
 | `inventory/ZAVOD_AND_MAX_PLUGINS_REVIEW.md` | Review of zavod folder and Max plugin library: xView, Maf Tools, Collizii limits | Reusing Max scripts from zavod/plugin folders |
-| `inventory/folder-followup-evidence.json` | Static scan evidence for zavod and Max plugin folders (files, archives, duplicates) | Verifying the zavod/plugins review |
-| `inventory/coverage.json` | Inventory scan coverage: roots, file counts, exclusions, drives | Checking what the inventory did or did not scan |
-| `inventory/duplicates.json` | 21 groups of byte-identical tool files | Checking whether two script copies are identical |
-| `inventory/applications.json` | Installed DCC applications, versions and paths observed 2026-09-26 | Checking historical app versions/paths |
-| `inventory/max-runtime.json` | 3ds Max 2024 runtime capabilities and loaded CUI/DLLs via MCP | Checking historical Max runtime setup |
-| `inventory/fbx-runtime.json` | Max FBX exporter settings snapshot (FBX2014, triangulate on) | Checking default Max FBX export settings |
-| `inventory/blender-preferences.json` | Enabled Blender add-ons parsed from userpref.blend (4.4, 5.0) | Checking which Blender add-ons were enabled |
-| `inventory/autocad-menus.json` | AutoCAD 2025 CUIX menu containers and script references | Checking AutoCAD menu customisations |
+| `inventory/folder-followup-evidence.json` | Static scan evidence for zavod and Max plugin folders (files, archives, duplicates) | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/coverage.json` | Inventory scan coverage: roots, file counts, exclusions, drives | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/duplicates.json` | 21 groups of byte-identical tool files | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/applications.json` | Installed DCC applications, versions and paths observed 2026-09-26 | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/max-runtime.json` | 3ds Max 2024 runtime capabilities and loaded CUI/DLLs via MCP | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/fbx-runtime.json` | Max FBX exporter settings snapshot (FBX2014, triangulate on) | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/blender-preferences.json` | Enabled Blender add-ons parsed from userpref.blend (4.4, 5.0) | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/autocad-menus.json` | AutoCAD 2025 CUIX menu containers and script references | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
 | `inventory/octopus-bindings.json` | Octopus menu bindings in Max with command hashes | Finding Octopus buttons (A101LP, UCX, GeoAGR) |
-| `inventory/packages.json` | Autodesk ApplicationPlugins packages (name, version) | Checking installed Autodesk plugin packages |
-| `inventory/mcp-registrations.json` | MCP server registrations found in local client configs (2026-09) | Checking historical MCP server setup |
+| `inventory/packages.json` | Autodesk ApplicationPlugins packages (name, version) | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
+| `inventory/mcp-registrations.json` | MCP server registrations found in local client configs (2026-09) | Historical reference only: checking the recorded inventory snapshot, not current availability or tool selection. |
 
 ## research/max-workbench
 
 | File | What it is | Read it when |
 |---|---|---|
 | `research/max-workbench/REVIEW.md` | Script review proposing a shared NPM/VPM Max tool, tab by tab | Designing a Max workbench or picking scripts per NPM/VPM step |
-| `research/max-workbench/EXPANSION_2026-09-27.md` | Workbench expansion register: version 0.5 contents, next transfers, pipeline refinement | Continuing Max workbench development |
-| `research/max-workbench/inventory.json` | Static index of 327 Max script/plugin files and 54 archives | Looking up a Max script file and its UI signals |
-| `research/max-workbench/expanded-inventory.json` | Expanded index of 640 files across 12 roots | Finding script candidates beyond the first inventory |
-| `research/max-workbench/scan-summary.txt` | Extension counts plus per-script rollout/button summary lines | Quick view of script UIs without opening them |
+| `research/max-workbench/EXPANSION_2026-09-27.md` | Workbench expansion register: version 0.5 contents, next transfers, pipeline refinement | Historical reference only: tracing the original Max workbench scan, not choosing a current workflow. |
+| `research/max-workbench/inventory.json` | Static index of 327 Max script/plugin files and 54 archives | Historical reference only: tracing the original Max workbench scan, not choosing a current workflow. |
+| `research/max-workbench/expanded-inventory.json` | Expanded index of 640 files across 12 roots | Historical reference only: tracing the original Max workbench scan, not choosing a current workflow. |
+| `research/max-workbench/scan-summary.txt` | Extension counts plus per-script rollout/button summary lines | Historical reference only: tracing the original Max workbench scan, not choosing a current workflow. |
 
 ## examples
 
