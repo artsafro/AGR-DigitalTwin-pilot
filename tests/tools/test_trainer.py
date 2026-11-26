@@ -492,7 +492,15 @@ def _run_dir(tmp_path, commands, events=True):
 @pytest.mark.parametrize("cmd", [
     r'type "G:\Мой диск\AGR-evidence\1855-trainer-v0\keys\heldout-key-v001.json"',
     "cat '/g/Мой диск/AGR-evidence/1855-trainer-v0/KEYS/heldout-sections-v002.json'",
-    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/keys"])
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/keys",
+    # review #1970 P1-2: key reads without the literal keys-dir string
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && cat keys/heldout-key-v001.json',
+    'Get-Content (Join-Path "G:/Мой диск/AGR-evidence/1855-trainer-v0" "keys/heldout-key-v001.json")',
+    'cat "G:/Мой диск/AGR-evidence/1855-trainer-v0/k"*/heldout-key-v001.json',
+    'find "G:/Мой диск/AGR-evidence" -name "heldout-*.json" -exec cat {} +',
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls k*',
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0"; Get-ChildItem keys',
+    "certutil -hashfile x.json | findstr 843197137db10cdc"])
 def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd):
     run = _run_dir(tmp_path, ["ls inputs", cmd])
     assert T.key_dir_reads(run) == [cmd]
@@ -503,7 +511,9 @@ def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd
 
 def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
     e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
-    run = _run_dir(tmp_path, ["ls inputs", "type G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/README.md"])
+    run = _run_dir(tmp_path, ["ls inputs", "type G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/README.md",
+                              'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls bank/g22-k2-stage1/k2_v002r1',
+                              "python tools/trainer/kit.py --keep-going"])
     assert T.key_dir_reads(run) == []
     assert T.score(e, str(run / "built"), tmp_path / "w")["steps"]["holdout"]["status"] == "pass"
     (tmp_path / "loose").mkdir()

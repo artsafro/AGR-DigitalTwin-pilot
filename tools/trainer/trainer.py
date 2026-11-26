@@ -296,14 +296,43 @@ def _norm(s):
     return str(s).replace("\\\\", "/").replace("\\", "/").lower()
 
 
+def key_markers():
+    """Lower-case strings that identify a held-out key read without the literal KEYS_DIR (review #1970 P1-2:
+    `cd .../1855-trainer-v0 && cat keys/...`, Join-Path, globs, `find -name heldout-*`): KEYS_DIR, the `heldout-`
+    stem, and the basename + pinned sha prefix of every pairs_v1 key/sections file under KEYS_DIR."""
+    marks = {KEYS_DIR, "heldout-"}
+    cfg = json.loads((ROOT / "tools/qa/form_check/pairs_v1.json").read_text(encoding="utf-8"))
+    for pair in cfg.get("pairs", []):
+        for f in ("key", "sections"):
+            if KEYS_DIR in _norm(pair.get(f, "")):
+                marks.add(_norm(pair[f]).rsplit("/", 1)[-1])
+                if pair.get(f + "_sha"):
+                    marks.add(str(pair[f + "_sha"]).lower())
+    return marks
+
+
+_KEYS_PARENT = KEYS_DIR.split("/")[0]
+# a `keys` path component, or a `k...` component carrying a glob (`k*`, `k"*`, `ke?s`); bank dirs such as
+# `k2_v002r1` carry no glob and stay clean
+_KEYS_COMPONENT = re.compile(r"""(?:^|[\s/"'(,=])(?:keys|k[\w"'-]*[*?\[][^/\s"')]*)(?=[/\s"')]|$)""")
+
+
+def _reads_key(cmd, marks):
+    c = _norm(cmd)
+    if any(m in c for m in marks):
+        return True
+    return _KEYS_PARENT in c and bool(_KEYS_COMPONENT.search(c))  # `1855-trainer-v0` + a keys component
+
+
 def key_dir_reads(run_dir):
-    """Builder commands in run_dir/events.jsonl that name KEYS_DIR (any slash form or case) -> list.
-    None when the run has no transcript."""
+    """Builder commands in run_dir/events.jsonl that read the held-out keys (any slash form or case; see
+    key_markers and _KEYS_COMPONENT) -> list. None when the run has no transcript."""
     ev = Path(run_dir) / "events.jsonl"
     if not ev.is_file():
         return None
     _, cmds, _ = parse_events(ev.read_text(encoding="utf-8", errors="replace").splitlines())
-    return [c for c in cmds if KEYS_DIR in _norm(c)]
+    marks = key_markers()
+    return [c for c in cmds if _reads_key(c, marks)]
 
 
 def holdout_step(built):
