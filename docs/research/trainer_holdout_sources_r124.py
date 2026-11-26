@@ -35,8 +35,16 @@ def main():
         raise RuntimeError("checked-out bank differs from frozen bank")
     subprocess.run(["git", "diff", "--exit-code", PIN, "--", "tools/trainer", "docs/trainer"], check=True)
     entries = {e["id"]: e for e in json.loads(raw)["etalons"]}
-    tuning = set.union(*(digests(e["sources"]) for e in entries.values() if e["split"] == "tuning"))
+    tuning: set[str] = set()
+    for e in entries.values():
+        if e["split"] == "tuning":
+            declared = digests(e["sources"])
+            if declared is None:
+                raise RuntimeError(f"incomplete tuning source identities: {e['id']}")
+            tuning.update(declared)
     tower_a = digests(entries["63a-stage1"]["sources"])
+    if tower_a is None:
+        raise RuntimeError("missing 63A witness source identity")
     tower_b = entries["63b-stage1"]["sources"]
     shared = overlap(tower_b, tower_a)
     separate = overlap(entries["g22-k2-stage1"]["sources"], tower_a)
