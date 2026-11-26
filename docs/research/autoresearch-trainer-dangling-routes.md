@@ -153,7 +153,8 @@ measured property of every ready practice tree; the class is not the single #192
 confounded by etalon (non-KPP1 escape 7/25 hit vs 3/12 not hit; 0 clean FBX in both). No live runs, no KEEP,
 no product change.
 
-Receipt: `docs/research/trainer_dangling_r119/receipt.json` (raw bytes sha256
+Receipt: `docs/research/trainer_dangling_r119/receipt.json` (Git-LF sha256
+`369f9ce53b6cb00c27d96334cbaeab4db3fd6009703883ee2a68c94341c0ca74`; raw CRLF bytes on the host
 `ca56fe35f7fff3062b027db7150f4379b004c873073a8098ed696c793b93520c`), inputs: head 8a2fa635, bank
 `016aab0c…6635`, trainer.py `16fd8edb…4b5`, measure.py `439c3a42…735`, E93 audit `e78e4927…ec3`.
 Replay of the current-head series is fully Git-bound; the stored-run table is replay limited
