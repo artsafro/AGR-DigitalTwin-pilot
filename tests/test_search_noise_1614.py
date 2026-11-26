@@ -246,6 +246,34 @@ ARCHIVE_SECTION = "## Hidden from search (still in the tree)\n"
 
 
 @needs_rg
+def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
+    historical = {
+        "experiments/bim-autocad-agr/README.md",
+        "experiments/bim-autocad-agr/test_experiment.py",
+        "experiments/complexity-group-index/red.log",
+        "experiments/flora-texture-diagnosis/bark-calibration-v001.json",
+        "experiments/flora-texture-diagnosis/bark_calibration.py",
+        "experiments/flora-texture-diagnosis/calibration-original-tilia.json",
+        "experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json",
+        "experiments/flora-texture-diagnosis/source-integrity-v002.json",
+        "experiments/flora-texture-diagnosis/test_calibration.py",
+        "tools/research/pdf_album/dimension-geometry-evidence.json",
+    }
+    retained = {
+        "benchmark/bench-b03-decor/README.md",  # deferred benchmark, still indexed
+        "docs/research/model-flora-dry-walk-2026-10-16.md",  # disputed; keep wins
+        "experiments/bim-autocad-agr/experiment.py",  # referenced by tests
+        "experiments/flora-texture-diagnosis/calibrate_uv_area.py",  # sibling still used
+        "tools/research/pdf_album/dimension-recall-results/evidence.json",  # cited receipt
+    }
+    tracked = set(sn.tracked(ROOT))
+    visible = _rg(ROOT)
+    assert historical | retained <= tracked
+    assert retained <= visible
+    assert not historical & visible
+
+
+@needs_rg
 def test_search_archive_round_trip(tmp_path):
     old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
     first = f"- `{old}` — Superseded result.\n"
@@ -308,6 +336,24 @@ def test_real_search_archive_is_tracked_and_hidden(real):
     paths = set(real["archive"])
     assert paths and paths <= set(real["files"])
     assert paths.isdisjoint(_rg(ROOT))
+
+
+@needs_rg
+def test_pre_lattice_regressions_stay_tracked_but_leave_agent_search(real):
+    historical = {"tests/test_body_contours.py", "tests/test_body_optimization.py"}
+    current = {"tools/methods/body/body_lattice.py", "tests/test_live_route_imports.py"}
+    listed = _rg(ROOT)
+    assert historical <= set(real["archive"]) & set(real["files"])
+    assert historical.isdisjoint(listed)
+    assert current <= listed
+
+
+def test_body_archive_gate_cites_accepted_real_npm_lattice_body():
+    for path in ("docs/scenarios/oks-vpm.md", "docs/domain/conflicts.md", "docs/cases.md"):
+        text = (ROOT / path).read_text(encoding="utf-8")
+        assert "v006" in text and "[D409]" in text and "#1833" in text, path
+    scenario = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
+    assert "no NPM body on a real object yet" not in scenario
 
 
 
@@ -373,7 +419,7 @@ def test_real_repo_measure_dropped_against_the_cut():
 
 
 def test_skeletons_doc_names_every_kept_name_and_the_commands():
-    text = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    text = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     assert not [n for n in sn.KEEP_NAMES if f"`{n}`" not in text]
     assert "`skeleton.json` folders" in text and "historical-data" in text and "--verify-evidence" in text
 

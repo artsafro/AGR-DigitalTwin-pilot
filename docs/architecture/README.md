@@ -95,7 +95,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | agents/roles | [agents/ROLES.md](../agents/ROLES.md) |  |
 | agents/skeleton-harvest/2026-11-23 | [agents/skeleton-harvest/2026-11-23.md](../agents/skeleton-harvest/2026-11-23.md) |  |
 | agents/skeleton-template-json | [agents/skeleton.template.json](../agents/skeleton.template.json) |  |
-| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) |  |
+| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) | [agents/SKELETONS-stages.md](../agents/SKELETONS-stages.md) |
 | agents/skeletons-json | [agents/skeletons.json](../agents/skeletons.json) |  |
 | agents/task-intake | [agents/task-intake.md](../agents/task-intake.md) |  |
 | agents/triage-labels | [agents/triage-labels.md](../agents/triage-labels.md) |  |
@@ -507,6 +507,8 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | sources/vyatskaya-tow02 | [sources/vyatskaya-tow02.md](../sources/vyatskaya-tow02.md) |  |
 | tools/max-scripts | [tools/max-scripts.md](../tools/max-scripts.md) |  |
 | tools/openings | [tools/openings.md](../tools/openings.md) |  |
+| trainer/entry-cost-1938 | [trainer/entry-cost-1938.md](../trainer/entry-cost-1938.md) |  |
+| trainer/entry-cost-1938-json | [trainer/entry-cost-1938.json](../trainer/entry-cost-1938.json) |  |
 | trainer/etalons | [trainer/ETALONS.md](../trainer/ETALONS.md) |  |
 | trainer/etalons-json | [trainer/etalons.json](../trainer/etalons.json) |  |
 | trainer/ledger-json | [trainer/ledger.json](../trainer/ledger.json) |  |

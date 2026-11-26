@@ -9,14 +9,14 @@ find the line for your question, then read that file. One line per tracked file.
 |---|---|---|
 | `README.md` | English overview of the folder; `docs/domain/` wins on conflict | Orienting in the AGR archive or tracing a `local: docs/agr/...` citation |
 | `DIGITAL_TWIN_AI_PROJECT_BRIEF.md` | Original production brief v0.1: goals, pipeline, architecture, stages DT-001…DT-033, risks | Needing the original requirements, stage IDs or intended architecture |
-| `GEOMETRY_RULES.md` | User's mandatory modeling rules (2026-09-27): exterior-only BODY, clean quads, Shell, windows | Building or reviewing BODY/window geometry |
+| `GEOMETRY_RULES.md` | User's mandatory modeling rules (2026-09-27): exterior-only BODY, clean quads, Shell, windows | Historical geometry rules; for stage-1 BODY use [the lattice](../domain/areas/body.md) [D373] |
 | `UV_RULES.md` | UV/texture reuse rules for NPM and VPM; NPM OKS exempt from Ground texel density | Laying out atlases/UDIM or judging NPM texture scale |
 | `geometry-quality.mdc` | Short always-apply rule card summarising GEOMETRY_RULES | Quick reminder of clean-quad BODY rules |
 | `uv-reuse.mdc` | Short always-apply rule card summarising UV_RULES | Quick reminder of atlas/UDIM reuse rules |
 | `ADAPTER_EXTRACTION.md` | Connect-quads operation (`dt_ai.geometry.connect`) extracted from Obr22: API, checks, transfer limits | Subdividing quads by max side length or reusing connect code |
 | `ADAPTER_REPORT.md` | AdapterReport contract: fields, required_checks_passed logic, delivery_passed always false | Writing or reading an operation report |
-| `EXTERIOR_ADAPTER.md` | Exterior-surface prototype (`extract_exterior`): job contract, parameters, reproduction | Extracting exterior facade quads from a prepared grid |
-| `BODY_SHELL_ADAPTER.md` | BODY/Shell adapter: exterior quads → inward Shell with reveals, no inner faces; Obr22 only | Building a shelled BODY from an exterior surface |
+| `EXTERIOR_ADAPTER.md` | Exterior-surface prototype (`extract_exterior`): job contract, parameters, reproduction | Historical reproduction only; superseded for stage-1 BODY by [D373] |
+| `BODY_SHELL_ADAPTER.md` | BODY/Shell adapter: exterior quads → inward Shell with reveals, no inner faces; Obr22 only | Historical reproduction only; superseded for stage-1 BODY by [D373] |
 | `EXPERIENCE_CAPTURE.md` | Rule for recording a user-accepted result as a case study | User praises/accepts a result and a case must be written |
 | `READINESS_REPORT.md` | Readiness audit 2026-09-26: NPM vs VPM, norm conflicts, app readiness, skills registry | Checking historical readiness, NPM/VPM differences or source contradictions |
 | `sintez_checks_1.6.1.json` | SINTEZ AGR Checker 1.6.1 dissection (#429): 36 checks, 10 fixers, thresholds, 2026 VPM/NPM req_nums vs our checkers | Comparing our checks or thresholds with the SINTEZ AGR Checker |
