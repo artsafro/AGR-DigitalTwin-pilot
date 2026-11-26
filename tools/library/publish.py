@@ -5,6 +5,8 @@ equipment into the AGR library as immutable `draft` versions; Artem's word flips
                               [--evidence DIR] [--issue N] [--blender EXE]
     agr library accept NAME[@vNNN] ... --words "<Artem's words>" [--despite-qa]
     agr library reject NAME[@vNNN] --words "<Artem's words>" --inbox-root G:/Мой диск/AGR-assets/_inbox
+    agr library reindex [--a101-root DIR]              rebuild the MAF search index now [D421]
+    agr library check-job jobs/<ID> [--outputs DIR]    close-out guard: no unpublished MAF master [D421]
 
 Stages (docs/agents/skeletons.json, cell library-publish), each on its existing owner:
   intake    list the objects of a batch COPY (A101 zips, object folders); every file is an object file, a work
@@ -21,7 +23,12 @@ Stages (docs/agents/skeletons.json, cell library-publish), each on its existing 
 
 Exit codes: 0 done, 1 an object failed QA / a command refused a record, 2 invalid input. QA failure does not
 stop the draft (Artem sees it on the sheet); `accept` refuses a QA-failed record unless --despite-qa.
-Read path: `available()` and assets_core.scan_maf offer only `accepted` versions.
+Read path [D421]: `available()` and the search index library/assets/maf_unified.json (rebuilt at the end of every
+publish / accept / reject) offer `accepted` AND `draft` versions, each with its `status`; an agent prefers accepted
+and says so in its report when it reuses a draft. The frozen AGR Tools assets browser (assets_core.scan_maf) stays
+accepted-only [D371].
+Close-out guard: `agr library check-job jobs/<ID> [--outputs DIR]` fails while a MAF master in the job outputs has no
+library entry.
 """
 from __future__ import annotations
 
@@ -138,15 +145,174 @@ def write_json_atomic(path, data):
     os.replace(tmp, p)
 
 
-def available(catalogue, kind=None):
-    """The agents' read path [D371]: only `accepted` versions; draft and rejected are not available."""
-    return [r for r in catalogue.get("records", []) if r.get("status") == "accepted"
+def available(catalogue, kind=None, drafts=True):
+    """The agents' read path [D421]: `accepted` AND `draft` versions, accepted first; every record keeps its `status`.
+    An agent prefers an accepted record, may reuse a draft and says so in its report; rejected is never offered.
+    drafts=False: accepted only (the frozen AGR Tools assets browser gate, [D371])."""
+    ok = ("accepted", "draft") if drafts else ("accepted",)
+    recs = [r for r in catalogue.get("records", []) if r.get("status") in ok
             and (kind is None or r.get("kind") == kind)]
+    return sorted(recs, key=lambda r: r["status"] != "accepted")
 
 
 def accepted_paths(catalogue):
-    """`<kind>/<name>/vNNN` folders the assets browser may show (assets_core.scan_maf filter)."""
-    return {"{}/{}/{}".format(r["kind"], r["name"], r["version"]).lower() for r in available(catalogue)}
+    """`<kind>/<name>/vNNN` folders the assets browser may show (assets_core.scan_maf filter): accepted only."""
+    return {"{}/{}/{}".format(r["kind"], r["name"], r["version"]).lower()
+            for r in available(catalogue, drafts=False)}
+
+
+# ---- search index (library/assets/maf_unified.json) [D421] ----------------------------------------------------
+UNIFIED = ROOT / "library/assets/maf_unified.json"
+DEFAULT_A101 = "G:/Мой диск/AGR-assets/maf/a101"
+INDEX_CACHE = Path.home() / ".cache" / "agr-library-index"
+
+
+def index_path(catalogue_path, index=None):
+    """Where `publish|accept|reject` rebuild the search index: --index, else the repo index for the repo catalogue,
+    else `maf_unified.json` next to the given catalogue (a test or scratch catalogue never rewrites the repo index)."""
+    if index:
+        return Path(index)
+    if Path(catalogue_path).resolve() == CATALOGUE.resolve():
+        return UNIFIED
+    return Path(catalogue_path).with_name("maf_unified.json")
+
+
+def index_record(r):
+    card = r.get("card") or {}
+    size = card.get("size_m")
+    return {"id": "{}_published:{}@{}".format(r["kind"], r["name"], r["version"]), "source": "published",
+            "name": r["name"], "version": r["version"], "status": r["status"],
+            "manufacturer": card.get("manufacturer"), "title_ru": card.get("title_ru"), "article": card.get("article"),
+            "bbox_mm": {"high": dict(zip("xyz", [round(v * 1000, 1) for v in size]))} if size else {},
+            "tris": card.get("tris"), "path": "{}/{}/{}".format(r["kind"], r["name"], r["version"]),
+            "preview": r.get("preview"), "qa": (r.get("qa") or {}).get("verdict"), "origin": r.get("origin")}
+
+
+def scan_a101(a101_root, cache=None, legacy=None):
+    """Rescan the A101 MAF archives (headless assets_core.scan_maf; unchanged zips reuse the cached scan) and unify
+    them with the legacy catalogue, as tools/assets/build_unified_library.py does."""
+    core = _load("agr_tools_assets_core", "adapters/max/agr_tools/assets_core.py")
+    cache = Path(cache or INDEX_CACHE)
+    cache.mkdir(parents=True, exist_ok=True)
+    old_p = cache / "maf_assets_index.json"
+    old = json.loads(old_p.read_text(encoding="utf-8")) if old_p.is_file() else None
+    root = Path(a101_root).as_posix()
+    idx = core.scan_maf(root, str(cache), lib="maf", old_index=old, published=set())
+    write_json_atomic(old_p, idx)
+    measured_p = ROOT / "library/assets/maf_measured.json"
+    unknown = []
+    if measured_p.is_file():
+        idx, unknown = lib.attach_measured(idx, json.loads(measured_p.read_text(encoding="utf-8"))["measured"])
+    if legacy is None:
+        legacy = json.loads((ROOT / "library/maf/catalogue.json").read_text(encoding="utf-8"))
+    mf = lib.unify_maf(idx, legacy)
+    mf["sources"] = {"a101_root": root, "catalogue": "library/maf/catalogue.json",
+                     "measured": "library/assets/maf_measured.json", "measured_unknown": unknown}
+    mf["audit"] = lib.audit_maf(idx)
+    mf["scan_problems"] = idx.get("report", {}).get("problems", [])
+    return mf
+
+
+def rebuild_index(catalogue, path, a101_root=None, cache=None, legacy=None, catalogue_path=None):
+    """Rebuild the MAF search index at `path` [D421]: the A101 + legacy part (rescanned when `a101_root` is given,
+    else kept from the file) + every draft / accepted published MAF record with its `status`. Atomic, idempotent."""
+    path = Path(path)
+    if catalogue_path and path.resolve() == Path(catalogue_path).resolve():
+        raise PublishError(f"index {path} is the catalogue itself")
+    if a101_root:
+        data = scan_a101(a101_root, cache, legacy)
+    elif path.is_file():
+        data = json.loads(path.read_text(encoding="utf-8"))
+    else:
+        data = {"schema": lib.UNIFIED_SCHEMA, "kind": "maf", "truth": "a101", "records": [], "counts": {},
+                "sources": {}}
+    if data.get("schema") != lib.UNIFIED_SCHEMA:
+        raise PublishError(f"index {path} is not an {lib.UNIFIED_SCHEMA} file")
+    pubs = [index_record(r) for r in available(catalogue, kind="maf")]
+    data["records"] = [r for r in data.get("records", []) if r.get("source") != "published"] + pubs
+    data.setdefault("counts", {}).update(
+        published_draft=sum(r["status"] == "draft" for r in pubs),
+        published_accepted=sum(r["status"] == "accepted" for r in pubs))
+    data.setdefault("sources", {})["published"] = "library/published/catalogue.json"
+    write_json_atomic(path, data)
+    return data
+
+
+def _refresh_index(a, cat):
+    """End of every publish / accept / reject: rebuild the search index (A101 rescan for the repo index)."""
+    path = index_path(a.catalogue, getattr(a, "index", None))
+    a101 = getattr(a, "a101_root", None)
+    if a101 is None and path.resolve() == UNIFIED.resolve():
+        a101 = DEFAULT_A101
+    if a101 and not Path(a101).is_dir():
+        print(f"index: A101 root {a101} not reachable; A101 part kept as it was", file=sys.stderr)
+        a101 = None
+    data = rebuild_index(cat, path, a101_root=a101, catalogue_path=a.catalogue)
+    c = data["counts"]
+    print(f"index: {path} rebuilt (a101 {c.get('a101', 0)}, published draft {c['published_draft']}, "
+          f"accepted {c['published_accepted']})")
+
+
+# ---- job close-out guard [D421] ---------------------------------------------------------------------------------
+MASTER_RE = re.compile(r"^(?P<key>.+?)(_groundel.*|_high|_low)$", re.I)
+
+
+def maf_masters(paths):
+    """MAF master files among job outputs: an object FBX/MAX `<key>_GroundEl*` or `<key>_high|_low`, or an A101
+    archive with a `_high.fbx` member. A delivery package object (`SM_<Address>_...`, docs/domain/geometry.md) is
+    not a library master."""
+    out = []
+    for base in paths:
+        base = Path(base)
+        files = sorted(p for p in base.rglob("*") if p.is_file()) if base.is_dir() else [base] if base.is_file() else []
+        for p in files:
+            ext, stem = p.suffix.lower(), p.stem
+            if stem.lower().startswith("sm_") or "source" in [x.lower() for x in p.parts[-3:-1]]:
+                continue
+            if ext in (".fbx", ".max"):
+                m = MASTER_RE.match(stem)
+                if m:
+                    out.append({"path": str(p), "key": m.group("key")})
+            elif ext == ".zip":
+                try:
+                    with zipfile.ZipFile(p) as zf:
+                        if any(n.lower().endswith("_high.fbx") for n in zf.namelist()):
+                            out.append({"path": str(p), "key": stem})
+                except zipfile.BadZipFile:
+                    continue
+    return out
+
+
+def unpublished_maf(paths, catalogue, unified):
+    """MAF masters with no library entry: no catalogue record (any status) by file SHA-256, name or origin object,
+    and no A101 / indexed record of that name. Empty list = the job may close."""
+    shas = {f.get("sha256") for r in catalogue.get("records", []) for f in r.get("files") or []}
+    names = {str(r.get("name", "")).lower() for r in catalogue.get("records", [])}
+    names |= {str((r.get("origin") or {}).get("object", "")).lower() for r in catalogue.get("records", [])}
+    names |= {str(r.get("name") or "").lower() for r in (unified or {}).get("records", [])
+              if r.get("source") in ("a101", "published")}
+    miss = []
+    for m in maf_masters(paths):
+        if m["key"].lower() in names or Path(m["path"]).stem.lower() in names:
+            continue
+        if sha256_file(m["path"]) in shas:
+            continue
+        miss.append(dict(m, reason="no library entry: run `agr library publish` (draft) before closing the job"))
+    return miss
+
+
+def job_artifacts(job_dir):
+    """Artifact paths a job declares in job.yaml (`artifacts[].path`, repo-relative or absolute)."""
+    import yaml
+    y = Path(job_dir) / "job.yaml"
+    if not y.is_file():
+        return []
+    data = yaml.safe_load(y.read_text(encoding="utf-8")) or {}
+    out = []
+    for a in data.get("artifacts") or []:
+        p = Path(str((a or {}).get("path", "")))
+        out.append(p if p.is_absolute() else ROOT / p)
+    return out
 
 
 # ---- 1 intake --------------------------------------------------------------------------------------------------
@@ -265,7 +431,8 @@ def identify_object(obj, unified, catalogue, kind="maf", name=None):
     art = _akey(ident.get("article") or "")
     mk = lib.maker_key(ident.get("manufacturer") or "")
     size = obj.get("size_mm") or _size_mm(obj)
-    pool = [dict(r, _from=r.get("source", "unified")) for r in (unified or {}).get("records", [])]
+    pool = [dict(r, _from=r.get("source", "unified")) for r in (unified or {}).get("records", [])
+            if r.get("source") != "published"]  # the catalogue below is the authority on published records
     pool += [{"name": r["name"], "manufacturer": r["card"].get("manufacturer"), "article": r["card"].get("article"),
               "bbox_mm": {"high": dict(zip("xyz", [v * 1000 for v in r["card"]["size_m"]]))}
               if r["card"].get("size_m") else None, "_from": "published:" + r["status"]}
@@ -728,9 +895,31 @@ def main(argv=None):
             q.add_argument("--despite-qa", action="store_true")
         else:
             q.add_argument("--inbox-root", default="G:/Мой диск/AGR-assets/_inbox")
+    q = sub.add_parser("reindex", help="rebuild the MAF search index now (A101 rescan + published records)")
+    q.add_argument("--catalogue", default=str(CATALOGUE))
+    j = sub.add_parser("check-job", help="close-out guard: every MAF master in the job outputs has a library entry")
+    j.add_argument("job", help="jobs/<ID> folder (reads job.yaml artifacts)")
+    j.add_argument("--outputs", action="append", default=[], help="output folder to scan as well (repeatable)")
+    j.add_argument("--catalogue", default=str(CATALOGUE))
+    for q in (p, sub.choices["accept"], sub.choices["reject"], sub.choices["reindex"], j):
+        q.add_argument("--index", help="search index to rebuild / read (default: the repo index for the repo "
+                                       "catalogue, else maf_unified.json next to --catalogue)")
+        if q is not j:
+            q.add_argument("--a101-root", help=f"rescan these A101 archives (default {DEFAULT_A101} for the repo index)")
     a = ap.parse_args(argv)
     try:
         cat = load_catalogue(a.catalogue)
+        if a.cmd == "reindex":
+            _refresh_index(a, cat)
+            return 0
+        if a.cmd == "check-job":
+            ip = index_path(a.catalogue, a.index)
+            unified = json.loads(ip.read_text(encoding="utf-8")) if ip.is_file() else {"records": []}
+            miss = unpublished_maf(job_artifacts(a.job) + [Path(o) for o in a.outputs], cat, unified)
+            for m in miss:
+                print(f"UNPUBLISHED MAF: {m['path']} (object {m['key']}): {m['reason']}", file=sys.stderr)
+            print(f"check-job {a.job}: {len(miss)} unpublished MAF master(s)")
+            return 1 if miss else 0
         if a.cmd == "publish":
             if _inside(a.catalogue, a.batch):
                 raise PublishError("catalogue lies inside the batch")
@@ -738,8 +927,11 @@ def main(argv=None):
             ids = json.loads(Path(a.identity).read_text(encoding="utf-8")) if a.identity else {}
             ids = {k: v for k, v in ids.items() if not k.startswith("_")}
             rb = (lambda f, o: blender_readback(f, o, a.blender))
+            if a.a101_root is None and index_path(a.catalogue, a.index).resolve() == UNIFIED.resolve():
+                a.a101_root = str(Path(a.assets_root) / "maf" / "a101")
             res = publish(a.batch, a.kind, cat, unified, a.assets_root, a.evidence, ids, a.issue, rb)
             write_json_atomic(a.catalogue, cat)
+            _refresh_index(a, cat)
             for r in res["rows"]:
                 print(f"{r['object']}: {r['identify']['result']} -> {r['name']} {r.get('version', '-')} "
                       f"QA {(r.get('qa') or {}).get('verdict', r.get('skip'))}")
@@ -753,12 +945,17 @@ def main(argv=None):
         else:
             recs = [reject_record(cat, a.refs[0], a.words, a.inbox_root)]
         write_json_atomic(a.catalogue, cat)
+        _refresh_index(a, cat)
         for r in recs:
             print(f"{r['name']}@{r['version']}: {r['status']}")
         return 0
     except PublishError as exc:
         if getattr(exc, "registered", None):
             write_json_atomic(a.catalogue, cat)  # describe the versions already made; never leave them orphan
+            try:
+                _refresh_index(a, cat)  # the orphan drafts are visible too [D421]
+            except (PublishError, OSError, ValueError) as idx_exc:
+                print(f"ERROR: index not rebuilt: {idx_exc}", file=sys.stderr)
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1 if a.cmd in ("accept", "reject") and "not accepted" in str(exc) else 2
     except (OSError, ValueError) as exc:

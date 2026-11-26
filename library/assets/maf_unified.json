@@ -1597,6 +1597,44 @@
    "status": "a101"
   },
   {
+   "id": "maf_a101:GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+   "source": "a101",
+   "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+   "manufacturer": "GKVysota",
+   "title": "StolSoSkameykoyIDivanom",
+   "article": "VST9504-1",
+   "versions": [
+    "high",
+    "low"
+   ],
+   "file": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1.zip",
+   "sidecar": true,
+   "units": "mm",
+   "tris": {
+    "high": 1020,
+    "low": 636
+   },
+   "bbox_mm": {
+    "high": {
+     "x": 1800.0,
+     "y": 2004.9,
+     "z": 854.9
+    },
+    "low": {
+     "x": 1800.0,
+     "y": 2004.9,
+     "z": 854.9
+    }
+   },
+   "spec": [],
+   "preview": "previews/maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1.png",
+   "category": "Скамья",
+   "title_ru": null,
+   "measured": false,
+   "warnings": [],
+   "status": "a101"
+  },
+  {
    "id": "maf_a101:Hobbika_GamakHardwood_25308",
    "source": "a101",
    "name": "Hobbika_GamakHardwood_25308",
@@ -19527,6 +19565,151 @@
    "file": "C:/x/t_3e6ff1b3/library/max/MAF_0931_Object122.max",
    "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0931_Object122.png",
    "status": "legacy_unidentified"
+  },
+  {
+   "id": "maf_published:Adanat_NavesLianaSPolikarbonatom_40074@v001",
+   "source": "published",
+   "name": "Adanat_NavesLianaSPolikarbonatom_40074",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Навес Лиана с поликарбонатом",
+   "article": "40074",
+   "bbox_mm": {
+    "high": {
+     "x": 3000.0,
+     "y": 2005.0,
+     "z": 2782.0
+    }
+   },
+   "tris": {
+    "vpm": 1200,
+    "npm": null
+   },
+   "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001",
+   "preview": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "AD40074",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Feniks_InformatsionnyyStendZapovednik_187150@v001",
+   "source": "published",
+   "name": "Feniks_InformatsionnyyStendZapovednik_187150",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Феникс",
+   "title_ru": "Информационный стенд Заповедник",
+   "article": "187150",
+   "bbox_mm": {
+    "high": {
+     "x": 844.0,
+     "y": 145.0,
+     "z": 1820.0
+    }
+   },
+   "tris": {
+    "vpm": 394,
+    "npm": null
+   },
+   "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001",
+   "preview": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "FX187150",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Feniks_SportivnyyVorkautKompleksZapovednik_217280@v001",
+   "source": "published",
+   "name": "Feniks_SportivnyyVorkautKompleksZapovednik_217280",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Феникс",
+   "title_ru": "Спортивный воркаут-комплекс Заповедник",
+   "article": "217280",
+   "bbox_mm": {
+    "high": {
+     "x": 4020.0,
+     "y": 2835.5,
+     "z": 2553.0
+    }
+   },
+   "tris": {
+    "vpm": 1900,
+    "npm": null
+   },
+   "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001",
+   "preview": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "FX217280",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_RazvivayuschiyElement_MG3402@v001",
+   "source": "published",
+   "name": "Millenium_RazvivayuschiyElement_MG3402",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Развивающий элемент",
+   "article": "MG3402",
+   "bbox_mm": {
+    "high": {
+     "x": 2134.0,
+     "y": 2435.6,
+     "z": 1305.0
+    }
+   },
+   "tris": {
+    "vpm": 1410,
+    "npm": null
+   },
+   "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001",
+   "preview": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "MG3402",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_Pereprava_MG3518@v001",
+   "source": "published",
+   "name": "Millenium_Pereprava_MG3518",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Переправа",
+   "article": "MG3518",
+   "bbox_mm": {
+    "high": {
+     "x": 3000.0,
+     "y": 526.0,
+     "z": 2070.0
+    }
+   },
+   "tris": {
+    "vpm": 1028,
+    "npm": null
+   },
+   "path": "maf/Millenium_Pereprava_MG3518/v001",
+   "preview": "maf/Millenium_Pereprava_MG3518/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "MG3518",
+    "issue": "1743"
+   }
   }
  ],
  "spec_without_a101_model": [
@@ -21655,18 +21838,21 @@
   }
  },
  "counts": {
-  "a101": 108,
+  "a101": 109,
   "a101_with_spec": 35,
   "spec_rows": 205,
   "spec_without_a101_model": 170,
   "spec_without_model_with_legacy_candidates": 47,
-  "legacy_entries": 931
+  "legacy_entries": 931,
+  "published_draft": 5,
+  "published_accepted": 0
  },
  "sources": {
   "a101_root": "G:/Мой диск/AGR-assets/maf/a101",
   "catalogue": "library/maf/catalogue.json",
   "measured": "library/assets/maf_measured.json",
-  "measured_unknown": []
+  "measured_unknown": [],
+  "published": "library/published/catalogue.json"
  },
  "audit": {
   "rows": [
@@ -21993,6 +22179,13 @@
     "id": "maf:FunGame_KaruselTaiga_DIO-004.008.000",
     "name": "FunGame_KaruselTaiga_DIO-004.008.000",
     "category": "Карусель",
+    "findings": [],
+    "warnings": []
+   },
+   {
+    "id": "maf:GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+    "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+    "category": "Скамья",
     "findings": [],
     "warnings": []
    },
@@ -22608,14 +22801,14 @@
   },
   "stats": {
    "high_tris": {
-    "n": 108,
+    "n": 109,
     "min": 68,
     "median": 890,
     "p90": 3620,
     "max": 26188
    },
    "low_tris": {
-    "n": 108,
+    "n": 109,
     "min": 26,
     "median": 416,
     "p90": 2084,
@@ -22624,7 +22817,7 @@
   },
   "categories": {
    "Игровое оборудование": 14,
-   "Скамья": 12,
+   "Скамья": 13,
    "Пергола": 12,
    "Спортивное оборудование": 10,
    "Стол": 7,
@@ -22648,6 +22841,7 @@
    "Песочница": 1,
    "Вазон": 1
   },
-  "clean": 105
- }
+  "clean": 106
+ },
+ "scan_problems": []
 }

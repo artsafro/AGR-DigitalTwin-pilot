@@ -3,7 +3,8 @@
 **Кратко.** Агент кладёт в библиотеку то, что намоделил (МАФ, Флора, окна, крышное оборудование [D372]),
 одной командой `agr library publish <партия>`: приём копии партии → дубль/вариант/новый → библиотечное имя →
 проверка ВПМ и НПМ → неизменяемая версия `vNNN` на Диске + черновик (`draft`) в каталоге git → лист превью
-Артёму. Другие агенты и браузер `assets` видят запись только после его «ок» (`agr library accept`) [D371].
+Артёму → пересборка поискового индекса. Черновик сразу виден другим агентам со статусом `draft`; после его «ок»
+(`agr library accept`) запись становится `accepted` [D421]. Браузер `assets` в AGR Tools показывает только принятые [D371].
 
 ## Where things are [D368]
 
@@ -11,8 +12,9 @@
 |---|---|
 | Files (immutable versions) | `G:/Мой диск/AGR-assets/<kind>/<name>/vNNN/` (+ `RECORD.json`, `SHA256SUMS.txt`) |
 | Catalogue (agents search this, not folders) | `library/published/catalogue.json`, schema `schemas/library_published.schema.json` |
-| Core + CLI | `tools/library/publish.py` (`agr library publish\|accept\|reject`) |
-| Read path | `publish.available()`; AGR Tools `assets` browser: `assets_core.scan_maf` + `published_gate` |
+| Core + CLI | `tools/library/publish.py` (`agr library publish\|accept\|reject\|reindex\|check-job`) |
+| Search index (rebuilt on every publish / accept / reject) [D421] | `library/assets/maf_unified.json` |
+| Read path | `publish.available()` (accepted + draft); AGR Tools `assets` browser: `assets_core.scan_maf` + `published_gate` (accepted only) |
 | Sheets for Artem | `G:/Мой диск/AGR-evidence/<issue>-library-publish/<batch>/sheet.md\|.html` |
 
 Kinds: `maf`, `flora`, `windows`, `roof_equipment`. `materials` is refused (later).
@@ -55,10 +57,32 @@ Exit: 0 done, 1 a QA failure / refused record, 2 invalid input. `--assets-root` 
    assets root overlapping the batch is refused before any write.
 6. `sheet` — one new folder per batch (never overwritten): table object / identify / name / version / QA / findings /
    preview, the drop list, `sheet.html` contact view, `SHA256SUMS.txt`, `publish.json`.
+7. `index` [D421] — at the end of every `publish`, `accept` and `reject` the search index
+   `library/assets/maf_unified.json` is rebuilt (`publish.rebuild_index`): A101 rescanned from
+   `G:/Мой диск/AGR-assets/maf/a101` (headless `assets_core.scan_maf`, unchanged zips reuse the scan cache in
+   `~/.cache/agr-library-index`) + legacy Union + every `draft` / `accepted` published MAF record
+   (`source: published`, `status`, `path: maf/<name>/vNNN`). Drive not reachable: the A101 part is kept, the published
+   part is still rebuilt. Commit the rebuilt index with the catalogue. `agr library reindex` rebuilds it by hand.
 
-## Read path [D371]
+## Read path [D421]
 
-`draft` and `rejected` are not available. `publish.available(catalogue)` returns only `accepted`; the assets browser
-(`assets_core.scan_maf`) hides every zip under `<name>/vNNN/` that the catalogue does not list as accepted, every
-`vNNN.partial`, and all published versions when the catalogue is missing or unreadable (`report.hidden_unaccepted`).
-A101 archives outside the publish layout are unchanged.
+Agent-made versions are visible to every agent as soon as they are published: `publish.available(catalogue)` returns
+`accepted` and `draft` records (accepted first, each with its `status`), and the search index lists them too.
+An agent prefers an `accepted` record; it may reuse a `draft` and then writes in its report «использован черновик
+`<Name>@vNNN`». Artem's «ок» on reuse (`agr library accept`) turns it into `accepted`. `rejected` is never offered.
+
+The frozen AGR Tools assets browser keeps the [D371] gate: `assets_core.scan_maf` hides every zip under
+`<name>/vNNN/` that the catalogue does not list as accepted, every `vNNN.partial`, and all published versions when the
+catalogue is missing or unreadable (`report.hidden_unaccepted`); `publish.available(catalogue, drafts=False)` is that
+accepted-only list. A101 archives outside the publish layout are unchanged.
+
+## Job close-out guard [D421]
+
+```bash
+agr library check-job jobs/<ID> [--outputs <job outputs folder>]   # exit 1 = an unpublished MAF master
+```
+
+A MAF master is an object FBX / MAX `<key>_GroundEl*` or `<key>_high|_low`, or an A101 archive with a `_high.fbx`
+member, among the `job.yaml` artifacts and the `--outputs` folders; delivery objects `SM_<Address>_...` are not
+masters. It has a library entry when a catalogue record (any status) has its SHA-256, its name or its object as
+`origin.object`, or an A101 / indexed record has its name. Publish it as a draft before closing the job.
