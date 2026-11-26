@@ -11,3 +11,22 @@
 - Also inject one malformed plan per fixture (`floors=0`, exactly that semantic field changed), with a new output: expect native rejection and no output. Read the separate bank label controls for native import and unchanged `bounds_step` diagnostics; the export signal is engineering-only, never a quality proxy if labels tie. Held-out meaning is technical transfer of output-slot recovery, not a cold-agent or accepted-quality result.
 - Budget: one candidate, zero new candidates. Three fresh pairs, each with clean parity builds for both inputs; report the median and min/max spread. One malformed injection per input and one fresh readback per bank label, not repeated performance trials. Hard cap 180 s overall, with per-process timeout and first-round projection (elapsed plus two first-round durations and 30 s for controls); stop inconclusive if the series cannot finish under the cap. Confirm narrow hypothesis only if all three pairs are +2, parity is exact, malformed plans fail closed and sentinel/input parity holds; refute on reproducible failure with valid inputs, otherwise inconclusive. No KEEP regardless; no automated retry or submission integration on delivered work.
 - Replay from this receipt branch: `uv run python docs/research/trainer_body_output_r120/replay.py .venv/r120-replay` (output must be new; pinned source tree must match, runner performs complete input hash preflight). All scratch output remains under the worktree; no DCC GUI. Repeat in a different fresh directory for a separate run.
+
+## Result — confirmed only for the occupied-slot mechanism
+
+**Итог:** при искусственно занятом каталоге обычный `agr body` не пишет FBX. Тот же неизменённый план в новом дочернем каталоге дал читаемый FBX на G22 и независимом 63A во всех трёх парах. Это не доказательство роста доли успешных холодных прогонов и не основание автоматически сдавать модель.
+
+| Pair | B: occupied | C: new child | C−B | Wall, s |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 0/2 | 2/2 | +2 | 14.125 |
+| 2 | 0/2 | 2/2 | +2 | 13.713 |
+| 3 | 0/2 | 2/2 | +2 | 14.273 |
+
+- Median +2, spread [+2,+2]. Native Blender 5.1.2 (`ec6e62d40fa9`); series completed in 50.643 s vs first-pair projection 72.532 s and cap 180 s. Measured harness `7eacb36b`. The first harness attempt (`156c9306`, 2.676 s) stopped on a log filename collision (`EEXIST clean.log`); distinct readback logs fixed it. That attempt is not a trial and did not alter any hypothesis threshold.
+- Clean: 6/6 builds and native readbacks succeed. Candidate: 6/6; all six mesh hashes identical to the paired clean output (G22 3,879 polygons/4,449 vertices; 63A 4,560/5,128). Each native success wrote exactly four new files; the preflight inputs stayed unchanged. Per input and repetition the occupied baseline creates 0 files, and both baseline and candidate change 0 existing files. The output-directory injection triggered on both inputs; `floors=0` changed one field per input and failed closed 2/2 without an output directory.
+- Real labels: native readback succeeds for the accepted G22 v002r1 and 63A v005 and for the rejected G22 v001. G22 rejected/accepted also tie at 0.0 m on the existing bounds diagnostic. Both recovered candidates pass that same bounds diagnostic (0.0 m; 0.1 m threshold); neither result proves architectural completeness or acceptance. G22's practice agent reported that its plan omitted parts of the requested scope. 63A has no rejected fixture in the bank. Quality separation, full trainer scoring, package validity, and fresh-agent adoption were not measured. In particular, there is no measured link between the occupied-slot trigger and the ledger's missing-FBX cases.
+- Would recommend a **new output child in the existing documented command** only when the refusal is `OUT_DIR exists` and a usable plan is already present. Do not recover from missing/invalid plans, auto-promote an output as a submission, or replace the trainer owner's selection changes. Keep nothing in product; no PR. Replay is limited by access to the hash-pinned local plans and Drive bank.
+
+Affected tests: `uv run pytest -q tests/test_body_lattice_1736.py tests/test_one_door_1895.py` — 118 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)

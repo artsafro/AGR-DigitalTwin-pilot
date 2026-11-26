@@ -1,0 +1,30 @@
+{
+  "base": "8a2fa635469d346009c60a922c9438e3dc20b77f",
+  "input_sha256": {
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "C:/x/trainer/runs/g22-k2-stage1-codex-r111-1/built/plan.json": "5cf2bdbb51178900ef22362126fccb15df43a4637f8c23632e6f6747d1f25895",
+    "C:/x/trainer/runs/63a-stage1-codex-r111-1/built/plan.json": "6f9c6d143d18febc7033f848505859bd2f50bd611c12f1f8147d1822eb6a7d66",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v002r1_body_quad.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v001_body_quad.fbx": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a"
+  },
+  "rounds": [
+    {
+      "rows": {
+        "g22-k2-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0
+        }
+      }
+    }
+  ],
+  "malformed": {},
+  "labels": {},
+  "status": "inconclusive",
+  "diagnostic": "[Errno 17] File exists: 'C:\\\\Users\\\\artsafro\\\\agr-pilot\\\\AGR-DigitalTwin\\\\.worktrees\\\\t_07addb64\\\\.venv\\\\r120-first\\\\round-1-g22-k2-stage1\\\\clean.log'",
+  "wall_s": 2.676
+}

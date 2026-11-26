@@ -1,0 +1,460 @@
+{
+  "base": "8a2fa635469d346009c60a922c9438e3dc20b77f",
+  "input_sha256": {
+    "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe": "1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5",
+    "C:/x/trainer/runs/g22-k2-stage1-codex-r111-1/built/plan.json": "5cf2bdbb51178900ef22362126fccb15df43a4637f8c23632e6f6747d1f25895",
+    "C:/x/trainer/runs/63a-stage1-codex-r111-1/built/plan.json": "6f9c6d143d18febc7033f848505859bd2f50bd611c12f1f8147d1822eb6a7d66",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v002r1_body_quad.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1/k2_v001_body_quad.fbx": "8e97a80af2de0a22fae5d689a193762fe5ff2d90eb4b83106e35d5c78a5eb519",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a"
+  },
+  "rounds": [
+    {
+      "rows": {
+        "g22-k2-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0,
+          "clean": {
+            "fbx_sha256": "ab089a311b74b018f7ed1535ebfee4b6adb6d3e26ee8f1c260455075a8647935",
+            "mesh_sha256": "65447a921bac4d5c54b3a8c6be27d3a232eb6a71b26986ef5dfe3d6a43a5e79d",
+            "polygons": 3879,
+            "vertices": 4449,
+            "bounds_m": [
+              [
+                [
+                  475.47869873046875,
+                  994.3082275390625,
+                  5.2998270988464355
+                ],
+                [
+                  551.78271484375,
+                  1059.697998046875,
+                  32.29983901977539
+                ]
+              ]
+            ]
+          },
+          "candidate_exit": 0,
+          "candidate": {
+            "fbx_sha256": "c89a1a0870a4b748eb22e0214129d1df7e28f04340fcd4e32110d70704475da6",
+            "mesh_sha256": "65447a921bac4d5c54b3a8c6be27d3a232eb6a71b26986ef5dfe3d6a43a5e79d",
+            "polygons": 3879,
+            "vertices": 4449,
+            "bounds_m": [
+              [
+                [
+                  475.47869873046875,
+                  994.3082275390625,
+                  5.2998270988464355
+                ],
+                [
+                  551.78271484375,
+                  1059.697998046875,
+                  32.29983901977539
+                ]
+              ]
+            ]
+          },
+          "candidate_changed_existing": 0,
+          "candidate_paths": [
+            "original.txt",
+            "stage1"
+          ],
+          "clean_created_files": 4,
+          "candidate_created_files": 4,
+          "candidate_bounds_vs_key": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0,
+            "tol_m": 0.1
+          }
+        },
+        "63a-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0,
+          "clean": {
+            "fbx_sha256": "63d97bc9d6472d65eaf687656dc6e4a6546604a3377d8fcf9c2bf06b1260cf84",
+            "mesh_sha256": "101916bc778b6539b4a7c1f2ea1bec6631912d57dd25c8eef6153dab1ce8c5ad",
+            "polygons": 4560,
+            "vertices": 5128,
+            "bounds_m": [
+              [
+                [
+                  81.02279663085938,
+                  63.73419952392578,
+                  10.149984359741211
+                ],
+                [
+                  119.56220245361328,
+                  95.58110809326172,
+                  47.949989318847656
+                ]
+              ]
+            ]
+          },
+          "candidate_exit": 0,
+          "candidate": {
+            "fbx_sha256": "a26150e733858164f26679354859c3b25199173c115c3462b2e1cc302a9170fe",
+            "mesh_sha256": "101916bc778b6539b4a7c1f2ea1bec6631912d57dd25c8eef6153dab1ce8c5ad",
+            "polygons": 4560,
+            "vertices": 5128,
+            "bounds_m": [
+              [
+                [
+                  81.02279663085938,
+                  63.73419952392578,
+                  10.149984359741211
+                ],
+                [
+                  119.56220245361328,
+                  95.58110809326172,
+                  47.949989318847656
+                ]
+              ]
+            ]
+          },
+          "candidate_changed_existing": 0,
+          "candidate_paths": [
+            "original.txt",
+            "stage1"
+          ],
+          "clean_created_files": 4,
+          "candidate_created_files": 4,
+          "candidate_bounds_vs_key": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "B": 0,
+      "C": 2,
+      "paired_delta": 2,
+      "wall_s": 14.125
+    },
+    {
+      "rows": {
+        "g22-k2-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0,
+          "clean": {
+            "fbx_sha256": "fffc0e09bf1c5422da6051fb44d1b6c539ca55865174011fb69d8758f1629387",
+            "mesh_sha256": "65447a921bac4d5c54b3a8c6be27d3a232eb6a71b26986ef5dfe3d6a43a5e79d",
+            "polygons": 3879,
+            "vertices": 4449,
+            "bounds_m": [
+              [
+                [
+                  475.47869873046875,
+                  994.3082275390625,
+                  5.2998270988464355
+                ],
+                [
+                  551.78271484375,
+                  1059.697998046875,
+                  32.29983901977539
+                ]
+              ]
+            ]
+          },
+          "candidate_exit": 0,
+          "candidate": {
+            "fbx_sha256": "ed0856da5268a596e73be674decdde03c5cfc80183130ebabfe591f4f0a66d44",
+            "mesh_sha256": "65447a921bac4d5c54b3a8c6be27d3a232eb6a71b26986ef5dfe3d6a43a5e79d",
+            "polygons": 3879,
+            "vertices": 4449,
+            "bounds_m": [
+              [
+                [
+                  475.47869873046875,
+                  994.3082275390625,
+                  5.2998270988464355
+                ],
+                [
+                  551.78271484375,
+                  1059.697998046875,
+                  32.29983901977539
+                ]
+              ]
+            ]
+          },
+          "candidate_changed_existing": 0,
+          "candidate_paths": [
+            "original.txt",
+            "stage1"
+          ],
+          "clean_created_files": 4,
+          "candidate_created_files": 4,
+          "candidate_bounds_vs_key": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0,
+            "tol_m": 0.1
+          }
+        },
+        "63a-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0,
+          "clean": {
+            "fbx_sha256": "f8e3c3ba354e2007188d27ab9f571f20e7fac715ba43b2dee1fb768c8629a8f6",
+            "mesh_sha256": "101916bc778b6539b4a7c1f2ea1bec6631912d57dd25c8eef6153dab1ce8c5ad",
+            "polygons": 4560,
+            "vertices": 5128,
+            "bounds_m": [
+              [
+                [
+                  81.02279663085938,
+                  63.73419952392578,
+                  10.149984359741211
+                ],
+                [
+                  119.56220245361328,
+                  95.58110809326172,
+                  47.949989318847656
+                ]
+              ]
+            ]
+          },
+          "candidate_exit": 0,
+          "candidate": {
+            "fbx_sha256": "ad0bd142a4bac214a645f083efadcec320ad11aeffc601ed7311ad504ee4f6d6",
+            "mesh_sha256": "101916bc778b6539b4a7c1f2ea1bec6631912d57dd25c8eef6153dab1ce8c5ad",
+            "polygons": 4560,
+            "vertices": 5128,
+            "bounds_m": [
+              [
+                [
+                  81.02279663085938,
+                  63.73419952392578,
+                  10.149984359741211
+                ],
+                [
+                  119.56220245361328,
+                  95.58110809326172,
+                  47.949989318847656
+                ]
+              ]
+            ]
+          },
+          "candidate_changed_existing": 0,
+          "candidate_paths": [
+            "original.txt",
+            "stage1"
+          ],
+          "clean_created_files": 4,
+          "candidate_created_files": 4,
+          "candidate_bounds_vs_key": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "B": 0,
+      "C": 2,
+      "paired_delta": 2,
+      "wall_s": 13.713
+    },
+    {
+      "rows": {
+        "g22-k2-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0,
+          "clean": {
+            "fbx_sha256": "878c2c294f7f226791488ece9bbe7df23a5fbb51d56411a3285b5910eb41a9ed",
+            "mesh_sha256": "65447a921bac4d5c54b3a8c6be27d3a232eb6a71b26986ef5dfe3d6a43a5e79d",
+            "polygons": 3879,
+            "vertices": 4449,
+            "bounds_m": [
+              [
+                [
+                  475.47869873046875,
+                  994.3082275390625,
+                  5.2998270988464355
+                ],
+                [
+                  551.78271484375,
+                  1059.697998046875,
+                  32.29983901977539
+                ]
+              ]
+            ]
+          },
+          "candidate_exit": 0,
+          "candidate": {
+            "fbx_sha256": "1812e8b3442222792c2f4474b661f0fc04f1c3b0b27796ba6c10162d04908338",
+            "mesh_sha256": "65447a921bac4d5c54b3a8c6be27d3a232eb6a71b26986ef5dfe3d6a43a5e79d",
+            "polygons": 3879,
+            "vertices": 4449,
+            "bounds_m": [
+              [
+                [
+                  475.47869873046875,
+                  994.3082275390625,
+                  5.2998270988464355
+                ],
+                [
+                  551.78271484375,
+                  1059.697998046875,
+                  32.29983901977539
+                ]
+              ]
+            ]
+          },
+          "candidate_changed_existing": 0,
+          "candidate_paths": [
+            "original.txt",
+            "stage1"
+          ],
+          "clean_created_files": 4,
+          "candidate_created_files": 4,
+          "candidate_bounds_vs_key": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0,
+            "tol_m": 0.1
+          }
+        },
+        "63a-stage1": {
+          "baseline_exit": 1,
+          "baseline_changed_existing": 0,
+          "baseline_paths": [
+            "original.txt"
+          ],
+          "clean_exit": 0,
+          "clean": {
+            "fbx_sha256": "68ce4d34bcf8b4609bd10b6a573b21e89d013c2836300c2faa542b2a19af55c7",
+            "mesh_sha256": "101916bc778b6539b4a7c1f2ea1bec6631912d57dd25c8eef6153dab1ce8c5ad",
+            "polygons": 4560,
+            "vertices": 5128,
+            "bounds_m": [
+              [
+                [
+                  81.02279663085938,
+                  63.73419952392578,
+                  10.149984359741211
+                ],
+                [
+                  119.56220245361328,
+                  95.58110809326172,
+                  47.949989318847656
+                ]
+              ]
+            ]
+          },
+          "candidate_exit": 0,
+          "candidate": {
+            "fbx_sha256": "8916b0e99d8e015b8a8b6a5e21be558c17b01b5203201f67bf579543fe419f0f",
+            "mesh_sha256": "101916bc778b6539b4a7c1f2ea1bec6631912d57dd25c8eef6153dab1ce8c5ad",
+            "polygons": 4560,
+            "vertices": 5128,
+            "bounds_m": [
+              [
+                [
+                  81.02279663085938,
+                  63.73419952392578,
+                  10.149984359741211
+                ],
+                [
+                  119.56220245361328,
+                  95.58110809326172,
+                  47.949989318847656
+                ]
+              ]
+            ]
+          },
+          "candidate_changed_existing": 0,
+          "candidate_paths": [
+            "original.txt",
+            "stage1"
+          ],
+          "clean_created_files": 4,
+          "candidate_created_files": 4,
+          "candidate_bounds_vs_key": {
+            "status": "pass",
+            "max_corner_dev_m": 0.0,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "B": 0,
+      "C": 2,
+      "paired_delta": 2,
+      "wall_s": 14.273
+    }
+  ],
+  "malformed": {
+    "g22-k2-stage1": {
+      "exit": 1,
+      "changed_fields": [
+        "floors"
+      ],
+      "created_dir": false,
+      "variant_sha256": "5d0c3ca38c6834ccbfd96d4ec8305239d28140bfb864e21db558ae8b49d41366"
+    },
+    "63a-stage1": {
+      "exit": 1,
+      "changed_fields": [
+        "floors"
+      ],
+      "created_dir": false,
+      "variant_sha256": "30638bac18aa709ddfc191501fc516351ab3a2647a1a6fbf6e9f6554069ba977"
+    }
+  },
+  "labels": {
+    "g22-k2-stage1": {
+      "accepted": {
+        "native_import": true,
+        "bounds_vs_key": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        }
+      },
+      "rejected-v001": {
+        "native_import": true,
+        "bounds_vs_key": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        }
+      }
+    },
+    "63a-stage1": {
+      "accepted": {
+        "native_import": true,
+        "bounds_vs_key": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        }
+      }
+    }
+  },
+  "status": "confirmed",
+  "projected_series_s": 72.532,
+  "input_changes": [],
+  "median": 2,
+  "spread": [
+    2,
+    2
+  ],
+  "wall_s": 50.643
+}
