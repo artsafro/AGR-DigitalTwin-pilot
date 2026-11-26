@@ -7,8 +7,8 @@ empty per layer, so the grouping survives the FBX into 3ds Max) and Workbench re
     blender44 -b --factory-startup --python tools/methods/body/scene_prepare_blender.py -- SRC.fbx ASSIGN.json OUT_DIR
 
 ASSIGN.json (written by dt_ai.intake.scene_prepare): {"layers": [{"id", "max_layer", "color"}], "objects": {name: id},
-"closeups": [id, ...]}. Writes OUT_DIR/blend_report.json: {"collections": {id: n}, "missing": [names in ASSIGN not in
-the FBX], "unassigned": [meshes not in ASSIGN], "nonmesh", "renders": {"overview"|id: png}}. Every output must be new.
+"dropped": [names with no geometry], "closeups": [id, ...]}. Writes OUT_DIR/blend_report.json with collection counts,
+missing and unassigned names, confirmed vertex-less drops, nonmesh count and render paths. Every output must be new.
 """
 import json
 import os
@@ -69,12 +69,18 @@ def main():
         roots[lid] = e
     counts = {lid: 0 for lid in layers}
     unassigned, nonmesh, by_layer = [], 0, {lid: [] for lid in layers}
+    expected_drops = set(assign.get("dropped", []))
+    dropped = []
     names = set()
     for ob in list(scene.objects):
         if ob.type == "EMPTY" and ob.name in {la["max_layer"] for la in layers.values()}:
             continue
         if ob.type != "MESH":
             nonmesh += 1
+            continue
+        if ob.name in expected_drops and not ob.data.vertices:
+            dropped.append(ob.name)
+            bpy.data.objects.remove(ob, do_unlink=True)
             continue
         names.add(ob.name)
         lid = assign["objects"].get(ob.name)
@@ -129,6 +135,7 @@ def main():
         near = [ob for ob in obs if (ob.matrix_world.translation - seed).length < 8.0] or obs[:1]
         renders[lid] = _render(scene, cam, near, os.path.join(out, f"render_{lid}.png"), res=(800, 640))
     rep = {"schema": "agr-scene-blend/1", "collections": counts, "missing": missing, "unassigned": sorted(unassigned),
+           "dropped": sorted(dropped),
            "nonmesh": nonmesh, "renders": {k: v for k, v in renders.items() if v}, "blend": os.path.basename(blend),
            "fbx": os.path.basename(fbx), "blender": bpy.app.version_string}
     with open(report, "x", encoding="utf-8") as fh:

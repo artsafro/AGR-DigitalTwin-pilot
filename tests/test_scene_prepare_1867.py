@@ -563,9 +563,25 @@ def test_end_to_end_on_synthetic_fbx(tmp_path, empty_mesh):
     blend = json.loads((out / "blend_report.json").read_text(encoding="utf-8"))
     assert blend["collections"]["WINDOWS"] == 1 and blend["missing"] == [] and blend["unassigned"] == []
     assert census["dropped"] == ([{"name": empty_name, "reason": "no_geometry"}] if empty_mesh else [])
-    assert blend.get("dropped", []) == ([empty_name] if empty_mesh else [])
+    assert blend["dropped"] == ([empty_name] if empty_mesh else [])
     assert empty_name not in got
     assert sum(blend["collections"].values()) == len(EXPECTED) + 3
     for f in ("scene_layers.blend", "sheet.png", "census.md", "dump.json"):
         assert (out / f).is_file(), f
     assert not math.isnan(census["envelope"]["area_m2"])
+    if empty_mesh:
+        readback = tmp_path / "readback.py"
+        readback.write_text(
+            'import bpy, sys\n'
+            'blend, fbx, empty_name = sys.argv[sys.argv.index("--") + 1:]\n'
+            'bpy.ops.wm.open_mainfile(filepath=blend)\n'
+            'names = {o.name for o in bpy.context.scene.objects if o.type == "MESH"}\n'
+            'assert names and empty_name not in names\n'
+            'bpy.ops.wm.read_factory_settings(use_empty=True)\n'
+            'bpy.ops.import_scene.fbx(filepath=fbx)\n'
+            'assert {o.name for o in bpy.context.scene.objects if o.type == "MESH"} == names\n',
+            encoding="utf-8",
+        )
+        subprocess.run([str(BLENDER44), "-b", "--factory-startup", "--disable-autoexec", "--python-exit-code", "1",
+                        "--python", str(readback), "--", str(out / "scene_layers.blend"),
+                        str(out / "split_PROPOSED.fbx"), empty_name], check=True, capture_output=True)

@@ -144,7 +144,15 @@ def _envelope(parts, env, *, closed_rings=False):
     merged = unary_union(parts).buffer(-env["close_m"], join_style="mitre")
     polys = [Polygon(g.exterior) for g in getattr(merged, "geoms", [merged])
              if isinstance(g, Polygon) and not g.is_empty and (not closed_rings or g.interiors)]
-    return unary_union([p for p in polys if p.area >= env["min_area_m2"]])
+    polys = [p for p in polys if p.area >= env["min_area_m2"]]
+    if not closed_rings:
+        # The all-height footprint is an outer outline: a nested ring could be a setback at another Z.
+        return unary_union(polys)
+    section = GeometryCollection()
+    for p in polys:
+        # Within one Z band, nested closed rings toggle occupied space (courtyard, then island).
+        section = section.symmetric_difference(p)
+    return section
 
 
 def _section_envelopes(objs, parts, env):
@@ -154,6 +162,9 @@ def _section_envelopes(objs, parts, env):
     wall fragments as closed local volumes. At a level seam, try the bands immediately above
     and below separately; joining their wall sets would erase the setback again.
     """
+    from shapely.geometry import Polygon
+    from shapely.ops import unary_union
+
     cuts = sorted({z for o in objs for z in o["z"]})
     cache = {}
 
@@ -168,7 +179,9 @@ def _section_envelopes(objs, parts, env):
                 lo, hi = cuts[k:k + 2]
                 active = [p for o, p in zip(objs, parts) if o["z"][0] <= lo and hi <= o["z"][1]]
                 shape = _envelope(active, env, closed_rings=True)
-                cache[k] = None if shape.is_empty else shape.boundary
+                holes = unary_union([Polygon(ring) for poly in getattr(shape, "geoms", [shape])
+                                     for ring in poly.interiors]).difference(shape)
+                cache[k] = None if shape.is_empty else (shape.boundary, holes)
             if cache[k] is not None:
                 result.append(cache[k])
         return result
@@ -196,14 +209,17 @@ def _place(o, c, foot, footprint_boundary, env, slabs_here, base, top, sections_
     under = [s for s in slabs_here if base + env["z_margin_m"] < s["z"][1] <= z0 + env["z_margin_m"]]
     if near and under and not any(s["z"][0] >= zc for s in slabs_here):
         return "roof", max(under, key=lambda s: s["z"][1]), "uncovered_slab", d_global
-    boundaries = sections_at(zc)
-    if not boundaries:
+    sections = sections_at(zc)
+    if not sections:
         return "inside" if inside else "out", None, "footprint_fallback", d_global
+    boundaries = [boundary for boundary, _ in sections]
     d = min(b.distance(pt) for b in boundaries)
     if d < env["face_m"]:
         return "face", None, "level_ring", d
     if wall_poly is not None and any(b.intersects(wall_poly) for b in boundaries):
         return "face", None, "level_ring_wall_reaches_boundary", d
+    if all(holes.covers(pt) for _, holes in sections):
+        return "out", None, "level_ring", d
     return "inside" if inside else "out", None, "level_ring", d
 
 
@@ -622,12 +638,15 @@ def prepare(src, out, rules_path=None, dump_path=None, blender=None, no_blend=Fa
         if not no_blend:
             assign = {"layers": [{k: la[k] for k in ("id", "max_layer", "color")} for la in rules["layers"]],
                       "objects": {o["name"]: o["layer"] for o in census["objects"]},
+                      "dropped": [o["name"] for o in census["dropped"]],
                       "closeups": closeup_layers(census)}
             (partial / "assign.json").write_text(json.dumps(assign, ensure_ascii=False), encoding="utf-8")
             _blender(BLENDER_SCRIPT, [src, partial / "assign.json", partial], blender)
             rep = json.loads((partial / "blend_report.json").read_text(encoding="utf-8"))
             if rep["missing"] or rep["unassigned"]:
                 raise ScenePrepareError(f"blend mismatch: missing {rep['missing'][:5]} unassigned {rep['unassigned'][:5]}")
+            if rep.get("dropped", []) != sorted(assign["dropped"]):
+                raise ScenePrepareError("blend mismatch: no_geometry drops differ from census")
             renders = {k: str(partial / v) for k, v in rep.get("renders", {}).items()}
             census["blend"] = {"collections": rep["collections"], "nonmesh": rep.get("nonmesh", 0)}
         if _sha(src) != sha0:
