@@ -157,7 +157,9 @@ def test_no_delivery_changes():
     # The #1784 Sokolniki job keeps its openings config and its v005/v007 body configs [D378][D410] and the
     # step-4 finish / UV / atlas spec [D412] (inputs, not deliveries).
     # The #1609 KPP1 lattice job keeps its inputs: finish bands and the NPM derive spec.
+    # The #1743 / #1980 MAF batch-3 library job keeps its passport and identity file (inputs; drafts live on Drive).
     ok = ('.py', '.md', '/skeleton.json', '/ground-site-1406-pilot.json', '/ground-site-1406-report.json',
+          '/mafs-b3/passport.json', '/mafs-b3/identity.json',
           '/maf-npm-light-1410/spec.json', '/maf-npm-light-1410/material-list.json',
           '/body-training-1619/palette_g22.json', '/POLY63-A/zonemap63.json',
           '/POLY63-B/sources.json', '/POLY63-B/zonemap63b.json',

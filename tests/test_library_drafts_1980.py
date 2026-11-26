@@ -1,4 +1,4 @@
-"""#1980 [D421]: agent-made library drafts are visible to other agents (marked `status: draft`), the MAF search index
+"""new-case: tests for #1980 [D421]: agent-made library drafts are visible to other agents (marked `status: draft`), the MAF search index
 is rebuilt at the end of every `agr library publish|accept|reject`, and a job with an unpublished MAF master fails.
 
 Synthetic catalogues / batches only (marked synthetic); no Blender, no Max, no Drive.

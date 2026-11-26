@@ -42,6 +42,8 @@ kept_jobs:
     ru: "только LESSONS.md; сценарий ground-vpm ссылается на уроки"
   - job: jobs/maf-atlas-512
     ru: "2 файла, записи о сдаче нет"
+  - job: jobs/mafs-b3
+    ru: "партия МАФ 3 (#1743, #1980): 5 черновиков библиотеки, ждут «ок» Артёма [D421]"
   - job: jobs/master-topology-1420
     ru: "диагностика только для чтения (2026-11-15), записи о сдаче нет"
   - job: jobs/ogorodnyj-proezd-zu4-3
