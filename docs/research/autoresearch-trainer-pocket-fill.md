@@ -96,7 +96,7 @@ written by pairs.py as `json.dump(key)`), the key sections re-extracted by the s
 zmap from the bank key FBX (sha `5b1e8d76…`, = the key's `accepted_bytes.fbx`); segment counts in box 30/36/36/30
 equal the key's `section_segments_in_box`. Parity: `detector.score` with the substitute reproduces **15/15** stored
 G22 detector rows item-by-item (status and dev_m): 7 practice runs + 8 #115 control cases (2 accepted `ok`,
-13 `defect` incl. rejected/module). Receipt `C:/x/ev_t_fa3712bf/parity.json` sha `a639c115…`.
+13 `defect` incl. rejected/module). Receipt `C:/x/ev_t_fa3712bf/parity.json` sha `a639c115…` (repo copy `trainer_pockets_r117/parity.json` Git-LF `6b0b15a1…`).
 M117 = substitute form_v2 verdict `ok` (pass); the trainer status (`error`) is recorded alongside. Nothing else in
 the contract changes. The missing pinned key is a side finding for the trainer owner (every G22 score on this PC
 now stops at `form_v2: error`).
@@ -112,8 +112,8 @@ comparison target); tuning texture depth / pocket-close; touching files of PR #1
 **H117 confirmed** (frozen rule): M117 **A 0/3, B 3/3**; parity held 3/3 (A rings == D1 rings, A form_v2 fails =
 D1's 4 items at 0.0999 m, `form` p95 0.0128 as D1); witness pocket filled 3/3; 63A accepted control 14 fill /
 6 keep exact (depths match); perturbations 5/5 as expected. Paired spread 0 (fail count 4/4/4 vs 0/0/0; FBX bytes
-differ per rep, metrics identical). Receipt `docs/research/trainer_pockets_r117/receipt.json` sha
-`b6a20590ad588f9182d8df325d18caa783aa151489b31d91f58f565b1596291b`; evidence
+differ per rep, metrics identical). Receipt `docs/research/trainer_pockets_r117/receipt.json` Git-LF SHA-256
+`fe3ccc6812b06ef9d248ebee209b64f081c02163f0e98b88b3f0b2b7717821f0` (CRLF copy on C:/x and Drive `b6a20590…`); evidence
 `G:/Мой диск/AGR-evidence/1855-r117-pocket-fill/SHA256SUMS.txt` sha `d7c64905117d9fb3ffff0ad9661f666d05768ccc9d71b17e85eb80e00b00bdb3`.
 
 | arm | form_v2 (substitute) | fails | first stop | `form` p95 / max vs key | ring vertices | polygons |
@@ -138,3 +138,11 @@ Would-change (OBSERVE, not applied): make the source-only D341 census runnable f
 `pockets_of` + `census` next to `tools/methods/body/floor_from_dump.py` (the #1928 promotion) with a regression test
 on a synthetic notch, and name `pockets_self -> floor_from_dump --fill` in the body trail after `--seal windows`.
 Owner: #1928 / trainer owner. Then measure live: 3 fresh G22 practice pairs, count runs reaching `vlm`.
+
+Replay: `uv run python docs/research/trainer_pockets_r117/run.py --out <NEW_DIR> --reps 3` (hash preflight of all
+pinned inputs, ~90 s; limited to this PC: C:/x stored run D1 + ev_1619 + Drive bank). Substitute parity:
+`uv run python docs/research/trainer_pockets_r117/substitute.py parity <NEW.json>`.
+Affected tests: `uv run pytest -q tests/test_search_noise_1614.py tests/test_trainer_inspect.py tests/tools/test_trainer.py`
+-> 211 passed, 2 failed = `test_form_v2_step_real_g22_accepted_pass_rejected_fail[v002r1-pass|v001-fail]`, both
+`FileNotFoundError C:/x/t_563a40f7/key/heldout-key-v001.json` (environment, Amendment 1; no code changed here).
+Full suite: deferred to merge batch (rule 68).
