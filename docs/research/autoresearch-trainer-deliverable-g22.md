@@ -87,3 +87,46 @@ uv run --frozen python docs/research/trainer_deliverable_g22_r115/series.py C:/x
 
 Replay is limited: inputs live on the local Drive bank and `C:/x/trainer/runs` (hash-pinned above); fresh agent runs
 are not byte-reproducible (model sampling), the series is the evidence.
+
+## Result (appended after the series; contract above unchanged since 5d90b92d)
+
+**Итог (RU).** H115 **inconclusive** по замороженному правилу. Засчитанный `artifact` на G22: C 2/3, D 3/3, прирост
+по парам [0, 0, +1]. Но механизм не сработал: ни один из трёх D-агентов не записал `deliverable.fbx` (0/3), все D
+засчитаны по папке с единственным FBX; лишний засчёт D3 — случайность (у C3 два FBX `pilot/` + `typical/` -> отказ
+скорера). D3 прямо пишет, почему не выдал `deliverable.fbx`: в модели нет первого этажа, верха и окон лестничных
+площадок — «не выдаю неполную модель за итог». Все 5 засчитанных прогонов — частичное типовое тело, первый
+проваленный шаг `form_v2`, score 0.7143 (как r97-C2). Побегов из практики 0/6. Статический контроль правила выбора
+(3 повтора, разброс 0) — всё как ожидалось. Продуктовых изменений нет, KEEP нет.
+
+- Practice root `88ef77fa95b13d5981ef7e6785c2d6ffde39c76b` (tree `2a995050a32db4f96134d60c933ea95320c381b4`) on
+  main `55b885c1`; bank_C `016aab0c…36635`, bank_D `f421a570801c46d18fe34e4d9e465dad55ebf96098766bc36d07c5f24f3b8493`.
+  Dry-run prompt: `deliverable.fbx` occurs 1x in D, 0x in C (the only difference).
+- Series 17:11:17–17:24:55 (13 min 38 s, 3 pairs, budget 60 min not reached, all rc 0). Log `series.log`.
+
+| run | FBX in built/ | root deliverable | M115 | first failing | score | form_p95 m |
+|---|---|---|---|---|---|---|
+| C1 | typical_partial/body.fbx | no | 1 | form_v2 | 0.7143 | 0.0139 |
+| C2 | candidate/body.fbx | no | 1 | form_v2 | 0.7143 | 0.0128 |
+| C3 | pilot/body.fbx, typical/body.fbx | no | 0 (several FBX refused) | — | — | — |
+| D1 | build01/body.fbx | no | 1 | form_v2 | 0.7143 | 0.0128 |
+| D2 | module_build/body.fbx | no | 1 | form_v2 | 0.7143 | 0.0128 |
+| D3 | build/body.fbx | no (withheld: incomplete) | 1 | form_v2 | 0.7143 | 0.0139 |
+
+- Decision rule: D−C = +1 (< +2) and counted D runs did not score a root deliverable -> not confirmed; D > C -> not
+  refuted -> **inconclusive**. Escape commands (absolute main-checkout `jobs/` or bank evidence reads): 0 in 6 runs
+  (relative `jobs/garibaldi22` mentions are hidden-path text inside the practice tree, not reads).
+- Static control (`control.json`, 3 reps, spread 0 after dropping per-folder refusal text): W D = direct typical
+  (form_v2 0.7143, p95 0.0128); A D = direct accepted (vlm 0.8571, p95 0.0001); R D = direct rejected (form 0.5714,
+  p95 0.61), accepted > rejected kept; P1/P3 refused in both rules; P2 module named deliverable scores bounds 0.4286
+  (p95 22.75) < W. Arm-C rule refuses all six cases (each holds two FBX). Clean = W/A/R, injected = P1–P3;
+  not measured: VLM step, package step, agent compliance with the rule on any other etalon.
+- Receipt `docs/research/trainer_deliverable_g22_r115/receipt.json`; evidence (runs, FBX, logs)
+  `G:/Мой диск/AGR-evidence/1855-r115-deliverable-g22/SHA256SUMS.txt` (51 files, 2.3 MB). Replay limited (fresh
+  agents are not byte-reproducible; inputs pinned by hash on Drive / `C:/x/trainer/runs`).
+
+### What OBSERVE would change (not applied)
+
+Nothing to the bank or scorer from this series: on G22 the H99 sentence is not followed when the agent judges its
+model incomplete, so it cannot be the artifact lever there. The measured artifact losses on G22 come from agents
+leaving 2 FBX (C3); a scorer-side rule cannot pick the right one without a name. The next stop for every counted G22
+run is `form_v2` on a partial typical body (missing ground floor, top and stair-landing openings).

@@ -1,0 +1,213 @@
+{
+ "hypothesis": "H115",
+ "verdict": "inconclusive",
+ "M115": {
+  "C": 2,
+  "D": 3
+ },
+ "pair_lift": [
+  0,
+  0,
+  1
+ ],
+ "d_compliance_root_deliverable": 0,
+ "counted_d_runs_scored_root_deliverable": false,
+ "escape_commands_total": 0,
+ "runs": {
+  "C": [
+   {
+    "run": "g22-k2-stage1-codex-r115-C1",
+    "fbx": [
+     "typical_partial/body.fbx"
+    ],
+    "root_deliverable": false,
+    "scored": true,
+    "artifact": "pass",
+    "M115": 1,
+    "first_failing_step": "form_v2",
+    "score": 0.7143,
+    "form_p95_m": 0.0139,
+    "escape_commands": 0,
+    "events_sha256": "33fb39f7c7c89a38863d66f13dd5696cf5a8c858153ad2156d36642499230334"
+   },
+   {
+    "run": "g22-k2-stage1-codex-r115-C2",
+    "fbx": [
+     "candidate/body.fbx"
+    ],
+    "root_deliverable": false,
+    "scored": true,
+    "artifact": "pass",
+    "M115": 1,
+    "first_failing_step": "form_v2",
+    "score": 0.7143,
+    "form_p95_m": 0.0128,
+    "escape_commands": 0,
+    "events_sha256": "345862f2f3c89536928af785ccbc791764fd6aff28dcd36a61915018382c97ac"
+   },
+   {
+    "run": "g22-k2-stage1-codex-r115-C3",
+    "fbx": [
+     "pilot/body.fbx",
+     "typical/body.fbx"
+    ],
+    "root_deliverable": false,
+    "scored": false,
+    "artifact": "refused",
+    "M115": 0,
+    "first_failing_step": null,
+    "score": null,
+    "form_p95_m": null,
+    "escape_commands": 0,
+    "events_sha256": "bdcea3c48ea60f59d4af0545fc9b1908461c7e768c8dc6963cdb05ea9d87d31a"
+   }
+  ],
+  "D": [
+   {
+    "run": "g22-k2-stage1-codex-r115-D1",
+    "fbx": [
+     "build01/body.fbx"
+    ],
+    "root_deliverable": false,
+    "scored": true,
+    "artifact": "pass",
+    "M115": 1,
+    "first_failing_step": "form_v2",
+    "score": 0.7143,
+    "form_p95_m": 0.0128,
+    "escape_commands": 0,
+    "events_sha256": "a5e230045290614a32a59b551e19d590d9847152db501b991676a8e387130203"
+   },
+   {
+    "run": "g22-k2-stage1-codex-r115-D2",
+    "fbx": [
+     "module_build/body.fbx"
+    ],
+    "root_deliverable": false,
+    "scored": true,
+    "artifact": "pass",
+    "M115": 1,
+    "first_failing_step": "form_v2",
+    "score": 0.7143,
+    "form_p95_m": 0.0128,
+    "escape_commands": 0,
+    "events_sha256": "d6b31a2dfad2679e90a04a7c2b288eda8257c507f5f8241d37647e0bb70f2b4a"
+   },
+   {
+    "run": "g22-k2-stage1-codex-r115-D3",
+    "fbx": [
+     "build/body.fbx"
+    ],
+    "root_deliverable": false,
+    "scored": true,
+    "artifact": "pass",
+    "M115": 1,
+    "first_failing_step": "form_v2",
+    "score": 0.7143,
+    "form_p95_m": 0.0139,
+    "escape_commands": 0,
+    "events_sha256": "c2c09ed2324c8a431e79bb177773d56b2e03f9e89174b096b6cb2ce00e7b5a88"
+   }
+  ]
+ },
+ "control_json_sha256": "95cce0b4165ca022677b5e56041afe3b40d6111d7a9a317e1e6e05c0d67b7c09",
+ "control_spread_zero": true,
+ "control_rep1": {
+  "direct": {
+   "accepted": {
+    "status": "scored",
+    "first_failing_step": "vlm",
+    "score": 0.8571,
+    "form_p95_m": 0.0001
+   },
+   "rejected": {
+    "status": "scored",
+    "first_failing_step": "form",
+    "score": 0.5714,
+    "form_p95_m": 0.61
+   },
+   "typical": {
+    "status": "scored",
+    "first_failing_step": "form_v2",
+    "score": 0.7143,
+    "form_p95_m": 0.0128
+   },
+   "module": {
+    "status": "scored",
+    "first_failing_step": "bounds",
+    "score": 0.4286,
+    "form_p95_m": 22.7501
+   }
+  },
+  "cases": {
+   "W_witness": {
+    "C": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\W_witness: ['deliverable.fbx', 'body.fbx']; pass --built FILE"
+    },
+    "D": {
+     "status": "scored",
+     "first_failing_step": "form_v2",
+     "score": 0.7143,
+     "form_p95_m": 0.0128
+    }
+   },
+   "A_accepted": {
+    "C": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\A_accepted: ['deliverable.fbx', 'body.fbx']; pass --built FILE"
+    },
+    "D": {
+     "status": "scored",
+     "first_failing_step": "vlm",
+     "score": 0.8571,
+     "form_p95_m": 0.0001
+    }
+   },
+   "R_rejected": {
+    "C": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\R_rejected: ['deliverable.fbx', 'body.fbx']; pass --built FILE"
+    },
+    "D": {
+     "status": "scored",
+     "first_failing_step": "form",
+     "score": 0.5714,
+     "form_p95_m": 0.61
+    }
+   },
+   "P1_absent": {
+    "C": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\P1_absent: ['body.fbx', 'body.fbx']; pass --built FILE"
+    },
+    "D": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\P1_absent: ['body.fbx', 'body.fbx']; pass --built FILE"
+    }
+   },
+   "P2_module_named": {
+    "C": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\P2_module_named: ['deliverable.fbx', 'body.fbx']; pass --built FILE"
+    },
+    "D": {
+     "status": "scored",
+     "first_failing_step": "bounds",
+     "score": 0.4286,
+     "form_p95_m": 22.7501
+    }
+   },
+   "P3_nested_only": {
+    "C": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\P3_nested_only: ['body.fbx', 'deliverable.fbx']; pass --built FILE"
+    },
+    "D": {
+     "status": "refused",
+     "error": "several FBX in C:\\x\\ev_t_a457c1b6\\control\\rep1\\in\\P3_nested_only: ['body.fbx', 'deliverable.fbx']; pass --built FILE"
+    }
+   }
+  }
+ }
+}

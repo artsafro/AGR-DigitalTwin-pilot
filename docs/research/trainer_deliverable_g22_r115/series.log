@@ -1,0 +1,19 @@
+17:11:17 start g22-k2-stage1-codex-r115-C1
+17:11:17 start g22-k2-stage1-codex-r115-D1
+17:14:43 done g22-k2-stage1-codex-r115-C1 rc=0
+17:14:55 score g22-k2-stage1-codex-r115-C1 built=C:\x\trainer\runs\g22-k2-stage1-codex-r115-C1\built rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0139}
+17:15:41 done g22-k2-stage1-codex-r115-D1 rc=0
+17:15:50 score g22-k2-stage1-codex-r115-D1 built=C:\x\trainer\runs\g22-k2-stage1-codex-r115-D1\built rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0128}
+17:15:50 start g22-k2-stage1-codex-r115-C2
+17:15:50 start g22-k2-stage1-codex-r115-D2
+17:20:08 done g22-k2-stage1-codex-r115-C2 rc=0
+17:20:22 score g22-k2-stage1-codex-r115-C2 built=C:\x\trainer\runs\g22-k2-stage1-codex-r115-C2\built rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0128}
+17:20:22 done g22-k2-stage1-codex-r115-D2 rc=0
+17:20:34 score g22-k2-stage1-codex-r115-D2 built=C:\x\trainer\runs\g22-k2-stage1-codex-r115-D2\built rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0128}
+17:20:34 start g22-k2-stage1-codex-r115-C3
+17:20:34 start g22-k2-stage1-codex-r115-D3
+17:24:32 done g22-k2-stage1-codex-r115-C3 rc=0
+17:24:33 score g22-k2-stage1-codex-r115-C3 built=C:\x\trainer\runs\g22-k2-stage1-codex-r115-C3\built rc=2 ERROR: several FBX in C:\x\trainer\runs\g22-k2-stage1-codex-r115-C3\built: ['body.fbx', 'body.fbx']; pass --built FILE
+17:24:47 done g22-k2-stage1-codex-r115-D3 rc=0
+17:24:55 score g22-k2-stage1-codex-r115-D3 built=C:\x\trainer\runs\g22-k2-stage1-codex-r115-D3\built rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0139}
+17:24:55 SERIES DONE
