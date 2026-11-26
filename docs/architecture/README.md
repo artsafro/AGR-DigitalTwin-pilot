@@ -399,6 +399,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
+| research/autoresearch-trainer-ledger-fresh | [research/autoresearch-trainer-ledger-fresh.md](../research/autoresearch-trainer-ledger-fresh.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
