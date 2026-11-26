@@ -92,3 +92,17 @@ def test_readback_default_uses_published_maf_library(tmp_path, monkeypatch):
     report = json.loads(output.read_text(encoding="utf-8"))
     assert [row["fbx"] for row in report["files"]] == [fbx.as_posix()]
     assert "error" not in report["files"][0]
+
+
+def test_readback_refuses_missing_library(tmp_path, monkeypatch):
+    library = tmp_path / "missing-library"
+    output = tmp_path / "report.json"
+    monkeypatch.setenv("AGR_MAF_LIB", str(library))
+    monkeypatch.setenv("AGR_MAF_READBACK", str(output))
+    monkeypatch.setitem(sys.modules, "bpy", SimpleNamespace(
+        app=SimpleNamespace(version_string="synthetic"),
+    ))
+    script = Path(__file__).resolve().parents[1] / "tools/library/maf_blender_readback.py"
+    with pytest.raises(FileNotFoundError, match="missing-library"):
+        runpy.run_path(str(script))
+    assert not output.exists()
