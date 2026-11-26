@@ -326,6 +326,28 @@ def test_batch_5d_hides_only_the_unreferenced_glb_provenance():
     assert "technical_library/window_atlas/SOURCE.json" in visible  # linked by its README
 
 
+BATCH_6A_OWNERS = {  # #1960: owner test file -> (merged duplicates, test functions after the merge)
+    "test_course_grid_native.py": (("coalesce", "conform", "finalize_identifiers", "joint_interval_noding",
+                                    "joint_tapers", "joints", "local", "loops", "native_anchor",
+                                    "native_constraint", "protected_tessellation", "udim_encoding"), 44),
+    "test_course_grid_boundary_support.py": (("backtracks", "finalize", "footprint_union", "outward_support",
+                                              "raster_coverage"), 20),
+    "test_course_grid_cut.py": (("cut_generated", "native_pinches", "pages"), 21),
+}
+
+
+def test_batch_6a_course_grid_duplicates_live_only_in_their_owners():
+    tracked = set(sn.tracked(ROOT))
+    for owner, (merged, count) in BATCH_6A_OWNERS.items():
+        text = (ROOT / "tests" / owner).read_text(encoding="utf-8")
+        assert f"tests/{owner}" in tracked
+        assert sum(line.startswith("def test_") for line in text.splitlines()) == count
+        for name in merged:
+            path = f"tests/test_course_grid_{name}.py"
+            assert path not in tracked and not (ROOT / path).exists()
+            assert f"# --- merged from {path} (#1960)" in text
+
+
 @needs_rg
 def test_search_archive_round_trip(tmp_path):
     old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
