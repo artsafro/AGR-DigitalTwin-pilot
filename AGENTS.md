@@ -25,11 +25,11 @@ Read on demand. Read the domain file that matches the task before production wor
 disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
 
 - State: `docs/PROJECT_STATE.md` (generated: `python tools/state/project_state.py`).
-- Every dated user decision (`D<n>`): `docs/decisions.md`.
+- Dated user decisions (`D<n>`): `docs/decisions.md`.
 - Fact locations: `docs/agents/WORKFLOW.md`, "Memory map".
 - Who owns what (Claude / Codex / Antigravity): `docs/agents/ROLES.md`.
 - Task loop, handoff, experience capture, snags: `docs/agents/WORKFLOW.md`.
-- Review/author receipts: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
+- Before PR `scripts/hygiene.sh`; author receipts `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
 - Tools/MCP status: `docs/agents/CAPABILITIES.md`.
 - Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation): `docs/domain/`.
 - Pipeline stages and their status: `docs/pipeline.md`.
@@ -40,7 +40,7 @@ disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
 - Naming (scripts, jobs, outputs, branches, tags): `docs/agents/NAMING.md`; object ids: `jobs/REGISTRY.md`.
 - Etalons: `benchmark/`; patterns: `docs/domain/patterns/INDEX.md`.
 - Customer sources, outside git: `G:/Мой диск/AGR-assets/<object>/source/` + `SHA256SUMS.txt`; `jobs/<ID>/sources.json`.
-- Machine-readable rules: `standards/` (locked; see `standards/README.md`).
+- Machine-readable rules: `standards/` (locked: `standards/README.md`).
 - AGR knowledge base (Russian, read-only): `docs/agr/INDEX.md` only.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
 - Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.

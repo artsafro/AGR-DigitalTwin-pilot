@@ -10,6 +10,27 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "^apply_patch$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 tools/hygiene/hygiene.py hook --agent codex",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 tools/hygiene/hygiene.py session --agent codex",
+            "timeout": 10
+          }
+        ]
       }
     ]
   }
