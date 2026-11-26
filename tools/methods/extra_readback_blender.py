@@ -6,9 +6,10 @@ Pattern: new-case: per-polygon material index and triangle readback for tools/me
         --python tools/methods/extra_readback_blender.py -- <model.fbx> <extra.json>
 
 Facts only; never writes the source. Per mesh: slot material names (None = empty slot), polygon count per
-material_index, the material_index of every polygon (readback polygon order), and the loop triangles (vertex indices in the same order as fbx_readback.py's
-face_geometry.vertices).
+material_index, the material_index of every polygon (readback polygon order), the loop triangles and the vertex
+list they index (`vertices`, world frame, from this same import; #1954), plus `source_sha256` of the FBX read.
 """
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -21,8 +22,10 @@ if len(args) != 2:
 source, out = Path(args[0]).resolve(), Path(args[1]).resolve()
 if source == out:
     raise SystemExit("output aliases the input")
-report = {"source": str(source), "ok": False, "meshes": {}}
+report = {"source": str(source), "source_sha256": None, "ok": False, "meshes": {}}
 try:
+    # binds this evidence to the FBX bytes it was read from (#1954): a name or a triangle count never does
+    report["source_sha256"] = hashlib.sha256(source.read_bytes()).hexdigest()
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.fbx(filepath=str(source))
     for obj in bpy.context.scene.objects:
@@ -38,6 +41,8 @@ try:
             "polygons_by_material_index": used,
             "polygon_material_index": [int(p.material_index) for p in me.polygons],
             "tris": [[int(i) for i in tri.vertices] for tri in me.loop_triangles],
+            # the vertex list `tris` indexes, from THIS import, world frame as fbx_readback.py (#1954)
+            "vertices": [list(obj.matrix_world @ v.co) for v in me.vertices],
         }
     report["ok"] = bool(report["meshes"])
 except Exception as exc:  # report, never hide

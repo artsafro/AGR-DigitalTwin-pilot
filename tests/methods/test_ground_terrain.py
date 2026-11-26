@@ -38,13 +38,16 @@ def plane(size=120, cell=10, hole=((40, 80), (40, 80)), z=10.0, dz=0.0, shift=(0
     return verts, tris
 
 
-def ground_rb(verts, tris, *, uv=True, name="SM_Test_Ground"):
+SYN_SHA = "5" * 64  # synthetic FBX identity of the fixtures; ground_cli rebinds it to the real synthetic bytes
+
+
+def ground_rb(verts, tris, *, uv=True, name="SM_Test_Ground", sha=SYN_SHA):
     m = mesh(name, verts, tris, uv=uv, materials=("M_Test_Ground_Surface",))
-    rb = {"source": "C:/synthetic/SM_Test_Ground.fbx", "readback_ok": True, "blender": "synthetic", "meshes": [m],
-          "other_objects": [], "images": [], "materials": []}
-    extra = {"ok": True, "meshes": {name: {"slots": ["M_Test_Ground_Surface"],
-                                           "polygons_by_material_index": {"0": len(tris)},
-                                           "polygon_material_index": [0] * len(tris), "tris": tris}}}
+    rb = {"source": "C:/synthetic/SM_Test_Ground.fbx", "source_sha256": sha, "readback_ok": True,
+          "blender": "synthetic", "meshes": [m], "other_objects": [], "images": [], "materials": []}
+    extra = {"ok": True, "source_sha256": sha, "meshes": {name: {
+        "slots": ["M_Test_Ground_Surface"], "polygons_by_material_index": {"0": len(tris)},
+        "polygon_material_index": [0] * len(tris), "tris": tris, "vertices": verts}}}
     return rb, extra
 
 
@@ -53,6 +56,8 @@ ZERO = np.zeros(3)
 
 def measure(out, ref=None, offset=ZERO, ref_offset=ZERO, **kw):
     ref = ref or ground_rb(*plane())
+    kw.setdefault("sha256", SYN_SHA)
+    kw.setdefault("ref_sha256", SYN_SHA)
     return mm.ground_terrain(out[0], out[1], ref[0], ref[1], offset, ref_offset, **kw)
 
 
@@ -119,7 +124,8 @@ def test_boundary_length_difference_is_measured():
 def test_deviation_and_footprint_null_with_reason(case, field, needle):
     out = ground_rb(*plane())
     if case == "no_ref":
-        g = mm.ground_terrain(out[0], out[1], None, None, ZERO, None, ref_reason="reference FBX missing")
+        g = mm.ground_terrain(out[0], out[1], None, None, ZERO, None, ref_reason="reference FBX missing",
+                              sha256=SYN_SHA, ref_sha256=None)
     elif case == "no_offset":
         g = measure(out, offset=None, offset_reason="no placement sidecar X")
     else:
@@ -304,6 +310,8 @@ def test_fresh_cli_polygon_fallback_inventory(tmp_path, target, mode):
     k = args.index(opt)
     del args[k:k + 2]
     rb, _ = _fallback_case(mode)
+    rb["source_sha256"] = json.loads((tmp_path / ("rb.json" if target == "output" else "ref_rb.json"))
+                                     .read_text(encoding="utf-8"))["source_sha256"]  # bound to its synthetic FBX
     (tmp_path / ("rb.json" if target == "output" else "ref_rb.json")).write_text(json.dumps(rb), encoding="utf-8")
     r = _fresh_cli(args)
     if mode in ("intact", "quads"):
@@ -359,7 +367,10 @@ def ground_cli(tmp_path, out_rb, *, ref_present=True, ref_sha=None, sidecars=Tru
     if sidecars:
         _sidecar(out)
     rbr, exr = ground_rb(*plane())
+    out_sha = hashlib.sha256(b"synthetic output fbx").hexdigest()
     for name, data in (("rb.json", out_rb[0]), ("extra.json", out_rb[1]), ("ref_rb.json", rbr), ("ref_extra.json", exr)):
+        if isinstance(data, dict) and data.get("source_sha256") == SYN_SHA:  # bind the fixture to the synthetic FBX
+            data = {**data, "source_sha256": sha if name.startswith("ref_") else out_sha}
         (tmp_path / name).write_text(json.dumps(data), encoding="utf-8")
     args = [str(out), "--bench", "synth", "--class", "ground-terrain", "--variant", "v1", "--benchmarks", str(bench),
             "--readback", str(tmp_path / "rb.json"), "--extra", str(tmp_path / "extra.json"),
