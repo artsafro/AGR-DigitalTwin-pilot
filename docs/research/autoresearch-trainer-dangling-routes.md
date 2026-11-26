@@ -69,7 +69,10 @@ At head 8a2fa635 the practice trees of the ready etalons contain dangling route 
   - P3 route doc names a path that is nowhere in head: 0 (stale +1)
   - P4 P1 path written with backslashes: +1
   - P5 the P1 line in a non-route file (`docs/research/`): 0
-  - P6 bare basename of a hidden-only head tool (G22: `revit_floor_dump.py`): +1
+  - P6 bare basename of a hidden-only head tool (G22: first sorted `.py` basename whose every head file is
+    under `jobs/garibaldi22/`, absent and not already counted): +1
+  - P1/P4/P5 use the first sorted hidden `.md` head file under the etalon's `hidden_repo_paths` that is not
+    already counted. Amended before the first measurement (harness review), not after a number.
 - Accepted/rejected fixtures: none exist for this static check; the "rejected" side is the stored runs that
   escaped or ended without FBX. Untouched etalon/perturbation inputs are labelled `not_exercised`.
 
