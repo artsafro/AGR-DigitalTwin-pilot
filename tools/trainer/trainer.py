@@ -315,11 +315,20 @@ _KEYS_PARENT = KEYS_DIR.split("/")[0]
 # a `keys` path component, or a `k...` component carrying a glob (`k*`, `k"*`, `ke?s`); bank dirs such as
 # `k2_v002r1` carry no glob and stay clean
 _KEYS_COMPONENT = re.compile(r"""(?:^|[\s/"'(,=])(?:keys|k[\w"'-]*[*?\[][^/\s"')]*)(?=[/\s"')]|$)""")
+# review #1970 r2 P1-1: fail-closed allowlist. Recursive tools (rg, Get-ChildItem -Recurse, find) aimed at a parent
+# of the keys dir read the key without naming it, so `1855-trainer-v0` must be directly followed by the `/bank`
+# component and `agr-evidence` by `/1855-trainer-v0/bank`; any other mention (bare parent, `bankX`) is a read.
+# `..` after either root is a read too (`bank/../keys`). Cost: cd-to-parent then a relative bank path also fails.
+_END = r"""(?=[/\s"')|;&]|$)"""
+_PARENT_NOT_BANK = re.compile(r"1855-trainer-v0(?!/bank" + _END + ")|agr-evidence(?!/1855-trainer-v0/bank" + _END + ")")
+_DOTDOT = re.compile(r"(?:agr-evidence|1855-trainer-v0)/[^\s\"']*(?:^|/)\.\.(?:/|[\s\"']|$)")
 
 
 def _reads_key(cmd, marks):
     c = _norm(cmd)
     if any(m in c for m in marks):
+        return True
+    if _PARENT_NOT_BANK.search(c) or _DOTDOT.search(c):
         return True
     return _KEYS_PARENT in c and bool(_KEYS_COMPONENT.search(c))  # `1855-trainer-v0` + a keys component
 

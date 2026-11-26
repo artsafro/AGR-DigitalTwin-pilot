@@ -500,7 +500,14 @@ def _run_dir(tmp_path, commands, events=True):
     'find "G:/Мой диск/AGR-evidence" -name "heldout-*.json" -exec cat {} +',
     'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls k*',
     'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0"; Get-ChildItem keys',
-    "certutil -hashfile x.json | findstr 843197137db10cdc"])
+    "certutil -hashfile x.json | findstr 843197137db10cdc",
+    # review #1970 r2 P1-1: recursive reads of a parent of the keys dir (fail-closed allowlist: only .../bank)
+    'rg -n roof "G:/Мой диск/AGR-evidence/1855-trainer-v0"',
+    "Get-ChildItem -Recurse 'G:/Мой диск/AGR-evidence/1855-trainer-v0' | Get-Content",
+    "rg -uu 843197 'G:/Мой диск/AGR-evidence'",
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls bank/g22-k2-stage1/k2_v002r1',
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/../",
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bankX"])
 def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd):
     run = _run_dir(tmp_path, ["ls inputs", cmd])
     assert T.key_dir_reads(run) == [cmd]
@@ -512,7 +519,9 @@ def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd
 def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
     e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
     run = _run_dir(tmp_path, ["ls inputs", "type G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/README.md",
-                              'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls bank/g22-k2-stage1/k2_v002r1',
+                              'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank" && ls g22-k2-stage1/k2_v002r1',
+                              "rg -n roof 'G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1'",
+                              r'dir G:\Мой диск\AGR-evidence\1855-trainer-v0\bank',
                               "python tools/trainer/kit.py --keep-going"])
     assert T.key_dir_reads(run) == []
     assert T.score(e, str(run / "built"), tmp_path / "w")["steps"]["holdout"]["status"] == "pass"
