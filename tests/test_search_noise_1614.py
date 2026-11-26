@@ -272,6 +272,83 @@ def test_live_subtree_archive_exception_is_exact(tmp_path, case):
             sn.state(root)
 
 
+OLD = "evidence/old.json"
+HIDE_OLD = ARCHIVE_SECTION + f"- `{OLD}` — old.\n"
+
+
+def _linked_archive_repo(tmp_path, entry, extra=None, archive_extra=""):
+    return _repo(tmp_path, {"AGENTS.md": entry, "docs/domain/a.md": f"see `{OLD}`\n", OLD: "old",
+                            "docs/ARCHIVE.md": archive_extra + HIDE_OLD, **(extra or {})})
+
+
+@pytest.mark.parametrize("case, entry, extra, referrer", [
+    ("one-hop", "[a](docs/domain/a.md) [archive](docs/ARCHIVE.md)\n", None, "docs/domain/a.md"),
+    ("two-hop", "[b](docs/domain/b.md) [archive](docs/ARCHIVE.md)\n",
+     {"docs/domain/b.md": "[a](a.md)\n"}, "docs/domain/a.md"),
+    ("code", "[archive](docs/ARCHIVE.md)\n", {"tools/use_old.py": f"# reads `{OLD}`\n"}, "tools/use_old.py"),
+    ("active-plan", "[archive](docs/ARCHIVE.md)\n",
+     {"docs/plans/p.md": f"# P\nStatus: active (2026-11-26)\n\nRead `{OLD}`.\n"}, "docs/plans/p.md"),
+])
+def test_archive_refuses_a_file_a_live_doc_links(tmp_path, capsys, case, entry, extra, referrer):
+    """#1891: a live (non-entry) doc reached by the closure must not link a hidden archive row."""
+    root = _linked_archive_repo(tmp_path, entry, extra)
+    ignore = root / ".ignore"
+    ignore.write_bytes(b"# unchanged\n")
+    assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+    err = capsys.readouterr().err
+    assert OLD in err and referrer in err and "linked by live" in err
+    assert ignore.read_bytes() == b"# unchanged\n" and (root / OLD).read_bytes() == b"old"
+
+
+def test_archive_mixed_rows_alias_link_names_only_the_linked_file(tmp_path):
+    """A valid unlinked row next to a row a live doc links through a relative alias: only the latter is named."""
+    ok = "evidence/ok.json"
+    root = _linked_archive_repo(tmp_path, "[a](docs/domain/a.md) [archive](docs/ARCHIVE.md)\n", {
+        "docs/domain/a.md": "[old](../../evidence/./old.json)\n", ok: "ok",
+        "docs/ARCHIVE.md": HIDE_OLD + f"- `{ok}` — unlinked receipt.\n"})
+    with pytest.raises(ValueError, match="linked by live") as exc:
+        sn.state(root)
+    assert f"{OLD} <- docs/domain/a.md" in str(exc.value) and ok not in str(exc.value)
+    (root / "docs/domain/a.md").write_text("# no link\n", encoding="utf-8")
+    assert set(sn.state(root)["archive"]) == {OLD, ok}
+
+
+def test_archive_entry_link_control_still_refused(tmp_path):
+    root = _linked_archive_repo(tmp_path, f"Use `{OLD}`. [archive](docs/ARCHIVE.md)\n")
+    with pytest.raises(ValueError, match="explicitly live"):
+        sn.state(root)
+
+
+@needs_rg
+@pytest.mark.parametrize("case", ["unlinked", "archive-tag-table", "ownership-table", "baseline", "reuse-data",
+                                  "hidden-doc", "done-plan"])
+def test_archive_allows_links_from_lookup_inventories_and_hidden_docs(tmp_path, case):
+    """Lookup inventories, archived docs and inactive plans are not live referrers (#1891)."""
+    entry = "[archive](docs/ARCHIVE.md) [index](docs/architecture/README.md)\n"
+    archive_extra, extra = "", {DOC_INDEX: DOC_TABLE + "| old | [Old](../domain/a.md) | |\n"}
+    if case == "archive-tag-table":
+        archive_extra = "| tag | `docs/domain/a.md` | REJECTED |\n\n"
+    if case == "ownership-table":
+        extra = {DOC_INDEX: DOC_TABLE + "| old | [Old](../domain/a.md) | |\n", "docs/guide.md": "# Guide\n"}
+    if case == "baseline":
+        entry += "`docs/agents/job_scripts_baseline.txt`\n"
+        extra["docs/agents/job_scripts_baseline.txt"] = f"{OLD}\n"
+    if case == "reuse-data":
+        entry += "[r](docs/research/reuse-1296/data/duplicate-groups.md)\n"
+        extra["docs/research/reuse-1296/data/duplicate-groups.md"] = f"- `{OLD}`\n"
+    if case == "hidden-doc":
+        archive_extra = "| tag | `docs/domain/a.md` | REJECTED |\n\n"
+        extra["docs/ARCHIVE.md"] = archive_extra + HIDE_OLD + "- `docs/domain/a.md` — old doc.\n"
+    if case == "done-plan":
+        entry += "[p](docs/plans/p.md)\n"
+        extra["docs/plans/p.md"] = f"# P\nStatus: done (2026-11-26)\n\nRead `{OLD}`.\n"
+    root = _linked_archive_repo(tmp_path, entry, extra, archive_extra)
+    assert sn.main(["--root", str(root), "--write-ignore"]) in (0, 1)  # 1: unrelated docs problems are fine
+    state = sn.state(root)
+    assert OLD in state["archive"] and OLD not in _rg(root)
+    assert (root / OLD).read_bytes() == b"old"
+
+
 @needs_rg
 def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
     historical = {
@@ -324,6 +401,28 @@ def test_batch_5d_hides_only_the_unreferenced_glb_provenance():
     assert provenance not in visible
     assert {glb + name for name in ("README.md", "QA.json", "build.py", "scenarios.json")} <= visible
     assert "technical_library/window_atlas/SOURCE.json" in visible  # linked by its README
+
+
+BATCH_6A_OWNERS = {  # #1960: owner test file -> (merged duplicates, test functions after the merge)
+    "test_course_grid_native.py": (("coalesce", "conform", "finalize_identifiers", "joint_interval_noding",
+                                    "joint_tapers", "joints", "local", "loops", "native_anchor",
+                                    "native_constraint", "protected_tessellation", "udim_encoding"), 44),
+    "test_course_grid_boundary_support.py": (("backtracks", "finalize", "footprint_union", "outward_support",
+                                              "raster_coverage"), 20),
+    "test_course_grid_cut.py": (("cut_generated", "native_pinches", "pages"), 21),
+}
+
+
+def test_batch_6a_course_grid_duplicates_live_only_in_their_owners():
+    tracked = set(sn.tracked(ROOT))
+    for owner, (merged, count) in BATCH_6A_OWNERS.items():
+        text = (ROOT / "tests" / owner).read_text(encoding="utf-8")
+        assert f"tests/{owner}" in tracked
+        assert sum(line.startswith("def test_") for line in text.splitlines()) == count
+        for name in merged:
+            path = f"tests/test_course_grid_{name}.py"
+            assert path not in tracked and not (ROOT / path).exists()
+            assert f"# --- merged from {path} (#1960)" in text
 
 
 @needs_rg
