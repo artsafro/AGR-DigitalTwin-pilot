@@ -106,3 +106,35 @@ now stops at `form_v2: error`).
 Changing scorer tolerances, the form_v2 detector or `pairs_v1.json`; editing the key, the bank, `etalons.json`,
 delivered packages, stored runs; using the etalon/key or `fill_k2_a.json` as an input to arm B (it is only a
 comparison target); tuning texture depth / pocket-close; touching files of PR #1917/#1928 or other cards.
+
+## Result (series `C:/x/ev_t_fa3712bf/series`, 3 pairs, 87.5 s wall, run status complete)
+
+**H117 confirmed** (frozen rule): M117 **A 0/3, B 3/3**; parity held 3/3 (A rings == D1 rings, A form_v2 fails =
+D1's 4 items at 0.0999 m, `form` p95 0.0128 as D1); witness pocket filled 3/3; 63A accepted control 14 fill /
+6 keep exact (depths match); perturbations 5/5 as expected. Paired spread 0 (fail count 4/4/4 vs 0/0/0; FBX bytes
+differ per rep, metrics identical). Receipt `docs/research/trainer_pockets_r117/receipt.json` sha
+`b6a20590ad588f9182d8df325d18caa783aa151489b31d91f58f565b1596291b`; evidence
+`G:/Мой диск/AGR-evidence/1855-r117-pocket-fill/SHA256SUMS.txt` sha `d7c64905117d9fb3ffff0ad9661f666d05768ccc9d71b17e85eb80e00b00bdb3`.
+
+| arm | form_v2 (substitute) | fails | first stop | `form` p95 / max vs key | ring vertices | polygons |
+|---|---|---|---|---|---|---|
+| A (agent recipe) | fail x3 | 4 (0.0999 m) | form_v2 | 0.0128 / 0.1178 m | 57 | 3987 |
+| B (+ pockets_self fill) | pass x3 | 0 | vlm (not run) | 0.0001 / 0.0002 m | 43 | 3717 |
+
+Measured separately:
+- Fill list vs Artem-accepted repair list `fill_k2_a.json`: frozen centroid metric matched **1/3** — a harness
+  artefact (vertex mean; envelope_check repeats the closing vertex, pockets_self drops it). Unfrozen sensitivity:
+  polygon IoU 1.000 / 1.000 / 0.999 for all 3 pockets (same areas 0.125/0.143/0.144 m2).
+- Invariance (expected 0 moved vertices): 2 A vertices far from fills have no B twin — both lie on B's ring
+  (<= 0.12 mm), i.e. collinear vertices dropped; B-A area outside fills+0.05 m = 0.045 m2 (3 pieces, max 0.042 m2,
+  outward). Not a confirm criterion; recorded as a small collateral change of `floor_from_dump --fill` closing.
+- Trainer `form_v2` = `error` in every arm (missing pinned key, Amendment 1) — the live trainer cannot score G22
+  form_v2 on this PC until the key is restored.
+- **Not measured:** live practice runs with the fill step (agents cannot run `pockets_self.py` in the G22 practice
+  tree: `ModuleNotFoundError: envelope_check`; 0/30 stored G22 runs executed it, 3 only read about it), `vlm`,
+  any etalon other than G22 for form_v2 (only G22 has a form-check key), deep pockets (> 0.4 m, need a reference).
+
+Would-change (OBSERVE, not applied): make the source-only D341 census runnable from the practice tree — move
+`pockets_of` + `census` next to `tools/methods/body/floor_from_dump.py` (the #1928 promotion) with a regression test
+on a synthetic notch, and name `pockets_self -> floor_from_dump --fill` in the body trail after `--seal windows`.
+Owner: #1928 / trainer owner. Then measure live: 3 fresh G22 practice pairs, count runs reaching `vlm`.

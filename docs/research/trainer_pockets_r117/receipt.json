@@ -1,0 +1,409 @@
+{
+ "schema": "r117-series/1",
+ "pins": {
+  "C:\\x\\trainer\\runs\\g22-k2-stage1-codex-r115-D1\\inputs\\g22_k2_src.npz": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622",
+  "C:\\x\\trainer\\runs\\g22-k2-stage1-codex-r115-D1\\wt\\tools\\methods\\body\\floor_from_dump.py": "c2eb4f8542c8401e36e4cf8509c836b1cc1045655a0ca74448bcf01022f2fbd1",
+  "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_fa3712bf\\jobs\\POLY63-A\\hooks\\pockets_self.py": "282af95c7e68a9fa208194b00b44f03aeab80c541443ebba62d44fbb6e6c059b",
+  "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_fa3712bf\\jobs\\garibaldi22\\body-training-1619\\hooks\\envelope_check.py": "b67452ffb212ef904ba5089c0e2f95778da2dc7822522c96fb3879ced2f5e5d6",
+  "C:\\x\\trainer\\runs\\g22-k2-stage1-codex-r115-D1\\built\\plan.json": "5cf2bdbb51178900ef22362126fccb15df43a4637f8c23632e6f6747d1f25895",
+  "C:\\x\\ev_1619\\r4\\fill_k2_a.json": "b8c0a4efcdb646f933c19d9974a1e52ac0d09806c133888d9df5a5d3d9759401",
+  "G:\\Мой диск\\AGR-evidence\\1855-trainer-v0\\bank\\g22-k2-stage1\\k2_v002r1_body_quad.fbx": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+  "C:\\x\\ev_1619\\r6\\floor_63A_a.json": "a6e92c8564427d1f1dcca998d425db31e07aa78efa689d98200aae6e3fdfb890",
+  "C:\\x\\ev_1619\\r6\\env_63A_a.json": "ae18326d66f9beb194a411b4986b8748100ab963856602594718a5f8c0d0bb6b",
+  "C:\\x\\trainer\\runs\\g22-k2-stage1-codex-r115-D1\\score\\form_v2\\G22_k2\\key_used.json": "4cb3cbfcfa3d4472d7f85b84d166f4a48fa4ea25592a631fd82c0022f00af5b9"
+ },
+ "python": "3.14.7 (main, Aug  7 2026, 02:26:22) [MSC v.1944 64 bit (AMD64)]",
+ "controls": {
+  "63A": {
+   "fill": 14,
+   "keep": 6,
+   "expected_fill": 14,
+   "expected_keep": 6,
+   "depths_match": true
+  },
+  "perturbations": {
+   "P0_none": {
+    "fill": 0,
+    "keep": 0,
+    "expected": [
+     0,
+     0
+    ],
+    "as_expected": true
+   },
+   "P1_d0.10": {
+    "fill": 1,
+    "keep": 0,
+    "expected": [
+     1,
+     0
+    ],
+    "as_expected": true
+   },
+   "P2_d0.39": {
+    "fill": 1,
+    "keep": 0,
+    "expected": [
+     1,
+     0
+    ],
+    "as_expected": true
+   },
+   "P3_d0.41": {
+    "fill": 0,
+    "keep": 1,
+    "expected": [
+     0,
+     1
+    ],
+    "as_expected": true
+   },
+   "P4_d0.10_shift": {
+    "fill": 1,
+    "keep": 0,
+    "expected": [
+     1,
+     0
+    ],
+    "as_expected": true
+   }
+  }
+ },
+ "reps": [
+  {
+   "A": {
+    "arm": "A",
+    "ffd0_rc": 0,
+    "ffd0_s": 4.1,
+    "parity_rings_equal_d1": true,
+    "body_rc": 0,
+    "body_s": 1.4,
+    "score_rc": 0,
+    "score_s": 5.6,
+    "fbx_sha256": "319a976d88679ac8a969ce4c7e20397f1f27e949041f006bdce0d3b9495d0182",
+    "trainer_first_failing_step": "form_v2",
+    "trainer_score": 0.7143,
+    "form_p95_m": 0.0128,
+    "trainer_form_v2": "error",
+    "trainer_form_v2_reason": "form-check detect exit 1: FileNotFoundError: [Errno 2] No such file or directory: 'C:/x/t_563a40f7/key/heldout-key-v001.json'",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "pass",
+     "topology": "pass",
+     "form": "pass",
+     "form_v2": "error",
+     "vlm": "not_run",
+     "package": "not_applicable"
+    },
+    "form_v2": "fail",
+    "form_v2_fail_count": 4,
+    "form_v2_fails": {
+     "contour@16.85": 0.0999,
+     "contour@19.8": 0.0999,
+     "band_contour@17.8": 0.0999,
+     "band_contour@18.2": 0.0999
+    },
+    "first_failing_step": "form_v2"
+   },
+   "B": {
+    "arm": "B",
+    "ffd0_rc": 0,
+    "ffd0_s": 4.1,
+    "pself_rc": 2,
+    "pself_s": 0.3,
+    "pockets": [
+     [
+      [
+       538.14,
+       1038.49
+      ],
+      0.1,
+      "fill"
+     ],
+     [
+      [
+       515.93,
+       1020.41
+      ],
+      0.1,
+      "fill"
+     ],
+     [
+      [
+       492.33,
+       1001.11
+      ],
+      0.1,
+      "fill"
+     ]
+    ],
+    "fill": 3,
+    "keep": 0,
+    "fill_match_accepted": {
+     "accepted": 3,
+     "candidate": 3,
+     "matched": 1,
+     "witness_filled": true
+    },
+    "ffd1_rc": 0,
+    "ffd1_s": 4.2,
+    "invariance_moved_outside_fills": 2,
+    "ring_vertices": [
+     57,
+     43
+    ],
+    "parity_rings_equal_d1": true,
+    "body_rc": 0,
+    "body_s": 1.4,
+    "score_rc": 0,
+    "score_s": 4.9,
+    "fbx_sha256": "c747b415c6478de724acbf188be6817c99fe2056c775ca62a3a05f6ded2d64ef",
+    "trainer_first_failing_step": "form_v2",
+    "trainer_score": 0.7143,
+    "form_p95_m": 0.0001,
+    "trainer_form_v2": "error",
+    "trainer_form_v2_reason": "form-check detect exit 1: FileNotFoundError: [Errno 2] No such file or directory: 'C:/x/t_563a40f7/key/heldout-key-v001.json'",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "pass",
+     "topology": "pass",
+     "form": "pass",
+     "form_v2": "error",
+     "vlm": "not_run",
+     "package": "not_applicable"
+    },
+    "form_v2": "pass",
+    "form_v2_fail_count": 0,
+    "form_v2_fails": {},
+    "first_failing_step": "vlm"
+   }
+  },
+  {
+   "A": {
+    "arm": "A",
+    "ffd0_rc": 0,
+    "ffd0_s": 4.2,
+    "parity_rings_equal_d1": true,
+    "body_rc": 0,
+    "body_s": 1.6,
+    "score_rc": 0,
+    "score_s": 4.9,
+    "fbx_sha256": "a1875cf96f4b6f673319ded8674323d3a55527373330c8746ee9635a7f2a14da",
+    "trainer_first_failing_step": "form_v2",
+    "trainer_score": 0.7143,
+    "form_p95_m": 0.0128,
+    "trainer_form_v2": "error",
+    "trainer_form_v2_reason": "form-check detect exit 1: FileNotFoundError: [Errno 2] No such file or directory: 'C:/x/t_563a40f7/key/heldout-key-v001.json'",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "pass",
+     "topology": "pass",
+     "form": "pass",
+     "form_v2": "error",
+     "vlm": "not_run",
+     "package": "not_applicable"
+    },
+    "form_v2": "fail",
+    "form_v2_fail_count": 4,
+    "form_v2_fails": {
+     "contour@16.85": 0.0999,
+     "contour@19.8": 0.0999,
+     "band_contour@17.8": 0.0999,
+     "band_contour@18.2": 0.0999
+    },
+    "first_failing_step": "form_v2"
+   },
+   "B": {
+    "arm": "B",
+    "ffd0_rc": 0,
+    "ffd0_s": 4.6,
+    "pself_rc": 2,
+    "pself_s": 0.3,
+    "pockets": [
+     [
+      [
+       538.14,
+       1038.49
+      ],
+      0.1,
+      "fill"
+     ],
+     [
+      [
+       515.93,
+       1020.41
+      ],
+      0.1,
+      "fill"
+     ],
+     [
+      [
+       492.33,
+       1001.11
+      ],
+      0.1,
+      "fill"
+     ]
+    ],
+    "fill": 3,
+    "keep": 0,
+    "fill_match_accepted": {
+     "accepted": 3,
+     "candidate": 3,
+     "matched": 1,
+     "witness_filled": true
+    },
+    "ffd1_rc": 0,
+    "ffd1_s": 4.1,
+    "invariance_moved_outside_fills": 2,
+    "ring_vertices": [
+     57,
+     43
+    ],
+    "parity_rings_equal_d1": true,
+    "body_rc": 0,
+    "body_s": 1.5,
+    "score_rc": 0,
+    "score_s": 5.1,
+    "fbx_sha256": "638b425763ade5084e5e2f0c3b20a2cb1415ac899b6b010ab43bc35c676f1416",
+    "trainer_first_failing_step": "form_v2",
+    "trainer_score": 0.7143,
+    "form_p95_m": 0.0001,
+    "trainer_form_v2": "error",
+    "trainer_form_v2_reason": "form-check detect exit 1: FileNotFoundError: [Errno 2] No such file or directory: 'C:/x/t_563a40f7/key/heldout-key-v001.json'",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "pass",
+     "topology": "pass",
+     "form": "pass",
+     "form_v2": "error",
+     "vlm": "not_run",
+     "package": "not_applicable"
+    },
+    "form_v2": "pass",
+    "form_v2_fail_count": 0,
+    "form_v2_fails": {},
+    "first_failing_step": "vlm"
+   }
+  },
+  {
+   "A": {
+    "arm": "A",
+    "ffd0_rc": 0,
+    "ffd0_s": 4.2,
+    "parity_rings_equal_d1": true,
+    "body_rc": 0,
+    "body_s": 1.5,
+    "score_rc": 0,
+    "score_s": 5.0,
+    "fbx_sha256": "221a2f5df60b39f128da5bae24d02ef84f7114f5857696c5705111171cda8b2b",
+    "trainer_first_failing_step": "form_v2",
+    "trainer_score": 0.7143,
+    "form_p95_m": 0.0128,
+    "trainer_form_v2": "error",
+    "trainer_form_v2_reason": "form-check detect exit 1: FileNotFoundError: [Errno 2] No such file or directory: 'C:/x/t_563a40f7/key/heldout-key-v001.json'",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "pass",
+     "topology": "pass",
+     "form": "pass",
+     "form_v2": "error",
+     "vlm": "not_run",
+     "package": "not_applicable"
+    },
+    "form_v2": "fail",
+    "form_v2_fail_count": 4,
+    "form_v2_fails": {
+     "contour@16.85": 0.0999,
+     "contour@19.8": 0.0999,
+     "band_contour@17.8": 0.0999,
+     "band_contour@18.2": 0.0999
+    },
+    "first_failing_step": "form_v2"
+   },
+   "B": {
+    "arm": "B",
+    "ffd0_rc": 0,
+    "ffd0_s": 4.0,
+    "pself_rc": 2,
+    "pself_s": 0.3,
+    "pockets": [
+     [
+      [
+       538.14,
+       1038.49
+      ],
+      0.1,
+      "fill"
+     ],
+     [
+      [
+       515.93,
+       1020.41
+      ],
+      0.1,
+      "fill"
+     ],
+     [
+      [
+       492.33,
+       1001.11
+      ],
+      0.1,
+      "fill"
+     ]
+    ],
+    "fill": 3,
+    "keep": 0,
+    "fill_match_accepted": {
+     "accepted": 3,
+     "candidate": 3,
+     "matched": 1,
+     "witness_filled": true
+    },
+    "ffd1_rc": 0,
+    "ffd1_s": 4.1,
+    "invariance_moved_outside_fills": 2,
+    "ring_vertices": [
+     57,
+     43
+    ],
+    "parity_rings_equal_d1": true,
+    "body_rc": 0,
+    "body_s": 1.6,
+    "score_rc": 0,
+    "score_s": 4.9,
+    "fbx_sha256": "53826e355844bf499803a1074a6ac14d3dd7df1e9e822e30f4e79ac7ca7e0d57",
+    "trainer_first_failing_step": "form_v2",
+    "trainer_score": 0.7143,
+    "form_p95_m": 0.0001,
+    "trainer_form_v2": "error",
+    "trainer_form_v2_reason": "form-check detect exit 1: FileNotFoundError: [Errno 2] No such file or directory: 'C:/x/t_563a40f7/key/heldout-key-v001.json'",
+    "steps": {
+     "artifact": "pass",
+     "readback": "pass",
+     "bounds": "pass",
+     "topology": "pass",
+     "form": "pass",
+     "form_v2": "error",
+     "vlm": "not_run",
+     "package": "not_applicable"
+    },
+    "form_v2": "pass",
+    "form_v2_fail_count": 0,
+    "form_v2_fails": {},
+    "first_failing_step": "vlm"
+   }
+  }
+ ],
+ "wall_s": 87.5,
+ "M117": {
+  "A": 0,
+  "B": 3
+ }
+}
