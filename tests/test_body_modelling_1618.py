@@ -68,7 +68,7 @@ def test_mapping_table_covers_every_rule():
 
 
 def test_skeleton_and_skill_link_the_rules():
-    sk = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    sk = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     body_rows = [r for r in sk.splitlines() if re.match(r"^\| \d+ \| `body`", r)]
     assert len(body_rows) == 2
     for row in body_rows:
@@ -109,7 +109,7 @@ def test_artem_answers_replace_proposals():
 
 
 def test_main_split_and_new_decision_rows_survive():
-    sk = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    sk = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     for row in sk.splitlines():
         if re.match(r"^\| \d+ \| `body`", row):
             assert "[D336]" in row and "body-modelling.md#5-правила" in row

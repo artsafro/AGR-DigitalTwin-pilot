@@ -95,7 +95,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | agents/roles | [agents/ROLES.md](../agents/ROLES.md) |  |
 | agents/skeleton-harvest/2026-11-23 | [agents/skeleton-harvest/2026-11-23.md](../agents/skeleton-harvest/2026-11-23.md) |  |
 | agents/skeleton-template-json | [agents/skeleton.template.json](../agents/skeleton.template.json) |  |
-| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) |  |
+| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) | [agents/SKELETONS-stages.md](../agents/SKELETONS-stages.md) |
 | agents/skeletons-json | [agents/skeletons.json](../agents/skeletons.json) |  |
 | agents/task-intake | [agents/task-intake.md](../agents/task-intake.md) |  |
 | agents/triage-labels | [agents/triage-labels.md](../agents/triage-labels.md) |  |
@@ -383,6 +383,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | procedure/node-r6-oks-body-facade | [procedure/node-r6-oks-body-facade.md](../procedure/node-r6-oks-body-facade.md) |  |
 | procedure/node-r7-flora-star-planes | [procedure/node-r7-flora-star-planes.md](../procedure/node-r7-flora-star-planes.md) |  |
 | procedure/node-recipes | [procedure/NODE_RECIPES.md](../procedure/NODE_RECIPES.md) |  |
+| procedure/oks-modelling-plan | [procedure/oks-modelling-plan.md](../procedure/oks-modelling-plan.md) |  |
 | procedure/review-textures | [procedure/REVIEW_TEXTURES.md](../procedure/REVIEW_TEXTURES.md) |  |
 | procedure/task-to-model | [procedure/TASK_TO_MODEL.md](../procedure/TASK_TO_MODEL.md) |  |
 | procedure/task-to-model-dry-run | [procedure/task-to-model-dry-run.md](../procedure/task-to-model-dry-run.md) |  |
@@ -397,6 +398,8 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
+| research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
@@ -476,6 +479,11 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/telegram-3dsmax-chat-2026-11 | [research/telegram-3dsmax-chat-2026-11.md](../research/telegram-3dsmax-chat-2026-11.md) |  |
 | research/toolchain-smoke-2026-10-15 | [research/toolchain-smoke-2026-10-15.md](../research/toolchain-smoke-2026-10-15.md) |  |
 | research/tow02-hand-finish-face-diff | [research/tow02-hand-finish-face-diff.md](../research/tow02-hand-finish-face-diff.md) |  |
+| research/trainer-tower-id-r87/calib-json | [research/trainer-tower-id-r87/calib.json](../research/trainer-tower-id-r87/calib.json) |  |
+| research/trainer-tower-id-r87/make-bank-py | [research/trainer-tower-id-r87/make_bank.py](../research/trainer-tower-id-r87/make_bank.py) |  |
+| research/trainer-tower-id-r87/result-json | [research/trainer-tower-id-r87/result.json](../research/trainer-tower-id-r87/result.json) |  |
+| research/trainer-tower-id-r87/score-py | [research/trainer-tower-id-r87/score.py](../research/trainer-tower-id-r87/score.py) |  |
+| research/trainer-tower-id-r87/series-sh | [research/trainer-tower-id-r87/series.sh](../research/trainer-tower-id-r87/series.sh) |  |
 | research/ucx-etalon-analysis | [research/ucx-etalon-analysis.md](../research/ucx-etalon-analysis.md) |  |
 | research/ucx-etalon-audit-2026-10-15-json | [research/ucx-etalon-audit-2026-10-15.json](../research/ucx-etalon-audit-2026-10-15.json) |  |
 | research/vatutino-ground-80deg-step-source | [research/vatutino-ground-80deg-step-source.md](../research/vatutino-ground-80deg-step-source.md) |  |
@@ -499,6 +507,8 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | sources/vyatskaya-tow02 | [sources/vyatskaya-tow02.md](../sources/vyatskaya-tow02.md) |  |
 | tools/max-scripts | [tools/max-scripts.md](../tools/max-scripts.md) |  |
 | tools/openings | [tools/openings.md](../tools/openings.md) |  |
+| trainer/entry-cost-1938 | [trainer/entry-cost-1938.md](../trainer/entry-cost-1938.md) |  |
+| trainer/entry-cost-1938-json | [trainer/entry-cost-1938.json](../trainer/entry-cost-1938.json) |  |
 | trainer/etalons | [trainer/ETALONS.md](../trainer/ETALONS.md) |  |
 | trainer/etalons-json | [trainer/etalons.json](../trainer/etalons.json) |  |
 | trainer/ledger-json | [trainer/ledger.json](../trainer/ledger.json) |  |

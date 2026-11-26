@@ -16,7 +16,39 @@ uv run agr trainer run ETALON --lane codex --out NEW_DIR [--timeout-s 1800] [--d
 uv run agr trainer score ETALON --built NEW_DIR/built --out NEW.json --png NEW.png [--vlm]
 uv run agr trainer calibrate --out NEW_DIR
 uv run agr trainer ledger --add NEW.json --lane codex --run NEW_DIR --date YYYY-MM-DD
+uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR [--lane codex] [--dry-run]
 ```
+
+### A/B probe of a harness edit [D415]
+
+- `ab` (#1924, Harness2 arXiv 2610.14224) runs the SAME etalon twice, one arm after the other, on the same lane,
+  model and `origin/main` commit. `OLD_DIR` / `NEW_DIR` are harness variants: folders of repo-relative files
+  (rule, skill or doc text) laid over the practice tree after the scrub and committed as a second commit, so the
+  agent's own diff stays separate. An empty folder is the unchanged baseline. Both arms are scored with `score`
+  (Blender / Core Console only, never Max). Default: 1-2 etalons (cost).
+- One contrast report `OUT/ab.json` + `OUT/ab.md`: per score step and per skeleton stage old / new / verdict,
+  first-command tokens (first 4 tokens of the first command, shell wrapper removed), wrong-turns (commands with a
+  non-zero exit), commands and input tokens with deltas, deliverable diff (added / removed / changed / same by
+  sha256). Verdict of the edit: `fixed` (non-pass -> pass, or bypassed -> used, and nothing regresses),
+  `regressed` (any pass -> non-pass or used -> bypassed; a mixed result is `regressed`), `unchanged`,
+  `inconclusive` (an arm timed out, exited non-zero, failed before recording or was not scored; never `unchanged`).
+- Refused with exit 2 and nothing written: identical or empty variants, OLD and NEW the same folder, an `--out`
+  that exists or sits inside a variant, a variant file under `docs/trainer/`, `pairs_v1.json`, the etalon's
+  `hidden_repo_paths` or `.git`, a symlink, a file that names the key, an unknown `--scope` or lane.
+- Scope tag: `--scope INVARIANT` (entry, context, tools: AGENTS.md, SKELETONS, routes, CLI help) or
+  `--scope DOMAIN` (OKS / Ground / MAF / Flora rules and scenarios). The two are probed in separate A/B runs, never
+  mixed in one variant; an edited path that looks like the other scope is listed in `scope_warnings`.
+- The verdict is the evidence of a job lesson (`jobs/<ID>/LESSONS.md`, form situation / lesson / evidence,
+  `jobs/_template/LESSONS.md`; `tools/qa/lessons_check.py` warns on a new lesson without evidence).
+- First real A/B (#1924, 2026-11-25, `origin/main` 54b63bab, codex / gpt-6.1-terra, g22-k2-stage1, INVARIANT):
+  the only edit is one phrase in `AGENTS.md` ("read `docs/agents/SKELETONS.md` FIRST (it lists every stage
+  command)"). Verdict `fixed`: old stopped at `artifact` (no FBX, 39 commands, 5 wrong-turns, 0.62 M input tokens);
+  new built `typical_candidate/body.fbx` and passed artifact / readback / bounds / topology / form, first failing
+  `form_v2` (36 commands, 6 wrong-turns, 1.68 M tokens), and also used `master-qa` and `readback`. First command:
+  old reads the scenario skill, new reads SKELETONS.md first. One sample per arm: LLM run-to-run variance is not
+  controlled, so this proves the A/B mechanism, not the edit. Report and arm records:
+  `G:/Мой диск/AGR-evidence/1924-trainer-ab/` (`ab.md`, `ab.json`, `old/`, `new/`, `SHA256SUMS.txt`;
+  `ab.json` sha256 8395028a84001fc6…).
 
 - `run` использует план записи #1608. Свежая сессия `codex exec --ephemeral --ignore-user-config` работает
   в отдельной папке: `git archive origin/main` распаковывается в новую папку, чистится, затем `git init` и
@@ -39,6 +71,40 @@ uv run agr trainer ledger --add NEW.json --lane codex --run NEW_DIR --date YYYY-
   считаются непройденными. Отчёт содержит первый непройденный этап.
 - Правило held-out (#1803): изменение, сделанное по провалу на `tuning`-эталоне, перепроверяется на `held_out`-эталоне.
   Сейчас `tuning`: kpp1-v004, g22-k2-stage1, 63a-stage1. `held_out`: 63b-stage1 (полный) и остальные.
+
+## Windows `sources-dwg`
+
+Use the in-sandbox route [D389] for DWG inputs. This procedure assumes a cold
+`workspace-write` session has already been prepared; the legacy `agr trainer run`
+command is not that Windows sandbox launcher. The session owner holds the shared
+AutoCAD batch lock (`dcc_batch.py`, `acad`) for the attempt. Use AutoCAD 2025 Core
+Console, one drawing at a time, with the source pinned by SHA-256 and a fresh,
+single-owner output directory with an absolute ASCII path (no spaces)
+inside the existing `workspace-write` sandbox. For example, with the prepared
+workspace Python and `SOURCE.dwg` the frozen source copy:
+
+```text
+.venv/Scripts/python.exe tools/methods/body/dwg_to_dxf.py SOURCE.dwg tmp/r1/L01.dxf tmp/r1/L01.json --workdir tmp/r1 --copy-name working.dwg --timeout 60
+.venv/Scripts/python.exe tools/methods/body/dxf_intake.py SOURCE.dwg tmp/r1/L01.dxf tmp/r1/L01.json tmp/r1/intake.json
+```
+
+Run intake only after converter exit 0. Before `plan_from_dxf.py extract`, require
+intake exit 0 on the same unmodified bytes: `dwg-to-dxf/1` with matching DWG and
+DXF SHA-256, complete ASCII DXF with terminal ENDSEC/EOF, strict parser readback,
+nonempty model space and `$INSUNITS=4` (mm). Conversion and intake are not stage
+passes by themselves; extraction still needs explicit source-layer and level mapping.
+
+On timeout or any nonzero exit, stop at `sources-dwg`. Keep the converter receipt,
+script and console log (or the CLI error if launch/preflight produced no receipt).
+Record the source hash, executable/version from the log when available, native
+outcome, elapsed/deadline and observed DXF size. Missing DXF and malformed DXF are
+different failures: do not use or repair a timed-out output, and do not treat a
+header-only check as strict intake (#1866 owns the separate converter false pass).
+A timeout has no vendor exit code. Escalate the diagnostics to the operator, not
+the sandbox permissions. The operator can run a separately locked, same-byte
+host **control** to compare behavior; it is not trainer output or authorization
+for the cold agent to run AutoCAD outside the sandbox. Never open the original
+DWG or reuse accepted assets from a previous run.
 
 ## Банк эталонов
 

@@ -2,6 +2,7 @@
 
 Native Blender 5.1 headless build + readback of synthetic, non-origin fixtures (no mocked Blender API).
 """
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -29,18 +30,18 @@ def _blender(*args):
                           capture_output=True, text=True)
 
 
-def _build(tmp_path, name, data):
+def _build(tmp_path, name, data, *extra):
     src, fbx = tmp_path / f'{name}.json', tmp_path / f'{name}.fbx'
     src.write_text(json.dumps(data))
-    run = _blender('build', src, fbx, 'Synthetic', 'SYNTHETIC_LOCAL')
+    run = _blender('build', src, fbx, 'Synthetic', 'SYNTHETIC_LOCAL', *extra)
     assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
     return fbx
 
 
-def _readback(tmp_path, fbx, name, data):
+def _readback(tmp_path, fbx, name, data, *extra):
     src, rep = tmp_path / f'{name}.src.json', tmp_path / f'{name}.readback.json'
     src.write_text(json.dumps(data))
-    run = _blender('readback', fbx, src, rep)
+    run = _blender('readback', fbx, src, rep, *extra)
     assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
     return json.loads(rep.read_text())
 
@@ -97,3 +98,131 @@ def test_unmatched_quad_is_reported_not_passed(built):
     assert cm['complete'] is False
     assert facts['material_mismatch'] == 0 and facts['material_by_centre'] == 'incomplete'
     assert facts['surface_normals_by_centre'] == 'incomplete'
+
+
+@pytest.fixture(scope='module')
+def tile_exports(tmp_path_factory):
+    if not BLENDER.exists():
+        pytest.skip('Blender 5.1.2 required')
+    tmp = tmp_path_factory.mktemp('gr1854')
+    data = mesh()
+    data['uv'][1] = [[1, 0], [2, 0], [1, 1]]
+    swapped = {**data, 'uv': [
+        [[u + shift, v] for u, v in face] for face, shift in zip(data['uv'], [1, -1])
+    ]}
+    return tmp, data, _build(tmp, '0001_Decoy_Ground', data, '--profile', 'vpm'), _build(
+        tmp, 'swapped', swapped, '--profile', 'vpm')
+
+
+@pytest.mark.parametrize('case,status', [
+    ('matched', 'pass'), ('swapped', 'fail'), ('missing', 'not_measured'), ('empty', 'not_measured'),
+    ('partial', 'fail'), ('crossing', 'fail'), ('nonfinite', 'fail'), ('infinite', 'fail'),
+    ('unsupported', 'fail'), ('duplicate_slot', 'fail'), ('unmapped_material', 'fail'),
+])
+def test_vpm_readback_udim_by_material(tile_exports, case, status):
+    tmp, data, fbx, swapped = tile_exports
+    expected = dict(data)
+    if case == 'missing':
+        del expected['uv']
+    elif case == 'empty':
+        expected['uv'] = []
+    elif case == 'partial':
+        expected['uv'] = data['uv'][:1]
+    elif case in {'crossing', 'nonfinite', 'infinite', 'unsupported'}:
+        u = {'crossing': 2.25, 'nonfinite': float('nan'), 'infinite': float('inf'), 'unsupported': '2'}[case]
+        expected['uv'] = [data['uv'][0], [[1, 0], [u, 0], [1, 1]]]
+    elif case == 'duplicate_slot':
+        expected['slots'] = ['Tile', 'Tile']
+    elif case == 'unmapped_material':
+        expected['slots'] = ['Tile', 'Other']
+    report = _readback(tmp, swapped if case == 'swapped' else fbx, case, expected)
+    tile, lawn = ('M_Synthetic_Ground_' + slot for slot in ('Tile', 'Lawn'))
+    facts = report['uv_tiles']
+    assert facts['tiles'] == [1001, 1002]
+    assert facts['by_material'] == ({tile: [1002], lawn: [1001]} if case == 'swapped'
+                                    else {tile: [1001], lawn: [1002]})
+    assignment = facts['udim_assignment']
+    assert assignment['status'] == status
+    if case in ('matched', 'swapped'):
+        assert assignment['differences'] == ({
+            tile: {'expected': [1001], 'observed': [1002]},
+            lawn: {'expected': [1002], 'observed': [1001]},
+        } if case == 'swapped' else {})
+    elif case == 'unmapped_material':
+        assert set(assignment['differences']) == {lawn, 'M_Synthetic_Ground_Other'}
+    else:
+        assert assignment['reason']
+
+
+def test_vpm_readback_straddling_face_is_named(tile_exports, tmp_path):
+    _, data, _, _ = tile_exports
+    crossing = {**data, 'uv': [data['uv'][0], [[1, 0], [2.25, 0], [1, 1]]]}
+    fbx = _build(tmp_path, 'crossing', crossing, '--profile', 'vpm')
+    uv = _readback(tmp_path, fbx, 'crossing', data)['uv_tiles']
+    assert uv['straddling'] == 1
+    assignment = uv['udim_assignment']
+    assert assignment['status'] == 'fail'
+    assert set(assignment['invalid_imported_faces_by_material']) == {'M_Synthetic_Ground_Lawn'}
+
+
+def test_vpm_readback_without_an_imported_uv_layer(tile_exports, tmp_path):
+    _, data, fbx, _ = tile_exports
+    dst = tmp_path / 'no_uv.fbx'
+    script = tmp_path / 'remove_uv.py'
+    script.write_text(
+        'import bpy\n'
+        f'bpy.ops.import_scene.fbx(filepath={str(fbx)!r})\n'
+        'mesh, = bpy.data.meshes\n'
+        'mesh.uv_layers.remove(mesh.uv_layers.active)\n'
+        f'bpy.ops.export_scene.fbx(filepath={str(dst)!r})\n', encoding='utf-8')
+    run = subprocess.run([str(BLENDER), '--background', '--factory-startup', '--threads', '1',
+                          '--python-exit-code', '1', '--python-expr',
+                          f'import bpy; bpy.ops.wm.read_factory_settings(use_empty=True); '
+                          f'exec(open({str(script)!r}).read())'], capture_output=True, text=True)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+    # Synthetic fault injection only: bind the VPM profile to the mutated FBX bytes.
+    meta = json.loads(Path(str(fbx) + '.export_meta.json').read_text(encoding='utf-8'))
+    meta.update(exported_files=[dst.name], exported_sha256={dst.name: hashlib.sha256(dst.read_bytes()).hexdigest()})
+    Path(str(dst) + '.export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    report = _readback(tmp_path, dst, 'no_uv', data, 4096, 0, 5000)
+    assert report['uv_layers'] == []
+    uv = report['uv_tiles']
+    assert uv['by_material'] == {}
+    assert uv['udim_assignment']['status'] == 'not_measured'
+    assert uv['udim_assignment']['reason'] == 'imported Ground has no applicable UV evidence'
+
+
+@pytest.mark.parametrize('case', ['missing_profile', 'stale_profile', 'npm'])
+def test_readback_without_vpm_profile_evidence(tile_exports, tmp_path, case):
+    _, data, fbx, _ = tile_exports
+    copied = tmp_path / ('SM_Synthetic_Ground.fbx' if case == 'missing_profile' else fbx.name)
+    copied.write_bytes(fbx.read_bytes())
+    if case != 'missing_profile':
+        meta = json.loads(Path(str(fbx) + '.export_meta.json').read_text(encoding='utf-8'))
+        if case == 'stale_profile':
+            meta['exported_sha256'][fbx.name] = '0' * 64
+        else:
+            # Explicit NPM atlas: deliberately shares tile 1001 across source slots.
+            atlas = {**data, 'uv': [data['uv'][0], [[0, 0], [1, 0], [0, 1]]]}
+            copied = _build(tmp_path, 'SM_Synthetic_Ground', atlas, '--profile', 'npm')
+        if case == 'stale_profile':
+            Path(str(copied) + '.export_meta.json').write_text(json.dumps(meta))
+    facts = _readback(tmp_path, copied, case, data, 4096, 0, 5000)['uv_tiles']
+    if case == 'npm':
+        assert facts == {'tiles': [1001], 'straddling': 0, 'mirrored_faces': 0}
+    else:
+        assert facts['udim_assignment']['status'] == 'not_measured'
+        assert facts['tiles'] == [1001, 1002]
+
+
+def test_readback_report_cannot_alias_source(tile_exports):
+    tmp, data, fbx, _ = tile_exports
+    src = tmp / 'alias.src.json'
+    src.write_text(json.dumps(data))
+    original = src.read_bytes()
+    alias = tmp / 'hardlink.json'
+    alias.hardlink_to(src)
+    for dst in (src, alias):
+        run = _blender('readback', fbx, src, dst)
+        assert run.returncode != 0
+        assert src.read_bytes() == alias.read_bytes() == original

@@ -14,9 +14,9 @@ rules:
 shared_kernel:
   serves_stage: export
   id: udim
-  ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
+  ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
-  owner_ru: "одна функция UDIM (#1337); Ground берёт номер тайла через udim_of_cell (UDIM = ID покрытия), её дубли охраняет карта НПМ (contexts.yaml)"
+  owner_ru: "одна функция UDIM (#1337); Ground передаёт в udim_of_cell плотный индекс покрытия [D399], дубли формулы охраняет карта НПМ (contexts.yaml)"
   functions:
     - name: udim_tile
       contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
@@ -88,18 +88,22 @@ contexts:
     ru: "Проверки Ground, xView, СИНТЕЗ"
     area: docs/domain/areas/package.md
     owner: tools/qa/validate_package.py
-    owner_ru: "проверка пакета по регламенту (agr validate)"
+    owner_ru: "проверка пакета по регламенту (agr validate); ограничение --master (не провал сдачи и не допуск): по вызову проверяет рабочий FBX в V003 (twinqa/master.py, с --scene) и/или хеш роли в build-манифесте V001, но не сравнивает поверхности рабочего и сдаточного FBX; совпадение числа треугольников не доказывает паритет поверхности D293; с agr checker (sintez) отчёты независимы — хеши между инструментами не сверяются, хеш ZIP не доказывает идентичный FBX (#1805, PR #1830)"
     functions:
       - name: validate_vpm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ"
       - name: validate_npm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+      - name: add_master
+        contract: "профиль, рабочий FBX (с --scene) -> проверки V003 рабочего FBX (twinqa/master.py), без сравнения поверхностей со сдаточным FBX"
+      - name: add_build_manifest
+        contract: "ZIP, build.json, --master [role=]путь -> сверка SHA-256 роли с манифестом в V001, без сравнения поверхностей FBX"
   - id: package
     grid: "2/4"
     ru: "Упаковка готовых файлов НПМ / ВПМ в ZIP"
     area: docs/domain/areas/package.md
     owner: adapters/max/agr_tools/package_core.py
-    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    owner_ru: "общий писатель ZIP сдачи на общем маршруте (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377); исторический обход ZIP Ватутино учтён в package-contexts.yaml (historical), без второй хронологии здесь"
     functions:
       - name: zip_plan
         contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
@@ -153,13 +157,13 @@ contexts:
         status: historical
   - id: ground-export
     grid: "2/3"
-    ru: "Экспорт Ground отдельно от ZIP"
+    ru: "Helper экспорта поверхности Ground (отдельно от сводного экспорта участка и ZIP)"
     area: docs/domain/export-import.md
     owner: tools/blender/ground_json_to_fbx.py
-    owner_ru: "инструмент Blender читает JSON-мастер, не OBJ сборщика; D366 отдельно требует рабочий FBX с квадами вместе с FBX сдачи"
+    owner_ru: "helper Blender выгружает только поверхность Ground из JSON-мастера, не OBJ сборщика и не сводный экспорт участка после расстановки МАФ и Флоры; канонического сборщика участка нет (исторический jobs/VATUTINO-SITE/assemble_delivery.py — только свидетельство триангулированного FBX сдачи, не маршрут и не D366); D366 отдельно требует нетриангулированный рабочий FBX рядом с пакетом (вне ZIP)"
     functions:
       - name: build
-        contract: "JSON-мастер меша, адрес -> FBX и метаданные экспорта"
+        contract: "JSON-мастер поверхности Ground, адрес -> FBX поверхности Ground и метаданные экспорта (не сводный экспорт участка и не рабочий FBX D366)"
 relations:
   - from: dcc
     to: heights
@@ -169,7 +173,7 @@ relations:
     ru: "граница и ноль"
   - from: udim
     to: ground
-    ru: "номер тайла (UDIM = ID покрытия)"
+    ru: "номер тайла по плотному индексу покрытия"
   - from: udim
     to: ground-export
     ru: "проверка тайлов при чтении FBX"

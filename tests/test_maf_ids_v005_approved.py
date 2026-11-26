@@ -99,11 +99,11 @@ def test_pointer_hash_matches_committed_lf_and_crlf_working_copy():
     assert _canonical_sha(blob + b" ") != pointer["sha256"]
 
 
-def test_material_ids_pointer_is_v006():
-    # v006 = v005 + ID 32 (D229, #993); v005 itself stays unchanged.
+def test_material_ids_pointer_is_v007():
+    # v007 = v006 + ID 33 (D240); v005 itself stays unchanged.
     pointer = json.loads(POINTER.read_text(encoding="utf-8"))
-    assert pointer["active"] == "v006"
-    assert pointer["path"].replace("\\", "/") == "library/maf/material_ids_v006.json"
+    assert pointer["active"] == "v007"
+    assert pointer["path"].replace("\\", "/") == "library/maf/material_ids_v007.json"
     target = ROOT / pointer["path"]
     assert _canonical_sha(target.read_bytes()) == pointer["sha256"]
 

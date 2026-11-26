@@ -242,6 +242,161 @@ def _rg(root):
     return set(out.splitlines())
 
 
+ARCHIVE_SECTION = "## Hidden from search (still in the tree)\n"
+
+
+@pytest.mark.parametrize("case", ["exact", "sibling", "overlap", "entry", "stale", "directory", "outside", "duplicate"])
+def test_live_subtree_archive_exception_is_exact(tmp_path, case):
+    old = "jobs/DONE/open-1/pilot/old.json"
+    sibling = "jobs/DONE/open-1/pilot/old-copy.json"
+    exception = {"directory": old.rsplit("/", 1)[0], "outside": "jobs/DONE/STATE.md"}.get(case, old)
+    config = CONFIG + f"    archive_exceptions:\n      - {exception}\n"
+    if case == "overlap":
+        config += "  - path: jobs/DONE/open-1/pilot\n    ru: другая защита\n"
+    if case == "duplicate":
+        config += f"      - {exception}\n"
+    index = ARCHIVE_SECTION + ("" if case == "stale" else f"- `{old}` — Historical receipt.\n")
+    if case == "sibling":
+        index += f"- `{sibling}` — Still protected.\n"
+    root = _repo(tmp_path, {
+        old: "old", sibling: "sibling", "docs/ARCHIVE.md": index,
+        "AGENTS.md": f"Read `{old}`.\n" if case == "entry" else "# Entry\n",
+    }, config=config)
+    if case == "exact":
+        state = sn.state(root)
+        assert set(state["archive"]) == {old}
+        assert not {old, sibling} & set(state["data"])
+    else:
+        match = "explicitly live" if case in {"sibling", "overlap", "entry"} else "archive_exceptions"
+        with pytest.raises(ValueError, match=match):
+            sn.state(root)
+
+
+@needs_rg
+def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
+    historical = {
+        "experiments/bim-autocad-agr/README.md",
+        "experiments/bim-autocad-agr/test_experiment.py",
+        "experiments/complexity-group-index/red.log",
+        "experiments/flora-texture-diagnosis/bark-calibration-v001.json",
+        "experiments/flora-texture-diagnosis/bark_calibration.py",
+        "experiments/flora-texture-diagnosis/calibration-original-tilia.json",
+        "experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json",
+        "experiments/flora-texture-diagnosis/source-integrity-v002.json",
+        "experiments/flora-texture-diagnosis/test_calibration.py",
+        "tools/research/pdf_album/dimension-geometry-evidence.json",
+    }
+    retained = {
+        "benchmark/bench-b03-decor/README.md",  # deferred benchmark, still indexed
+        "docs/research/model-flora-dry-walk-2026-10-16.md",  # disputed; keep wins
+        "experiments/bim-autocad-agr/experiment.py",  # referenced by tests
+        "experiments/flora-texture-diagnosis/calibrate_uv_area.py",  # sibling still used
+        "tools/research/pdf_album/dimension-recall-results/evidence.json",  # cited receipt
+    }
+    tracked = set(sn.tracked(ROOT))
+    visible = _rg(ROOT)
+    assert historical | retained <= tracked
+    assert retained <= visible
+    assert not historical & visible
+
+
+@needs_rg
+def test_batch_5b_receipts_stay_tracked_and_only_exact_paths_leave_search():
+    ac08 = "jobs/TEC26-OKS/AC08"
+    tracked = set(sn.tracked(ROOT))
+    _, _, exceptions, _ = sn.load_config(ROOT, tracked)
+    hidden = exceptions[ac08]
+    visible = _rg(ROOT)
+    assert len(hidden) == 30
+    assert hidden <= tracked and not hidden & visible
+    assert f"{ac08}/pilot-v010/qa_master.json" in visible
+    assert f"{ac08}/kernel-ops-v001/evidence/kernel_ops.json" in visible
+
+
+@needs_rg
+def test_search_archive_round_trip(tmp_path):
+    old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
+    first = f"- `{old}` — Superseded result.\n"
+    second = f"- `{other}` — Historical receipt.\n"
+    index = "# Archive\n\n" + ARCHIVE_SECTION + "\n### evidence/\n\n"
+    root = _repo(tmp_path, {old: "old", other: "other", sibling: "sibling", "docs/ARCHIVE.md": index + first + second,
+                            "AGENTS.md": "See [archive](docs/ARCHIVE.md).\n"})
+    archive = root / "docs/ARCHIVE.md"
+    cli = [sys.executable, str(ROOT / "tools/architecture/search_noise.py"), "--write-ignore", "--root", str(root)]
+    ignore = root / ".ignore"
+    tracked = sn.tracked(root)
+    assert {old, other, sibling} <= _rg(root)
+    sn.write_block(root, [], [])
+    assert sn.main(["--root", str(root)]) == 1  # missing explicit rules are not ordinary pending paths
+    partial = root / ".ignore.partial"
+    partial.hardlink_to(root / old)
+    before = ignore.read_bytes()
+    assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+    assert ignore.read_bytes() == before and partial.read_bytes() == b"old"
+    partial.unlink()
+    subprocess.run(cli, cwd=root, check=True)
+    assert sibling in _rg(root) and not {old, other} & _rg(root)
+    before = ignore.read_bytes()
+    (root / "AGENTS.md").write_text(f"Use `{other}`.\n", encoding="utf-8")
+    assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+    assert ignore.read_bytes() == before
+    (root / "AGENTS.md").write_text("See [archive](docs/ARCHIVE.md).\n", encoding="utf-8")
+    archive.write_text(index + second + first, encoding="utf-8")
+    subprocess.run(cli, cwd=root, check=True)
+    assert ignore.read_bytes() == before
+    archive.write_text(index + second, encoding="utf-8")
+    assert sn.main(["--root", str(root)]) == 1  # removing the row makes the old rule stale
+    subprocess.run(cli, cwd=root, check=True)
+    assert old in _rg(root) and other not in _rg(root)
+    archive.write_text(index, encoding="utf-8")
+    subprocess.run(cli, cwd=root, check=True)
+    assert {old, other, sibling} <= _rg(root)
+    assert sn.tracked(root) == tracked
+    assert [(root / p).read_bytes() for p in (old, other, sibling)] == [b"old", b"other", b"sibling"]
+
+
+@pytest.mark.parametrize("bad", [
+    "- `evidence/gone.json` — Missing.", "- `evidence/./ok.json` — Alias.", "- `evidence` — Directory.",
+    "- `evidence/ok.json` — Duplicate.", "- `evidence/ok.json`", "- `evidence/*.json` — Wildcard.",
+])
+def test_search_archive_rejects_bad_rows(tmp_path, capsys, bad):
+    valid = "- `evidence/ok.json` — Historical receipt.\n"
+    root = _repo(tmp_path, {"evidence/ok.json": "original", "docs/ARCHIVE.md": ARCHIVE_SECTION + valid + bad + "\n"})
+    ignore = root / ".ignore"
+    ignore.write_bytes(b"# unchanged\n")
+    for _ in range(2):
+        assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+        assert "docs/ARCHIVE.md" in capsys.readouterr().err
+        assert ignore.read_bytes() == b"# unchanged\n"
+        assert (root / "evidence/ok.json").read_bytes() == b"original"
+
+
+@needs_rg
+def test_real_search_archive_is_tracked_and_hidden(real):
+    paths = set(real["archive"])
+    assert paths and paths <= set(real["files"])
+    assert paths.isdisjoint(_rg(ROOT))
+
+
+@needs_rg
+def test_pre_lattice_regressions_stay_tracked_but_leave_agent_search(real):
+    historical = {"tests/test_body_contours.py", "tests/test_body_optimization.py"}
+    current = {"tools/methods/body/body_lattice.py", "tests/test_live_route_imports.py"}
+    listed = _rg(ROOT)
+    assert historical <= set(real["archive"]) & set(real["files"])
+    assert historical.isdisjoint(listed)
+    assert current <= listed
+
+
+def test_body_archive_gate_cites_accepted_real_npm_lattice_body():
+    for path in ("docs/scenarios/oks-vpm.md", "docs/domain/conflicts.md", "docs/cases.md"):
+        text = (ROOT / path).read_text(encoding="utf-8")
+        assert "v006" in text and "[D409]" in text and "#1833" in text, path
+    scenario = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
+    assert "no NPM body on a real object yet" not in scenario
+
+
+
 # --- real repository ---------------------------------------------------------------------------------------------
 
 @pytest.fixture(scope="module")
@@ -296,7 +451,7 @@ def test_real_repo_measure_dropped_against_the_cut():
     # 5399ed96 sat exactly on the edge (2232 of max 2232 non-test, 545 of max 546 jobs), so any new card failed.
     # 2026-11-24: the 25-file allowance was used up by live code/jobs merged in one day (6e453db5: 2259 of max 2257;
     # KPP1 lattice job, railing core, Revit material intake) - red main again. Raised to 60; the cut itself is unchanged.
-    growth = 100  # 2026-11-25: trainer v0 (#1859) +3 over 60; the night hygiene plan (archive batches) brings this far below the cut - lower it back then.
+    growth = 60  # #1885: B1 search-only archive restores the pre-trainer allowance.
     assert m["visible_non_test"] <= BEFORE["visible_non_test"] - 400 + growth
     assert m["jobs_visible"] <= BEFORE["jobs_visible"] - 150 + growth
     assert m["docs_visible"] <= BEFORE["docs_visible"] - 250 + growth
@@ -304,7 +459,7 @@ def test_real_repo_measure_dropped_against_the_cut():
 
 
 def test_skeletons_doc_names_every_kept_name_and_the_commands():
-    text = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    text = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     assert not [n for n in sn.KEEP_NAMES if f"`{n}`" not in text]
     assert "`skeleton.json` folders" in text and "historical-data" in text and "--verify-evidence" in text
 

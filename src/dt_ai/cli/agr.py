@@ -114,7 +114,7 @@ def _dispatch(args: list[str]) -> int:
         tail = args[1:]
         if tail in (["--help"], ["-h"]):
             print("usage: agr vpm-to-npm [--blender EXE] ATLAS_ARGS --then-npm NPM_ARGS\n"
-                  "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --master MASTER --recipe-dir RECIPE)\n"
+                  "ATLAS_ARGS: dt derive atlas --help (SPEC NEW_ATLAS --master MASTER [--kpp-spec KPP.json])\n"
                   "NPM_ARGS: dt derive npm --help (MASTER SPEC ATLAS NEW_EXPORT PREFIX)\n"
                   "No rollback; existing tools own their contracts. After npm, the NPM UV readback (#1580,\n"
                   "python -m twinqa.npm_uv) checks the exported FBX named in NEW_EXPORT/../export_npm_meta.json\n"

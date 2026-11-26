@@ -3,6 +3,18 @@
 Adapted from the AGR orchestration cycle (`docs/agr/` and the archive). Scale it to the
 task: a one-line fix skips most steps; a multi-stage delivery uses all of them.
 
+## Read-only hygiene audit
+
+Use this check only when the card asks you to recommend hiding, archiving, merging or deleting tracked files.
+At the pinned audit revision, search inbound references with `git grep -n -F -e "<repo-relative path>"`
+and `git grep -n -F -e "<basename or module name>"` across the whole tracked tree, not just your slice.
+Verify the hits: links in `.agents/` and `.claude/`, imports and split paths, test/eval fixtures, guard
+inventories, attributes and other configuration count when a live consumer uses them. Separate passive
+inventory entries and unrelated basename hits. Record `refs: {"count": N, "where": [...]}` (count distinct
+live referring files and cite their locations) and list affected tests/evals. If a live consumer remains
+or the search is incomplete, recommend `keep` and name what must move or be verified first. For a proposed
+merge, name the target and the overlapping logic. This audit authorizes no file, visibility or policy changes.
+
 ## Loop
 
 Harness work (issues labelled `harness`) runs grilling -> to-spec -> to-tickets -> implement ->
@@ -109,6 +121,8 @@ following three items:
    - Label invented inputs synthetic; never present them as real object data.
    - Record `invariant -> probe -> N/N` in the PR, with the command, seed or exhaustive bounds and
      evidence path so the reviewer can reproduce it.
+   - For a claimed route or generated-output change, exercise the consumer once and check the result it reads.
+     A token in YAML, a source substring or a static test proves presence, not that the route or output works.
    - If a probe is not applicable, record `n/a: <reason>` instead of inventing a count or omitting the line.
    - After review fixes, test the combination of the new case with previous fixes, not just each
      finding in isolation.
@@ -431,6 +445,13 @@ a merge to `main` keep `main`'s handoff unless the merged branch's handoff is th
 
 Each kind of fact lives in one place; the others point to it.
 Before adding documentation, check the [topic owner](../architecture/README.md#documentation-ownership) [D386].
+
+**Live trail in the same PR [D386].** The entry chain is `AGENTS.md` -> scenario cell (`docs/agents/SKELETONS.md`,
+`skeleton_guard.py --show <cell>`) -> trail (`routes/*.md` or the cell card) -> rule + command at the step. Each
+decision lives in one place and the rest link to it. A PR that changes a working command, a file location or the
+recommended entry into a task updates the ACTIVE route/scenario section in the same PR and smoke-checks that command
+on a safe entry (`<cmd> --help`; `tests/test_trail_commands_1895.py`). Superseded decisions stay in
+`docs/decisions.md` with the reason; the entry indexes only the live ones.
 
 | Fact | File |
 |---|---|

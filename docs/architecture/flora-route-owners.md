@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `b7e19c31d029d44b02323a6f784371a798ee99e0d20dc25766df86ce7496f364`.
+Редакция YAML SHA-256: `978e21ac48a76827d5a11d64a0f3811f0892a1ac33a75d6a02b91f60c108876f`.
 
 Ревизия исходников: Ведомость озеленения и СПОЗУ: ревизия, SHA-256, виды, размеры и точки в реестре исходников.
 
@@ -76,7 +76,7 @@
 | Расстановка по СПОЗУ: утопление 10 см, поворот Z и масштаб ±10 %, сид записан. Ватутино v007: 4 915 растений (flora-route-a-v004.md); placement-report.md — история v006 | D329, D100, D095 | [`src/dt_ai/placement/engine.py`](../../src/dt_ai/placement/engine.py); [`src/dt_ai/placement/site.py`](../../src/dt_ai/placement/site.py); [`jobs/VATUTINO-SITE/place_site.py`](../../jobs/VATUTINO-SITE/place_site.py); [`jobs/VATUTINO-SITE/flora-route-a-v004.md`](../../jobs/VATUTINO-SITE/flora-route-a-v004.md); [`jobs/VATUTINO-SITE/placement-report.md`](../../jobs/VATUTINO-SITE/placement-report.md);  |
 | НПМ-версия Флоры в тех же точках | D293, D102, D097 | [`adapters/max/agr_tools/flora_atlas_max.py`](../../adapters/max/agr_tools/flora_atlas_max.py); [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md); ВПМ уже расставлена: конвертация ВПМ → НПМ: в тех же точках звёзды НПМ (ВПМ — их оболочки); расстановка с нуля: звезда НПМ и оболочка ВПМ ставятся вместе в одни точки |
 | Атласы из расставленной сцены: НПМ — один 2048 (без альфы, прозрачность отдельно); ВПМ — свой 4096, UDIM после Ground | D246, D160, D210, D155, D020 | [`tools/library/flora_atlas_from_scene.py`](../../tools/library/flora_atlas_from_scene.py); [`jobs/VATUTINO-SITE/flora-route-a-v004.md`](../../jobs/VATUTINO-SITE/flora-route-a-v004.md);  |
-| agr validate --scene не передаёт ведомость: высота и крона FLO-04 (V015) для распознанной Флоры в Ground FBX — not_run. Доля Флоры 70 000 и список карт НПМ — отдельные проверки | D099, D097, D155 | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py); [`src/twinqa/scene.py`](../../src/twinqa/scene.py); [`src/twinqa/flora.py`](../../src/twinqa/flora.py); [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md);  |
+| agr validate --scene не передаёт ведомость: высота и крона FLO-04 (V015) для распознанной Флоры в Ground FBX — not_run. Доля Флоры 70 000 и список карт НПМ — отдельные проверки | D099, D097, D155, D406 | [`tools/qa/validate_package.py`](../../tools/qa/validate_package.py); [`src/twinqa/scene.py`](../../src/twinqa/scene.py); [`src/twinqa/flora.py`](../../src/twinqa/flora.py); [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md);  |
 | Артём: визуальный шлюз — лист видов (замены красным) и расстановка; для Ватутино v007 приёмка ожидается | D246, D104 | [`jobs/VATUTINO-SITE/flora-route-a-v004.md`](../../jobs/VATUTINO-SITE/flora-route-a-v004.md);  |
 | Флора в Ground FBX → маршрут «Пакет и сдача» | D235 | [`docs/architecture/package-route.events.yaml`](../../docs/architecture/package-route.events.yaml); [`jobs/VATUTINO-SITE/site-route-20261109.md`](../../jobs/VATUTINO-SITE/site-route-20261109.md);  |
 
@@ -84,7 +84,6 @@
 
 - Библиотека v003: привязка карт к UV сломана у 99 из 99 объектов (#377, запаркована D232); у Ватутино 8 из 11 найденных видов — замены: [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md)
 - Бюджет НПМ: Флора 70 000 из 180 000 (D097); Ватутино 118 774 до облегчения, 64 454 с LOD; режет Артём (D167): [`docs/plans/flora-426-route-2026-11.md`](../../docs/plans/flora-426-route-2026-11.md)
-- FLO-08: нет отдельной карты прозрачности НПМ — review; FLO-11: ручная проверка прозрачности. C18 открыт: [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md); [`docs/domain/conflicts.md`](../../docs/domain/conflicts.md)
 - Ватутино: отдельная диагностика по мешам до слияния. Ведомость для V015 не заменяет ручные FLO-01, FLO-02 (нет парсера формулировок), FLO-03 и сверку вида и цвета FLO-04: [`docs/architecture/report-routes-maf-flora-package.md`](../../docs/architecture/report-routes-maf-flora-package.md); [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md)
 - Покрытие листа Флоры: 7 из 17 строк без автопроверки; остальные покрыты частично: [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md)
 - ВПМ 4096: для pos15 отчёт даёт 2 098 px/m, выше диапазона V009 512–1 706 (D160); по UV FBX не подтверждено. D246 разрешает исключение только по нижней границе для указанных мелких кустов: [`jobs/VATUTINO-SITE/flora-route-a-v004.md`](../../jobs/VATUTINO-SITE/flora-route-a-v004.md); [`docs/domain/areas/flora.md`](../../docs/domain/areas/flora.md); [`src/twinqa/scene.py`](../../src/twinqa/scene.py)

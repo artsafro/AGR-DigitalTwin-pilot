@@ -123,12 +123,15 @@ def shell_run(tmp_path):
     bash = str(git_bash) if git_bash.exists() else shutil.which("bash")
     if not bash:
         pytest.skip("Bash unavailable")
-    job = tmp_path / "job"
+    job = tmp_path / "jobs" / "KPP1"
     scripts = job / "scripts"
     scripts.mkdir(parents=True)
     fake_bin = tmp_path / "bin"
     fake_bin.mkdir()
     shutil.copyfile(SCRIPTS / "export_safety.py", scripts / "export_safety.py")
+    owner = tmp_path / "tools" / "derive" / "export_safety.py"
+    owner.parent.mkdir(parents=True)
+    shutil.copyfile(SCRIPTS.parents[2] / "tools" / "derive" / owner.name, owner)
     run_text = (SCRIPTS / "run_all.sh").read_text(encoding="utf-8")
     blender = fake_bin / "blender"
     run_text = run_text.replace('BL="/c/Program Files/Blender Foundation/Blender 5.1/blender.exe"',

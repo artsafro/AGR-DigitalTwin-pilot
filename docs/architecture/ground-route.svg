@@ -77,33 +77,35 @@
 <rect x="2470" y="1183.0" width="230" height="182.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2470" y="1381.5" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="2750" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="2740" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2700" y1="225.0" x2="2740" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="2740" y="170" width="230" height="296.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2700" y1="225.0" x2="2740" y2="318.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="2740" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="2740" y="596.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
-<rect x="2740" y="676.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
-<rect x="2740" y="766.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="2740" y="676.25" width="230" height="90.0" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="2740" y="766.25" width="230" height="377.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="3050" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="3010" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="2970" y1="225.0" x2="3010" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3010" y="170" width="230" height="190.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="2970" y1="318.12" x2="3010" y2="265.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="3010" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="3010" y="596.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3010" y="676.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="3010" y="766.25" width="230" height="117.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="3010" y="899.75" width="230" height="85.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3010" y="899.75" width="230" height="263.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="3320" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="3280" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="3240" y1="225.0" x2="3280" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3280" y="170" width="230" height="211.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="3240" y1="265.0" x2="3280" y2="275.62" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="3280" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="3280" y="596.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3280" y="676.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="3280" y="766.25" width="230" height="150.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="3280" y="932.25" width="230" height="328.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="3590" y="100" width="150" height="38.75" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="3550" y="170" width="230" height="110" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="3510" y1="225.0" x2="3550" y2="225.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="3550" y="170" width="230" height="168.75" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="3510" y1="275.62" x2="3550" y2="254.37" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="3550" y="476.25" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="3550" y="596.25" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="3550" y="676.25" width="230" height="60" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
+<rect x="3550" y="766.25" width="230" height="263.75" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Маршрут Ground (НПМ + ВПМ) — целевой порядок D293: событийный штурм (#1392)</tspan>
 </text>
@@ -252,7 +254,7 @@
 <tspan x="1235.0" dy="21.25">текстуры по ID,</tspan>
 <tspan x="1235.0" dy="21.25">бесшовные UV-острова</tspan>
 <tspan x="1235.0" dy="21.25">до проекции, тайлы</tspan>
-<tspan x="1235.0" dy="21.25">UDIM = ID</tspan>
+<tspan x="1235.0" dy="21.25">UDIM подряд с 1001</tspan>
 </text>
 <text x="1235.0" y="495.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Команда:</tspan>
@@ -261,7 +263,7 @@
 </text>
 <text x="1235.0" y="608.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Правила: D097, D160, D210,</tspan>
-<tspan x="1235.0" dy="17.5">D293</tspan>
+<tspan x="1235.0" dy="17.5">D293, D399</tspan>
 </text>
 <text x="1235.0" y="686.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1235.0" dy="14">Контекст: Поверхность</tspan>
@@ -509,11 +511,20 @@
 <tspan x="2855.0" dy="15">Агент: Blender / Max /</tspan>
 <tspan x="2855.0" dy="18.75">AGR Tools</tspan>
 </text>
-<text x="2855.0" y="182.5" font-size="17" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2855.0" dy="17">11. Ground НПМ / ВПМ</tspan>
-<tspan x="2855.0" dy="21.25">экспортирован; рабочий</tspan>
-<tspan x="2855.0" dy="21.25">FBX с квадами вместе с</tspan>
-<tspan x="2855.0" dy="21.25">FBX сдачи</tspan>
+<text x="2855.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="17">11. Цель (D293, D366):</tspan>
+<tspan x="2855.0" dy="21.25">сводный экспорт</tspan>
+<tspan x="2855.0" dy="21.25">участка НПМ / ВПМ</tspan>
+<tspan x="2855.0" dy="21.25">(Ground + МАФ + Флора)</tspan>
+<tspan x="2855.0" dy="21.25">— триангулированный</tspan>
+<tspan x="2855.0" dy="21.25">FBX сдачи и отдельный</tspan>
+<tspan x="2855.0" dy="21.25">рабочий FBX без</tspan>
+<tspan x="2855.0" dy="21.25">триангуляции рядом с</tspan>
+<tspan x="2855.0" dy="21.25">пакетом (вне ZIP);</tspan>
+<tspan x="2855.0" dy="21.25">helper</tspan>
+<tspan x="2855.0" dy="21.25">ground_json_to_fbx.py</tspan>
+<tspan x="2855.0" dy="21.25">выгружает только</tspan>
+<tspan x="2855.0" dy="21.25">поверхность Ground</tspan>
 </text>
 <text x="2855.0" y="512.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="14">Нет команды agr/dt</tspan>
@@ -521,24 +532,48 @@
 <text x="2855.0" y="617.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="14">Правила: D293, D366</tspan>
 </text>
-<text x="2855.0" y="688.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="2855.0" dy="14">Контекст: Экспорт Ground из</tspan>
-<tspan x="2855.0" dy="17.5">JSON-мастера</tspan>
+<text x="2855.0" y="686.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="2855.0" dy="14">Контекст: Helper экспорта</tspan>
+<tspan x="2855.0" dy="17.5">поверхности Ground из</tspan>
+<tspan x="2855.0" dy="17.5">JSON-мастера (не сводный</tspan>
+<tspan x="2855.0" dy="17.5">экспорт участка)</tspan>
 </text>
 <text x="2855.0" y="776.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
 <tspan x="2855.0" dy="13">⚠ Blender Ground JSON-to-FBX</tspan>
-<tspan x="2855.0" dy="16.25">принимает JSON-мастер, не</tspan>
-<tspan x="2855.0" dy="16.25">OBJ. Прямого перехода от</tspan>
-<tspan x="2855.0" dy="16.25">сборщика нет в общем</tspan>
-<tspan x="2855.0" dy="16.25">маршруте; это не выпуск</tspan>
-<tspan x="2855.0" dy="16.25">рабочего FBX по D366.</tspan>
+<tspan x="2855.0" dy="16.25">(ground_json_to_fbx.py) —</tspan>
+<tspan x="2855.0" dy="16.25">helper только поверхности</tspan>
+<tspan x="2855.0" dy="16.25">Ground: принимает</tspan>
+<tspan x="2855.0" dy="16.25">JSON-мастер, не OBJ сборщика,</tspan>
+<tspan x="2855.0" dy="16.25">и не делает сводный экспорт</tspan>
+<tspan x="2855.0" dy="16.25">участка после расстановки</tspan>
+<tspan x="2855.0" dy="16.25">Ground, МАФ и Флоры. Прямого</tspan>
+<tspan x="2855.0" dy="16.25">перехода от сборщика нет в</tspan>
+<tspan x="2855.0" dy="16.25">общем маршруте; это не выпуск</tspan>
+<tspan x="2855.0" dy="16.25">отдельного рабочего FBX без</tspan>
+<tspan x="2855.0" dy="16.25">триангуляции рядом с пакетом</tspan>
+<tspan x="2855.0" dy="16.25">(вне ZIP) по D366.</tspan>
+<tspan x="2855.0" dy="16.25">Исторический</tspan>
+<tspan x="2855.0" dy="16.25">jobs/VATUTINO-SITE/assemble_d</tspan>
+<tspan x="2855.0" dy="16.25">elivery.py</tspan>
+<tspan x="2855.0" dy="16.25">(use_triangles=True) — только</tspan>
+<tspan x="2855.0" dy="16.25">историческое свидетельство</tspan>
+<tspan x="2855.0" dy="16.25">триангулированного FBX сдачи</tspan>
+<tspan x="2855.0" dy="16.25">Ватутино, не канонический</tspan>
+<tspan x="2855.0" dy="16.25">маршрут и не реализация D366.</tspan>
+<tspan x="2855.0" dy="16.25">[D293, D366]</tspan>
 </text>
 <text x="3125.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3125.0" dy="15">Агент</tspan>
 </text>
-<text x="3125.0" y="203.75" font-size="17" text-anchor="middle" fill="#1e1e1e">
-<tspan x="3125.0" dy="17">12. Готовые файлы НПМ</tspan>
-<tspan x="3125.0" dy="21.25">/ ВПМ собраны в пакеты</tspan>
+<text x="3125.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3125.0" dy="17">12. Общий маршрут</tspan>
+<tspan x="3125.0" dy="21.25">упаковки: готовые</tspan>
+<tspan x="3125.0" dy="21.25">файлы НПМ / ВПМ</tspan>
+<tspan x="3125.0" dy="21.25">собраны в ZIP через</tspan>
+<tspan x="3125.0" dy="21.25">package_core._write_zi</tspan>
+<tspan x="3125.0" dy="21.25">p (исторический обход</tspan>
+<tspan x="3125.0" dy="21.25">ZIP Ватутино учтён в</tspan>
+<tspan x="3125.0" dy="21.25">package-contexts.yaml)</tspan>
 </text>
 <text x="3125.0" y="495.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3125.0" dy="14">Команда:</tspan>
@@ -561,18 +596,35 @@
 <tspan x="3125.0" dy="16.25">(D288) [D262, D285, D288]</tspan>
 </text>
 <text x="3125.0" y="909.75" font-size="13" text-anchor="middle" fill="#1e1e1e">
-<tspan x="3125.0" dy="13">⚠ Упаковка берёт готовые</tspan>
-<tspan x="3125.0" dy="16.25">файлы, пишет ZIP и не</tspan>
-<tspan x="3125.0" dy="16.25">экспортирует FBX. Маршрут</tspan>
-<tspan x="3125.0" dy="16.25">сдачи отдельно (#1805).</tspan>
+<tspan x="3125.0" dy="13">⚠ Упаковка на общем маршруте</tspan>
+<tspan x="3125.0" dy="16.25">(agr package-vpm /</tspan>
+<tspan x="3125.0" dy="16.25">package-npm -&gt;</tspan>
+<tspan x="3125.0" dy="16.25">package_core._write_zip)</tspan>
+<tspan x="3125.0" dy="16.25">берёт готовые файлы, пишет</tspan>
+<tspan x="3125.0" dy="16.25">ZIP и не экспортирует FBX.</tspan>
+<tspan x="3125.0" dy="16.25">Исторический обход ZIP</tspan>
+<tspan x="3125.0" dy="16.25">Ватутино</tspan>
+<tspan x="3125.0" dy="16.25">(jobs/VATUTINO-SITE/run_deliv</tspan>
+<tspan x="3125.0" dy="16.25">ery.py, статус historical)</tspan>
+<tspan x="3125.0" dy="16.25">уже учтён в</tspan>
+<tspan x="3125.0" dy="16.25">package-contexts.yaml, без</tspan>
+<tspan x="3125.0" dy="16.25">второй хронологии здесь.</tspan>
+<tspan x="3125.0" dy="16.25">Маршрут сдачи отдельно</tspan>
+<tspan x="3125.0" dy="16.25">(#1805).</tspan>
 </text>
 <text x="3395.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3395.0" dy="15">Агент</tspan>
 </text>
-<text x="3395.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
-<tspan x="3395.0" dy="17">13. Проверки Ground и</tspan>
-<tspan x="3395.0" dy="21.25">xView выполнены,</tspan>
-<tspan x="3395.0" dy="21.25">отказы записаны</tspan>
+<text x="3395.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="17">13. Проверки Ground</tspan>
+<tspan x="3395.0" dy="21.25">(agr validate) и xView</tspan>
+<tspan x="3395.0" dy="21.25">выполнены, отказы</tspan>
+<tspan x="3395.0" dy="21.25">записаны; --master</tspan>
+<tspan x="3395.0" dy="21.25">проверяет рабочий FBX</tspan>
+<tspan x="3395.0" dy="21.25">и/или хеш роли в</tspan>
+<tspan x="3395.0" dy="21.25">манифесте, но не</tspan>
+<tspan x="3395.0" dy="21.25">сравнивает поверхности</tspan>
+<tspan x="3395.0" dy="21.25">FBX</tspan>
 </text>
 <text x="3395.0" y="495.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3395.0" dy="14">Команда:</tspan>
@@ -596,13 +648,38 @@
 <tspan x="3395.0" dy="16.25">закрыт, участок #298 шёл на</tspan>
 <tspan x="3395.0" dy="16.25">v014 [D152]</tspan>
 </text>
+<text x="3395.0" y="942.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3395.0" dy="13">⚠ Ограничение agr validate</tspan>
+<tspan x="3395.0" dy="16.25">--master (не провал сдачи и</tspan>
+<tspan x="3395.0" dy="16.25">не утверждённый допуск): в</tspan>
+<tspan x="3395.0" dy="16.25">зависимости от вызова</tspan>
+<tspan x="3395.0" dy="16.25">--master запускает проверки</tspan>
+<tspan x="3395.0" dy="16.25">рабочего FBX (V003 с --scene:</tspan>
+<tspan x="3395.0" dy="16.25">квады / треугольники / без</tspan>
+<tspan x="3395.0" dy="16.25">n-gon в src/twinqa/master.py;</tspan>
+<tspan x="3395.0" dy="16.25">только неименованный путь или</tspan>
+<tspan x="3395.0" dy="16.25">одна роль oks) и/или сверяет</tspan>
+<tspan x="3395.0" dy="16.25">SHA-256 роли с</tspan>
+<tspan x="3395.0" dy="16.25">build-манифестом (V001), но</tspan>
+<tspan x="3395.0" dy="16.25">не сравнивает поверхности</tspan>
+<tspan x="3395.0" dy="16.25">рабочего и сдаточного FBX.</tspan>
+<tspan x="3395.0" dy="16.25">Одинаковое число</tspan>
+<tspan x="3395.0" dy="16.25">треугольников недостаточно</tspan>
+<tspan x="3395.0" dy="16.25">для доказательства совпадения</tspan>
+<tspan x="3395.0" dy="16.25">поверхности Ground по D293.</tspan>
+<tspan x="3395.0" dy="16.25">[D293, D366]</tspan>
+</text>
 <text x="3665.0" y="110.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3665.0" dy="15">Чекер СИНТЕЗ</tspan>
 </text>
-<text x="3665.0" y="193.12" font-size="17" text-anchor="middle" fill="#1e1e1e">
-<tspan x="3665.0" dy="17">14. Чекер СИНТЕЗ</tspan>
-<tspan x="3665.0" dy="21.25">отработал на тех же</tspan>
-<tspan x="3665.0" dy="21.25">файлах</tspan>
+<text x="3665.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="17">14. Чекер СИНТЕЗ:</tspan>
+<tspan x="3665.0" dy="21.25">целевое требование —</tspan>
+<tspan x="3665.0" dy="21.25">прогон на том же</tspan>
+<tspan x="3665.0" dy="21.25">входе, что и validate;</tspan>
+<tspan x="3665.0" dy="21.25">оба инструмента пишут</tspan>
+<tspan x="3665.0" dy="21.25">независимые отчёты без</tspan>
+<tspan x="3665.0" dy="21.25">взаимной сверки хешей</tspan>
 </text>
 <text x="3665.0" y="503.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3665.0" dy="14">Команда:</tspan>
@@ -614,5 +691,22 @@
 <text x="3665.0" y="688.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="3665.0" dy="14">Контекст: Чекер СИНТЕЗ и</tspan>
 <tspan x="3665.0" dy="17.5">загрузка архива</tspan>
+</text>
+<text x="3665.0" y="776.25" font-size="13" text-anchor="middle" fill="#1e1e1e">
+<tspan x="3665.0" dy="13">⚠ Требование одного входа для</tspan>
+<tspan x="3665.0" dy="16.25">validate → sintez отделено от</tspan>
+<tspan x="3665.0" dy="16.25">самих отчётов (#1805, PR</tspan>
+<tspan x="3665.0" dy="16.25">#1830): agr validate и agr</tspan>
+<tspan x="3665.0" dy="16.25">checker пишут независимые</tspan>
+<tspan x="3665.0" dy="16.25">отчёты и не сверяют хеши друг</tspan>
+<tspan x="3665.0" dy="16.25">с другом; хеш ZIP не</tspan>
+<tspan x="3665.0" dy="16.25">доказывает идентичный входной</tspan>
+<tspan x="3665.0" dy="16.25">FBX. Исторический</tspan>
+<tspan x="3665.0" dy="16.25">jobs/VATUTINO-SITE/run_delive</tspan>
+<tspan x="3665.0" dy="16.25">ry.py (учтён в</tspan>
+<tspan x="3665.0" dy="16.25">package-contexts.yaml как</tspan>
+<tspan x="3665.0" dy="16.25">historical) звал</tspan>
+<tspan x="3665.0" dy="16.25">run_agr_checker.py в обход</tspan>
+<tspan x="3665.0" dy="16.25">agr checker. [D104]</tspan>
 </text>
 </svg>

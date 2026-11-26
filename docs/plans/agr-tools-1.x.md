@@ -1,6 +1,8 @@
 # AGR Tools 1.x: что сделано в 1.0, хвост и хендофф Max↔Blender
 
-Status: active (2026-11-24)
+Status: done (2026-11-25)
+
+> **Frozen 2026-11-25 [D393]:** AGR Tools stay at the current 1.1.x - no new functions, off the trail, no rollback to 0.9; they remain the executors of OKS stages 2-4 [D392]. The queue below is closed, not finished. Before AGR Tools code leaves the tree, `translit` / `propose_maf_name` move to `tools/library` (separate small PR).
 
 > **Статус: ПЛАН, не факт.** Раздел 1 — сводка того, что записано в `adapters/max/agr_tools/CHANGELOG.md` (1.0.0, #1024), прочитанная [стат.], без повторного прогона. Разделы 2–4 — очередь работ после 1.0.0: что решено владельцем и ещё не исполнено в коде. Реестр кнопок и их версий — `docs/plans/agr-tools-suite.json`; точка входа для агента — `docs/agr-tools/OVERVIEW.md`.
 

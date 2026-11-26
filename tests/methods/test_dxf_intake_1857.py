@@ -99,6 +99,16 @@ def test_handoff_dxf_reads_back_through_plan_from_dxf(case, tmp_path):
         json.loads(out.read_text(encoding="utf-8"))["inputs"]["model_layers"]
 
 
+@pytest.mark.parametrize("trailer", [None, b"0\nSECTION\n"])
+def test_missing_terminal_eof_refuses_even_with_matching_hashes(case, trailer):
+    dwg, dxf, receipt, out = case
+    lines = dxf.read_bytes().splitlines(keepends=True)
+    assert lines[-1].strip() == b"EOF" and lines[-2].strip() == b"0"
+    dxf.write_bytes(b"".join(lines[:-2]) if trailer is None else b"".join(lines) + trailer)
+    _receipt(receipt, dwg, dxf)
+    _fail(case, _cli(dwg, dxf, receipt, out), "terminal 0/EOF")
+
+
 def test_no_process_is_launched(case, monkeypatch):
     dwg, dxf, rec, _ = case
 
@@ -225,5 +235,5 @@ def test_skeleton_names_the_intake_and_keeps_the_autocad_lane():
     sk = json.loads((ROOT / "docs/agents/skeletons.json").read_text(encoding="utf-8"))["stages"]["sources-dwg"]
     assert "tools/methods/body/dxf_intake.py" in sk["owners"] and "verify_dxf_derivative" in sk["entry_defs"]
     assert "tools/methods/body/dwg_to_dxf.py" in sk["owners"] and "dxf_intake.py" in sk["calls"]
-    doc = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    doc = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     assert "dxf_intake.py" in doc

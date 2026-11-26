@@ -10,6 +10,8 @@ A fresh agent searches the repo with ripgrep, which reads the root `.ignore`. #1
 - historical DOCS: every tracked docs/ file that no entry doc, scenario, route, skill or live code reaches.
   Dated plan status overrides visibility. `--check-docs` validates the existing route index's ownership
   table, plan headers and visibility; adding a path to the generated ignore block cannot waive ownership.
+- explicit search archive (#1885): exact reviewed files in the search-only section of docs/ARCHIVE.md.
+  These paths are never inputs to `--move-evidence`.
 "Live surface" (`live_closure`): the entry docs, routes/, docs/scenarios/, .agents/skills/ and the non-test code
 (tools/, src/, adapters/, schemas/, standards/), followed transitively through the files they name (markdown links,
 `backticked` paths, bare repo paths). Job files are leaves: a delivered job's report keeps nothing else alive.
@@ -44,6 +46,8 @@ DOC_INDEX = "docs/architecture/README.md"
 DOC_SECTION = "## Documentation ownership"
 DOC_TABLE = ("| Topic | Owner | Related |", "|---|---|---|")
 DOC_EXEMPT = frozenset({"docs/decisions.md", "docs/PROJECT_STATE.md"})
+ARCHIVE = "docs/ARCHIVE.md"
+ARCHIVE_SECTION = "## Hidden from search (still in the tree)"
 _INDEX_LINK = re.compile(r"\[[^\]\n]+\]\(([^()\s]+)\)")
 _PLAN_STATUS = re.compile(r"(active|done|superseded by (\S+)) \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)")
 MANIFEST = "EVIDENCE-MOVED.json"
@@ -82,6 +86,29 @@ def _doc_sections(text):
     return ("\n" + text).partition("\n" + DOC_SECTION + "\n")
 
 
+def search_archive(root, files):
+    """Read the final search-only section, not the older tag-based archive inventory."""
+    fileset = set(files)
+    if ARCHIVE not in fileset:
+        return []
+    lines = (root / ARCHIVE).read_text(encoding="utf-8").splitlines()
+    if ARCHIVE_SECTION not in lines:
+        return []
+    out = set()
+    start = lines.index(ARCHIVE_SECTION) + 1
+    for n, line in enumerate(lines[start:], start + 1):
+        if not re.match(r"\s*(?:[-+*]|\d+[.)]|## )", line):
+            continue  # prose or a folder heading
+        row = re.fullmatch(r"- `([^`]+)` — (\S.*)", line)
+        if not row:
+            raise ValueError(f"{ARCHIVE}:{n}: expected an exact file row with a reason")
+        rel = row[1]
+        if rel not in fileset or rel in out or rel in {".ignore", ARCHIVE, CONFIG, CONTEXTS, DOC_INDEX, *ENTRY_FILES}:
+            raise ValueError(f"{ARCHIVE}:{n}: invalid or duplicate tracked archive path {rel!r}")
+        out.add(rel)
+    return sorted(out)
+
+
 def refs(root, rel, fileset, dirs):
     """Tracked files named by `rel`: link targets, backticked and bare repo paths, relative or from the root; a
     named directory keeps its README.md / INDEX.md."""
@@ -95,6 +122,9 @@ def refs(root, rel, fileset, dirs):
     if rel == DOC_INDEX:
         # The ownership inventory is a lookup, not a dependency of every route or job.
         text = _doc_sections(text)[0]
+    if rel == ARCHIVE:
+        # The search archive is also an inventory, not an inbound live reference.
+        text = ("\n" + text).partition("\n" + ARCHIVE_SECTION + "\n")[0]
     here, out = rel.rsplit("/", 1)[0] if "/" in rel else "", set()
     for m in _REF.finditer(text):
         raw = next(g for g in m.groups() if g).split("#")[0].split("?")[0].strip("'\"").rstrip(".,;:'\"")
@@ -148,14 +178,15 @@ def entry_named(root, files):
 
 
 def load_config(root, files):
-    """Read kept jobs, live paths and the exact legacy doc exemption cut."""
+    """Read job classification, live paths, exact archive exceptions and legacy docs."""
     cfg = mini_yaml.load(Path(root) / CONFIG)
     if not isinstance(cfg, dict):
         raise ValueError(f"{CONFIG}: expected a mapping")
     unknown = set(cfg) - {"kept_jobs", "live_paths", "legacy_hidden_docs"}
     if unknown:
         raise ValueError(f"{CONFIG}: unknown keys {sorted(unknown)}")
-    kept, parts = {}, {}
+    kept, parts, exceptions = {}, {}, {}
+    fileset = set(files)
     for i, e in enumerate(cfg.get("kept_jobs") or []):
         job, ru = str(e.get("job", "")), str(e.get("ru", "")).strip()
         if not re.match(r"^jobs/[^/]+$", job) or not ru:
@@ -172,13 +203,21 @@ def load_config(root, files):
         if path not in files and not any(f.startswith(path + "/") for f in files):
             raise ValueError(f"{CONFIG}: live_paths {path} holds no tracked file")
         parts[path] = ru
+        allowed = e.get("archive_exceptions", [])
+        if (not isinstance(allowed, list)
+                or any(not isinstance(rel, str) or rel not in fileset
+                       or not rel.startswith(path + "/") for rel in allowed)
+                or len(set(allowed)) != len(allowed)):
+            raise ValueError(f"{CONFIG}: archive_exceptions for {path} must be unique tracked descendant files")
+        if allowed:
+            exceptions[path] = set(allowed)
     legacy = cfg.get("legacy_hidden_docs", [])
     if (not isinstance(legacy, list)
             or any(not isinstance(p, str) or not p.startswith("docs/") or "\\" in p
                    or posixpath.normpath(p) != p for p in legacy)
             or len(set(legacy)) != len(legacy)):
         raise ValueError(f"{CONFIG}: legacy_hidden_docs must list unique canonical docs paths")
-    return kept, parts, set(legacy)
+    return kept, parts, exceptions, set(legacy)
 
 
 def job_folders(files):
@@ -367,7 +406,7 @@ def _pattern(rel):
     return "/" + dg.GLOB_CHARS.sub(r"\\\1", rel).replace(" ", "\\ ")
 
 
-def render_block(data, docs):
+def render_block(data, docs, archive=()):
     lines, job = [BEGIN], None
     for rel in data:
         this = "/".join(rel.split("/")[:2])
@@ -379,6 +418,10 @@ def render_block(data, docs):
     if docs:
         lines.append("# HISTORICAL [D327] docs: unreached docs (#1614) and inactive plans (#1856); hidden from agent search")
         lines.extend(_pattern(rel) for rel in docs)
+    extra = sorted(set(archive) - set(data) - set(docs))
+    if extra:
+        lines.append("# Search-only archive (#1885): exact tracked files listed in docs/ARCHIVE.md")
+        lines.extend(_pattern(rel) for rel in extra)
     lines.append(END)
     return "\n".join(lines) + "\n"
 
@@ -391,14 +434,14 @@ def _parts(text):
     return head, BEGIN + block + END + "\n", tail[1:] if tail.startswith("\n") else tail
 
 
-def block_problems(root, data, docs):
+def block_problems(root, data, docs, archive=()):
     path = Path(root) / ".ignore"
     text = path.read_text(encoding="utf-8") if path.is_file() else ""
     parts = _parts(text)
     if parts is None:
         return [f".ignore: no single historical-data block ({len(data)} data files, {len(docs)} docs unhidden); "
                 "run search_noise.py --write-ignore"]
-    want = render_block(data, docs)
+    want = render_block(data, docs, archive)
     if parts[1] == want:
         return []
     have = {ln for ln in parts[1].splitlines() if ln.startswith("/")}
@@ -406,19 +449,22 @@ def block_problems(root, data, docs):
     if have - need:
         return [f".ignore: historical-data block hides live or gone paths {sorted(have - need)[:5]} "
                 f"({len(have - need)}); run search_noise.py --write-ignore"]
+    missing = {_pattern(rel) for rel in archive} - have
+    if missing:
+        return [f".ignore: {len(missing)} explicit archive rules missing; run search_noise.py --write-ignore"]
     return []
 
 
-def pending(root, data, docs):
+def pending(root, data, docs, archive=()):
     """Historical paths not yet in the block: a new unreached doc or new job data stays visible (never hidden by
     surprise) until the next --write-ignore; reported, not a failure."""
     path = Path(root) / ".ignore"
     parts = _parts(path.read_text(encoding="utf-8")) if path.is_file() else None
     have = {ln for ln in parts[1].splitlines() if ln.startswith("/")} if parts else set()
-    return sorted(ln for ln in render_block(data, docs).splitlines() if ln.startswith("/") and ln not in have)
+    return sorted(ln for ln in render_block(data, docs, archive).splitlines() if ln.startswith("/") and ln not in have)
 
 
-def write_block(root, data, docs):
+def write_block(root, data, docs, archive=()):
     path = Path(root) / ".ignore"
     text = path.read_text(encoding="utf-8") if path.is_file() else ""
     parts = _parts(text)
@@ -426,8 +472,14 @@ def write_block(root, data, docs):
         raise ValueError(".ignore: broken historical-data block (BEGIN/END); fix it by hand")
     head, _, tail = parts or (text + ("\n" if text and not text.endswith("\n") else ""), "", "")
     tmp = path.with_name(".ignore.partial")
-    tmp.write_text(head + render_block(data, docs) + tail, encoding="utf-8", newline="\n")
-    tmp.replace(path)
+    stream = tmp.open("x", encoding="utf-8", newline="\n")
+    try:
+        with stream:
+            stream.write(head + render_block(data, docs, archive) + tail)
+        tmp.replace(path)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
 
 
 def sha256(path):
@@ -591,16 +643,31 @@ def state(root):
     files = tracked(root)
     contexts = mini_yaml.load(Path(root) / CONTEXTS)
     finished = dg.finished_jobs(root, contexts)
-    kept, parts, legacy = load_config(root, files)
+    kept, parts, exceptions, legacy = load_config(root, files)
     live = live_closure(root, files)
     statuses, plan_problems = plan_statuses(root, files)
     live.update(rel for rel, status in statuses.items() if status == "active")
     inactive = {rel for rel, status in statuses.items() if status != "active"}
     live.difference_update(inactive)
     data = historical_job_data(root, files, finished, parts, live)
+    archive = search_archive(root, files)
+    excepted = set().union(*exceptions.values())
+    stale = excepted.difference(archive)
+    if stale:
+        raise ValueError(f"{CONFIG}: archive_exceptions missing from {ARCHIVE}: {sorted(stale)}")
+    if archive:
+        named = entry_named(root, files)
+        # The archive's own old tag inventory may name its evidence. Entry links, unlike
+        # those inventory pointers, must stay visible when a path is adopted again.
+        for rel in archive:
+            # An exception lifts only its own live_paths row, never an independent guard.
+            protected = under(rel, (p for p in parts if rel not in exceptions.get(p, ())))
+            if (rel in named or statuses.get(rel) == "active" or protected or rel.startswith(ENTRY_DIRS)
+                    or (rel in excepted and rel in live)):
+                raise ValueError(f"{ARCHIVE}: {rel} is explicitly live and cannot be archived")
     return {"files": files, "contexts": contexts, "finished": finished, "kept": kept, "parts": parts, "live": live,
             "data": data, "docs": sorted(set(historical_docs(files, live, parts)) | inactive),
-            "legacy_docs": legacy, "statuses": statuses, "plan_problems": plan_problems}
+            "archive": archive, "legacy_docs": legacy, "statuses": statuses, "plan_problems": plan_problems}
 
 
 def hidden_scripts_per_job(root):
@@ -658,7 +725,8 @@ def main(argv=None):
             return 0
         st = state(args.root)
         if args.candidates or args.move_evidence:
-            move, kept = move_candidates(args.root, st["files"], st["data"])
+            archive = set(st["archive"])
+            move, kept = move_candidates(args.root, st["files"], [f for f in st["data"] if f not in archive])
             if args.candidates:
                 print(json.dumps({"move": move, "kept_named_elsewhere": kept}, indent=1, ensure_ascii=False))
             if args.move_evidence:
@@ -672,19 +740,20 @@ def main(argv=None):
             print(f"evidence: {n - len(bad)}/{n} copies verified")
             if bad or n == 0:
                 return 1
+        blocks = st["data"], st["docs"], st["archive"]
         if args.write_ignore:
-            write_block(args.root, st["data"], st["docs"])
+            write_block(args.root, *blocks)
         if args.table:
             print(table(st, args.root))
         problems = classification_problems(st["files"], st["finished"], st["kept"], st["parts"]) \
-            + block_problems(args.root, st["data"], st["docs"]) + manifest_problems(args.root, st["files"])
+            + block_problems(args.root, *blocks) + manifest_problems(args.root, st["files"])
     except (OSError, ValueError, KeyError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     for p in problems:
         print(f"PROBLEM {p}")
     print(f"search_noise: {len(st['data'])} historical data files, {len(st['docs'])} historical docs, "
-          f"{len(pending(args.root, st['data'], st['docs']))} pending (visible until --write-ignore), "
+          f"{len(st['archive'])} explicit archive files, {len(pending(args.root, *blocks))} pending, "
           f"{len(problems)} problems")
     return 1 if problems else 0
 
