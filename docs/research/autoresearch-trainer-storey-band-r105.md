@@ -59,6 +59,47 @@
 | `1855-r91-artifact-route/63B-1-aligned/body.fbx` | `aa6820088d16b5d3847b2b1ecdeab65d0b9375d07b875caf9b2e4127f299fa8e` |
 | `C:/Program Files/Blender Foundation/Blender 4.4/blender.exe` | `fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5` |
 
-## Result
+## Result — H105 refuted (frozen S105), no KEEP
 
-Pending (filled only after the frozen series).
+**Итог.** Правило «самая длинная серия одинаковых этажей» без ключа на 63A проходит `bounds` (0,0514 м), но на
+отложенной 63B даёт **27,65 м** во всех трёх повторах — почти ровно то же, что построил агент #91 (27,67 м): шесть этажей
+5,35…24,25 м против принятых 4,65…51,90 м. Значит, остановка 63B на `bounds` — не ошибка агента и не «нечитаемый
+источник»: по одному источнику однозначно не выводится, какие этажи входят в «этап 1». Нужен диапазон этажей в тексте
+задачи 63B (как у 63A) — это решение владельца банка, не исследование.
+
+| Tower | Role | Selected band (pitch, storeys) | Signed face deltas vs key (xmin, ymin, zmin, xmax, ymax, zmax), m | M105 (3/3 same) | #91 baseline |
+| --- | --- | --- | --- | ---: | ---: |
+| 63A | tuning | 10.14…47.94 (3.15, 12) | −0.051, +0.044, −0.010, +0.027, −0.001, −0.010 | pass 0.0514 | pass 0.0442 |
+| 63B | held out | 5.35…24.25 (3.15, 6) | −0.034, −0.050, +0.700, +0.200, −0.042, −27.650 | fail 27.65 | fail 27.67 |
+
+- **Clean:** commit `41d0b413` froze contract and driver before any 63B inspection; three sequential fresh Blender 4.4
+  imports + 15 native readbacks, series 238.5 s (pairs 79.3 / 80.1 / 78.8 s), status `complete`, no budget stop. Hash
+  preflight/postflight and code parity to `e1f3f168` passed. Calibration 3/3: v007 pass 0.0000, v004 fail 0.1993. Row-order
+  reversal gave the identical selection on both towers, 3/3.
+- **Injected (6/6 each):** +0.5 m facade witness -> +1 band row, `Xmax` +0.5 m, native 0.5267 m on 63A (63B stays at its
+  27.65 m maximum - the witness moves `Xmax`, not the maximum face); Floor-named witness -> selection unchanged (floor
+  exclusion fires); outside-box witness -> identical selection. Synthetic rows only in memory; no model written.
+- **Not measured:** an agent with a stated 63B range, any other project, BODY form/openings/package acceptance, a 63C/63D tower.
+- **Post-hoc diagnosis (after the series; not a result, not used to change S105).** 63B source levels: storeys at
+  `4.65 + 3.15k` (153 rows each), with two different storeys at 23.55 and 39.30 (55/54 rows), plus window rows at the +0.70
+  phase. The accepted 63B range bridges those two storeys (similarity ~0.36), while the accepted 63A range stops at 47.25
+  where similarity is ~0.78 and identical storeys continue to 69.3 m. The datum also differs: 63A key starts at the
+  window phase (10.15, slabs at 9.45), 63B key at the slab phase (4.65, windows at 5.35). No single repetition threshold or
+  phase rule reproduces both accepted ranges, so the stage-1 storey scope is a task specification, not source geometry.
+- **Would change next (OBSERVE, not applied):** bank owner (#1855/#1861) adds the explicit typical-storey range and Z datum
+  to the 63B task, as the 63A task has (`+4.65 .. +51.90 m` per the accepted v007 readback) — user decision because it is
+  key-derived scope. Then re-run 63B practice and count the `bounds` step. Remaining XY/phase residuals after a stated
+  range: S105 63B `xmax` +0.200 m with the stated band not measured.
+
+Receipt: [`trainer_storey_band_r105/receipt.json`](trainer_storey_band_r105/receipt.json), SHA-256
+`75fbddb1b0d782a14000270e8c87ed0e6e05489ab0c7073263eb623d98f6d30c`; driver Git-LF SHA-256
+`1c074b42a5d90b2c42fb2d67219274d84c8d95591dabd33998a1f04f89bf1b0a`. Evidence (readbacks, dumps, logs, tuning scratch):
+`G:/Мой диск/AGR-evidence/1855-r105-storey-band/SHA256SUMS.txt` (41 files, list SHA-256
+`21b8412d32f9f2c7af9278ec37a5af0a9ff61e060000bf61392ae49eb89d6bfe`). Replay limited to runners with the hash-pinned Drive
+inputs and Blender 4.4. Branch-only OBSERVE; no production change. Hypothesis result (refuted) is separate from review readiness.
+
+Affected tests: `uv run pytest -q tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 105 passed, 1 warning (no product code changed; driver imports `trainer.bounds_step` unchanged).
+
+Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)
