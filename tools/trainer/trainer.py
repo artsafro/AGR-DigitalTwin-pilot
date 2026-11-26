@@ -35,7 +35,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BANK = ROOT / "docs/trainer/etalons.json"
 LEDGER = ROOT / "docs/trainer/ledger.json"
-STEPS = ("artifact", "readback", "bounds", "topology", "form", "form_v2", "vlm", "package")
+STEPS = ("holdout", "artifact", "readback", "bounds", "topology", "form", "form_v2", "vlm", "package")
 STATUSES = {"pass", "fail", "not_run", "not_measured", "error", "not_applicable"}
 TOL = {"bounds_m": 0.10, "form_p95_m": 0.05, "form_max_m": 0.30, "quad_share_drop": 0.02}
 LANES = {"codex": {"model": "gpt-6.1-terra"}}
@@ -172,7 +172,8 @@ def secret_tokens(e):
 
 
 # The bank itself and the form-check pair registry name every key; a practice worktree never contains them.
-ALWAYS_HIDDEN = ("docs/trainer", "tools/qa/form_check/pairs_v1.json")
+# tools/trainer (the scorer) names the held-out KEYS_DIR (#1955: isolation by context), so it is hidden too.
+ALWAYS_HIDDEN = ("docs/trainer", "tools/qa/form_check/pairs_v1.json", "tools/trainer")
 
 
 def scan_tokens(e):
@@ -185,6 +186,7 @@ def scan_tokens(e):
             toks |= {p, p.replace("/", "\\"), Path(p).name}
         if item.get("sha256"):
             toks |= {item["sha256"], item["sha256"][:12]}
+    toks |= {KEYS_DIR, KEYS_DIR.replace("/", "\\"), KEYS_DIR.replace("/", "\\\\")}  # #1955: never name the keys dir
     return sorted(t.lower() for t in toks if len(t) >= 6)
 
 
@@ -277,9 +279,42 @@ def task_text(e, inputs_dir, out_dir):
                   "report the source hash and reason, and do not escalate or launch a host fallback."]
     text = "\n".join(lines) + "\n"
     leaks = [t for t in secret_tokens(e) if t in text]
+    if KEYS_DIR in _norm(text):
+        leaks.append(KEYS_DIR)
     if leaks:
         raise TrainerError(f"task text would leak the key: {sorted(leaks)}")
     return text
+
+
+# #1955 (orchestrator 2026-11-26): the scorer-only held-out keys (form_v2 key + sections) live on Drive under this
+# folder, same Windows account as the builder. Isolation is by context, not ACL: the prompt never names it and the
+# scorer fails any run whose builder transcript touches it (`holdout` step). A real ACL is an open item for Artem.
+KEYS_DIR = "1855-trainer-v0/keys"
+
+
+def _norm(s):
+    return str(s).replace("\\\\", "/").replace("\\", "/").lower()
+
+
+def key_dir_reads(run_dir):
+    """Builder commands in run_dir/events.jsonl that name KEYS_DIR (any slash form or case) -> list.
+    None when the run has no transcript."""
+    ev = Path(run_dir) / "events.jsonl"
+    if not ev.is_file():
+        return None
+    _, cmds, _ = parse_events(ev.read_text(encoding="utf-8", errors="replace").splitlines())
+    return [c for c in cmds if KEYS_DIR in _norm(c)]
+
+
+def holdout_step(built):
+    """A trainer run dir (the nearest ancestor of built with run.json) must have a transcript free of KEYS_DIR reads."""
+    run = next((p for p in Path(built).resolve().parents if (p / "run.json").is_file()), None)
+    if run is None:
+        return step("not_applicable", reason="not inside a trainer run dir (no run.json): no builder transcript")
+    reads = key_dir_reads(run)
+    if reads is None:
+        return step("error", reason=f"trainer run without events.jsonl: {run}")
+    return step("fail" if reads else "pass", key_dir_reads=len(reads), commands=reads[:5])
 
 
 def parse_events(lines):
@@ -489,8 +524,10 @@ def form_step(dev):
 
 
 def score_value(steps):
-    """Passed-step share, then the form deviation as tie-break (lower is better). Used for ranking only."""
-    counted = [s for s in STEPS if s in steps and steps[s]["status"] != "not_applicable"]
+    """Passed-step share, then the form deviation as tie-break (lower is better). Used for ranking only.
+    `holdout` is a gate (first_failing_step/passed), not a quality step: kept out of the share so earlier scores
+    stay comparable."""
+    counted = [s for s in STEPS if s in steps and s != "holdout" and steps[s]["status"] != "not_applicable"]
     passed = sum(steps[s]["status"] == "pass" for s in counted)
     p95 = steps.get("form", {}).get("p95_m")
     return round(passed / len(counted), 4) if counted else 0.0, (p95 if isinstance(p95, (int, float)) else math.inf)
@@ -541,7 +578,7 @@ def score(e, built, out_dir, vlm=False, allow_key=False):
     work.mkdir(parents=True, exist_ok=False)
     key = Path(e["key"]["path"])
     fbx, zip_ = pick_built(built, e)
-    steps = {}
+    steps = {"holdout": holdout_step(built)}
     if fbx is None or not fbx.is_file():
         steps["artifact"] = step("fail", reason="no FBX in the built result")
     else:

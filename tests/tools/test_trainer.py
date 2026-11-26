@@ -490,7 +490,7 @@ def _run_dir(tmp_path, commands, events=True):
 
 
 @pytest.mark.parametrize("cmd", [
-    'type "G:\Мой диск\AGR-evidence\1855-trainer-v0\keys\heldout-key-v001.json"',
+    r'type "G:\Мой диск\AGR-evidence\1855-trainer-v0\keys\heldout-key-v001.json"',
     "cat '/g/Мой диск/AGR-evidence/1855-trainer-v0/KEYS/heldout-sections-v002.json'",
     "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/keys"])
 def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd):
@@ -520,4 +520,12 @@ def test_holdout_audit_errors_when_a_run_has_no_transcript(tmp_path):
 def test_task_text_never_names_the_keys_dir():
     e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
     with pytest.raises(T.TrainerError, match="keys"):
-        T.task_text(dict(e, task=e["task"] + "\nsee G:\AGR-evidence\1855-trainer-v0\keys\\"), Path("i"), Path("o"))
+        T.task_text(dict(e, task=e["task"] + "\nsee " + r"G:\AGR-evidence\1855-trainer-v0\keys" + "\\"), Path("i"), Path("o"))
+
+
+def test_scrub_hides_the_scorer_that_names_the_keys_dir(tmp_path):
+    wt = _repo(tmp_path, {"tools/trainer/trainer.py": f"KEYS_DIR = {T.KEYS_DIR!r}", "docs/clean.md": "x",
+                          "tests/t.py": r"p = 'G:\AGR-evidence\1855-trainer-v0\KEYS\k.json'"})
+    removed = T.scrub_worktree(wt, _E)
+    assert "tools/trainer/" in removed and any(r.startswith("tests/t.py") for r in removed)
+    assert sorted(p.name for p in wt.rglob("*") if p.is_file() and ".git" not in p.parts) == ["clean.md"]
