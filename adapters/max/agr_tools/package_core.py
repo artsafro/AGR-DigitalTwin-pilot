@@ -23,6 +23,7 @@ import os
 import re
 import subprocess
 import zipfile
+from contextlib import ExitStack
 
 MIB = 1024 * 1024
 # D015 binary units; standards/NPM_STANDARD.yaml archive.max_bytes, VPM_STANDARD.yaml archive.oks/ground_max_bytes
@@ -33,6 +34,8 @@ CODE = re.compile(r'^[0-9]{4}$')
 NPM_FBX = re.compile(r'^(?P<code>[0-9]{4})_(?P<address>' + ADDRESS + r')_(?P<part>0[1-9]|1[0-9]|20|Ground)\.fbx$')
 VPM_FILE = re.compile(r'^SM_(?P<stem>' + ADDRESS + r')(?P<ext>\.fbx|\.geojson)$')
 VPM_TEX = re.compile(r'^T_(?P<stem>' + ADDRESS + r')_(?:Diffuse|ERM|Normal)_[0-9]+\.[0-9]{4}\.png$')
+GROUND_UDIM_FILES = ('ground-udim.json', 'ground-udim.md')
+_GROUND_MAP_TYPES = ('Diffuse', 'ERM', 'Normal')
 OKS_INDEX = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<index>[0-9]{3})$')
 TRAILING_NUMBER = re.compile(r'^(?P<address>' + ADDRESS + r')_(?P<number>[0-9]+)$')
 GROUND_ROLES = {'GroundElGlass': 'groundel', 'GroundGlass': 'ground', 'GroundEl': 'groundel',
@@ -582,6 +585,218 @@ def write_delivery_report(target, body):
             os.unlink(partial)
 
 
+def _shipped_core(name):
+    # The installed runtime path-loads package_core without a package or sibling sys.path.
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        'agr_tools_' + name, os.path.join(os.path.dirname(os.path.abspath(__file__)), name + '.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _ground_face_slots(data, stem):
+    """Read (tile, delivery slot) pairs from the binary FBX polygon, UV and material layers."""
+    import math
+    import struct
+    import zlib
+    fbx = _shipped_core('handoff_core')
+    tile_codec = _shipped_core('udimtile_core')
+    if len(data) < 27 or not data.startswith(fbx._FBX_MAGIC):
+        raise ValueError('binary FBX 7.x required for Ground UDIM readback')
+    version = struct.unpack_from('<I', data, 23)[0]
+    if not 7000 <= version < 8000:
+        raise ValueError(f'unsupported binary FBX version {version}')
+
+    def children(n):
+        return list(fbx._fbx_nodes(data, n[3], n[4], version))
+
+    def props(n):
+        return fbx._fbx_props(data, n[2], n[3], n[1])
+
+    def unique(nodes, key):
+        found = [n for n in nodes if n[0] == key]
+        if len(found) != 1:
+            raise ValueError(f'FBX requires exactly one {key}; found {len(found)}')
+        return found[0]
+
+    def value(nodes, key):
+        v = props(unique(nodes, key))
+        if len(v) != 1:
+            raise ValueError(f'FBX requires one {key} property')
+        return v[0]
+
+    def array(nodes, key):
+        v = value(nodes, key)
+        if not isinstance(v, list) or not v:
+            raise ValueError(f'empty or invalid FBX {key} array')
+        return v
+
+    def label(p, kind):
+        return p[1].split(b'\x00', 1)[0].decode('utf-8').removeprefix(kind + '::')
+
+    try:
+        top = list(fbx._fbx_nodes(data, 27, len(data), version))
+        objects, links = {}, {}
+        for obj in children(unique(top, 'Objects')):
+            if obj[0] not in ('Model', 'Geometry', 'Material'):
+                continue
+            p = props(obj)
+            if (len(p) != 3 or type(p[0]) is not int or not p[0] or p[0] in objects
+                    or not isinstance(p[1], bytes) or not isinstance(p[2], bytes)):
+                raise ValueError(f'invalid or duplicate FBX {obj[0]}: {p!r}')
+            objects[p[0]] = obj, p
+        for link in children(unique(top, 'Connections')):
+            p = props(link)
+            if link[0] != 'C' or not p or p[0] not in (b'OO', b'OP') or len(p) != (3 if p[0] == b'OO' else 4):
+                raise ValueError(f'unsupported FBX connection: {p!r}')
+            if type(p[1]) is not int or type(p[2]) is not int:
+                raise ValueError(f'invalid FBX connection: {p!r}')
+            if p[0] == b'OO' and p[1] in objects:
+                links.setdefault(p[2], []).append(p[1])
+
+        pairs, used = set(), set()
+        for mid, (model, p) in objects.items():
+            if model[0] != 'Model' or p[2] == b'Null':
+                continue
+            name = label(p, 'Model')
+            attached = links.get(mid, ())
+            geoms = [i for i in attached if objects[i][0][0] == 'Geometry']
+            if p[2] != b'Mesh' or len(geoms) != 1 or objects[geoms[0]][1][2] != b'Mesh':
+                raise ValueError(f'{name}: unsupported model or geometry binding')
+            used.add(geoms[0])
+            if name in (f'SM_{stem}Glass', f'SM_{stem}ElGlass') or re.fullmatch(
+                    r'UCX_SM_' + re.escape(stem) + r'_[0-9]{3}', name):
+                continue  # glass and collision have no Ground map set
+            geom = children(objects[geoms[0]][0])
+            uv_node, mat_node = (unique(geom, k) for k in ('LayerElementUV', 'LayerElementMaterial'))
+            # Check explicit layer references when present; never read a stale/unselected layer.
+            layers = [n for n in geom if n[0] == 'Layer']
+            for kind, node in (('LayerElementUV', uv_node), ('LayerElementMaterial', mat_node)):
+                refs = [value(children(e), 'TypedIndex') for layer in layers for e in children(layer)
+                        if e[0] == 'LayerElement' and value(children(e), 'Type') == kind.encode('ascii')]
+                if layers and refs != props(node):
+                    raise ValueError(f'{name}: unmapped FBX layer {kind}: {refs}')
+            uv, mat = children(uv_node), children(mat_node)
+            indices = array(geom, 'PolygonVertexIndex')
+            verts = array(geom, 'Vertices')
+            count = len(verts) // 3
+            if len(verts) % 3 or any(not math.isfinite(v) for v in verts):
+                raise ValueError(f'{name}: partial or nonfinite FBX vertices')
+            if indices[-1] >= 0 or any(type(i) is not int or not -count <= i < count for i in indices):
+                raise ValueError(f'{name}: partial or unmapped FBX polygon indices')
+
+            uvs = array(uv, 'UV')
+            if len(uvs) % 2 or any(not math.isfinite(v) for v in uvs):
+                raise ValueError(f'{name}: partial or nonfinite FBX UVs')
+            mapping, reference = (value(uv, k) for k in ('MappingInformationType', 'ReferenceInformationType'))
+            if mapping == b'ByPolygonVertex':
+                n_uv = len(indices)
+            elif mapping in (b'ByVertex', b'ByVertice'):
+                n_uv = count
+            else:
+                raise ValueError(f'{name}: unsupported FBX UV mapping {mapping!r}')
+            if reference == b'IndexToDirect':
+                uv_indices = array(uv, 'UVIndex')
+                if len(uv_indices) != n_uv or any(type(i) is not int or not 0 <= i < len(uvs)//2 for i in uv_indices):
+                    raise ValueError(f'{name}: partial or unmapped FBX UVIndex')
+            elif reference == b'Direct' and len(uvs) == 2 * n_uv:
+                uv_indices = range(n_uv)
+            else:
+                raise ValueError(f'{name}: partial or unsupported FBX UV reference {reference!r}')
+
+            materials = [label(objects[i][1], 'Material') for i in attached if objects[i][0][0] == 'Material']
+            if len(set(materials)) != len(materials):
+                raise ValueError(f'{name}: duplicate FBX material connections: {materials}')
+            assignments = array(mat, 'Materials')
+            mapping_mat, ref_mat = (value(mat, k) for k in ('MappingInformationType', 'ReferenceInformationType'))
+            if ref_mat != b'IndexToDirect' or mapping_mat not in (b'AllSame', b'ByPolygon'):
+                raise ValueError(f'{name}: unsupported FBX material layout {mapping_mat!r}/{ref_mat!r}')
+            if len(assignments) != (1 if mapping_mat == b'AllSame' else sum(i < 0 for i in indices)):
+                raise ValueError(f'{name}: partial material assignment')
+            slot_by_index = {}
+            for i in set(assignments):
+                if type(i) is not int or not 0 <= i < len(materials):
+                    raise ValueError(f'{name}: unmapped FBX material slot {i}')
+                m = re.fullmatch(r'M_' + re.escape(stem) + r'_([1-9][0-9]*)', materials[i])
+                if not m:
+                    raise ValueError(f'{name}: unmapped Ground material: {materials[i]}')
+                slot_by_index[i] = int(m[1])
+            face, face_idx = [], 0
+            for corner, index in enumerate(indices):
+                uv_index = uv_indices[corner if mapping == b'ByPolygonVertex' else (~index if index < 0 else index)]
+                face.append((uvs[2 * uv_index], uvs[2 * uv_index + 1]))
+                if index < 0:
+                    try:
+                        tile = tile_codec.face_tile(face)
+                    except ValueError as exc:
+                        raise ValueError(f'{name} face {face_idx}: {exc}') from exc
+                    if not 1001 <= tile <= 1100:
+                        raise ValueError(f'{name} face {face_idx}: unsupported Ground UDIM {tile}')
+                    pairs.add((tile, slot_by_index[assignments[0 if mapping_mat == b'AllSame' else face_idx]]))
+                    face, face_idx = [], face_idx + 1
+        orphaned = [label(p, 'Geometry') for i, (n, p) in objects.items() if n[0] == 'Geometry' and i not in used]
+        if orphaned or not pairs:
+            raise ValueError(f'empty Ground UDIM readback or unbound FBX geometry: {orphaned}')
+        return sorted(pairs)
+    except (struct.error, zlib.error) as exc:
+        raise ValueError(f'truncated or unreadable Ground FBX: {exc}') from exc
+
+
+def ground_udim_paths(target):
+    """Reserved sidecar paths for a canonical Ground VPM archive (one package per output directory)."""
+    parent, name = os.path.split(target)
+    m = re.fullmatch(r'SM_(' + ADDRESS + r')\.zip', name)
+    info = _vpm_set(m[1]) if m else None
+    return tuple(os.path.join(parent, n) for n in GROUND_UDIM_FILES) if info and info[1] == 'vpm_ground' else ()
+
+
+def _ground_udim_payload(packed, stem, archive_sha):
+    """Use only verified ZIP members, never a source-side OBJ table or a separate readback receipt."""
+    import hashlib
+    master = f'SM_{stem}.fbx'
+    if master not in packed.namelist():
+        raise ValueError('missing Ground FBX: ' + master)
+    data = packed.read(master)
+    try:
+        pairs = _ground_face_slots(data, stem)
+    except ValueError as exc:
+        raise ValueError(f'{master}: {exc}') from exc
+    rows = [{'udim': tile, 'slot': slot, 'material': f'M_{stem}_{slot}',
+             'maps': {kind: f'T_{stem}_{kind}_{slot}.{tile}.png' for kind in _GROUND_MAP_TYPES}}
+            for tile, slot in pairs]
+    expected = {n for row in rows for n in row['maps'].values()}
+    actual = {n for n in packed.namelist() if n.lower().endswith('.png')}
+    if expected != actual:
+        raise ValueError(f'{master}: Ground UDIM maps differ; missing {sorted(expected - actual)}; '
+                         f'unmapped {sorted(actual - expected)}')
+    report = {'schema': 'ground-udim-package/1', 'archive': f'SM_{stem}.zip', 'archive_sha256': archive_sha,
+              'fbx': master, 'fbx_sha256': hashlib.sha256(data).hexdigest(), 'tiles': rows}
+    md = [f'# Ground UDIM — `{report["archive"]}`', '', f'ZIP SHA-256: `{archive_sha}`',
+          f'FBX SHA-256: `{report["fbx_sha256"]}` (`{master}`)', '',
+          '| UDIM | Slot | Material | Diffuse | ERM | Normal |', '| --- | --- | --- | --- | --- | --- |']
+    for row in rows:
+        maps = ' | '.join(f'`{row["maps"][k]}`' for k in _GROUND_MAP_TYPES)
+        md.append(f'| {row["udim"]} | {row["slot"]} | `{row["material"]}` | {maps} |')
+    return json.dumps(report, indent=2) + '\n', '\n'.join(md) + '\n'
+
+
+def _file_identity(stat):
+    return stat.st_dev, stat.st_ino
+
+
+def _file_signature(stat):
+    return _file_identity(stat), stat.st_size, stat.st_mtime_ns
+
+
+def _remove_partial(path, identity):
+    try:
+        if _file_identity(os.lstat(path)) == identity:
+            os.unlink(path)
+    except FileNotFoundError:
+        pass  # Windows no-replace rename can consume the partial
+
+
 def _write_zip(folder, archive, target, expected_sha256=None):
     """New ZIP via an exclusive `.partial` beside the target, then a no-clobber link; no temp file is left.
     Member names are checked first: an unsafe one is refused before the `.partial` exists.
@@ -598,6 +813,16 @@ def _write_zip(folder, archive, target, expected_sha256=None):
     if os.path.exists(target):
         raise FileExistsError('refusing to overwrite: ' + target)
     partial = target + '.partial'
+    sidecars = ground_udim_paths(target)
+    is_ground = archive.get('role') == 'vpm_ground' or ground_udim_paths(archive['name'])
+    if (is_ground or sidecars) and (not sidecars or archive['name'] != os.path.basename(target)):
+        raise ValueError('Ground VPM needs its canonical archive name: ' + archive['name'])
+    for path in sidecars:
+        for candidate in (path, path + '.partial'):
+            if os.path.lexists(candidate):
+                raise FileExistsError('refusing to overwrite: ' + candidate)
+        if os.path.basename(path).casefold() in {n.casefold() for n in names}:
+            raise ValueError('Ground UDIM table is outside the ZIP: ' + path)
     import hashlib
     def digest(stream):
         value = hashlib.sha256()
@@ -623,27 +848,54 @@ def _write_zip(folder, archive, target, expected_sha256=None):
             fingerprints[name.casefold()] = digest(stream)
         if name in expected_sha256 and fingerprints[name.casefold()] != expected_sha256[name]:
             raise ValueError(name + ': FBX bytes changed between the export_meta check and the ZIP; nothing written')
-    owned_partial = False
+    identity = None
     try:
         with open(partial, 'xb') as fh:
-            owned_partial = True
+            identity = _file_identity(os.fstat(fh.fileno()))
             with zipfile.ZipFile(fh, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as z:
                 for m in archive['members']:
                     z.write(os.path.join(folder, m['name']), arcname=m['name'])
-        size = os.path.getsize(partial)
+            fh.flush()
+            packed_stat = os.fstat(fh.fileno())
+        signature = _file_signature(packed_stat)
+        size = packed_stat.st_size
         if size_status(size, archive['limit']) != 'pass':
             return None, size
-        with zipfile.ZipFile(partial) as packed:
-            for member in archive['members']:
-                name = member['name']
-                with open(os.path.join(folder, name), 'rb') as stream, packed.open(name) as archived:
-                    if digest(stream) != fingerprints[name.casefold()] or digest(archived) != fingerprints[name.casefold()]:
-                        raise ValueError('input changed during packaging: ' + name)
-        _publish(partial, target)
+        with open(partial, 'rb') as staged:
+            if _file_signature(os.fstat(staged.fileno())) != signature:
+                raise ValueError('staged ZIP changed during packaging: ' + partial)
+            with zipfile.ZipFile(staged) as packed:
+                if sidecars:
+                    staged.seek(0)
+                    payload = _ground_udim_payload(packed, archive['name'][3:-4], digest(staged))
+                for member in archive['members']:
+                    name = member['name']
+                    with open(os.path.join(folder, name), 'rb') as stream, packed.open(name) as archived:
+                        if digest(stream) != fingerprints[name.casefold()] or digest(archived) != fingerprints[name.casefold()]:
+                            raise ValueError('input changed during packaging: ' + name)
+        with ExitStack() as cleanup, ExitStack() as rollback:
+            if sidecars:
+                table_signatures = {}
+                for path, content in zip(sidecars, payload):
+                    with open(path + '.partial', 'x', encoding='utf-8', newline='\n') as fh:
+                        cleanup.callback(_remove_partial, path + '.partial', _file_identity(os.fstat(fh.fileno())))
+                        fh.write(content)
+                        fh.flush()
+                        table_signatures[path] = _file_signature(os.fstat(fh.fileno()))
+                for path in sidecars:
+                    if _file_signature(os.lstat(path + '.partial')) != table_signatures[path]:
+                        raise ValueError('staged Ground UDIM table changed: ' + path)
+                    _publish(path + '.partial', path)
+                    rollback.callback(_remove_partial, path, table_signatures[path][0])
+                cleanup.close()
+            if _file_signature(os.lstat(partial)) != signature:
+                raise ValueError('staged ZIP changed during packaging: ' + partial)
+            _publish(partial, target)  # ZIP is the last publication; a refused table leaves no ZIP
+            rollback.pop_all()
         return target, size
     finally:
-        if owned_partial and os.path.exists(partial):
-            os.unlink(partial)
+        if identity is not None:
+            _remove_partial(partial, identity)
 
 
 def zip_apply(edit, preview, validate_fn=None, limits=None, stamp=None):

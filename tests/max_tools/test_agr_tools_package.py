@@ -14,6 +14,7 @@ import subprocess
 import sys
 import zipfile
 from io import BytesIO
+from itertools import permutations
 from pathlib import Path
 
 import pytest
@@ -110,6 +111,58 @@ def test_ground_zip_has_tables_from_binary_fbx(tmp_path):
     for row in table['tiles']:
         assert f"| {row['udim']} | {row['slot']} | `{row['material']}` |" in md
         assert all(f'`{name}`' in md for name in row['maps'].values())
+
+
+@pytest.mark.parametrize('tiles', list(permutations((1001, 1011, 1100))))
+def test_ground_table_is_order_independent_across_grid(tmp_path, tiles):
+    slots = {1001: 12, 1011: 3, 1100: 7}
+    folder = ground_package(tmp_path / 'source', tiles, tuple(slots[t] for t in tiles))
+    # Add a repeated face for the same pair; the table still contains one row per pair.
+    (folder / 'SM_X_Ground.fbx').write_bytes(
+        ground_fbx(tiles=(*tiles, tiles[0]), slots=tuple(slots[t] for t in (*tiles, tiles[0]))))
+    [archive] = pc.zip_plan(folder)['archives']
+    pc._write_zip(folder, archive, str(tmp_path / 'SM_X_Ground.zip'))
+    rows = json.loads((tmp_path / 'ground-udim.json').read_text(encoding='utf-8'))['tiles']
+    assert [(r['udim'], r['slot']) for r in rows] == sorted(slots.items())
+
+
+@pytest.mark.parametrize('stage', ['input_during_readback', 'staged_zip_swap', 'foreign_sidecar', 'foreign_partial'])
+def test_ground_zip_refuses_racing_writer_without_clobber(tmp_path, monkeypatch, stage):
+    folder = ground_package(tmp_path / 'source')
+    fbx = folder / 'SM_X_Ground.fbx'
+    target = tmp_path / 'SM_X_Ground.zip'
+    foreign = tmp_path / ('ground-udim.md.partial' if stage == 'foreign_partial' else 'ground-udim.md')
+    [archive] = pc.zip_plan(folder)['archives']
+    read, publish = pc._ground_face_slots, pc._publish
+
+    def during_readback(data, stem):
+        if stage == 'input_during_readback':
+            fbx.write_bytes(data + b'changed')
+        elif stage == 'foreign_partial':
+            os.link(fbx, foreign)
+        return read(data, stem)
+
+    def during_publish(partial, path):
+        if path == str(tmp_path / 'ground-udim.json'):
+            if stage == 'staged_zip_swap':
+                replaced = target.with_suffix('.zip.partial')
+                replaced.rename(tmp_path / 'superseded.zip.partial')
+                os.link(fbx, replaced)
+            elif stage == 'foreign_sidecar':
+                os.link(fbx, foreign)
+        return publish(partial, path)
+
+    monkeypatch.setattr(pc, '_ground_face_slots', during_readback)
+    monkeypatch.setattr(pc, '_publish', during_publish)
+    with pytest.raises((ValueError, FileExistsError)):
+        pc._write_zip(folder, archive, str(target))
+    assert not target.exists()
+    assert not (tmp_path / 'ground-udim.json').exists()
+    assert not (tmp_path / 'ground-udim.json.partial').exists()
+    if stage.startswith('foreign_'):
+        assert foreign.samefile(fbx)
+    if stage == 'staged_zip_swap':
+        assert target.with_suffix('.zip.partial').samefile(fbx)
 
 
 def test_ground_cli_replaces_neither_input_tables_nor_their_contents(tmp_path):
