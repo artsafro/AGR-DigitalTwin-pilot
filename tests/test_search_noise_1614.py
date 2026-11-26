@@ -246,6 +246,34 @@ ARCHIVE_SECTION = "## Hidden from search (still in the tree)\n"
 
 
 @needs_rg
+def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
+    historical = {
+        "experiments/bim-autocad-agr/README.md",
+        "experiments/bim-autocad-agr/test_experiment.py",
+        "experiments/complexity-group-index/red.log",
+        "experiments/flora-texture-diagnosis/bark-calibration-v001.json",
+        "experiments/flora-texture-diagnosis/bark_calibration.py",
+        "experiments/flora-texture-diagnosis/calibration-original-tilia.json",
+        "experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json",
+        "experiments/flora-texture-diagnosis/source-integrity-v002.json",
+        "experiments/flora-texture-diagnosis/test_calibration.py",
+        "tools/research/pdf_album/dimension-geometry-evidence.json",
+    }
+    retained = {
+        "benchmark/bench-b03-decor/README.md",  # deferred benchmark, still indexed
+        "docs/research/model-flora-dry-walk-2026-10-16.md",  # disputed; keep wins
+        "experiments/bim-autocad-agr/experiment.py",  # referenced by tests
+        "experiments/flora-texture-diagnosis/calibrate_uv_area.py",  # sibling still used
+        "tools/research/pdf_album/dimension-recall-results/evidence.json",  # cited receipt
+    }
+    tracked = set(sn.tracked(ROOT))
+    visible = _rg(ROOT)
+    assert historical | retained <= tracked
+    assert retained <= visible
+    assert not historical & visible
+
+
+@needs_rg
 def test_search_archive_round_trip(tmp_path):
     old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
     first = f"- `{old}` — Superseded result.\n"
