@@ -1,0 +1,6 @@
+{
+  "kpp1_accepted": {"zip": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25-r1/vpm/SM_Kpp_1.zip", "sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9", "member": "SM_Kpp_1.fbx"},
+  "kpp1_predecessor": {"zip": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b23/vpm/SM_Kpp_1.zip", "sha256": "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3", "member": "SM_Kpp_1.fbx"},
+  "elv_delivered": {"zip": "G:/Мой диск/AGR-evidence/1104-elv-delivered/SM_Elevatornaya_1.zip", "sha256": "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9", "member": "SM_Elevatornaya_1.fbx", "decoy_fbx_member": "SM_Elevatornaya_1_Light.fbx"},
+  "elv_work": {"zip": "C:/x/elv_v006/SM_Elevatornaya_Vl_1_A_001_work_quads_v006.zip", "sha256": "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926", "member": "SM_Elevatornaya_Vl_1_A_001_work_quads.fbx"}
+}
