@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import shutil
 import statistics
+import subprocess
 import sys
 import time
 from zipfile import ZipFile
@@ -67,23 +68,21 @@ def stage(catalog, out):
     return copies, light
 
 
-def validate(zip_path, work):
+def validate(zip_path, work, head):
     work.mkdir(parents=True)
     verdict = trainer.package_step({"profile": "vpm"}, zip_path, work)
     raw = (work / "validate.json").read_text(encoding="utf-8")
     report = json.loads(raw)
+    if report.get("code_commit") != head:
+        raise ValueError(f"validator revision drift: {work}: {report.get('code_commit')} != {head}")
     if verdict["status"] not in {"pass", "fail"} or not isinstance(report.get("passed"), bool):
         raise ValueError(f"unusable native validator output: {work}")
     # Only path representation may differ. Keep all findings and statuses.
     canonical = json.dumps(report, ensure_ascii=False, sort_keys=True)
     for path in (str(zip_path), zip_path.as_posix()):
         canonical = canonical.replace(json.dumps(path, ensure_ascii=False)[1:-1], "$ZIP")
-    statuses = {}
-    for finding in report.get("findings", []):
-        status = finding.get("status", "missing-status")
-        statuses[status] = statuses.get(status, 0) + 1
     return {**verdict, "report_sha256": hashlib.sha256(canonical.encode()).hexdigest(),
-            "finding_status_counts": statuses}
+            "machine_stage_counts": report["machine_stage_counts"]}
 
 
 def refused(func, *args):
@@ -94,7 +93,7 @@ def refused(func, *args):
     return None
 
 
-def exercise(room, body, archive, light, decoy):
+def exercise(room, body, archive, light, decoy, head):
     built = room / "built"
     built.mkdir(parents=True)
     fbx = built / body.name
@@ -105,7 +104,7 @@ def exercise(room, body, archive, light, decoy):
     expected = [digest(body), digest(archive)]
     fbx_ref, zip_ref = (file.relative_to(built) for file in (fbx, zip_path))
     clean = trainer.pick_built(built, {})
-    oracle = validate(clean[1], room / "oracle")
+    oracle = validate(clean[1], room / "oracle", head)
     a = trainer.pick_built(fbx, {})
     variants = {}
     inventory = set(built.rglob("*.*"))
@@ -116,7 +115,7 @@ def exercise(room, body, archive, light, decoy):
             (built / "nested").mkdir()
             os.link(light, built / "nested" / body.name)
         selected = explicit_pair(built, fbx_ref, zip_ref)
-        measured = validate(selected[1], room / label)
+        measured = validate(selected[1], room / label, head)
         variants[label] = {"added_entries": len(set(built.rglob("*.*")) - inventory),
                            "selected_sha256": [digest(x) for x in selected], "native": measured}
         if label == "extra_zip":
@@ -145,6 +144,7 @@ def save(path, data):
 
 
 def main(out):
+    head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     catalog = json.loads(MANIFEST.read_text(encoding="utf-8"))
     preflight(catalog)
     out.mkdir(parents=True)
@@ -155,7 +155,7 @@ def main(out):
         cases = {}
         for name, (body, archive) in copies.items():
             other = "kpp1_predecessor" if name == "kpp1_accepted" else "kpp1_accepted"
-            cases[name] = exercise(out / f"R{rep}" / name, body, archive, light, copies[other][1])
+            cases[name] = exercise(out / f"R{rep}" / name, body, archive, light, copies[other][1], head)
             if time.monotonic() - started > CAP:
                 status = "wall_stop"
                 save(out / "partial.json", cases)
@@ -175,7 +175,7 @@ def main(out):
     complete = status == "series_complete" and len(rounds) == 3
     good = all(r["A"] == 0 and r["B"] == 4 and all(c["ok"] for c in r["cases"].values()) for r in rounds)
     receipt = dict(hypothesis=("confirmed" if good else "refuted") if complete else "inconclusive",
-                   run_status=status, paired_lifts=lifts,
+                   run_status=status, paired_lifts=lifts, validator_head=head,
                    series_wall_s=round(time.monotonic() - started, 3),
                    paired_median=statistics.median(lifts) if complete else None,
                    paired_spread=[min(lifts), max(lifts)] if complete else None,
