@@ -1,0 +1,15 @@
+{
+  "status": "invalid_revision_drift",
+  "diagnostic_only_paired_lifts": [
+    3,
+    4,
+    4
+  ],
+  "old_receipt_sha256": "a54ca66e46afe1e78c1f699ef769d1aa5fc54ff56b6126d0d93cf487a792851b",
+  "parsed_report_delta": {
+    "code_commit": [
+      "0fd7e3e64beae39f16a2a1c2c3342f3fa34e1d18",
+      "568ab8d95af72207881eabe77095780dc7c4162a"
+    ]
+  }
+}

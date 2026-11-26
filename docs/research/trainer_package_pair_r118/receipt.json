@@ -1,0 +1,1196 @@
+{
+  "candidate_worktree_sha256": "e22fe46471998ed6963486b1cfe0f92e7cfd6cc786c92d95b55bb59e4525d0bc",
+  "hypothesis": "confirmed",
+  "manifest_worktree_sha256": "d19b1aaf0ee8031972039027e691da03d566ab0f48f4e3925face2269e59b016",
+  "paired_lifts": [
+    4,
+    4,
+    4
+  ],
+  "paired_median": 4,
+  "paired_spread": [
+    4,
+    4
+  ],
+  "rounds": [
+    {
+      "A": 0,
+      "B": 4,
+      "cases": {
+        "elv_delivered": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+            "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Elevatornaya_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R1\\elv_delivered\\built: ['SM_Elevatornaya_1.fbx', 'SM_Elevatornaya_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            }
+          }
+        },
+        "elv_work": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+            "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Elevatornaya_Vl_1_A_001_work_quads_v006.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 2,
+              "not_run": 9,
+              "pass": 0,
+              "review": 1
+            },
+            "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R1\\elv_work\\built: ['SM_Elevatornaya_Vl_1_A_001_work_quads.fbx', 'SM_Elevatornaya_Vl_1_A_001_work_quads.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            }
+          }
+        },
+        "kpp1_accepted": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+            "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Kpp_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R1\\kpp1_accepted\\built: ['SM_Kpp_1.fbx', 'SM_Kpp_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            }
+          }
+        },
+        "kpp1_predecessor": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+            "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Kpp_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R1\\kpp1_predecessor\\built: ['SM_Kpp_1.fbx', 'SM_Kpp_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            }
+          }
+        }
+      },
+      "elapsed_s": 43.556,
+      "lift": 4
+    },
+    {
+      "A": 0,
+      "B": 4,
+      "cases": {
+        "elv_delivered": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+            "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Elevatornaya_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R2\\elv_delivered\\built: ['SM_Elevatornaya_1.fbx', 'SM_Elevatornaya_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            }
+          }
+        },
+        "elv_work": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+            "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Elevatornaya_Vl_1_A_001_work_quads_v006.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 2,
+              "not_run": 9,
+              "pass": 0,
+              "review": 1
+            },
+            "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R2\\elv_work\\built: ['SM_Elevatornaya_Vl_1_A_001_work_quads.fbx', 'SM_Elevatornaya_Vl_1_A_001_work_quads.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            }
+          }
+        },
+        "kpp1_accepted": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+            "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Kpp_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R2\\kpp1_accepted\\built: ['SM_Kpp_1.fbx', 'SM_Kpp_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            }
+          }
+        },
+        "kpp1_predecessor": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+            "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Kpp_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R2\\kpp1_predecessor\\built: ['SM_Kpp_1.fbx', 'SM_Kpp_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            }
+          }
+        }
+      },
+      "elapsed_s": 92.27,
+      "lift": 4
+    },
+    {
+      "A": 0,
+      "B": 4,
+      "cases": {
+        "elv_delivered": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+            "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Elevatornaya_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R3\\elv_delivered\\built: ['SM_Elevatornaya_1.fbx', 'SM_Elevatornaya_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "cbf174d49cda63b4b4d272a13912e1c7efd4c9b49e12a3a32c7bddbf8073ce9a",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "17380bed11052aacf6f74a73d0d01e74cfaa7ee4d1fbc94f502dbb864ad50d6d",
+                "23aac6a5f42579e8d30ce64dcaab275f2cfabf16b51aa5141d7f6a75113b2dc9"
+              ]
+            }
+          }
+        },
+        "elv_work": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+            "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Elevatornaya_Vl_1_A_001_work_quads_v006.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 2,
+              "not_run": 9,
+              "pass": 0,
+              "review": 1
+            },
+            "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R3\\elv_work\\built: ['SM_Elevatornaya_Vl_1_A_001_work_quads.fbx', 'SM_Elevatornaya_Vl_1_A_001_work_quads.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 2,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 1
+                },
+                "report_sha256": "35d55b91e7accf3de16de3f4e60c2de5b4da6d25196448a6b8a717c325c15d8c",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "e6f323b42cd54e5a1325a6fc1128a1db61b7a6e7243b72f5e5038eb1322e676a",
+                "c0c9fa63336dd8af2322dc9e3c182884f2e0b5c7ac0d45aa12d79a83b0174926"
+              ]
+            }
+          }
+        },
+        "kpp1_accepted": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+            "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Kpp_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R3\\kpp1_accepted\\built: ['SM_Kpp_1.fbx', 'SM_Kpp_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "667a0e1f21c5e8bdc3a1382c8d129dad54980aab34171da6cfab41ea3ecac031",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23",
+                "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9"
+              ]
+            }
+          }
+        },
+        "kpp1_predecessor": {
+          "A_complete": false,
+          "B_complete": true,
+          "expected_sha256": [
+            "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+            "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+          ],
+          "negatives": {
+            "missing_fbx": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: missing.fbx"
+            },
+            "missing_zip": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: missing.zip"
+            },
+            "outside_root": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .zip reference: ..\\outside.zip"
+            },
+            "wrong_suffix": {
+              "changed_references": 1,
+              "refusal": "invalid explicit .fbx reference: selected\\SM_Kpp_1.zip"
+            }
+          },
+          "ok": true,
+          "oracle": {
+            "machine_stage_counts": {
+              "fail": 1,
+              "not_run": 9,
+              "pass": 0,
+              "review": 2
+            },
+            "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+            "status": "fail",
+            "validate_exit": 1
+          },
+          "variants": {
+            "clean": {
+              "added_entries": 0,
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            },
+            "extra_zip": {
+              "added_entries": 1,
+              "directory_zip_sha256": "d84d1df0adc2b80e35bc5c5eaecc47ea9fb5ec95553ac3756635848b12ce1bf9",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            },
+            "extra_zip_and_fbx": {
+              "added_entries": 2,
+              "directory_refusal": "several FBX in C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_a9c1655f\\.r118-stable\\R3\\kpp1_predecessor\\built: ['SM_Kpp_1.fbx', 'SM_Kpp_1.fbx']; pass --built FILE",
+              "native": {
+                "machine_stage_counts": {
+                  "fail": 1,
+                  "not_run": 9,
+                  "pass": 0,
+                  "review": 2
+                },
+                "report_sha256": "d4de0c5e8d7e5f9e81a1a131e44d74d493604b2edf787f415b55ae285f8a5fb2",
+                "status": "fail",
+                "validate_exit": 1
+              },
+              "selected_sha256": [
+                "239e0aaa80544e428f1c87f7b5afdf680426a5dae5b9247a93ef0d0066dee84c",
+                "95bb3338e7e6ffe326f74ff3203acb07d98d4ec1d1c6bfc44ccc3eaa6094ffb3"
+              ]
+            }
+          }
+        }
+      },
+      "elapsed_s": 137.61,
+      "lift": 4
+    }
+  ],
+  "run_status": "series_complete",
+  "series_wall_s": 137.914,
+  "validator_head": "5200582542824e018895d8dc6eea52deb3f543cc"
+}
