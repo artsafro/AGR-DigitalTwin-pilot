@@ -880,6 +880,7 @@
 /library/assets/intake/VLAD-MAF-B2/identify.json
 /technical_library/evidence/ALL_GROUPS_QA_20261001.json
 /technical_library/evidence/PR_AUDIT_20261001.json
+/technical_library/glb_atlas/SOURCE.json
 /technical_library/uv/corner_match.py
 /test-polygon/build/topview.py
 /tests/blender/run_uv_compaction_1380.py

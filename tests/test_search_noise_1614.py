@@ -314,6 +314,19 @@ def test_batch_5b_receipts_stay_tracked_and_only_exact_paths_leave_search():
 
 
 @needs_rg
+def test_batch_5d_hides_only_the_unreferenced_glb_provenance():
+    glb = "technical_library/glb_atlas/"
+    provenance = glb + "SOURCE.json"
+    tracked = set(sn.tracked(ROOT))
+    visible = _rg(ROOT)
+
+    assert provenance in tracked
+    assert provenance not in visible
+    assert {glb + name for name in ("README.md", "QA.json", "build.py", "scenarios.json")} <= visible
+    assert "technical_library/window_atlas/SOURCE.json" in visible  # linked by its README
+
+
+@needs_rg
 def test_search_archive_round_trip(tmp_path):
     old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
     first = f"- `{old}` — Superseded result.\n"
