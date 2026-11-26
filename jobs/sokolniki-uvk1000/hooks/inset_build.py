@@ -1105,10 +1105,11 @@ def pack_cells(sizes, span, gap):
     return round(lo, 4), place(lo)
 
 
-def wintex(scan, cfg, gap=0.04, round_m=0.1):
+def wintex(scan, cfg, gap=0.04, round_m=0.1, cw=None):
     """winscan instances -> a NEW uv_config dict: finishes get `pattern: elevations` cells (one drawing per
     type x size class x hand, panes of the most frequent instance) and `window_texture.instances` rows
-    [cell, cx, cy, rx, ry, U0, U1, Z0, Z1] (box in the instance frame: u along r from (cx, cy), world z)."""
+    [cell, cx, cy, rx, ry, U0, U1, Z0, Z1] (box in the instance frame: u along r from (cx, cy), world z).
+    `cw` = cwscan curtain-wall faces (r5 [D418]): their cells / rows from cw_texture join the same finishes' sheets."""
     wt = cfg["window_texture"]
     classes, rows = {}, []
     for name in sorted(scan):
@@ -1132,6 +1133,11 @@ def wintex(scan, cfg, gap=0.04, round_m=0.1):
         key, sizes = max(variants.items(), key=lambda kv: (len(kv[1]), kv[0]))
         per_fin.setdefault(fin, {})[cell] = {"size": list(sizes[0]), "panes": [list(p) for p in key],
                                              "instances": sum(len(v) for v in variants.values())}
+    if cw is not None:                                 # r5 [D418]: curtain-wall faces, one row per face
+        cw_cells_, cw_rows = cw_texture(cw, wt["cw"])
+        for fin, cs in cw_cells_.items():
+            per_fin.setdefault(fin, {}).update(cs)
+        rows += cw_rows
     for fin in sorted(set(per_fin) | set(wt["fallback"])):
         cells = per_fin.setdefault(fin, {})
         t = out["finishes"][fin]
@@ -1186,8 +1192,129 @@ def face_uv(pts, cell):
     return [(b[0] + (x - min(xs)) / sx * (b[2] - b[0]), b[1] + (z - min(zs)) / sz * (b[3] - b[1])) for x, z in pts]
 
 
+# ---------------------------------------- #1925 r5 [D418]: curtain walls drawn by their Revit panels
+# Each v009 curtain-wall face (finishes 05 / 06) is its own row (the face box); its drawing = the Revit glass panels
+# inside the face (cwscan, inset_write_blender.py), small walls (<= 1.6 x 3.4 m) like windows, large ones on their
+# Revit mullion / transom grid; a face without Revit panels gets a ~1 m mullion grid with transoms at the Revit
+# transom levels of its finish. No geometry: explicit UVs like the windows.
+
+def cw_panes(box, panes, min_m=0.05):
+    """Revit panel rectangles (u, z absolute) clipped to the face box, relative to its lower-left; slivers dropped."""
+    u0, u1, z0, z1 = box
+    out = []
+    for a, b, c, d in panes:
+        a, b, c, d = max(a, u0), min(b, u1), max(c, z0), min(d, z1)
+        if b - a > min_m + 1e-6 and d - c > min_m + 1e-6:
+            p = [round(a - u0, 3), round(b - u0, 3), round(c - z0, 3), round(d - z0, 3)]
+            if p not in out:
+                out.append(p)
+    return sorted(out)
+
+
+def cw_levels(faces, gap=0.3):
+    """Transom levels (world z) per finish: the middle of every gap < `gap` between a Revit pane top and the
+    next pane bottom in the same face column."""
+    lv = {}
+    for f in faces:
+        ps = f["panes"]
+        for a, b, _, top in ps:
+            for a2, b2, bot, _ in ps:
+                if 0 < bot - top < gap and min(b, b2) - max(a, a2) > 0.05:
+                    lv.setdefault(f["finish"], set()).add(round((top + bot) / 2, 2))
+    return {k: sorted(v) for k, v in lv.items()}
+
+
+def cw_grid(box, levels, pitch, mullion):
+    """Synthetic Revit-pitch grid for a face without Revit panels: n = round(w / pitch) bays, transoms at `levels`
+    inside the face (>= 0.3 m from its edges); panes relative to the lower-left, half a mullion off each line."""
+    u0, u1, z0, z1 = box
+    w, h, m = u1 - u0, z1 - z0, mullion / 2
+    n = max(1, round(w / pitch))
+    zs = [0.0] + [round(l - z0, 3) for l in levels if z0 + 0.3 < l < z1 - 0.3] + [round(h, 3)]
+    return [[round(i * w / n + m, 3), round((i + 1) * w / n - m, 3), round(zs[j] + m, 3), round(zs[j + 1] - m, 3)]
+            for i in range(n) for j in range(len(zs) - 1)]
+
+
+def cw_groups(faces, tol=0.02):
+    """Join coplanar curtain-wall faces of one finish that touch (the v009 opening strips of one Revit wall) into
+    one item in the frame of its first face: box = union, panes = all; so one drawing spans the whole wall."""
+    fs = sorted(faces, key=lambda f: (f["obj"], f["i"]))
+    parent = list(range(len(fs)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def shifted(f, g):          # g's box / panes in f's frame (None if not coplanar)
+        rf, rg = f["r"], g["r"]
+        if f["finish"] != g["finish"] or rf[0] * rg[0] + rf[1] * rg[1] < 0.999:
+            return None
+        dx, dy = g["c"][0] - f["c"][0], g["c"][1] - f["c"][1]
+        if abs(dx * rf[1] - dy * rf[0]) > tol:
+            return None
+        du = dx * rf[0] + dy * rf[1]
+        return du
+    for i, f in enumerate(fs):
+        for j in range(i):
+            du = shifted(fs[j], f)
+            if du is None:
+                continue
+            a, b = fs[j]["box"], f["box"]
+            if a[0] - tol <= b[1] + du and b[0] + du <= a[1] + tol and a[2] - tol <= b[3] and b[2] <= a[3] + tol:
+                parent[find(i)] = find(j)
+    groups = {}
+    for i, f in enumerate(fs):
+        groups.setdefault(find(i), []).append(f)
+    out = []
+    for g in groups.values():
+        f0 = g[0]
+        box, panes = list(f0["box"]), []
+        for f in g:
+            du = shifted(f0, f)
+            b = f["box"]
+            box = [min(box[0], b[0] + du), max(box[1], b[1] + du), min(box[2], b[2]), max(box[3], b[3])]
+            panes += [[p[0] + du, p[1] + du, p[2], p[3]] for p in f["panes"]]
+        out.append(dict(f0, box=[round(x, 3) for x in box], panes=panes, faces=len(g)))
+    return out
+
+
+def cw_texture(faces, cw):
+    """cwscan faces -> ({finish: {cell: {size, panes, instances}}}, rows). Touching coplanar faces form one wall
+    (cw_groups); one cell per distinct wall layout (size and panes to 2 cm); rows [cell, cx, cy, rx, ry, U0, U1,
+    Z0, Z1] = the wall box."""
+    faces = cw_groups(faces)
+    levels = cw_levels(faces)
+    sw, sh = cw["small_max_m"]
+    cells, rows, keys = {}, [], {}
+    for f in sorted(faces, key=lambda f: (f["obj"], f["i"])):
+        box = f["box"]
+        w, h = box[1] - box[0], box[3] - box[2]
+        panes = cw_panes(box, f["panes"]) or cw_grid(box, levels.get(f["finish"], []), cw["grid_pitch_m"],
+                                                      cw["mullion_m"])
+        small = w <= sw + 1e-6 and h <= sh + 1e-6
+        base = "%s%s_%.1fx%.1f" % (cw["codes"][f["finish"]], "s" if small else "", w, h)
+        key = (f["finish"], base, round(w / 0.02), round(h / 0.02),
+               tuple(tuple(round(x / 0.02) for x in p) for p in panes))
+        fc = cells.setdefault(f["finish"], {})
+        if key not in keys:
+            k = sum(1 for kk in keys if kk[:2] == key[:2])
+            keys[key] = base if k == 0 else "%s_%d" % (base, k + 1)
+            fc[keys[key]] = {"size": [round(w, 3), round(h, 3)], "panes": panes, "instances": 0}
+        name = keys[key]
+        fc[name]["instances"] += 1
+        rows.append([name, round(f["c"][0], 3), round(f["c"][1], 3), round(f["r"][0], 5), round(f["r"][1], 5),
+                     *[round(b, 3) for b in box]])
+    return cells, rows
+
+
 def wintex_main(argv):
-    """inset_build.py wintex WINSCAN.json UV_CONFIG.json NEW_UV_CONFIG.json"""
+    """inset_build.py wintex WINSCAN.json UV_CONFIG.json NEW_UV_CONFIG.json [--cw CWSCAN.json]"""
+    cw_p = None
+    if "--cw" in argv:
+        k = argv.index("--cw")
+        cw_p, argv = argv[k + 1], argv[:k] + argv[k + 2:]
     scan_p, cfg_p, out_p = argv
     if os.path.exists(out_p) and os.path.realpath(out_p) != os.path.realpath(cfg_p):
         print("refused: %s exists" % out_p, file=sys.stderr)
@@ -1196,7 +1323,11 @@ def wintex_main(argv):
         scan = json.load(fh)
     with open(cfg_p, encoding="utf-8") as fh:
         cfg = json.load(fh)
-    out = wintex(scan["instances"], cfg)
+    cw = None
+    if cw_p:
+        with open(cw_p, encoding="utf-8") as fh:
+            cw = json.load(fh)["faces"]
+    out = wintex(scan["instances"], cfg, cw=cw)
     out["window_texture"]["source"] = scan.get("source")
     with open(out_p, "w", encoding="utf-8", newline="\n") as fh:
         fh.write(dump_uv_config(out))

@@ -549,6 +549,79 @@ def winscan(argv):
     print("WINSCAN faces", len(faces), "instances", len(res), "unmatched", len(unmatched))
 
 
+def cwscan(argv):
+    """#1925 r5 [D418] read-only: every vertical v009 curtain-wall face (material -> a finish of uv_config
+    window_texture.cw.codes) -> its frame (c, r = right seen along -n), box (u along r from c, world z) and the
+    Revit curtain panels ('Системная панель ...', flat, parallel) overlapping it as (u, z) rectangles - only the
+    Revit layer nearest to the face within cw.search_depth_m (the F05 ground wall sits 2.1 m behind its inset). Never saves.
+
+        blender44 -b --factory-startup --python inset_write_blender.py -- cwscan V009.blend REVIT.fbx UV_CONFIG NEW.json"""
+    import collections
+    import re
+    import numpy as np
+    v009, revit, cfg_path, out = argv
+    if os.path.exists(out):
+        print("refused: output exists", file=sys.stderr)
+        sys.exit(2)
+    with open(cfg_path, encoding="utf-8") as fh:
+        cfg = json.load(fh)
+    fins = set(cfg["window_texture"]["cw"]["codes"])
+    depth = cfg["window_texture"]["cw"]["search_depth_m"]
+    bpy.ops.wm.open_mainfile(filepath=v009)
+    faces = []
+    for o in sorted((o for o in bpy.context.scene.objects if o.type == "MESH"), key=lambda o: o.name):
+        mats = [m.name if m else None for m in o.data.materials]
+        for p in o.data.polygons:
+            fin = cfg["material_map"].get(mats[p.material_index]) if mats else None
+            if fin not in fins:
+                continue
+            n = np.array((o.matrix_world.to_3x3() @ p.normal).normalized())
+            if abs(n[2]) > 0.3:
+                continue
+            n[2] = 0.0
+            n /= np.linalg.norm(n)
+            P = np.array([o.matrix_world @ o.data.vertices[i].co for i in p.vertices])
+            faces.append((o.name, p.index, fin, P, n))
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.fbx(filepath=revit, use_image_search=False)
+    pan = []
+    for o in bpy.data.objects:
+        if o in before or o.type != "MESH" or not o.name.startswith("Системная панель"):
+            continue
+        V = np.array([o.matrix_world @ v.co for v in o.data.vertices])
+        if len(V):
+            pan.append((re.sub(r"_[0-9a-f]{6,8}$", "", o.name).strip(), V))
+    res, kinds = [], collections.Counter()
+    for oname, pi, fin, P, n in faces:
+        c = P.mean(0)
+        r = np.cross([0.0, 0.0, 1.0], n)
+        u = (P - c) @ r
+        box = [float(u.min()), float(u.max()), float(P[:, 2].min()), float(P[:, 2].max())]
+        rects = []
+        for name, V in pan:
+            dn = (V - c) @ n
+            if abs(float(dn.mean())) > depth or float(dn.max() - dn.min()) > 0.15:
+                continue
+            uu = (V - c) @ r
+            rr = [float(uu.min()), float(uu.max()), float(V[:, 2].min()), float(V[:, 2].max())]
+            if rr[1] < box[0] + 0.02 or rr[0] > box[1] - 0.02 or rr[3] < box[2] + 0.02 or rr[2] > box[3] - 0.02:
+                continue
+            rects.append((abs(float(dn.mean())), name, [round(x, 3) for x in rr]))
+        near = min((d for d, _, _ in rects), default=0.0)     # the Revit wall layer nearest to the face only
+        rects = [(d, k, rr) for d, k, rr in rects if d <= near + 0.3]
+        for _, k, _ in rects:
+            kinds[k[:40]] += 1
+        res.append({"obj": oname, "i": pi, "finish": fin, "c": [round(float(x), 3) for x in c[:2]],
+                    "r": [round(float(x), 5) for x in r[:2]], "box": [round(x, 3) for x in box],
+                    "depth_m": round(near, 2), "panes": sorted(rr for _, _, rr in rects)})
+    with open(revit, "rb") as fh:
+        sha = hashlib.sha256(fh.read()).hexdigest()
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump({"source": {"revit": os.path.basename(revit), "sha256": sha[:16], "v009": os.path.basename(v009)},
+                   "panel_kinds": dict(kinds), "faces": res}, fh, ensure_ascii=False, indent=1)
+    print("CWSCAN faces", len(res), "without panels", sum(1 for f in res if not f["panes"]), "kinds", dict(kinds))
+
+
 if __name__ == "__main__":
     _args = sys.argv[sys.argv.index("--") + 1:]
     if _args and _args[0] == "render":
@@ -557,5 +630,7 @@ if __name__ == "__main__":
         uv(_args[1:])
     elif _args and _args[0] == "winscan":
         winscan(_args[1:])
+    elif _args and _args[0] == "cwscan":
+        cwscan(_args[1:])
     else:
         main(_args)

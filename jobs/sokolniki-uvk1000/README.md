@@ -281,7 +281,31 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py wintex <winscan.json> 
   its drawing (explicit UVs, no cuts, no vertex moved); 5 door faces without an instance get the `_face` drawing.
 - Result: 32 073 triangles (was 32 731: the window / door faces are no longer cut by the old periodic grid); max vertex move
   0.0 m; UV overflow 0; V006 PASS; xView per object PASS; readback ok. NPM density: windows ~31 px/m, doors ~56 px/m.
-- Curtain walls (`Glazing` 06, F05 05) keep the periodic grid: open question to Artem (sheet item 2).
+- Curtain walls: see the next section ([D418]).
 - Evidence: `step4-uv-atlas-v001/windows-texture-v001/sok-windows-texture-v001.png` + `.pdf` (Revit | v009 | NPM before |
   NPM after on the question-sheet cameras, atlas regions, F01 before / after), atlas, master, NPM FBX, winscan;
-  `SHA256SUMS.txt` 129 files. Waiting for Artem's picture approval.
+  `SHA256SUMS.txt` 129 files. Accepted by Artem 2026-11-26 ~17:55 [D418].
+
+### Curtain walls drawn by their Revit panels ([D418])
+
+Artem 2026-11-26 ~17:55 («Принимаю»): windows W1-W4 + doors accepted as is; curtain walls - small ones (<= 1.6 x 3.4 m)
+like windows, large ones as a grid with the Revit pitch; glass dark blue with gradient, frames RAL 7016 (provisional).
+
+```
+blender44 ... hooks/inset_write_blender.py -- cwscan <step3>/assembly/body_v009.blend <revit sokolniki_ar_r23_v1.fbx> jobs/sokolniki-uvk1000/uv_config.json <cwscan.json>
+uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py wintex <winscan.json> jobs/sokolniki-uvk1000/uv_config.json jobs/sokolniki-uvk1000/uv_config.json --cw <cwscan.json>
+(then the step-4 chain above: uv -> agr vpm-to-npm -> xview / readback / render)
+```
+
+- `cwscan` (read-only) takes every vertical v009 face of finishes 05 / 06 (97: 20 + 77) and the Revit curtain panels
+  (`Системная панель ADSK_Стеклопакет` / `Стемалит`) of the Revit wall layer nearest to it within 2.5 m (the F05 ground
+  wall stands 2.1 m behind its inset). `wintex --cw` joins touching coplanar faces into one wall (97 faces -> 60 walls:
+  11 small `CWs_`, 36 large `CW_`, 13 F05 `CF_`) and draws each distinct wall from its own Revit panels in the 05 / 06
+  tiles (`pattern: elevations`, shared `finish_painter`); 4 faces without Revit panels (Glazing 10-13, 2.2 m) get a 1 m
+  grid with transoms at the Revit transom levels. UVs are explicit per wall box (no grid cuts; only the shared 4 m
+  max-quad-side split).
+- Result: 31 377 triangles (r4: 32 073); max vertex move 0.0 m; UV overflow 0; V006 PASS; xView per object PASS;
+  readback ok. NPM density: 05 ~133 px/m, 06 ~84 px/m. Glazed doors inside the F05 walls read as RAL 7016 profile.
+- Evidence: `step4-uv-atlas-v001/curtain-walls-v001/sok-curtain-walls-v001.png` + `.pdf` (Revit | before | after
+  close-ups of a small, a large and an F05 wall; F05 / F01 / F04 / iso before / after; atlas), master, NPM FBX, cwscan;
+  `SHA256SUMS.txt` 176 files.

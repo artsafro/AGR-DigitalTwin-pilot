@@ -1,4 +1,4 @@
-"""Sokolniki #1925 step 4 [D412, D413, D417]: finish zones, UV report table, uv_config.json, windows as texture.
+"""Sokolniki #1925 step 4 [D412, D413, D417, D418]: finish zones, UV report table, uv_config.json, windows + curtain walls as texture.
 
 Pattern: n/a | new-case: tests of jobs/sokolniki-uvk1000/hooks/inset_build.py (body_finish, ring_relation),
 inset_sheet.py (uv_rows) and uv_config.json against the shared atlas spec validator (no DCC).
@@ -186,8 +186,7 @@ def test_uv_config_window_rows_point_at_drawn_cells():
     wt = CFG['window_texture']
     cells = {n: f for f, t in CFG['finishes'].items() if t.get('pattern') == 'elevations' for n in t['cells']}
     assert set(cells) and all(r[0] in cells for r in wt['instances'])
-    assert len(wt['instances']) == 244 and wt['source']['sha256'].startswith('feaae527')
-    assert sorted({f for f in cells.values()}) == ['07_window_RAL7016', '08_door_RAL7016']
+    assert sum(1 for r in wt['instances'] if r[0][0] in 'WD') == 244 and wt['source']['sha256'].startswith('feaae527')
 
 
 def test_elevations_painter_draws_glass_panes_inside_the_profile():
@@ -204,6 +203,72 @@ def test_elevations_painter_draws_glass_panes_inside_the_profile():
     mullion = dif[400 - 1 * px, int(1.0 * px)]
     assert glass[2] > 110 and abs(int(mullion[0]) - 56) < 8
     assert abs(int(dif[100, 300][0]) - 56) < 8          # outside every cell = profile colour
+
+
+# ------------------------------------------------ #1925 r5 [D418]: curtain walls drawn by their Revit panels
+def _cw(fin, c, box, panes):
+    return {'obj': 'G', 'i': int(c[0]), 'finish': fin, 'c': c, 'r': [1.0, 0.0], 'box': box, 'panes': panes}
+
+
+def test_cw_panes_clip_to_the_face_and_drop_slivers():
+    box = [-1.0, 1.0, 0.0, 3.0]
+    panes = [[-0.95, -0.05, 0.05, 2.95], [0.05, 0.95, 0.05, 2.95], [0.98, 1.9, 0.05, 2.95], [-1.9, -0.95, 0.0, 3.0]]
+    assert ib.cw_panes(box, panes) == [[0.05, 0.95, 0.05, 2.95], [1.05, 1.95, 0.05, 2.95]]
+
+
+def test_cw_grid_has_about_one_metre_mullions_and_transoms_at_the_levels():
+    p = ib.cw_grid([0.0, 4.1, 0.0, 9.0], [3.0, 6.0, 9.5], 1.0, 0.05)
+    xs = sorted({(a, b) for a, b, _, _ in p})
+    zs = sorted({(c, d) for _, _, c, d in p})
+    assert len(xs) == 4 and len(zs) == 3 and len(p) == 12
+    assert xs[0] == pytest.approx((0.025, 1.0), abs=1e-3) and zs[1] == pytest.approx((3.025, 5.975), abs=1e-3)
+
+
+def test_wintex_curtain_walls_small_like_windows_large_on_the_revit_grid():
+    fin = '06_cw_stick_RAL7016'
+    small = [[0.05, 0.95, 0.05, 2.95]]
+    big = [[x + 0.025, x + 0.875, z + 0.025, z + 2.875] for x in (0.0, 0.9, 1.8) for z in (0.0, 2.9)]
+    faces = [_cw(fin, [0.0, 0.0], [-0.5, 0.5, 0.0, 3.0], [[a - 0.5, b - 0.5, c, d] for a, b, c, d in small]),
+             _cw(fin, [5.0, 0.0], [-0.5, 0.5, 0.0, 3.0], [[a - 0.5, b - 0.5, c, d] for a, b, c, d in small]),
+             _cw(fin, [9.0, 0.0], [-1.35, 1.35, 0.0, 5.8], [[a - 1.35, b - 1.35, c, d] for a, b, c, d in big]),
+             _cw(fin, [20.0, 0.0], [-2.0, 2.0, 0.0, 5.8], [])]
+    out = ib.wintex({'a': W1}, _cfg(), cw=faces)
+    t = out['finishes'][fin]
+    assert t['pattern'] == 'elevations'
+    assert set(t['cells']) == {'CWs_1.0x3.0', 'CW_2.7x5.8', 'CW_4.0x5.8', '_face'}
+    assert t['cells']['CWs_1.0x3.0']['instances'] == 2 and t['cells']['CWs_1.0x3.0']['panes'] == small
+    assert len(t['cells']['CW_2.7x5.8']['panes']) == 6
+    grid = t['cells']['CW_4.0x5.8']['panes']                       # no Revit panels: 1 m grid, transoms at 2.9
+    assert len({p[0] for p in grid}) == 4 and len({p[2] for p in grid}) == 2
+    rows = [r for r in out['window_texture']['instances'] if r[0].startswith('CW')]
+    assert [r[0] for r in rows] == ['CWs_1.0x3.0', 'CWs_1.0x3.0', 'CW_2.7x5.8', 'CW_4.0x5.8']
+    row = ib.match_window((9.0, 0.0, 2.0), (0.0, -1.0, 0.0), t['cells'], out['window_texture']['instances'], 0.6)
+    assert row[0] == 'CW_2.7x5.8'
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from tools.derive import finish_map
+    finish_map.validate_spec(out)
+
+
+def test_cw_groups_join_touching_coplanar_strips_into_one_wall():
+    fin = '06_cw_stick_RAL7016'
+    a = _cw(fin, [0.0, 0.0], [-0.5, 0.5, 0.0, 3.0], [[-0.45, 0.6, 0.05, 2.95]])
+    b = _cw(fin, [1.0, 0.0], [-0.5, 0.5, 0.0, 3.0], [[-0.4, 0.45, 0.05, 2.95]])
+    c = _cw(fin, [1.0, 0.5], [-0.5, 0.5, 0.0, 3.0], [])              # parallel, 0.5 m deeper: another wall
+    g = ib.cw_groups([a, b, c])
+    assert [x['faces'] for x in g] == [2, 1]
+    assert g[0]['box'] == [-0.5, 1.5, 0.0, 3.0]
+    assert ib.cw_panes(g[0]['box'], g[0]['panes']) == [[0.05, 1.1, 0.05, 2.95], [1.1, 1.95, 0.05, 2.95]]
+
+
+def test_uv_config_curtain_walls_are_drawn_from_revit():
+    cells = {n: f for f, t in CFG['finishes'].items() if t.get('pattern') == 'elevations' for n in t['cells']}
+    rows = [r for r in CFG['window_texture']['instances'] if r[0].startswith('C')]
+    assert sorted(set(cells.values())) == ['05_cw_structural_RAL7016', '06_cw_stick_RAL7016',
+                                           '07_window_RAL7016', '08_door_RAL7016']
+    assert len(rows) == 60 and all(r[0] in cells for r in rows)       # 97 v009 faces -> 60 Revit walls
+    assert sum(1 for r in rows if r[0].startswith('CWs')) == 11
+    assert CFG['finishes']['06_cw_stick_RAL7016']['rgb'] == CFG['finishes']['07_window_RAL7016']['rgb']   # RAL 7016
 
 
 def test_elevations_spec_refuses_overlap_and_panes_outside():
