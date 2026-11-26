@@ -1,0 +1,111 @@
+{
+ "rows": [
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\A_accepted_D\\form_v2\\detector.json",
+   "stored_verdict": "ok",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\P2_module_named_D\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 33,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\R_rejected_D\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\W_witness_D\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\direct_accepted\\form_v2\\detector.json",
+   "stored_verdict": "ok",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\direct_module\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 33,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\direct_rejected\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/ev_t_a457c1b6/control/rep1\\direct_typical\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r115-C1\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r115-C2\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r115-D1\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r115-D2\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r115-D3\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r97-B1\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  },
+  {
+   "detector": "C:/x/trainer/runs\\g22-k2-stage1-codex-r97-C2\\score\\form_v2\\detector.json",
+   "stored_verdict": "defect",
+   "items": 29,
+   "diff": {},
+   "equal": true
+  }
+ ],
+ "compared": 15,
+ "equal": 15
+}

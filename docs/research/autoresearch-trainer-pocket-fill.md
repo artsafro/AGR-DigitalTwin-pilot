@@ -82,6 +82,25 @@ Builder/scorer: `agr body --blender "C:/Program Files/Blender Foundation/Blender
   publish `inconclusive` with the exact next command. Max 1 confirm series; no new candidate variants.
 - Deterministic pipeline: reps test replay stability (paired spread of form_v2 fail count and max dev), not noise.
 
+## Amendment 1 (before the series; nothing of arm B measured yet)
+
+The first measured pair (`C:/x/ev_t_fa3712bf/pair1`, arm A only, 10 s) showed `agr trainer score` now returns
+`form_v2: error` — `FileNotFoundError: C:/x/t_563a40f7/key/heldout-key-v001.json`. The pinned G22 form-check key
+and sections (sha `843197137db10cdc` / `270e83dedbbae380`) are gone from this PC and are not on Drive (searched
+`AGR-evidence` depth 5: only the 63B copies in standing51/57, other hashes). The frozen M117 (trainer form_v2
+status) is therefore unmeasurable. Arm A's other parity held: plan rings equal D1's, `form` p95 0.0128 as D1.
+
+M117 is measured with a **parity-proved substitute** (`docs/research/trainer_pockets_r117/substitute.py`): the key
+dict = D1's stored `key_used.json` (sha `4cb3cbfcfa3d4472d7f85b84d166f4a48fa4ea25592a631fd82c0022f00af5b9`,
+written by pairs.py as `json.dump(key)`), the key sections re-extracted by the same `blender_scene.py extract` and
+zmap from the bank key FBX (sha `5b1e8d76…`, = the key's `accepted_bytes.fbx`); segment counts in box 30/36/36/30
+equal the key's `section_segments_in_box`. Parity: `detector.score` with the substitute reproduces **15/15** stored
+G22 detector rows item-by-item (status and dev_m): 7 practice runs + 8 #115 control cases (2 accepted `ok`,
+13 `defect` incl. rejected/module). Receipt `C:/x/ev_t_fa3712bf/parity.json` sha `a639c115…`.
+M117 = substitute form_v2 verdict `ok` (pass); the trainer status (`error`) is recorded alongside. Nothing else in
+the contract changes. The missing pinned key is a side finding for the trainer owner (every G22 score on this PC
+now stops at `form_v2: error`).
+
 ## Forbidden shortcuts
 
 Changing scorer tolerances, the form_v2 detector or `pairs_v1.json`; editing the key, the bank, `etalons.json`,
