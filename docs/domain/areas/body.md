@@ -7,7 +7,8 @@ Ground, derivation and packaging. Their interfaces appear only where they constr
 
 How stage 1 is built: only the lattice, `agr body PLAN NEW_OUT` (`tools/methods/body/body_lattice.py`) [D373],
 in every profile [D392]; a bad mesh is rebuilt from a fixed plan, never repaired. Older body methods cited below
-(shell, kernel prisms, VARIANTS R14) are history for the body.
+(shell, kernel prisms, VARIANTS R14) are superseded for stage 1. Sokolniki NPM body v006
+was accepted [D409] (PR #1833), satisfying the archive condition in [conflict 51](../conflicts.md).
 
 Readiness: [roadmap §4 and §7.1](../../research/capability-roadmap.md#4-coverage-matrix-upstream-main-ea7ecce)
 records BODY at **L3** through user-accepted cases, not official AGR acceptance. L0 means no

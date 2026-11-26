@@ -310,6 +310,24 @@ def test_real_search_archive_is_tracked_and_hidden(real):
     assert paths.isdisjoint(_rg(ROOT))
 
 
+@needs_rg
+def test_pre_lattice_regressions_stay_tracked_but_leave_agent_search(real):
+    historical = {"tests/test_body_contours.py", "tests/test_body_optimization.py"}
+    current = {"tools/methods/body/body_lattice.py", "tests/test_live_route_imports.py"}
+    listed = _rg(ROOT)
+    assert historical <= set(real["archive"]) & set(real["files"])
+    assert historical.isdisjoint(listed)
+    assert current <= listed
+
+
+def test_body_archive_gate_cites_accepted_real_npm_lattice_body():
+    for path in ("docs/scenarios/oks-vpm.md", "docs/domain/conflicts.md", "docs/cases.md"):
+        text = (ROOT / path).read_text(encoding="utf-8")
+        assert "v006" in text and "[D409]" in text and "#1833" in text, path
+    scenario = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
+    assert "no NPM body on a real object yet" not in scenario
+
+
 
 # --- real repository ---------------------------------------------------------------------------------------------
 

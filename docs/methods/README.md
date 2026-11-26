@@ -20,7 +20,7 @@ Our own code only: team scripts and plugins are described by their logic in `doc
 
 | Class | Status | What a variant produces |
 |---|---|---|
-| [building-body](building-body/VARIANTS.md) | **measured** (3 variants x 3 objects + source reference) | OKS body mesh (walls, slabs, roof, decor) from the sources |
+| [building-body](building-body/VARIANTS.md) | **superseded for stage 1** [D373], [D392] (3 variants x 3 objects + source reference retained) | Historical comparison only; use [the lattice body route](../domain/areas/body.md) for production |
 | [windows-glazing](windows-glazing/VARIANTS.md) | **measured** (3 variants x 3 objects + source reference) | windows, frames and glass (geometry or atlas planes) |
 | [ground-terrain](ground-terrain/VARIANTS.md) | **measured** (3 variants x cells 4 / 2 / 8 m + reference row) | Ground surface: relief, paving, kerbs, layers |
 | [ucx-collisions](ucx-collisions/VARIANTS.md) | **measured** (5 variants x 3 objects) | VPM UCX collision pieces |
