@@ -205,6 +205,33 @@ def test_npm_lite_freeze_survives_the_one_door_split(path, section_start, sectio
     assert "[D405]" in section
 
 
+def test_pipeline_has_only_one_live_oks_body_route():
+    section = _text("docs/pipeline.md").split("## Building (OKS)", 1)[1].split("\n## ", 1)[0]
+    rows = [line.strip("|").split("|") for line in section.splitlines() if line.startswith("|")]
+    body_rows = [row for row in rows if re.search(r"\bbody\b", row[1], re.I)]
+    live_rows = [row for row in body_rows if not row[2].strip().lower().startswith("historical")]
+    assert len(live_rows) == 1, live_rows
+    live = live_rows[0]
+    assert all(token in live[2] for token in ("[D373]", "[D392]")), live
+    assert "`agr body PLAN NEW_OUT`" in live[3] and "body_lattice.py" in live[3], live
+    for row in rows:
+        if any(name in row[3] for name in ("geometry/exterior.py", "`connect.py`", "build_exterior_surface.py")):
+            assert row[2].strip().lower().startswith("historical"), row
+
+
+def test_sokolniki_v006_case_credits_the_recorded_lattice_recipe():
+    recipe = _text("jobs/sokolniki-uvk1000/README.md").split("### Body v006", 1)[1].split("```", 2)[1]
+    producer, writer = recipe.splitlines()[2:4]
+    assert "volume_body.py" in producer and "--core tools/methods/body" in producer
+    assert "--config jobs/sokolniki-uvk1000/body_config_body_v006.json" in producer
+    assert "volume_body_blender.py" in writer and "<body-v006>/meshes.json" in writer
+    row = next(line for line in _text("docs/cases.md").splitlines() if line.startswith("| Sokolniki UVK 1000"))
+    chain = ("`volume_body.py`", "`meshes.json`", "`volume_body_blender.py`")
+    assert re.search(r".*".join(map(re.escape, chain)), row), row
+    assert "shared lattice core" in row and "body_lattice.py" in row
+    assert "[D409]" in row and "PR #1833" in row and "agr body" not in row
+
+
 def test_psu275_is_not_a_body_etalon():
     row = next(ln for ln in _text("docs/cases.md").splitlines() if ln.startswith("| PSU275"))
     assert "superseded by the lattice [D373]" in row
