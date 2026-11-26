@@ -1,3 +1,4 @@
+# Staged copy: move to .github/workflows/hygiene.yml (the worker token lacks `workflow` scope).
 # Pinned repo-hygiene on every PR (#1950): the same entry as scripts/hygiene.sh and the agent hooks.
 # repo-hygiene is private: set the repository variable HYGIENE_PROJECT to a clone on the runner (the pinned
 # commit is checked out there as a detached worktree); without it the step falls back to `uvx git+URL@PIN`.

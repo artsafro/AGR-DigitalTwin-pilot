@@ -155,7 +155,11 @@ def test_pin_is_a_full_commit_and_the_wiring_names_one_entry():
         assert any(entry in c and f"hook --agent {agent}" in c for c in pre)
         assert any(entry in c and f"session --agent {agent}" in c for c in start)
     assert "One door" in json.loads(hygiene.session("claude"))["hookSpecificOutput"]["additionalContext"]
-    ci = (ROOT / ".github/workflows/hygiene.yml").read_text(encoding="utf-8")
+    # The worker token cannot push .github/workflows/ (no `workflow` scope): staged for Artem to move.
+    staged = [p for p in (ROOT / ".github/workflows/hygiene.yml", ROOT / "tools/hygiene/hygiene.workflow.yml")
+              if p.is_file()]
+    assert len(staged) == 1
+    ci = staged[0].read_text(encoding="utf-8")
     assert entry in ci and "check --base" in ci
     assert "scripts/hygiene" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     profile = (ROOT / hygiene.PROFILE).read_text(encoding="utf-8")

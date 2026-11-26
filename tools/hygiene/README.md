@@ -1,7 +1,9 @@
 # tools/hygiene — pinned repo-hygiene (#1950)
 
 `artsafro/repo-hygiene` runs on the pilot from one entry, `tools/hygiene/hygiene.py`; `scripts/hygiene.sh`,
-`scripts/hygiene.ps1`, the Claude/Codex hooks and `.github/workflows/hygiene.yml` all call it.
+`scripts/hygiene.ps1`, the Claude/Codex hooks and the PR workflow all call it. The workflow is staged as
+`tools/hygiene/hygiene.workflow.yml` until someone with a `workflow`-scoped token moves it to
+`.github/workflows/hygiene.yml` (`git mv`, nothing else changes).
 
 - **Pin:** `PIN` in `hygiene.py` (a full commit, no submodule, nothing vendored). Bump it in its own PR.
 - **Profile:** `docs/architecture/hygiene-profile.yaml`, owned by the pilot (no copy in repo-hygiene is used).
