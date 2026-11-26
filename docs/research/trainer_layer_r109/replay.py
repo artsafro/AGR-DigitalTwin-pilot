@@ -26,6 +26,8 @@ WALL = 'Базовая стена '
 BOXES = {'63A': ([79.0, 61.8, -2], [121.6, 97.6, 79.2]), '63B': ([53.3, -1.4, -2], [98.4, 36.0, 62.4])}
 SCOPE = {'63A': (10.15, 47.95), '63B': (4.65, 51.90)}  # stated bands, same as #107/#108
 PARITY_63B_FAMILY_ROWS = 907
+MIN_FAMILY_GEOMETRIES = 907  # frozen: N >= 907 (superset of the 63B in-band rows)
+BUDGET_S = 600.0  # frozen: <= 10 min wall, end to end
 
 
 # ---- minimal FBX 7.x binary reader -------------------------------------------------------------------------
@@ -182,6 +184,72 @@ def blender_rows(doc):
     return out
 
 
+# ---- frozen controls, run inside every replay (r2: review r1 P1.1/P1.2) -------------------------------------
+def _box(o):
+    f = [(0, 1, 3, 2), (4, 6, 7, 5), (0, 4, 5, 1), (2, 3, 7, 6), (0, 2, 6, 4), (1, 5, 7, 3)]
+    return [[o + i for i in q] for q in f]
+
+
+def _layered():
+    m = {0: 1, 2: 3, 4: 5, 6: 7, 1: 8, 3: 9, 5: 10, 7: 11}
+    return _box(0) + [[m[i] for i in q] for q in _box(0)]
+
+
+# name: (polys, mats, expected raw evidence subset). 'b_dup_face' is the r1 counterexample: one closed cube with one
+# outer face duplicated fires raw (b) without any second solid or interface, so (b) is NOT specific to layers.
+CONTROLS = {
+    'pos_a_disjoint': (lambda: _box(0) + _box(8), lambda: [0] * 12, {'a_components': True, 'any': True}),
+    'pos_b_interface': (_layered, lambda: [0] * 12, {'b_nonmanifold': True, 'a_components': False, 'any': True}),
+    'pos_c_partition': (_layered, lambda: [0] * 6 + [1] * 6, {'c_closed_partition': True, 'any': True}),
+    'neg_painted_face': (lambda: _box(0), lambda: [1, 0, 0, 0, 0, 0],
+                         {'a_components': False, 'b_nonmanifold': False, 'c_closed_partition': False, 'any': False}),
+    'neg_clean_cube': (lambda: _box(0), lambda: [0] * 6,
+                       {'a_components': False, 'b_nonmanifold': False, 'c_closed_partition': False, 'any': False}),
+    'b_dup_face': (lambda: _box(0) + [list(_box(0)[0])], lambda: [0] * 7,
+                   {'a_components': False, 'b_nonmanifold': True, 'c_closed_partition': False, 'any': True}),
+}
+# What a raw criterion proves. A fired feature is a layer CANDIDATE, never proof of a layer or of a reachable selector.
+CRITERIA = {'a_components': 'candidate (separate solids)',
+            'b_nonmanifold': 'unvalidated (fires on a duplicated outer face, control b_dup_face)',
+            'c_closed_partition': 'candidate (closed material sub-solid)'}
+
+
+def run_controls():
+    out = {}
+    for name, (polys, mats, want) in CONTROLS.items():
+        try:
+            got = evidence(polys(), mats())
+            out[name] = {'pass': all(got.get(k) == v for k, v in want.items()), 'got': got}
+        except Exception as exc:  # a crashing detector is a failed control, not a skipped one
+            out[name] = {'pass': False, 'error': f'{type(exc).__name__}: {exc}'}
+    return out
+
+
+def decide(runs, family_geometries, family_rows_63b, controls, wall_s):
+    """Frozen verdict rule -> (hypothesis, status, reasons). Pure; tested through main()."""
+    if wall_s is None or wall_s > BUDGET_S:
+        return 'inconclusive', 'budget_stop', [f'wall {wall_s} s > {BUDGET_S:.0f} s']
+    reasons = []
+    failed = sorted(k for k in CONTROLS if not controls.get(k, {}).get('pass'))
+    if failed:
+        reasons.append('frozen controls failed or missing: ' + ','.join(failed))
+    if len(runs) != 3 or len({r['result_sha256'] for r in runs}) != 1:
+        reasons.append('census runs disagree or != 3')
+    if (family_geometries or 0) < MIN_FAMILY_GEOMETRIES:
+        reasons.append(f'N={family_geometries} < {MIN_FAMILY_GEOMETRIES}')
+    if family_rows_63b != PARITY_63B_FAMILY_ROWS:
+        reasons.append(f'63B family rows {family_rows_63b} != {PARITY_63B_FAMILY_ROWS}')
+    if reasons:
+        return 'inconclusive', 'invalid', reasons
+    m109 = [r['census'].get(FAMILY.strip(), {}).get('any', 0) for r in runs]
+    if all(m == 0 for m in m109):
+        return 'confirmed', 'complete', []
+    if all(m > 0 for m in m109):
+        return 'refuted', 'complete', []
+    return 'inconclusive', 'complete', ['M109 differs between runs']
+
+
+# ---- replay -------------------------------------------------------------------------------------------------
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
@@ -190,74 +258,97 @@ def blob(rev, path):
     return subprocess.check_output(['git', 'show', f'{rev}:{path}'], cwd=ROOT)
 
 
-def main():
-    work, commit = Path(sys.argv[1]).resolve(), sys.argv[2]
+def check_frozen(commit, work):
     script = Path(__file__).resolve()
     if len(commit) != 40 or blob(commit, script.relative_to(ROOT).as_posix()) != script.read_bytes().replace(
             b'\r\n', b'\n') or blob(commit, DUMP) != (ROOT / DUMP).read_bytes().replace(b'\r\n', b'\n'):
         raise ValueError('use the full frozen variant commit with exact replay/dump blobs')
     if not work.is_relative_to(ROOT):
         raise ValueError('output must be inside this worktree')
-    work.mkdir()
-    manifest = dict(re.findall(r'^\| `([^`]+)` \| `([0-9a-f]{64})` \|$', blob(R105, MANIFEST).decode('utf-8'), re.M))
-    pins = {EV / SOURCE: manifest[SOURCE], Path(BLENDER): manifest[BLENDER]}
+
+
+def verify_pins(pins, msg='pinned input changed'):
     for p, h in pins.items():
         if sha(p) != h:
-            raise ValueError(f'pinned input mismatch: {p}')
-    t0 = time.monotonic()
+            raise ValueError(f'{msg}: {p}')
+
+
+def pinned_inputs():
+    manifest = dict(re.findall(r'^\| `([^`]+)` \| `([0-9a-f]{64})` \|$', blob(R105, MANIFEST).decode('utf-8'), re.M))
+    pins = {EV / SOURCE: manifest[SOURCE], Path(BLENDER): manifest[BLENDER]}
+    verify_pins(pins, 'pinned input mismatch')
+    return pins
+
+
+def read_source(pins):
     data = (EV / SOURCE).read_bytes()
     if hashlib.sha256(data).hexdigest() != pins[EV / SOURCE]:
         raise ValueError('source changed while reading')
+    return data
+
+
+def blender_secondary(work, pins, timeout):
+    """-> (M109-B rows, blender wall s, dump sha); (None, None, None) when the remaining budget runs out."""
+    staged = work / 'source.fbx'
+    shutil.copyfile(EV / SOURCE, staged)
+    out = work / 'layer_dump.json'
+    s = time.monotonic()
+    try:
+        proc = subprocess.run([BLENDER, '-b', '--factory-startup', '--python', str(ROOT / DUMP), '--', str(staged),
+                               str(out)], capture_output=True, text=True, encoding='utf-8', errors='replace',
+                              timeout=max(1.0, timeout))
+    except subprocess.TimeoutExpired:
+        return None, None, None
+    finally:
+        staged.unlink()
+    blender_s = time.monotonic() - s
+    doc = json.loads(out.read_text(encoding='utf-8')) if out.exists() else None
+    if proc.returncode or doc is None or doc['sha256'] != pins[EV / SOURCE]:
+        raise RuntimeError(f'blender dump failed rc={proc.returncode}: {proc.stderr[-400:]}')
+    return blender_rows(doc), blender_s, sha(out)
+
+
+def main():
+    work, commit = Path(sys.argv[1]).resolve(), sys.argv[2]
+    check_frozen(commit, work)
+    work.mkdir()
+    t0 = time.monotonic()
+    pins = pinned_inputs()
+    controls = run_controls()
+    data = read_source(pins)
     runs = []
     for i in range(3):
         s = time.monotonic()
         res = census(data)
         runs.append({'run': i + 1, 'wall_s': time.monotonic() - s, 'result_sha256': hashlib.sha256(
             json.dumps(res, sort_keys=True, ensure_ascii=False).encode()).hexdigest(), 'census': res})
-    staged = work / 'source.fbx'
-    shutil.copyfile(EV / SOURCE, staged)
-    out = work / 'layer_dump.json'
-    s = time.monotonic()
-    proc = subprocess.run([BLENDER, '-b', '--factory-startup', '--python', str(ROOT / DUMP), '--', str(staged),
-                           str(out)], capture_output=True, text=True, encoding='utf-8', errors='replace',
-                          timeout=480)
-    blender_s = time.monotonic() - s
-    staged.unlink()
-    doc = json.loads(out.read_text(encoding='utf-8')) if out.exists() else None
-    if proc.returncode or doc is None or doc['sha256'] != pins[EV / SOURCE]:
-        raise RuntimeError(f'blender dump failed rc={proc.returncode}: {proc.stderr[-400:]}')
-    brows = blender_rows(doc)
-    for p, h in pins.items():
-        if sha(p) != h:
-            raise ValueError(f'pinned input changed: {p}')
-    agree = len({r['result_sha256'] for r in runs}) == 1
+    brows, blender_s, dump_sha = blender_secondary(work, pins, BUDGET_S - (time.monotonic() - t0))
+    verify_pins(pins)
+    wall = time.monotonic() - t0
     fam = runs[0]['census'].get(FAMILY.strip(), {})
+    hypothesis, status, reasons = decide(runs, fam.get('geometries'), (brows or {}).get('63B', {}).get('family_rows'),
+                                         controls, wall if brows is not None else None)
     m109 = [r['census'].get(FAMILY.strip(), {}).get('any', 0) for r in runs]
-    parity = brows['63B'].get('family_rows') == PARITY_63B_FAMILY_ROWS
     real_positive = sorted(k for k, v in runs[0]['census'].items() if v.get('any'))
-    if not (agree and parity and fam.get('geometries', 0) >= 1):
-        verdict = 'inconclusive'
-    elif all(m == 0 for m in m109):
-        verdict = 'confirmed'
-    elif all(m > 0 for m in m109):
-        verdict = 'refuted'
-    else:
-        verdict = 'inconclusive'
-    receipt = {'hypothesis': verdict, 'status': 'complete', 'variant_commit': commit,
-               'wall_s': time.monotonic() - t0, 'blender_wall_s': blender_s,
+    receipt = {'hypothesis': hypothesis, 'status': status, 'reasons': reasons, 'variant_commit': commit,
+               'claim_scope': 'absence/presence of the three measured raw features only; a fired feature is a '
+                              'layer candidate, never proof of a layer; selector reachability is not measured',
+               'selector_reachable': 'not_measured', 'criteria': CRITERIA, 'controls': controls,
+               'wall_s': wall, 'budget_s': BUDGET_S, 'blender_wall_s': blender_s,
                'M109_family_layer_evidence': {'median': statistics.median(m109), 'runs': m109,
                                               'family_geometries': fam.get('geometries'), 'family': fam},
-               'M109B_blender_rows': brows, 'parity_63B_family_rows': parity, 'runs_agree': agree,
-               'real_source_positive_families': real_positive or 'not_exercised',
+               'M109B_blender_rows': brows, 'real_source_positive_families': real_positive or 'not_exercised',
                'census_runs': [{k: v for k, v in r.items() if k != 'census'} for r in runs],
                'census': runs[0]['census'], 'inputs': {p.as_posix(): h for p, h in pins.items()},
-               'r105_manifest': f'{R105}:{MANIFEST}', 'layer_dump_sha256': sha(out),
-               'replay_sha256_git_lf': hashlib.sha256(script.read_bytes().replace(b'\r\n', b'\n')).hexdigest()}
+               'r105_manifest': f'{R105}:{MANIFEST}', 'layer_dump_sha256': dump_sha,
+               'replay_sha256_git_lf': hashlib.sha256(
+                   Path(__file__).resolve().read_bytes().replace(b'\r\n', b'\n')).hexdigest()}
     (work / 'receipt.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + '\n', encoding='utf-8',
                                        newline='\n')
-    print(json.dumps({k: receipt[k] for k in ('hypothesis', 'wall_s', 'M109_family_layer_evidence',
-                                              'M109B_blender_rows', 'real_source_positive_families')},
-                     ensure_ascii=True))
+    print(json.dumps({k: receipt[k] for k in ('hypothesis', 'status', 'reasons', 'wall_s',
+                                              'M109_family_layer_evidence', 'M109B_blender_rows',
+                                              'real_source_positive_families')}, ensure_ascii=True))
+    return receipt
 
 
 if __name__ == '__main__':

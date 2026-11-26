@@ -3,8 +3,9 @@
 blender -b --factory-startup --python docs/research/trainer_layer_r109/layer_dump_blender.py -- SRC.fbx NEW.json
 
 `objects[*]` (name, verts, tris, z, hull) is computed exactly as tools/methods/body/revit_fbx_dump_blender.py
-(schema `revit-fbx-dump/1`, same import and object order), so the pinned r105 runner reads it unchanged and the
-S107 baseline must reproduce #107 within 1e-6 m. Each object also gets `parts`: its connected vertex components
+(schema `revit-fbx-dump/1`, same import and object order), so the pinned r105 runner could read it unchanged.
+R109 does NOT re-score S107 from this dump (not measured); it only checks the 63B `Вентфасад 250` row count
+(parity 907) in replay.py. Each object also gets `parts`: its connected vertex components
 (Revit exports a compound wall as one solid per layer; Blender's FBX import drops the unnamed per-polygon layer
 indices because the bank FBX has zero Material nodes). Per part: vertex count, world AABB, |signed volume|,
 surface area and thickness_m = 2*volume/area (slab thickness, rotation invariant). Source-only; never a key
