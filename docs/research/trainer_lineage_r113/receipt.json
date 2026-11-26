@@ -1,0 +1,547 @@
+{
+ "schema": "r113/1",
+ "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+ "inputs": {
+  "bank_sha256": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+  "trainer_py_sha256": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5",
+  "measure_py_sha256": "f0cb9f9620852f4c9b1eadb8cea3b6de53f6453b9fbfc39497cd0f601a0d26c3"
+ },
+ "tokens": {
+  "63a-stage1": [
+   "1619-body-training",
+   "1855-trainer-v0"
+  ],
+  "kpp1-v004": [
+   "1609-kpp1-lattice-posts",
+   "1609-kpp1-package-v004"
+  ],
+  "g22-k2-stage1": [
+   "1619-body-training",
+   "1855-trainer-v0"
+  ]
+ },
+ "series": [
+  {
+   "etalon": "63a-stage1",
+   "rep": 1,
+   "baseline": {
+    "M113": 5,
+    "files": [
+     "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+     "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+     "docs/research/autoresearch-trainer-gate1.md",
+     "docs/research/autoresearch-trainer-tower-id.md",
+     "docs/research/body-training-1619/README.md"
+    ],
+    "per_token": {
+     "1619-body-training": 4,
+     "1855-trainer-v0": 1
+    },
+    "removed": 8,
+    "wall_s": 19.8,
+    "witness_present": true
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1619-body-training": 0,
+     "1855-trainer-v0": 0
+    },
+    "removed": 13,
+    "wall_s": 19.4,
+    "witness_present": false
+   },
+   "changed": 5,
+   "changed_files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-training-1619/README.md"
+   ],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "kpp1-v004",
+   "rep": 1,
+   "baseline": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1609-kpp1-lattice-posts": 0,
+     "1609-kpp1-package-v004": 0
+    },
+    "removed": 3,
+    "wall_s": 18.9,
+    "witness_present": null
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1609-kpp1-lattice-posts": 0,
+     "1609-kpp1-package-v004": 0
+    },
+    "removed": 3,
+    "wall_s": 19.1,
+    "witness_present": null
+   },
+   "changed": 0,
+   "changed_files": [],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "rep": 1,
+   "baseline": {
+    "M113": 11,
+    "files": [
+     "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+     "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+     "docs/research/autoresearch-trainer-gate1.md",
+     "docs/research/autoresearch-trainer-tower-id.md",
+     "docs/research/body-mesh-method.md",
+     "jobs/POLY63-A/README.md",
+     "jobs/POLY63-A/stage2-1619/README.md",
+     "jobs/POLY63-B/REPORT.md",
+     "jobs/POLY63-B/sources.json",
+     "jobs/POLY63-B/stage2/README.md",
+     "jobs/POLY63-C/skeleton.json"
+    ],
+    "per_token": {
+     "1619-body-training": 10,
+     "1855-trainer-v0": 1
+    },
+    "removed": 11,
+    "wall_s": 20.9,
+    "witness_present": null
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1619-body-training": 0,
+     "1855-trainer-v0": 0
+    },
+    "removed": 22,
+    "wall_s": 19.4,
+    "witness_present": null
+   },
+   "changed": 11,
+   "changed_files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-mesh-method.md",
+    "jobs/POLY63-A/README.md",
+    "jobs/POLY63-A/stage2-1619/README.md",
+    "jobs/POLY63-B/REPORT.md",
+    "jobs/POLY63-B/sources.json",
+    "jobs/POLY63-B/stage2/README.md",
+    "jobs/POLY63-C/skeleton.json"
+   ],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "63a-stage1",
+   "rep": 2,
+   "baseline": {
+    "M113": 5,
+    "files": [
+     "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+     "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+     "docs/research/autoresearch-trainer-gate1.md",
+     "docs/research/autoresearch-trainer-tower-id.md",
+     "docs/research/body-training-1619/README.md"
+    ],
+    "per_token": {
+     "1619-body-training": 4,
+     "1855-trainer-v0": 1
+    },
+    "removed": 8,
+    "wall_s": 19.5,
+    "witness_present": true
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1619-body-training": 0,
+     "1855-trainer-v0": 0
+    },
+    "removed": 13,
+    "wall_s": 19.6,
+    "witness_present": false
+   },
+   "changed": 5,
+   "changed_files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-training-1619/README.md"
+   ],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "kpp1-v004",
+   "rep": 2,
+   "baseline": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1609-kpp1-lattice-posts": 0,
+     "1609-kpp1-package-v004": 0
+    },
+    "removed": 3,
+    "wall_s": 18.8,
+    "witness_present": null
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1609-kpp1-lattice-posts": 0,
+     "1609-kpp1-package-v004": 0
+    },
+    "removed": 3,
+    "wall_s": 18.5,
+    "witness_present": null
+   },
+   "changed": 0,
+   "changed_files": [],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "rep": 2,
+   "baseline": {
+    "M113": 11,
+    "files": [
+     "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+     "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+     "docs/research/autoresearch-trainer-gate1.md",
+     "docs/research/autoresearch-trainer-tower-id.md",
+     "docs/research/body-mesh-method.md",
+     "jobs/POLY63-A/README.md",
+     "jobs/POLY63-A/stage2-1619/README.md",
+     "jobs/POLY63-B/REPORT.md",
+     "jobs/POLY63-B/sources.json",
+     "jobs/POLY63-B/stage2/README.md",
+     "jobs/POLY63-C/skeleton.json"
+    ],
+    "per_token": {
+     "1619-body-training": 10,
+     "1855-trainer-v0": 1
+    },
+    "removed": 11,
+    "wall_s": 19.7,
+    "witness_present": null
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1619-body-training": 0,
+     "1855-trainer-v0": 0
+    },
+    "removed": 22,
+    "wall_s": 19.3,
+    "witness_present": null
+   },
+   "changed": 11,
+   "changed_files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-mesh-method.md",
+    "jobs/POLY63-A/README.md",
+    "jobs/POLY63-A/stage2-1619/README.md",
+    "jobs/POLY63-B/REPORT.md",
+    "jobs/POLY63-B/sources.json",
+    "jobs/POLY63-B/stage2/README.md",
+    "jobs/POLY63-C/skeleton.json"
+   ],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "63a-stage1",
+   "rep": 3,
+   "baseline": {
+    "M113": 5,
+    "files": [
+     "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+     "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+     "docs/research/autoresearch-trainer-gate1.md",
+     "docs/research/autoresearch-trainer-tower-id.md",
+     "docs/research/body-training-1619/README.md"
+    ],
+    "per_token": {
+     "1619-body-training": 4,
+     "1855-trainer-v0": 1
+    },
+    "removed": 8,
+    "wall_s": 20.5,
+    "witness_present": true
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1619-body-training": 0,
+     "1855-trainer-v0": 0
+    },
+    "removed": 13,
+    "wall_s": 19.0,
+    "witness_present": false
+   },
+   "changed": 5,
+   "changed_files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-training-1619/README.md"
+   ],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "kpp1-v004",
+   "rep": 3,
+   "baseline": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1609-kpp1-lattice-posts": 0,
+     "1609-kpp1-package-v004": 0
+    },
+    "removed": 3,
+    "wall_s": 18.2,
+    "witness_present": null
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1609-kpp1-lattice-posts": 0,
+     "1609-kpp1-package-v004": 0
+    },
+    "removed": 3,
+    "wall_s": 18.9,
+    "witness_present": null
+   },
+   "changed": 0,
+   "changed_files": [],
+   "route_critical_removed": []
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "rep": 3,
+   "baseline": {
+    "M113": 11,
+    "files": [
+     "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+     "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+     "docs/research/autoresearch-trainer-gate1.md",
+     "docs/research/autoresearch-trainer-tower-id.md",
+     "docs/research/body-mesh-method.md",
+     "jobs/POLY63-A/README.md",
+     "jobs/POLY63-A/stage2-1619/README.md",
+     "jobs/POLY63-B/REPORT.md",
+     "jobs/POLY63-B/sources.json",
+     "jobs/POLY63-B/stage2/README.md",
+     "jobs/POLY63-C/skeleton.json"
+    ],
+    "per_token": {
+     "1619-body-training": 10,
+     "1855-trainer-v0": 1
+    },
+    "removed": 11,
+    "wall_s": 19.2,
+    "witness_present": null
+   },
+   "candidate": {
+    "M113": 0,
+    "files": [],
+    "per_token": {
+     "1619-body-training": 0,
+     "1855-trainer-v0": 0
+    },
+    "removed": 22,
+    "wall_s": 22.0,
+    "witness_present": null
+   },
+   "changed": 11,
+   "changed_files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-mesh-method.md",
+    "jobs/POLY63-A/README.md",
+    "jobs/POLY63-A/stage2-1619/README.md",
+    "jobs/POLY63-B/REPORT.md",
+    "jobs/POLY63-B/sources.json",
+    "jobs/POLY63-B/stage2/README.md",
+    "jobs/POLY63-C/skeleton.json"
+   ],
+   "route_critical_removed": []
+  }
+ ],
+ "stored_r111": [
+  {
+   "run": "63a-stage1-codex-r111-1",
+   "M113": 5,
+   "files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-training-1619/README.md"
+   ]
+  },
+  {
+   "run": "63a-stage1-codex-r111-2",
+   "M113": 5,
+   "files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-training-1619/README.md"
+   ]
+  },
+  {
+   "run": "63a-stage1-codex-r111-3",
+   "M113": 5,
+   "files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-training-1619/README.md"
+   ]
+  },
+  {
+   "run": "g22-k2-stage1-codex-r111-1",
+   "M113": 11,
+   "files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-mesh-method.md",
+    "jobs/POLY63-A/README.md",
+    "jobs/POLY63-A/stage2-1619/README.md",
+    "jobs/POLY63-B/REPORT.md",
+    "jobs/POLY63-B/sources.json",
+    "jobs/POLY63-B/stage2/README.md",
+    "jobs/POLY63-C/skeleton.json"
+   ]
+  },
+  {
+   "run": "g22-k2-stage1-codex-r111-2",
+   "M113": 11,
+   "files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-mesh-method.md",
+    "jobs/POLY63-A/README.md",
+    "jobs/POLY63-A/stage2-1619/README.md",
+    "jobs/POLY63-B/REPORT.md",
+    "jobs/POLY63-B/sources.json",
+    "jobs/POLY63-B/stage2/README.md",
+    "jobs/POLY63-C/skeleton.json"
+   ]
+  },
+  {
+   "run": "g22-k2-stage1-codex-r111-3",
+   "M113": 11,
+   "files": [
+    "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+    "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+    "docs/research/autoresearch-trainer-gate1.md",
+    "docs/research/autoresearch-trainer-tower-id.md",
+    "docs/research/body-mesh-method.md",
+    "jobs/POLY63-A/README.md",
+    "jobs/POLY63-A/stage2-1619/README.md",
+    "jobs/POLY63-B/REPORT.md",
+    "jobs/POLY63-B/sources.json",
+    "jobs/POLY63-B/stage2/README.md",
+    "jobs/POLY63-C/skeleton.json"
+   ]
+  },
+  {
+   "run": "kpp1-v004-codex-r111-1",
+   "M113": 0,
+   "files": []
+  },
+  {
+   "run": "kpp1-v004-codex-r111-2",
+   "M113": 0,
+   "files": []
+  },
+  {
+   "run": "kpp1-v004-codex-r111-3",
+   "M113": 0,
+   "files": []
+  }
+ ],
+ "perturb": {
+  "p1_backslash": {
+   "etalon": "63a-stage1",
+   "expected_caught": true,
+   "candidate_caught": true,
+   "baseline_caught": false,
+   "ok": true
+  },
+  "p2_upper": {
+   "etalon": "63a-stage1",
+   "expected_caught": true,
+   "candidate_caught": true,
+   "baseline_caught": false,
+   "ok": true
+  },
+  "p3_sibling": {
+   "etalon": "63a-stage1",
+   "expected_caught": false,
+   "candidate_caught": false,
+   "baseline_caught": false,
+   "ok": true
+  },
+  "p4_repo_folder": {
+   "etalon": "63a-stage1",
+   "expected_caught": false,
+   "candidate_caught": false,
+   "baseline_caught": false,
+   "ok": true
+  },
+  "p5_kpp1_for_kpp1": {
+   "etalon": "kpp1-v004",
+   "expected_caught": true,
+   "candidate_caught": true,
+   "baseline_caught": false,
+   "ok": true
+  },
+  "p5_kpp1_for_63a": {
+   "etalon": "63a-stage1",
+   "expected_caught": false,
+   "candidate_caught": false,
+   "baseline_caught": false,
+   "ok": true
+  }
+ },
+ "first_pair_s": 45.5,
+ "derived_cap_s": 2047.9,
+ "inputs_post": {
+  "bank_sha256": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+  "trainer_py_sha256": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5"
+ },
+ "wall_s": 470.7,
+ "run_status": "finished"
+}

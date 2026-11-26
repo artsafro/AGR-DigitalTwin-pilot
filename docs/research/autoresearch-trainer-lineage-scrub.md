@@ -88,3 +88,51 @@ cards' files; deselecting tests; changing tokens after the first measurement.
 **Replay.** `uv run --frozen python docs/research/trainer_lineage_r113/measure.py --out C:/x/ev_t_70d0913e/r113-NEW`
 from this branch (new output dir). Inputs pinned: head `7762dcfe` (git object), bank and `trainer.py` SHA-256
 checked against the receipt before measuring; stored #111 trees read-only.
+
+## Result — H113 confirmed for the practice-tree pointer surface (OBSERVE, no product change)
+
+**Кратко (RU).** Гипотеза **подтверждена** для статической поверхности побега. В дереве тренажёра на голове
+7762dcfe остаются файлы, называющие папки принятой линии: **63A — 5 файлов, G22 — 11, KPP1 — 0** (3/3 повтора,
+разброс 0; те же 5/11/0 в девяти реальных деревьях прогонов #111). С токенами линии в чистке — **0/0/0** в 3/3
+повторах; файл, через который сбежал агент 63A r111-1 (`docs/research/body-training-1619/README.md`), удалён 3/3;
+файлов маршрута (AGENTS, docs/agents, routes, docs/domain, tools, …) не удалено ни одного. Отложенный G22
+задействован (11 изменённых файлов), KPP1 — `not_exercised` (у него таких файлов нет: `jobs/KPP1` уже скрыт).
+Что **не измерено**: доля побегов у живых агентов (папка `G:/Мой диск/AGR-evidence/` остаётся доступной для
+листинга и без указателя) и прохождение `artifact`. Код продукта, банк и ledger не менялись; PR нет.
+
+Run `C:/x/ev_t_70d0913e/r113-1`, status `finished`, wall 470.7 s (first 63A pair 45.5 s, derived cap 2047.9 s).
+Measured harness = committed `404bffa2` bytes (SHA-256 `f0cb9f96…0d26c3`). Inputs pre = post: bank
+`016aab0c…36635`, `trainer.py` `16fd8edb…aa4b5`. Tokens actually derived: 63A/G22 `1619-body-training`,
+`1855-trainer-v0`; KPP1 `1609-kpp1-package-v004`, `1609-kpp1-lattice-posts` (a rejected version's folder).
+
+| Etalon | role | baseline M113 median [min,max] | candidate M113 | changed (extra removed) | route-critical removed | witness |
+|---|---|---:|---:|---:|---:|---|
+| 63a-stage1 | tuning + trigger | 5 [5,5] | 0 [0,0] | 5 each rep | 0 | present → removed 3/3 |
+| g22-k2-stage1 | held-out | 11 [11,11] | 0 [0,0] | 11 each rep | 0 | — |
+| kpp1-v004 | held-out | 0 [0,0] | 0 [0,0] | 0 → `not_exercised` | not measured | — |
+
+- Baseline files, 63A: `docs/research/body-training-1619/README.md`, `docs/research/autoresearch-trainer-gate1.md`
+  (names the bank folder `1855-trainer-v0`), `docs/research/autoresearch-trainer-tower-id.md`,
+  `docs/research/autoresearch-body-mesh-quality-harness/{calibrate.py,r0.json}`. G22 adds
+  `docs/research/body-mesh-method.md` and six `jobs/POLY63-*` files (not hidden for G22).
+- Parity: stored product trees of #111 (`C:/x/trainer/runs/*-codex-r111-*/wt`) give the same M113 as the fresh
+  baseline: 63A 5/5/5, G22 11/11/11, KPP1 0/0/0 — the baseline arm reproduces the real practice scrub.
+- Perturbations (synthetic, all as expected): p1 backslash caught, p2 upper case caught, p3 sibling evidence
+  folder not caught, p4 repo folder name not caught, p5 KPP1 key folder caught for KPP1 and not for 63A.
+  Product scrub caught none of p1-p5.
+- Clean / injected / not measured: clean = the 3x3 fresh trees + 9 stored trees; injected = p1-p5 only;
+  not measured = KPP1 collateral, live escape rate, live `artifact` passage, any step after `artifact`.
+
+**Hypothesis result: confirmed** (static pointer surface only). **Would-change** (for the trainer owner, normal PR +
+review): a bank field `lineage` (accepted-lineage evidence folders per etalon) plus generic key/rejected evidence
+top folders added to `scan_tokens`; then the live check below. Replay limited to hosts with the stored #111 trees
+for the parity line; the 3x3 fresh series needs only this repo at `7762dcfe`.
+
+Next command (live check, not run here; ~2M input tokens and 2-5 min per run): build a scratch bank whose
+`63a-stage1.hidden_repo_paths` adds the five 63A files above, then three fresh runs
+`uv run agr trainer --bank <scratch bank> run 63a-stage1 --lane codex --out C:/x/trainer/runs/63a-stage1-codex-r113-L<k>`
+and count escape commands to `AGR-evidence/1619-body-training` (r111 baseline: 1/3 escaped).
+
+Affected tests: none changed (harness + docs only); `tests/tools/test_trainer.py` run as a regression guard.
+
+Full suite: deferred to merge batch (rule 68).
