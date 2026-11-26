@@ -45,3 +45,32 @@ The repinned G22 scoring key (#1970) does not itself provide a new build input.
   fake `passed`, or edits to anyone else's files. Dry-run must not create `--out`.
   Not measured: native source hashes or geometric equivalence, calibration of
   model quality, isolation, artifact passage, and cold-agent adoption.
+
+## Result
+
+**RU:** H124 опровергнута: ни один из 6 held-out не допущен опубликованным
+банком (0/6 во всех трёх обходах). У 63B и 63C тот же объявленный хеш FBX,
+что и у обучающего 63A. TEC26 имеет непересекающийся объявленный хеш, но
+банк содержит только альбом и не допускает прогон. У ELV, Сокольников и
+Ватутино независимость не измерена: нет полного набора хешей.
+`artifact` остаётся первым кандидатом на улучшение, но его прохождение
+здесь не измерялось. KEEP нет, производственный код и банк не менялись.
+
+- Initial frozen revision `5d459392d989328db8cf490b9f79f95486057342`:
+  0/0/0, wall 20.382 s. Post-lint robustness revision
+  `b127cae737f0bbeb4d0358a5c22b6532969d4ccd`: 0/0/0, median 0, spread 0,
+  17.742 s (sweeps 5.507/5.615/6.483 s). The explicit missing-tuning-hash
+  refusal did not change any of 27 verdicts. Raw final receipt:
+  `docs/research/trainer_holdout_sources_r124.jsonl`.
+- Native positive controls: 9/9 tuning admissions; refusals: 18/18 held-out
+  calls, all unscheduled. No output directories created. The renamed, new,
+  and missing fake metadata controls respectively produced 1, 0, and null.
+- Affected tests: `uv run --offline pytest -q tests/tools/test_trainer.py tests/tools/test_trainer_ab.py tests/test_trainer_inspect.py` — 154 passed, 1 warning.
+- Full suite: deferred to merge batch (rule 68). `repo_guards.sh` did not
+  complete within 130 s; duplicate guard ran, guard-test section started.
+- Next: bank owner #1861 should bind an independent, scheduled input set with
+  accepted/rejected calibration (e.g. Sokolniki, if the missing sources and
+  labels are resolved); then replay #1917/#1928 without double-counting #123
+  artifacts. Keep 63B as a same-scene transfer fixture, not as evidence of
+  independent-source transfer. Do not run cold with open isolation gaps
+  #1973/#1974.
