@@ -309,3 +309,40 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py wintex <winscan.json> 
 - Evidence: `step4-uv-atlas-v001/curtain-walls-v001/sok-curtain-walls-v001.png` + `.pdf` (Revit | before | after
   close-ups of a small, a large and an F05 wall; F05 / F01 / F04 / iso before / after; atlas), master, NPM FBX, cwscan;
   `SHA256SUMS.txt` 176 files.
+
+## Step 5 — NPM delivery package v001 ([D419])
+
+Artem 2026-11-26 ~21:40 («Да», #1966): the NPM package on the accepted master of step 4 (curtain-walls-v001,
+`master_v001.blend` sha `013cf06b…`). The joined `*_Main` failed xView NPM (953 faces / 3 896 vertices): insets touch
+the body. Delivery copy only, the accepted master is not edited:
+
+```
+blender44 ... hooks/inset_write_blender.py -- dump <cw-v001>/uv/master_v001.blend <d>/dump_v001.json
+uv run python tools/derive/inset_offset.py <d>/dump_v001.json <d>/offset_plan_6mm.json --target-mm 6 --weld-anchor
+blender44 ... hooks/inset_write_blender.py -- offset <cw-v001>/uv/master_v001.blend <d>/offset_plan_6mm.json <d>/master_v002.blend
+uv run agr vpm-to-npm --blender blender51 jobs/sokolniki-uvk1000/uv_config.json <d>/atlas --master <d>/master_v002.blend --then-npm <d>/master_v002.blend jobs/sokolniki-uvk1000/uv_config.json <d>/atlas <d>/npm/fbx 0000
+uv run dt derive --blender blender51 npm <d>/master_v002.blend jobs/sokolniki-uvk1000/uv_config.json <d>/atlas <d>/work/fbx 0000 --keep-quads   (quad WORK FBX)
+uv run dt qa xview <fbx> --out <xview.json> --profile NPM          (delivery + work FBX)
+uv run agr package-npm <d>/pkg --allow-incomplete                 (no Ground: diagnostic ZIP)
+uv run agr build-manifest build <zip> --master oks=<d>/master_v002.blend --derivation <d>/npm/derivation --transform-name "..." --blender blender51
+uv run agr validate <zip> --profile npm --scene --json --export-meta <v013.json> --master oks=<d>/master_v002.blend --npm-atlas <fbx>=<d>/atlas/npm_atlas.json
+uv run agr validate <zip> --profile npm --scene --json --export-meta <v013.json> --master <work_quads.fbx>     (V003)
+```
+
+- `inset_offset.py` (shared, pure numpy over the xView kernel): body volumes (components with finishes 01/02/03) are
+  anchors; every inset component moves rigidly off the face it touches until the planes are 6 mm apart (NPM xView
+  face_m = 5 mm: a 2 mm offset leaves 341 inset-body + 40 inset-inset face pairs); a component pushed both ways moves
+  per vertex (F05 outer glazing shortened at its ends, 1 cage post thinned), a mesh held between cage frames is
+  pinned and the frames move; exactly coincident body-seam vertices are welded (20, no move, no bow-tie).
+- Result: 382 insets moved (windows 228 x 6 mm, curtain strips 47 x 6-18 mm, doors 19, decor 38 x 1-9 mm, frames 42,
+  fins 4, deck 4), max 18 mm; 31 377 + 120 glass triangles unchanged; pixel diff on the review cameras <= 0.014 %;
+  xView delivery FBX 89 faces / 20 vertices, work FBX 52 / 20 - all at the body-volume seams (D|N +13.50: 0.9 mm
+  level mismatch and coplanar overlap in the accepted body v006), 0 inset pairs.
+- `agr validate`: V002 / V005 / V006 / V012 pass; V001 fail (no Ground, site placement out of scope); V003 fail on the
+  work FBX (123 n-gons of the accepted body, 1 462 T-junctions review); V004 fail (49 887 self-intersections, before
+  47 965: the pergola cage crossing itself 39 176, insets set into the body; 7 seam pairs < 5 mm). SINTEZ / Max xView
+  not run (Max closed by day). Fences, UCX, GeoJSON: not in this package (README of the package).
+- Evidence: `G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step5-npm-package-v001/` (ZIP, work FBX, build manifest,
+  master v002 + plans, xView / validate / self-intersection reports, before / after / diff renders, Russian summary
+  `svodka-npm-package-v001.md` + `sok-npm-package-v001.png`; `SHA256SUMS.txt` 58 files, manifest `de36883e…`).
+  Waiting for Artem's acceptance in 3ds Max (quads) and his answers on the body seams, V004 and UCX / GeoJSON.
