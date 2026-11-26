@@ -109,7 +109,7 @@ def make_user_vjoints(t, size):
 
 
 def make_elevations(t, size):
-    """Trim sheet of whole window / door elevations (#1925 [D416], windows shown as texture): `cells` maps a name
+    """Trim sheet of whole window / door elevations (#1925 [D417], windows shown as texture): `cells` maps a name
     to {box: [u0, v0, u1, v1] tile metres (v up), size: [w, h] metres, panes: [[x0, x1, z0, z1], ...] metres from
     the drawing's lower-left}. Everything that is not a pane is profile (frame, mullion, transom, sash, leaf) in
     `rgb`; panes are `glass_rgb`, lighter at the top, with a dark 12 mm gasket line. Deterministic."""

@@ -282,3 +282,29 @@ def test_elevations_spec_refuses_overlap_and_panes_outside():
     t['cells'] = {'a': {'box': [0, 0, 2, 2], 'size': [1, 1], 'panes': [[0.5, 1.5, 0, 1]]}}
     with pytest.raises(ValueError, match='outside'):
         finish_map.validate_elevations('x', t)
+
+
+PR_FILES_1925 = (
+    "jobs/sokolniki-uvk1000/README.md",
+    "jobs/sokolniki-uvk1000/uv_config.json",
+    "jobs/sokolniki-uvk1000/hooks/inset_build.py",
+    "jobs/sokolniki-uvk1000/hooks/inset_sheet.py",
+    "jobs/sokolniki-uvk1000/hooks/inset_write_blender.py",
+    "tests/test_uv_compaction_1380.py",
+    "tools/derive/finish_map.py",
+    "tools/derive/finish_painter.py",
+)
+
+
+STALE_ID = "D" + "416"  # main's #1951 batch-5b row; spelled split so the PR diff never cites it
+
+
+@pytest.mark.parametrize("rel", PR_FILES_1925)
+def test_no_stale_d416_citation_after_renumber_to_d417(rel):
+    """This card's windows decision was renumbered to [D417] (rule 42)."""
+    assert f"[{STALE_ID}]" not in (ROOT / rel).read_text(encoding="utf-8")
+
+
+def test_d416_row_is_not_this_cards_decision():
+    rows = [l for l in (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines() if l.startswith(f"| {STALE_ID} |")]
+    assert len(rows) == 1 and "#1925" not in rows[0]

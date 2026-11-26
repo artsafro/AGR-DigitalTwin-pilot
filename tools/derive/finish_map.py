@@ -24,7 +24,7 @@ def load(path):
 
 
 def validate_elevations(name, t):
-    """`pattern: elevations` (#1925 [D416]): drawings inside the tile, not overlapping, panes inside each drawing."""
+    """`pattern: elevations` (#1925 [D417]): drawings inside the tile, not overlapping, panes inside each drawing."""
     rgb = t.get("glass_rgb")
     if not (isinstance(rgb, list) and len(rgb) == 3 and all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):
         raise ValueError(f"finish {name}: elevations need glass_rgb as three ints 0..255, got {rgb}")
