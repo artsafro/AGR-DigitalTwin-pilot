@@ -727,7 +727,10 @@ def main(argv=None) -> int:
         guard_cli([args.dxf] + ([args.map_file] if args.map_file is not None else []), outs)
         dxf_sha = _sha256(args.dxf)
         import ezdxf
-        doc = ezdxf.readfile(args.dxf)
+        try:
+            doc = ezdxf.readfile(args.dxf)
+        except (ezdxf.DXFError, UnicodeError) as exc:
+            raise ValueError(f"{args.dxf} does not parse as DXF: {exc}") from exc
         if _sha256(args.dxf) != dxf_sha:
             raise ValueError(f"{args.dxf} changed while it was read")
         if args.command == "census":
