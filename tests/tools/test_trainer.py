@@ -475,3 +475,49 @@ def test_cli_check_refuses_practice_ready_path_outside_drive(tmp_path):
     p = _cli("--bank", str(bad), "check")
     assert p.returncode == 2
     assert "G:/Мой диск/AGR-" in p.stderr and "C:/x/scratch/a.dwg" in p.stderr
+
+
+# ---------------------------------------------------------------- #1955: held-out keys dir isolation by context
+def _run_dir(tmp_path, commands, events=True):
+    run = tmp_path / "run"
+    (run / "built").mkdir(parents=True)
+    (run / "run.json").write_text('{"schema": "trainer-run/1"}', encoding="utf-8")
+    if events:
+        lines = [json.dumps({"type": "item.completed", "item": {"type": "command_execution", "command": c}})
+                 for c in commands]
+        (run / "events.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return run
+
+
+@pytest.mark.parametrize("cmd", [
+    'type "G:\Мой диск\AGR-evidence\1855-trainer-v0\keys\heldout-key-v001.json"',
+    "cat '/g/Мой диск/AGR-evidence/1855-trainer-v0/KEYS/heldout-sections-v002.json'",
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/keys"])
+def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd):
+    run = _run_dir(tmp_path, ["ls inputs", cmd])
+    assert T.key_dir_reads(run) == [cmd]
+    rep = T.score(next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1"), str(run / "built"), tmp_path / "w")
+    assert rep["steps"]["holdout"]["status"] == "fail" and rep["first_failing_step"] == "holdout"
+    assert rep["passed"] is False
+
+
+def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
+    e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
+    run = _run_dir(tmp_path, ["ls inputs", "type G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/README.md"])
+    assert T.key_dir_reads(run) == []
+    assert T.score(e, str(run / "built"), tmp_path / "w")["steps"]["holdout"]["status"] == "pass"
+    (tmp_path / "loose").mkdir()
+    assert T.score(e, str(tmp_path / "loose"), tmp_path / "w2")["steps"]["holdout"]["status"] == "not_applicable"
+
+
+def test_holdout_audit_errors_when_a_run_has_no_transcript(tmp_path):
+    run = _run_dir(tmp_path, [], events=False)
+    e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
+    rep = T.score(e, str(run / "built"), tmp_path / "w")
+    assert rep["steps"]["holdout"]["status"] == "error" and rep["passed"] is False
+
+
+def test_task_text_never_names_the_keys_dir():
+    e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
+    with pytest.raises(T.TrainerError, match="keys"):
+        T.task_text(dict(e, task=e["task"] + "\nsee G:\AGR-evidence\1855-trainer-v0\keys\\"), Path("i"), Path("o"))
