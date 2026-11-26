@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 from tools.trainer import trainer  # noqa: E402
 
-HEAD = "8a2fa63599cee0ec1983b2acfe60ecaab4b5f1cc"
+HEAD = "8a2fa635469d346009c60a922c9438e3dc20b77f"
 ETALONS = ("g22-k2-stage1", "63a-stage1", "kpp1-v004")  # g22 first: witness + first measured pair
 WITNESS = ("g22-k2-stage1", "floor_from_dump.py")
 HELD_OUT = ("63a-stage1", "kpp1-v004")
