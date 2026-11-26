@@ -123,9 +123,8 @@ def main():
     driver = ModuleType('r105_native_replay')
     driver.__file__ = str(script)  # R105 resolves ROOT and hashes the invoking replay from this layout.
     exec(compile(previous, f'{PREVIOUS}:{DRIVER}', 'exec'), driver.__dict__)
-    driver.CONTRACT = SimpleNamespace(read_text=lambda *, encoding: manifest.decode(encoding))
-    driver.tower = lambda *args: probe(driver, *args)
-    driver.decide = verdict
+    vars(driver).update(CONTRACT=SimpleNamespace(read_text=lambda *, encoding: manifest.decode(encoding)),
+                        tower=lambda *args: probe(driver, *args), decide=verdict)
     driver.main()
     path = Path(sys.argv[1]) / 'receipt.json'
     report = json.loads(path.read_text(encoding='utf-8'))
