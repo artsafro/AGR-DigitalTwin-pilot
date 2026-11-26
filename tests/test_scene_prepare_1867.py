@@ -239,6 +239,33 @@ def test_stepped_facade_preserves_existing_exterior_and_roof_wall(rules):
     assert objs["Базовая стена ADSK_Внутренняя_Г terrace wall"] == ("roof", "BODY")
 
 
+@pytest.mark.parametrize("offset", [0, 100, -100])
+def test_courtyard_facade_and_inside_control(rules, offset):
+    objects = []
+    for tag, lo, hi in (("outer", 0, 40), ("court", 15, 25)):
+        t = 0.3
+        for side, bounds in enumerate(((lo, lo, hi, lo + t), (lo, hi - t, hi, hi),
+                                       (lo, lo, lo + t, hi), (hi - t, lo, hi, hi))):
+            objects.append(box(f"Базовая стена Наружная {tag} [{side}]", *bounds, 0, 12))
+    objects += [
+        box("Базовая крыша roof", 0, 0, 40, 40, 11.8, 12),
+        box("WB_Окно courtyard", 20, 15, 21, 15.2, 4, 6),
+        box("WB_Окно inside", 7, 7, 8, 7.2, 4, 6),
+        box("WB_Окно outside", 20, 0, 21, 0.2, 4, 6),
+        box("WB_Окно courtyard centre", 20, 20, 21, 20.2, 4, 6),
+    ]
+    for obj in objects:
+        obj["hull"] = [[x + offset, y - offset] for x, y in obj["hull"]]
+    if offset:
+        objects.reverse()
+    census = sp.classify({"schema": "revit-fbx-dump/1", "objects": objects}, rules)
+    places = {o["name"]: (o["place"], o["layer"]) for o in census["objects"]}
+    assert places["WB_Окно courtyard"] == ("face", "WINDOWS")
+    assert places["WB_Окно inside"] == ("inside", "INTERIOR_OUT")
+    assert places["WB_Окно outside"] == ("face", "WINDOWS")
+    assert places["WB_Окно courtyard centre"] == ("out", "SITE")
+
+
 def test_census_markdown_has_one_row_per_layer(rules):
     md = sp.census_markdown(sp.classify(synthetic_dump(), rules), rules)
     for la in rules["layers"]:
@@ -495,6 +522,10 @@ argv = sys.argv[sys.argv.index("--") + 1:]
 spec, out = json.load(open(argv[0], encoding="utf-8")), argv[1]
 bpy.ops.wm.read_factory_settings(use_empty=True)
 for o in spec:
+    if not o["hull"]:
+        mesh = bpy.data.meshes.new(o["name"])
+        bpy.context.collection.objects.link(bpy.data.objects.new(o["name"], mesh))
+        continue
     x0, y0 = o["hull"][0]; x1, y1 = o["hull"][2]; z0, z1 = o["z"]
     bpy.ops.mesh.primitive_cube_add(size=1, location=((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
     ob = bpy.context.active_object
@@ -507,9 +538,14 @@ bpy.ops.export_scene.fbx(filepath=out, use_selection=False, apply_unit_scale=Tru
 
 
 @pytest.mark.skipif(not BLENDER44.is_file(), reason="Blender 4.4 not installed")
-def test_end_to_end_on_synthetic_fbx(tmp_path):
+@pytest.mark.parametrize("empty_mesh", [False, True])
+def test_end_to_end_on_synthetic_fbx(tmp_path, empty_mesh):
     spec = tmp_path / "spec.json"
-    spec.write_text(json.dumps(synthetic_dump()["objects"], ensure_ascii=False), encoding="utf-8")
+    objects = synthetic_dump()["objects"]
+    empty_name = "Пустой_abcdef1"
+    if empty_mesh:
+        objects.append({"name": empty_name, "hull": [], "z": None})
+    spec.write_text(json.dumps(objects, ensure_ascii=False), encoding="utf-8")
     script = tmp_path / "mk.py"
     script.write_text(SYNTH_FBX_SCRIPT, encoding="utf-8")
     fbx = tmp_path / "synthetic.fbx"
@@ -526,6 +562,9 @@ def test_end_to_end_on_synthetic_fbx(tmp_path):
         assert got[name] == layer, name
     blend = json.loads((out / "blend_report.json").read_text(encoding="utf-8"))
     assert blend["collections"]["WINDOWS"] == 1 and blend["missing"] == [] and blend["unassigned"] == []
+    assert census["dropped"] == ([{"name": empty_name, "reason": "no_geometry"}] if empty_mesh else [])
+    assert blend.get("dropped", []) == ([empty_name] if empty_mesh else [])
+    assert empty_name not in got
     assert sum(blend["collections"].values()) == len(EXPECTED) + 3
     for f in ("scene_layers.blend", "sheet.png", "census.md", "dump.json"):
         assert (out / f).is_file(), f
