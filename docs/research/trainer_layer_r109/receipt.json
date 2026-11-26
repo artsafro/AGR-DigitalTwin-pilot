@@ -1,0 +1,293 @@
+{
+  "hypothesis": "confirmed",
+  "status": "complete",
+  "variant_commit": "94fa9d8639a0213cafd86715b0be67594d0c951e",
+  "wall_s": 106.15134379998199,
+  "blender_wall_s": 74.08707879998838,
+  "M109_family_layer_evidence": {
+    "median": 0,
+    "runs": [
+      0,
+      0,
+      0
+    ],
+    "family_geometries": 1210,
+    "family": {
+      "geometries": 1210,
+      "multi_material": 1152,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    }
+  },
+  "M109B_blender_rows": {
+    "63A": {
+      "other_rows": 1513,
+      "other_multi_part": 0
+    },
+    "63B": {
+      "family_rows": 907,
+      "family_multi_part": 0,
+      "other_rows": 977,
+      "other_multi_part": 0
+    }
+  },
+  "parity_63B_family_rows": true,
+  "runs_agree": true,
+  "real_source_positive_families": [
+    "Базовая стена (В) СВ-1.1",
+    "Базовая стена (К) ЖБ-180",
+    "Базовая стена (Н) СН-3.2"
+  ],
+  "census_runs": [
+    {
+      "run": 1,
+      "wall_s": 10.563289099984104,
+      "result_sha256": "7cfc9efee9d03343c45a921e7cd451b8a998a6e50dfe9fc4983d77efe5e123be"
+    },
+    {
+      "run": 2,
+      "wall_s": 10.135709800000768,
+      "result_sha256": "7cfc9efee9d03343c45a921e7cd451b8a998a6e50dfe9fc4983d77efe5e123be"
+    },
+    {
+      "run": 3,
+      "wall_s": 10.142334400006803,
+      "result_sha256": "7cfc9efee9d03343c45a921e7cd451b8a998a6e50dfe9fc4983d77efe5e123be"
+    }
+  ],
+  "census": {
+    "Базовая стена (В) СВ-1.1": {
+      "geometries": 1533,
+      "multi_material": 32,
+      "a_components": 3,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 3
+    },
+    "Базовая стена (В) СВ-1.3": {
+      "geometries": 4,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (В) СВ-3.2": {
+      "geometries": 356,
+      "multi_material": 4,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (В) СВ-6.2": {
+      "geometries": 18,
+      "multi_material": 1,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (К) ЖБ-120": {
+      "geometries": 49,
+      "multi_material": 2,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (К) ЖБ-180": {
+      "geometries": 86,
+      "multi_material": 3,
+      "a_components": 1,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 1
+    },
+    "Базовая стена (К) ЖБ-200": {
+      "geometries": 132,
+      "multi_material": 8,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (К) ЖБ-250": {
+      "geometries": 1,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (К) М-10_Мет.каркас": {
+      "geometries": 10,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (Н) СН-1.1": {
+      "geometries": 155,
+      "multi_material": 19,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (Н) СН-3.2": {
+      "geometries": 181,
+      "multi_material": 1,
+      "a_components": 1,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 1
+    },
+    "Базовая стена (Ф) УМВ-120": {
+      "geometries": 7,
+      "multi_material": 1,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена (ФМ) КЛП-10": {
+      "geometries": 170,
+      "multi_material": 170,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена 10 Штукатурка_ГБ-200_10": {
+      "geometries": 2,
+      "multi_material": 2,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Башня 23": {
+      "geometries": 699,
+      "multi_material": 529,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Вент фасад_мин_вата": {
+      "geometries": 43,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Вентфасад +100": {
+      "geometries": 785,
+      "multi_material": 785,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Вентфасад 250 250": {
+      "geometries": 1210,
+      "multi_material": 1152,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Вентфасад 250_АК_RAL": {
+      "geometries": 43,
+      "multi_material": 43,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Вентфасад_АКП_250_ral 7047": {
+      "geometries": 231,
+      "multi_material": 215,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Декоративная решётка": {
+      "geometries": 2,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Кровля_заводится на": {
+      "geometries": 16,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена ОБЩИЙ -": {
+      "geometries": 1542,
+      "multi_material": 35,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Сетка парапет_медь": {
+      "geometries": 1,
+      "multi_material": 0,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Утеплитель 120_Штукатурка": {
+      "geometries": 49,
+      "multi_material": 49,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена ФМ_Штукатурка_RAL ххх": {
+      "geometries": 4,
+      "multi_material": 4,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена Шт_фасад 135": {
+      "geometries": 999,
+      "multi_material": 999,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    },
+    "Базовая стена башня 16": {
+      "geometries": 790,
+      "multi_material": 14,
+      "a_components": 0,
+      "b_nonmanifold": 0,
+      "c_closed_partition": 0,
+      "any": 0
+    }
+  },
+  "inputs": {
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "C:/Program Files/Blender Foundation/Blender 4.4/blender.exe": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"
+  },
+  "r105_manifest": "95ae5adb1bf907e927b994296c51ad321edd18b7:docs/research/autoresearch-trainer-storey-band-r105.md",
+  "layer_dump_sha256": "a67da0d643bf8119362117f6ed6e80cfe58b2c80c7af01cd760705253763c0f6",
+  "replay_sha256_git_lf": "a9b569a2ec327c877111f4e08592844a2f75e41b954287fb2f2676f58af5e8c8"
+}

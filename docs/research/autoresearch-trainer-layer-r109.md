@@ -4,7 +4,8 @@
 Xmax +0,20 м на 63B, проверяем, есть ли вообще в исходном Revit FBX площадки 63 сведения о слоях стен,
 привязанные к строкам стен. Это проверка достижимости источника, а не правило для `bounds`. Итог — в «Result».
 
-Status: **contract frozen before the frozen series** (commit of this file). Hypothesis result: see "Result".
+Status: **contract frozen at `94fa9d86` before the frozen series; series complete.** Hypothesis result: **confirmed**
+(see "Result"). Review readiness is separate.
 
 ## Focus and exclusions
 
@@ -71,4 +72,49 @@ superset of the 907 63B in-band rows) the layer-evidence count is 0. Expected di
 
 ## Result
 
-(filled after the frozen series)
+**Итог (RU).** H109 **подтверждена**: в исходном Revit FBX площадки 63 нет данных о слоях стен. Из 1 210 геометрий
+семейства `Вентфасад 250 250` ни одна не содержит слоёв: нет отдельных тел, нет внутренних граней между слоями и нет
+замкнутых «слоёв» по индексам материалов. В 1 152 геометриях несколько индексов материала, но без имён (в файле
+0 объектов Material), и в просмотренных образцах это окраска грани, а не слой. В Blender все 907 строк 63B в полосе и
+все прочие стены обеих башен — по одному телу. Значит, правило «оставить несущий слой» по этому источнику
+построить нельзя: остаток Xmax +0,20 м на 63B из геометрии источника не снимается. Толщину слоя дают только имена
+типов (`250`, `200`, `135`, `+100`) — использовать их или нет, решают владелец банка или Артём, не этот цикл. Модели,
+банк, скорер и пороги не менялись, ключ не читался.
+
+Variant `94fa9d8639a0213cafd86715b0be67594d0c951e`, run `complete`, wall 106.15 s (census 10.56 / 10.14 / 10.14 s,
+Blender dump 74.09 s). Pinned source and Blender SHA-256 matched the r105 manifest before and after.
+
+| Check | Result |
+|---|---|
+| **M109** `Вентфасад 250 250` geometries with layer evidence (3 runs, median) | **0 / 1 210** (0, 0, 0); a 0, b 0, c 0; 1 152 multi-material |
+| Census runs agree | yes, result SHA-256 `7cfc9efe…5e123be` ×3 |
+| **M109-B** Blender in-box in-band rows with ≥ 2 parts | 63A 0 / 1 513; 63B family 0 / 907 (parity 907 ✓), other 0 / 977 |
+| Real-source control (all 28 `Базовая стена *` families) | exercised for (a) only: 5 multi-solid geometries — `(В) СВ-1.1` 3, `(К) ЖБ-180` 1, `(Н) СН-3.2` 1; (b) and (c) real **not_exercised** |
+| Synthetic witnesses (a/b/c) + painted-face negative | pass (`tests/research/test_trainer_layer_r109.py`, 5 passed) |
+
+- **Clean:** census and Blender dump on the pinned source. **Injected:** synthetic layered/disjoint/painted
+  geometries only (unit tests). **Not measured:** `bounds` itself (no selector built — none is reachable from this
+  source), any key or package, other sources (a Revit schedule/RVT export with compound structure is not in the bank),
+  welded-vs-unwelded effects on (b) (raw index connectivity equals Blender's; unwelded duplicates would hide (b)).
+- Would-change (OBSERVE, owner bank #1855/#1861): if the layer split matters for the 63B key, the task must state it
+  or the bank must add a source carrying compound structure (RVT/IFC/schedule). Do not infer thickness from the key.
+
+Replay: `uv run python docs/research/trainer_layer_r109/replay.py tmp/r109-NEW 94fa9d8639a0213cafd86715b0be67594d0c951e`
+(needs the pinned Drive source and Blender 4.4; replay limited otherwise).
+[Receipt](trainer_layer_r109/receipt.json) Git-LF SHA-256 `e1570399b8dd8cb39e0658df8114c31ad1473fb873ec407984d240568068d01e`.
+Evidence (receipt, layer dump, exploration scripts): `G:/Мой диск/AGR-evidence/1855-r109-layer/SHA256SUMS.txt`
+(7 entries), SHA-256 `73159ad3d46c6277df4facef6b0668c96016bc1ec4a08beaeeca21fd436d7c1c`.
+
+## Next targets
+
+1. Bank owner decision (#1855/#1861): does the 63B key envelope include the `Вентфасад 250` system on +X but not on
+   −Y? Only the task text can say it; the source cannot.
+2. Type-name thickness as a source signal: count 63B faces whose residual matches the thickness in the extremal row's
+   type name (`250`, `200`, `135`) — needs a decision that type names are allowed evidence.
+3. Leave 63B bounds; move to the next ledger row once a fresh practice run lands (ledger still 4 rows since 11-25).
+
+Affected tests: `uv run pytest -q tests/research/test_trainer_layer_r109.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 110 passed, 1 warning (new controls: 5 passed).
+
+Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)
