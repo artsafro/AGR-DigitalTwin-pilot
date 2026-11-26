@@ -1,0 +1,1036 @@
+{
+  "fixture_head": "55b885c1b9ccdbe53df2c0d6ade9d4e5bd8ca364",
+  "fixture_tree": "1ce94014f390b5494923902075a2d17a3d29fd26",
+  "inputs": {
+    "r114_harness": "c37f01bafe5568ad071b24c20d268d35391271f42e9798bed035bbce6de922ec",
+    "trainer": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5",
+    "bank": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+    "ledger": "230eace1a0a434cb25091f449760d3895d5b7d169086a2f2ba049db88a8496a7",
+    "r116_harness": "22ad78827bd43d8b2073a319ac0c9059a5227f656ba25cef8461c8b76b22ab06"
+  },
+  "pairs": [
+    {
+      "etalon": "63a-stage1",
+      "split": "tuning",
+      "practice_ready": true,
+      "native": {
+        "B": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "D": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "stock_removed": 8,
+        "stock_witness_survives": true,
+        "route_critical": [],
+        "changed_B_to_C": 1,
+        "changed_B_to_D": 0,
+        "changed_C_to_D": 1,
+        "changed_paths_C_to_D": [
+          "docs/research/autoresearch-trainer-gate1.md"
+        ],
+        "native_branch_witness": "exercised",
+        "parity": true
+      },
+      "controls": {
+        "exact_slash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_json": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "bare_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "remote_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_head": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_remote": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "branch_suffix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "path_past_ref": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "alien_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "other_namespace": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        }
+      },
+      "M116": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "injected_expected": true,
+      "all_expected": true,
+      "wall_s": 23.268
+    },
+    {
+      "etalon": "63b-stage1",
+      "split": "held_out",
+      "practice_ready": false,
+      "native": {
+        "B": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "D": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "stock_removed": 40,
+        "stock_witness_survives": true,
+        "route_critical": [],
+        "changed_B_to_C": 0,
+        "changed_B_to_D": 0,
+        "changed_C_to_D": 0,
+        "changed_paths_C_to_D": [],
+        "native_branch_witness": "not_exercised",
+        "parity": true
+      },
+      "controls": {
+        "exact_slash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_json": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "bare_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "remote_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_head": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_remote": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "branch_suffix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "path_past_ref": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "alien_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "other_namespace": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        }
+      },
+      "M116": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "injected_expected": true,
+      "all_expected": true,
+      "wall_s": 24.046
+    },
+    {
+      "etalon": "63a-stage1",
+      "split": "tuning",
+      "practice_ready": true,
+      "native": {
+        "B": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "D": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "stock_removed": 8,
+        "stock_witness_survives": true,
+        "route_critical": [],
+        "changed_B_to_C": 1,
+        "changed_B_to_D": 0,
+        "changed_C_to_D": 1,
+        "changed_paths_C_to_D": [
+          "docs/research/autoresearch-trainer-gate1.md"
+        ],
+        "native_branch_witness": "exercised",
+        "parity": true
+      },
+      "controls": {
+        "exact_slash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_json": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "bare_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "remote_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_head": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_remote": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "branch_suffix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "path_past_ref": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "alien_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "other_namespace": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        }
+      },
+      "M116": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "injected_expected": true,
+      "all_expected": true,
+      "wall_s": 25.288
+    },
+    {
+      "etalon": "63b-stage1",
+      "split": "held_out",
+      "practice_ready": false,
+      "native": {
+        "B": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "D": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "stock_removed": 40,
+        "stock_witness_survives": true,
+        "route_critical": [],
+        "changed_B_to_C": 0,
+        "changed_B_to_D": 0,
+        "changed_C_to_D": 0,
+        "changed_paths_C_to_D": [],
+        "native_branch_witness": "not_exercised",
+        "parity": true
+      },
+      "controls": {
+        "exact_slash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_json": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "bare_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "remote_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_head": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_remote": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "branch_suffix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "path_past_ref": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "alien_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "other_namespace": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        }
+      },
+      "M116": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "injected_expected": true,
+      "all_expected": true,
+      "wall_s": 26.624
+    },
+    {
+      "etalon": "63a-stage1",
+      "split": "tuning",
+      "practice_ready": true,
+      "native": {
+        "B": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "D": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "stock_removed": 8,
+        "stock_witness_survives": true,
+        "route_critical": [],
+        "changed_B_to_C": 1,
+        "changed_B_to_D": 0,
+        "changed_C_to_D": 1,
+        "changed_paths_C_to_D": [
+          "docs/research/autoresearch-trainer-gate1.md"
+        ],
+        "native_branch_witness": "exercised",
+        "parity": true
+      },
+      "controls": {
+        "exact_slash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_json": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "bare_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "remote_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_head": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_remote": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "branch_suffix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "path_past_ref": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "alien_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "other_namespace": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        }
+      },
+      "M116": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "injected_expected": true,
+      "all_expected": true,
+      "wall_s": 23.192
+    },
+    {
+      "etalon": "63b-stage1",
+      "split": "held_out",
+      "practice_ready": false,
+      "native": {
+        "B": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "D": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "stock_removed": 40,
+        "stock_witness_survives": true,
+        "route_critical": [],
+        "changed_B_to_C": 0,
+        "changed_B_to_D": 0,
+        "changed_C_to_D": 0,
+        "changed_paths_C_to_D": [],
+        "native_branch_witness": "not_exercised",
+        "parity": true
+      },
+      "controls": {
+        "exact_slash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "exact_json": {
+          "expected": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "changed_C_to_D": 0,
+          "D_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "bare_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "remote_ref": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_head": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "full_remote": {
+          "expected": true,
+          "B": true,
+          "C": false,
+          "D": true,
+          "changed_C_to_D": 1,
+          "D_trigger": "exercised"
+        },
+        "branch_suffix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "path_past_ref": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "alien_prefix": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        },
+        "other_namespace": {
+          "expected": false,
+          "B": true,
+          "C": false,
+          "D": false,
+          "changed_C_to_D": 0,
+          "D_trigger": "not_exercised"
+        }
+      },
+      "M116": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "injected_expected": true,
+      "all_expected": true,
+      "wall_s": 24.506
+    }
+  ],
+  "run_status": "finished",
+  "hypothesis": "confirmed",
+  "not_measured": [
+    "live escapes",
+    "artifact passage",
+    "accepted/rejected FBX quality"
+  ],
+  "projected_total_s": 162.876,
+  "wall_s": 146.925,
+  "stats": {
+    "63a-stage1": {
+      "median": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "paired_gain_range": {
+        "B": [
+          8,
+          8
+        ],
+        "C": [
+          4,
+          4
+        ]
+      }
+    },
+    "63b-stage1": {
+      "median": {
+        "B": 8,
+        "C": 4,
+        "D": 0
+      },
+      "paired_gain_range": {
+        "B": [
+          8,
+          8
+        ],
+        "C": [
+          4,
+          4
+        ]
+      }
+    }
+  }
+}

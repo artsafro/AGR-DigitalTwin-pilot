@@ -9,3 +9,24 @@ At `8a2fa635469d346009c60a922c9438e3dc20b77f:docs/trainer/ledger.json` the modal
 - Perturbations, in addition to #114's 3 exact positives and 4 sibling negatives: positives bare, uppercase remote, full heads, full remote; negatives near-name branch suffix, path past ref, alien prefix attached to `origin/`, and token in an unrelated branch namespace. Only the four new positives must move from C false to D true; new negatives must remain false in D. B must flag all 15; C must flag exactly the three old positives; D must flag all seven positives only. Each case is a separate file in fresh scratch, not a modification of a historical tree or delivery.
 - Metric M116 = labelled misclassified input files (miss + collateral) across the 15-control corpus per etalon. Expected B/C/D = 8/4/0, paired B−D gain 8 and C−D gain 4; require those bounds in each pair and median of 3, with exact per-file truth and the native parity guard. No new candidate budget: one candidate, three fresh static pairs per etalon, interleaved. Wall limit 360 s checked between pairs; after the first pair stop inconclusive if elapsed + 5 × first pair × 1.2 > 360 s. Budget stop is not refutation. No auto-KEEP even if confirmed.
 - Replay: `uv run --frozen python docs/research/trainer_lineage_r116/measure.py --out tmp/r116-replay` from this branch with the previous research Git object present (fetch `origin research/autoresearch-standing-114` if missing); new output directory only. RED witness: add `--legacy-control` to the command with a fresh output path; C must miss all four new positives, producing exit 1. Full run must exercise fresh archives, not rescore a dump. Receipt lists identities and per-file state changes. No product edits, changes to other cards, accepted/rejected models, validator or tolerances, DCC, delivery packages, weakening tests, or live agent launches. Accepted/rejected FBX calibration, live escapes and `artifact` passage are not measured. Separate hypothesis from review readiness.
+
+## Result — static H116 confirmed; OBSERVE only
+
+**Кратко.** На 63A точное правило вернуло пропущенную ссылку на ветку журнала; на отложенном 63B сохранило обе существующие отметки. На каждом наборе медиана ошибок на 15 размеченных примерах: 8 у поиска подстроки, 4 у матчера из #114, 0 у нового варианта. Это статическая проверка: реальную изоляцию, качество FBX и прохождение `artifact` не измеряли. Рабочий код не меняли, PR не открывали.
+
+| Fixture | Native flags B / C / D (each repetition) | Native files changed C→D | M116 medians B / C / D | Paired gain spread B−D; C−D |
+| --- | ---: | ---: | ---: | --- |
+| 63A tuning | 5 / 4 / 5 | 1 | 8 / 4 / 0 | [8, 8]; [4, 4] |
+| 63B held out, same site, static | 2 / 2 / 2 | 0 | 8 / 4 / 0 | [8, 8]; [4, 4] |
+
+- **Clean:** the stock scrub left the README witness and all three research arms flagged it, 6/6. C→D restored only `docs/research/autoresearch-trainer-gate1.md` on 63A, 3/3. B→D changed no flags and no route-critical file was flagged in any arm. On 63B the evidence-component trigger was active, but the extra native branch trigger was **not exercised**. The undetected or untouched remainder does not prove isolation.
+- **Injected:** all 90 labelled file classifications for D matched (42 positives, 48 negatives; same 15 labels exercised on six fresh trees, not 90 independent fixture sources). Precisely the four new branch positives changed per pair. The old matcher failed the dedicated pre-change control, exit 1, missing `bare_ref`, `remote_ref`, `full_head`, `full_remote`.
+- **Not measured:** actual branch reachability, fresh practice-agent escapes, `artifact` passage, accepted/rejected FBX quality, independent-site transfer. No claim that the ledger's modal stop is solved.
+
+Measured harness `6790eb3e857a7ff31f767c2b625427cd4a082eb0`; harness SHA-256 `22ad78827bd43d8b2073a319ac0c9059a5227f656ba25cef8461c8b76b22ab06`. [Raw receipt](trainer_lineage_r116/receipt.json) Git-LF SHA-256 `346e3a91ef901d77406bcb3400de5a450c1b50b3c218f22d0c0cdc10fd87f25b`. Run `finished`, exit 0; wall 146.925 s, first pair 23.268 s, projected total 162.876 s. Replay on a slower host can report `budget_stop` (exit 3, `inconclusive` for that run). No Drive data or native DCC needed.
+
+Would-change for the trainer owner: keep exact evidence components and add an explicit bank-reference class rather than making every prefixed token an exception. Next, independently preflight host isolation/source-only admission, then measure three paired fresh escape-free artifact attempts on an admitted, untuned etalon.
+
+Affected tests: `env -u MSYS_NO_PATHCONV -u MSYS2_ARG_CONV_EXCL uv run --frozen pytest -q -p no:cacheprovider --basetemp=C:/x/t_2f9a1faa-pytest tests/tools/test_trainer.py` — 73 passed at the measured harness head; final-head checks in the board handoff.
+
+Full suite: deferred to merge batch (rule 68).
