@@ -25,3 +25,29 @@ SHA-256 verified on each original before and after the series and on each staged
 | `1855-r91-artifact-route/63A-1-aligned/body.fbx` | `6b5e5ec58f6210bba4667f215740fca654cc6ea44dc0bc3fad3baae6e025e250` |
 | `1855-r91-artifact-route/63B-1-aligned/body.fbx` | `aa6820088d16b5d3847b2b1ecdeab65d0b9375d07b875caf9b2e4127f299fa8e` |
 | `C:/Program Files/Blender Foundation/Blender 4.4/blender.exe` | `fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5` |
+
+## Result — H104 confirmed for upper-face reach only; no KEEP
+
+**Итог.** В исходном Revit FBX есть верхняя отметка **+51,90 м** внутри бокса 63B (элемент `21997400`),
+во всех трёх свежих чтениях. Прошлая сборка остановилась на +24,23 м. Но выбор ближайшей отметки сравнивался
+с ключом; он не доказывает, что агент выберет правильные этажи без ключа. Даже идеальная правка только верхней
+грани оставила бы у 63B ошибки **0,680 м по низу и 0,121 м по Xmax**, обе выше допуска 0,10 м. `bounds` не пройден;
+ничего не меняли в банке, валидаторе и моделях.
+
+| Fixture | Eligible rows | Nearest source top | Baseline top delta | M104 median (min–max) | Paired gain median (min–max) | Native #91 bounds |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| 63A, tuning | 9497 | 47.9500 m, row 8561 `5600629` | 0 m | ≤0.0001 m (same all three) | −0.0000107 m (same all three; dump precision) | pass, 0.0442 m |
+| 63B, held out | 5166 | 51.9000 m, row 22079 `21997400` | 27.670002 m | ≤0.0001 m (same all three) | +27.6700005 m (same all three) | fail, 27.6700 m |
+
+- **Clean:** three sequential Blender 4.4.0 imports of the source FBX (27,629 readable mesh rows in each, source-world metres) and 15 native model readbacks. Complete wall 267.63 s, pairs 92.50 / 92.62 / 82.19 s, no budget stop. Input and code hash preflight passed; staged hash parity and original postflight passed. Ordered vs reversed source census gave the same nearest row and count (6/6). Native accepted v007 pass/0.0000 m vs rejected v004 fail/0.1993 m in 3/3. v004 shares v007's top Z: **upper Z alone does not separate accepted/rejected versions**.
+- **Injected:** eligible synthetic witness: +1 selected row and delta 0 in 6/6; outside-box witness: +1 input but 0 selected change and unchanged score in 6/6. This exercises containment, not architectural membership. 63A was already passing native bounds before the experiment.
+- **Not measured:** key-free choice of floor range, transfer to an independent project, native passage for a rebuilt 63B, or any shape/material/package acceptance. The largest unchanged face delta (0.6800 m) is an arithmetic counterfactual, not a candidate readback. On another host a slow import may hit the frozen cap; preserve partial evidence and report the run inconclusive rather than shortening the series.
+- **Would change next:** test a key-free typical-storey band proposal from named Revit source levels/objects (measure both Z boundaries and all six native faces); hand any task-scope/approval question to the bank owner. Do not use the published accepted floor range as a tuning input. Then test on an independent source/export pair.
+
+Receipt: [`trainer_revit_bounds_r104/receipt.json`](trainer_revit_bounds_r104/receipt.json), Git-LF SHA-256 `302a6c0b198e5e3d172515225d12ae232a546178fd409a15136243806c1ccfce`; driver Git-LF SHA-256 `711f09fc6c719b3d9bdae51634b1f853acd50b8065454936fcacbbf01ef8752a`. Replay limited to runners with access to the hash-pinned Drive paths and the pinned Blender installation. Branch-only OBSERVE; no production change or PR. Review readiness is separate from the confirmed narrow hypothesis.
+
+Affected tests: `uv run pytest -q tests/tools/test_trainer.py tests/test_trainer_inspect.py tests/test_openings_from_revit_fbx_1784.py tests/qa/test_blender_runner.py tests/qa/test_topology.py` — 351 passed, 1 deselected (configured), 1 warning.
+
+Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)
