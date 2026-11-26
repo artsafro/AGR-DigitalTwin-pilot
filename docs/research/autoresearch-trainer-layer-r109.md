@@ -4,8 +4,57 @@
 Xmax +0,20 м на 63B, проверяем, есть ли вообще в исходном Revit FBX площадки 63 сведения о слоях стен,
 привязанные к строкам стен. Это проверка достижимости источника, а не правило для `bounds`. Итог — в «Result».
 
-Status: **contract frozen at `94fa9d86` before the frozen series; series complete.** Hypothesis result: **confirmed**
-(see "Result"). Review readiness is separate.
+Status: **contract frozen at `94fa9d86` before the frozen series; series complete.** Hypothesis result: **confirmed,
+limited to the three measured raw features** (r2 amendment below supersedes the r1 wording of the conclusion; the frozen
+history and r1 data stay unchanged). Review readiness is separate.
+
+## Amendment r2 (review r1 P1.1/P1.2/P3) — current conclusion
+
+**Итог r2 (RU).** H109 подтверждена **только в узком смысле**: ни у одной из 1 210 геометрий `Вентфасад 250 250` нет
+ни одного из трёх измеренных сырых признаков — (a) несколько тел, (b) неманифолдное ребро, (c) замкнутое
+подразбиение по индексу материала. Это **не доказывает**, что в источнике нет никаких сведений о слоях, и не доказывает,
+что остаток Xmax нельзя снять: на 148 геометриях семейства есть открытые рёбра индексного буфера (не измерялось как
+признак), `bounds` не измерялся, независимый эталон не проверялся. И обратно: срабатывание признака — только кандидат
+в слой. Признак (b) срабатывает на одном замкнутом кубе с продублированной внешней гранью (второго тела и интерфейса
+нет), поэтому (b) помечен как **непроверенный** (`unvalidated`), а «M109 > 0 ⇒ селектор достижим» из r1-контракта
+снято: достижимость селектора — `not_measured` при любом вердикте.
+
+- **Verdict rule r2 (enforced in `replay.py:decide`, tested through `main()`)**: wall > 600 s end to end or the
+  Blender dump times out in the remaining budget → `inconclusive` / `budget_stop`; any of the 6 frozen controls failing
+  or crashing, census runs disagreeing, N < 907, or 63B family rows ≠ 907 → `inconclusive` / `invalid`; otherwise
+  M109 = 0 ×3 → `confirmed`, > 0 ×3 → `refuted` (= the measured features exist; layers and reachability still not
+  shown). Every receipt carries `claim_scope`, `criteria` and `selector_reachable: not_measured`.
+- **Controls run inside every replay** (`CONTROLS`, results in the receipt):
+
+| Control | Input | Expected raw evidence | Role |
+|---|---|---|---|
+| `pos_a_disjoint` | two disjoint cubes | a=True | positive witness |
+| `pos_b_interface` | two cubes sharing a face | b=True, a=False | positive witness |
+| `pos_c_partition` | same, one material per cube | c=True | positive witness |
+| `neg_painted_face` | one cube, one face other index | all False | negative control |
+| `neg_clean_cube` | one closed cube, one material | all False | negative control |
+| `b_dup_face` | one closed cube + duplicated outer face | b=True only | r1 counterexample: (b) unspecific |
+
+| Replay input (doubles through `main()`) | Expected |
+|---|---|
+| N=907, parity 907, controls pass, 100 s | `confirmed` / `complete` |
+| (a) N=906, parity 907, 100 s | `inconclusive` / `invalid` |
+| (b) N=907, parity 907, 601 s | `inconclusive` / `budget_stop` |
+| (c) N=907, parity 907, 100 s, `evidence()` crashes on the witnesses | `inconclusive` / `invalid` |
+| N=907, parity 906 | `inconclusive` / `invalid` |
+| Blender dump timeout in the remaining budget | `inconclusive` / `budget_stop` |
+
+- P3: `layer_dump_blender.py` no longer promises an S107 reproduction (S107 is not re-scored here: not measured).
+- **r2 native replay** at variant `733f0ffe7786279e5b5f7215016100dfa78fee85`:
+  `uv run python docs/research/trainer_layer_r109/replay.py tmp/r109-r2 733f0ffe7786279e5b5f7215016100dfa78fee85`
+  → `confirmed` / `complete`, reasons none; M109 0 / 1 210 (0, 0, 0; result SHA-256 `7cfc9efe…` ×3, identical to r1);
+  6/6 controls pass (incl. `b_dup_face` raw b=True); M109-B 63A 0 / 1 513, 63B family 0 / 907 (parity ✓), other 0 / 977;
+  wall 98.71 s of 600 s (Blender 64.66 s). [Receipt r2](trainer_layer_r109/receipt_r2.json) SHA-256
+  `2335768f3d04910843304552c001b59c59e4dfa699473ab3cdc6f6ff80dc7f88`; dump `layer_dump_r2.json` SHA-256 `9453b4def341…`
+  in `G:/Мой диск/AGR-evidence/1855-r109-layer/SHA256SUMS.txt` (9 entries, SHA-256
+  `db3cd27c8fa70cf60592560863a0ecda910a2c4ee42067e4e55f00aede4de00a`). r1 receipt kept unchanged as history.
+- **Not measured** (unchanged): `bounds`, selector reachability, open index edges as a feature, independent etalon,
+  real-source positives for (b)/(c) (`not_exercised`).
 
 ## Focus and exclusions
 
@@ -72,6 +121,8 @@ superset of the 907 63B in-band rows) the layer-evidence count is 0. Expected di
 
 ## Result
 
+*(r1 wording, kept as history; its claims «слоёв нет» / «построить нельзя» are superseded by Amendment r2.)*
+
 **Итог (RU).** H109 **подтверждена**: в исходном Revit FBX площадки 63 нет данных о слоях стен. Из 1 210 геометрий
 семейства `Вентфасад 250 250` ни одна не содержит слоёв: нет отдельных тел, нет внутренних граней между слоями и нет
 замкнутых «слоёв» по индексам материалов. В 1 152 геометриях несколько индексов материала, но без имён (в файле
@@ -113,7 +164,7 @@ Evidence (receipt, layer dump, exploration scripts): `G:/Мой диск/AGR-evi
    type name (`250`, `200`, `135`) — needs a decision that type names are allowed evidence.
 3. Leave 63B bounds; move to the next ledger row once a fresh practice run lands (ledger still 4 rows since 11-25).
 
-Affected tests: `uv run pytest -q tests/research/test_trainer_layer_r109.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 110 passed, 1 warning (new controls: 5 passed).
+Affected tests: `uv run pytest -q tests/research/test_trainer_layer_r109.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — r2: 117 passed (r109 controls + main() verdict table 12 passed); r1: 110 passed.
 
 Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
 
