@@ -85,7 +85,33 @@ Readback JSON/logs: `G:/Мой диск/AGR-evidence/1855-r107-railing/` (`SHA25
 `4caefa0aec146af207c441252dc36cfb0aa46b366a748c1bded007e20c24dd0d`, 37 files). No binaries committed. Replay limited to
 runners with the pinned Drive fixtures and Blender 4.4. Review readiness is independent of H107.
 
-Affected tests: `uv run pytest -q tests/research/test_trainer_railing_r107.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 107 passed, 1 warning. Pre-implementation run failed at collection (module absent), then 2/2 new tests passed.
+### Review r1 rework: frozen per-pair bounds enforced
+
+**Итог по ревью.** Замороженные числовые границы (63A |S107−S106| ≤ 0,05 м, 63B S107 ≤ S106) раньше не входили в вердикт:
+хватало статуса `pass`. Теперь `probe` считает и пишет `bound_check` по каждой башне и паре, нарушение даёт
+`frozen_bound=false` и статус `inconclusive`, а `verdict` до `confirmed`/`refuted` требует `bound_check.ok` для обеих башен во
+всех трёх парах. Контракт не менялся — исправлена только реализация (вариант `a1fd0f4a`). Повторный native-прогон дал те же
+числа, H107 остаётся **inconclusive** (63A: правило не срабатывает, побочный эффект не измерен).
+
+| Input (real `bounds_step`, `probe` → `verdict`, 3 pairs, all other controls green, rule fires on both towers) | 63A S106 → S107, m | 63B S106 → S107, m | Before fix | Expected / after |
+| --- | --- | --- | --- | --- |
+| In-limit control | 0.00 → 0.03 | 0.20 → 0.00 | confirmed | confirmed |
+| 63A collateral violation (both native pass) | 0.00 → 0.07 | 0.20 → 0.00 | confirmed (false) | inconclusive |
+| 63B direction violation (railing restored Xmin) | 0.00 → 0.03 | 0.20 → 0.30 | refuted (false) | inconclusive |
+| In-limit 63B direction control | 0.00 → 0.03 | 0.20 → 0.20 | refuted | refuted |
+
+Regression `test_probe_verdict_enforces_frozen_pair_bounds` (4 cases): on `eca133c0` the two violations return the false
+verdict, the two controls fail on the missing `bound_check`; on `a1fd0f4a` 4/4 pass.
+
+Native rerun `uv run python docs/research/trainer_railing_r107/replay.py tmp/r107-r2-native a1fd0f4ab470cc281caa36041241fe198255553b`:
+status `complete`, pairs 72.80 / 71.74 / 71.98 s (216.85 s series). Per pair 63A `delta_m` 0.0000 ok, 63B −2.0346 ok;
+63A 0.0514 pass, 63B 0.2002 fail, rail_rule 63A `not_exercised` → **inconclusive**. Original receipt kept unchanged
+(`receipt.json`, 759e94ae…2f85); new [receipt_r2.json](trainer_railing_r107/receipt_r2.json) SHA-256
+`6c6a43de16b6d2162547b4f6cd76027b34f1b21250b4e3354fcb5a66e8799f25`; readbacks
+`G:/Мой диск/AGR-evidence/1855-r107-railing-r2/` (`SHA256SUMS.txt` sha256
+`3890e5f719529aeae39e37514bd323656ff4a7db86d586ea0d38f771ee53b6ae`, 37 files).
+
+Affected tests: `uv run pytest -q tests/research/test_trainer_railing_r107.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 111 passed, 1 warning (r1 rework; was 107). Pre-implementation run failed at collection (module absent), then 2/2 new tests passed.
 
 Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
 
