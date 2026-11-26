@@ -22,7 +22,7 @@ SENTINEL = b"pre-existing unrelated file\n"
 READBACK = ROOT / "tools/blender/fbx_readback.py"
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 from dt_ai.core.blender_runner import blender_command  # noqa: E402
-from tools.trainer.trainer import bounds_step  # noqa: E402
+from tools.trainer.trainer import bounds_step  # type: ignore[import-not-found]  # noqa: E402
 
 
 def sha(path):
@@ -73,7 +73,7 @@ def main(output):
                     str(plan), str(out)], log)
 
     def native(fbx, dest):
-        rc = run(blender_command(READBACK, [fbx, dest], executable=BLENDER), dest.with_suffix(".log"))
+        rc = run(blender_command(READBACK, [fbx, dest], executable=BLENDER), dest.with_suffix(".readback.log"))
         require(rc == 0 and dest.is_file(), f"readback failed: {fbx}, exit={rc}")
         report = json.loads(dest.read_text(encoding="utf-8"))
         meshes = report["meshes"]
@@ -96,7 +96,9 @@ def main(output):
     try:
         for idx in range(3):
             t0 = time.monotonic()
-            trial = {"rows": {}}
+            trial: dict[str, object] = {}
+            rows = {}
+            trial["rows"] = rows
             result["rounds"].append(trial)
             for label, plan in plans.items():
                 d = output / f"round-{idx+1}-{label}"
@@ -105,7 +107,7 @@ def main(output):
                 sentinel = occupied / "original.txt"
                 sentinel.write_bytes(SENTINEL)
                 entry = {}
-                trial["rows"][label] = entry
+                rows[label] = entry
                 entry["baseline_exit"] = build(plan, occupied, d / "baseline.log")
                 entry["baseline_changed_existing"] = int(sentinel.read_bytes() != SENTINEL)
                 entry["baseline_paths"] = sorted(p.name for p in occupied.iterdir())
@@ -127,9 +129,10 @@ def main(output):
                         and entry["clean"]["mesh_sha256"] == entry["candidate"]["mesh_sha256"], f"parity failed: {d}")
                 entry["clean_created_files"] = len(clean_files)
                 entry["candidate_created_files"] = len(child_files)
-            trial.update(B=0, C=len(trial["rows"]), paired_delta=len(trial["rows"]), wall_s=round(time.monotonic()-t0, 3))
+            round_wall = round(time.monotonic() - t0, 3)
+            trial.update(B=0, C=len(rows), paired_delta=len(rows), wall_s=round_wall)
             if idx == 0:
-                projected = time.monotonic() - started + 2 * trial["wall_s"] + 30
+                projected = time.monotonic() - started + 2 * round_wall + 30
                 result["projected_series_s"] = round(projected, 3)
                 if projected > 180:
                     raise TimeoutError("frozen first-round projection exceeds budget")
