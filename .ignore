@@ -739,11 +739,20 @@
 /docs/experiments/tow02-hand-finish-face-diff.md
 /docs/research/ifc-intake-src-contract.md
 /docs/research/job-artifact-name-contract.md
+/experiments/bim-autocad-agr/README.md
+/experiments/bim-autocad-agr/test_experiment.py
 /experiments/body-gn-full-snap-edge-locator-rerun/drive.py
 /experiments/body-gn-full-snap-edge-locator-rerun/probe6.py
 /experiments/body-gn-full-snap-edge-locator-rerun/probe7.py
 /experiments/body-gn-full-snap-edge-locator-rerun/run8.py
+/experiments/complexity-group-index/red.log
 /experiments/fbxmaps-1760/native_smoke.py
+/experiments/flora-texture-diagnosis/bark-calibration-v001.json
+/experiments/flora-texture-diagnosis/bark_calibration.py
+/experiments/flora-texture-diagnosis/calibration-original-tilia.json
+/experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json
+/experiments/flora-texture-diagnosis/source-integrity-v002.json
+/experiments/flora-texture-diagnosis/test_calibration.py
 /jobs/4bk-k3-course-grid-1326/numerical-repair-checkpoint-v166.json
 /jobs/4bk-k3-course-grid-1326/repair-checkpoint-v026.json
 /jobs/butovskaya-sosh1000/autoresearch/results.json
@@ -857,4 +866,5 @@
 /tests/test_body_training_1619_r6.py
 /tests/test_body_training_1619_r7.py
 /tests/test_body_training_1619_stage2.py
+/tools/research/pdf_album/dimension-geometry-evidence.json
 # END historical-data

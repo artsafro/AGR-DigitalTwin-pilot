@@ -380,3 +380,19 @@ locations; search visibility is the only change to them. Retained consumers are 
 - `tests/test_body_training_1619_r6.py` — Historical comparators; still tracked and runnable by pytest.
 - `tests/test_body_training_1619_r7.py` — Historical comparators; still tracked and runnable by pytest.
 - `tests/test_body_training_1619_stage2.py` — Historical comparators; still tracked and runnable by pytest.
+
+### Batch 5a (#1933): research and experiments
+
+Exact paths below stay in Git at their original locations. Only default search visibility changes;
+active consumers and their inputs remain visible. Explicit pytest invocations still work.
+
+- `experiments/bim-autocad-agr/README.md` — Historical experiment instructions, not the active drawing intake route.
+- `experiments/bim-autocad-agr/test_experiment.py` — Historical experiment tests, still runnable by exact path.
+- `experiments/complexity-group-index/red.log` — Frozen pre-fix test output.
+- `experiments/flora-texture-diagnosis/bark-calibration-v001.json` — Frozen bark calibration result.
+- `experiments/flora-texture-diagnosis/bark_calibration.py` — Historical calibration script, not a library entrypoint.
+- `experiments/flora-texture-diagnosis/calibration-original-tilia.json` — Frozen calibration of the original Tilia asset.
+- `experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json` — Frozen source calibration baseline.
+- `experiments/flora-texture-diagnosis/source-integrity-v002.json` — Earlier source-integrity receipt; the cited v003 receipt stays visible.
+- `experiments/flora-texture-diagnosis/test_calibration.py` — Historical experiment tests, still runnable by exact path.
+- `tools/research/pdf_album/dimension-geometry-evidence.json` — Frozen PDF dimension geometry research receipt.
