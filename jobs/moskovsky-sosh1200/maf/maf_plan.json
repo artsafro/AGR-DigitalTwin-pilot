@@ -1,0 +1,732 @@
+{
+ "schema": "agr.job.maf_plan/1",
+ "job": "moskovsky-sosh1200",
+ "status": "plan only - no modelling, nothing accepted",
+ "budget": {
+  "maf_npm_tris": 60000,
+  "source": "TASK.md decision 3 (Ground 50k / MAF 60k / Flora 70k)"
+ },
+ "estimate_basis": "per-item NPM tris guessed from A101 library low versions of the same category (benches 26-1534, urn 230, canopy 774, pergola 104-1020, table 68-488) and the staged VST 9504-1 Low 636; real counts after modelling",
+ "library_search": "library/published/catalogue.json: 0 records; library/assets/maf_unified.json: no entry for any code/name/manufacturer here",
+ "rows": [
+  {
+   "pos": 1,
+   "ledger_name": "Теневой навес 6400x4850x2700 мм",
+   "code": "ВСТ 1519/1",
+   "manufacturer": "Высота",
+   "blocks": [
+    "A$C8eeb7752 (7 hatch fills)"
+   ],
+   "count_drawing_in_gpzu": 7,
+   "count_ledger": 7.0,
+   "count_viz": 7,
+   "count_plan": 7,
+   "library": "new",
+   "manufacturer_url": "https://gk-vysota.ru/catalog/parkovaya-mebel/tproduct/673007226-979496308342-tenevoi-naves-nordik",
+   "dims_m": {
+    "L": 6.4,
+    "W": 4.85,
+    "H": 2.7
+   },
+   "colour_material": "not stated on page (Нордик, light wood + metal per blog)",
+   "viz_dummy": {
+    "objects": "NAVES_260529_004..010",
+    "L": 6.6,
+    "W": 4.85,
+    "H": 2.72,
+    "faces_getPolygonCount": 1060
+   },
+   "npm_tris_each_est": 800,
+   "npm_tris_total_est": 5600,
+   "note": "Теневой навес «Нордик». Viz dummy L 6.60 vs page 6.40 (+20 cm, outside the 10 cm tolerance): size from the page."
+  },
+  {
+   "pos": 2,
+   "ledger_name": "Доска для рисования мелом",
+   "code": "7w2002",
+   "manufacturer": "Робинзон",
+   "blocks": [
+    "Робинзон доска 7w2002"
+   ],
+   "count_drawing_in_gpzu": 5,
+   "count_ledger": 5.0,
+   "count_viz": 5,
+   "count_plan": 5,
+   "library": "new",
+   "manufacturer_url": "https://robinzon-maf.ru/igrovye-elementy/7w2002-bezhevyy",
+   "dims_m": {
+    "L": 1.2,
+    "W": 0.15,
+    "H": 1.56
+   },
+   "colour_material": "beige; materials not stated",
+   "viz_dummy": {
+    "objects": "Group4193/4201/4209/4217/4225",
+    "L": 1.2,
+    "W": 0.16,
+    "H": 1.59,
+    "faces_getPolygonCount": 36236
+   },
+   "npm_tris_each_est": 150,
+   "npm_tris_total_est": 750,
+   "note": ""
+  },
+  {
+   "pos": 3,
+   "ledger_name": "Малые архитектурные формы \"Собрание\"",
+   "code": "6W7000",
+   "manufacturer": "Робинзон",
+   "blocks": [
+    "Робинзон стол 6W7000"
+   ],
+   "count_drawing_in_gpzu": 7,
+   "count_ledger": 7.0,
+   "count_viz": 7,
+   "count_plan": 7,
+   "library": "new",
+   "manufacturer_url": "https://robinzon-maf.ru/malye-arhitekturnye-formy/6w7000-bezhevyy",
+   "dims_m": {
+    "L": 1.79,
+    "W": 1.79,
+    "H": 0.5
+   },
+   "colour_material": "beige (also blue/red); materials not stated",
+   "viz_dummy": {
+    "objects": "Робинзон стол 6W7000..6W7006",
+    "L": 1.77,
+    "W": 1.77,
+    "H": 0.5,
+    "faces_getPolygonCount": 5522
+   },
+   "npm_tris_each_est": 500,
+   "npm_tris_total_est": 3500,
+   "note": "Table with stump seats «Собрание»."
+  },
+  {
+   "pos": 4,
+   "ledger_name": "Гимнастический комплекс \"БУМ-Бревно\"",
+   "code": "ИК 0209Т-6.1",
+   "manufacturer": "Тайга",
+   "blocks": [
+    "A$Cb11df218 (label ИК 0209Т-6.1)"
+   ],
+   "count_drawing_in_gpzu": 6,
+   "count_ledger": 11.0,
+   "count_viz": 5,
+   "count_plan": 6,
+   "library": "new",
+   "manufacturer_url": "https://playtaiga.ru/product/2289-brevno-naklonnoe-ik-0209t6/ (closest: ИК 0209Т-6)",
+   "dims_m": {
+    "L": 2.3,
+    "W": 0.3,
+    "H": 0.5
+   },
+   "colour_material": "5 colour options, no RAL",
+   "viz_dummy": {
+    "objects": "БУМ_БРЕВНО..004 (Corona proxies)",
+    "L": 2.3,
+    "W": 0.18,
+    "H": 0.46,
+    "faces_getPolygonCount": null
+   },
+   "npm_tris_each_est": 300,
+   "npm_tris_total_est": 1800,
+   "note": "Code ИК 0209Т-6.1 not found on playtaiga.ru; closest ИК 0209Т-6 «Бревно наклонное». Ledger 11."
+  },
+  {
+   "pos": 5,
+   "ledger_name": "Переговорные трубы",
+   "code": "ИО 1215.1",
+   "manufacturer": "Тайга",
+   "blocks": [
+    "Тайга перег_трубы ИО 1215"
+   ],
+   "count_drawing_in_gpzu": 4,
+   "count_ledger": 4.0,
+   "count_viz": 4,
+   "count_plan": 4,
+   "library": "new",
+   "manufacturer_url": "https://playtaiga.ru/product/2893-peregovornye-truby-io-12151/",
+   "dims_m": {
+    "L": 0.3,
+    "W": 0.2,
+    "H": 1.0
+   },
+   "colour_material": "5 colour options, no RAL",
+   "viz_dummy": {
+    "objects": "ИО 1215 / ИО 1216 (each mesh = 2 tube sets)",
+    "L": 0.55,
+    "W": 4.49,
+    "H": 0.98,
+    "faces_getPolygonCount": 136042
+   },
+   "npm_tris_each_est": 300,
+   "npm_tris_total_est": 1200,
+   "note": "ИО 1215 (h 1.40) also exists; ledger says ИО 1215.1 (h 1.00); viz H 0.98 agrees with 1215.1."
+  },
+  {
+   "pos": 6,
+   "ledger_name": "Аэрофон",
+   "code": "ИО 1204",
+   "manufacturer": "Тайга",
+   "blocks": [
+    "Тайга Аэрофон ИО 1204"
+   ],
+   "count_drawing_in_gpzu": 2,
+   "count_ledger": 2.0,
+   "count_viz": 2,
+   "count_plan": 2,
+   "library": "new",
+   "manufacturer_url": "https://playtaiga.ru/product/2809-aerofon-io-1204/",
+   "dims_m": {
+    "L": 1.1,
+    "W": 0.3,
+    "H": 0.9
+   },
+   "colour_material": "metal tubes; 5 colour options",
+   "viz_dummy": {
+    "objects": "garbled-name Editable_Poly x2",
+    "L": 1.09,
+    "W": 0.32,
+    "H": 0.94,
+    "faces_getPolygonCount": 97775
+   },
+   "npm_tris_each_est": 400,
+   "npm_tris_total_est": 800,
+   "note": ""
+  },
+  {
+   "pos": 7,
+   "ledger_name": "Язычковый барабан",
+   "code": "ИО 1211",
+   "manufacturer": "Тайга",
+   "blocks": [
+    "Тайга Барабан ИО 1211"
+   ],
+   "count_drawing_in_gpzu": 2,
+   "count_ledger": 2.0,
+   "count_viz": 2,
+   "count_plan": 2,
+   "library": "new",
+   "manufacturer_url": "https://playtaiga.ru/product/2824-yazychkovyy-baraban-io-1211/",
+   "dims_m": {
+    "L": 0.6,
+    "W": 0.6,
+    "H": 0.8
+   },
+   "colour_material": "5 colour options",
+   "viz_dummy": {
+    "objects": "Тайга Барабан ИО 1211 / 1212",
+    "L": 0.58,
+    "W": 0.58,
+    "H": 0.78,
+    "faces_getPolygonCount": 34916
+   },
+   "npm_tris_each_est": 200,
+   "npm_tris_total_est": 400,
+   "note": ""
+  },
+  {
+   "pos": 8,
+   "ledger_name": "Шахматный стол \"Шах и мат\" (цвет Бежевый)",
+   "code": "6U7004",
+   "manufacturer": "Робинзон",
+   "blocks": [
+    "Шахматы 6U7004"
+   ],
+   "count_drawing_in_gpzu": 10,
+   "count_ledger": 4.0,
+   "count_viz": 10,
+   "count_plan": 10,
+   "library": "new",
+   "manufacturer_url": "https://robinzon-maf.ru/malye-arhitekturnye-formy/skameyki/6u7004 (404 now; dims from search snippet)",
+   "dims_m": {
+    "L": 1.7,
+    "W": 0.8,
+    "H": 0.756
+   },
+   "colour_material": "бежевый (ledger); concrete",
+   "viz_dummy": {
+    "objects": "boltu 011..020",
+    "L": 1.74,
+    "W": 0.81,
+    "H": 0.76,
+    "faces_getPolygonCount": 69614
+   },
+   "npm_tris_each_est": 200,
+   "npm_tris_total_est": 2000,
+   "note": "Ledger 4."
+  },
+  {
+   "pos": 9,
+   "ledger_name": "Скамейка \"Стрела-дуга\"",
+   "code": "6U2023",
+   "manufacturer": "Робинзон",
+   "blocks": [
+    "Робинзон_6U2023"
+   ],
+   "count_drawing_in_gpzu": 3,
+   "count_ledger": 3.0,
+   "count_viz": 2,
+   "count_plan": 3,
+   "library": "new",
+   "manufacturer_url": "https://robinzon-maf.ru/malye-arhitekturnye-formy/skameyki/6u2023-bezhevyy",
+   "dims_m": {
+    "L": 10.33,
+    "W": 4.26,
+    "H": 0.4
+   },
+   "colour_material": "beige; materials not stated",
+   "viz_dummy": {
+    "objects": "Стрела Дуга / Стрела Дуга001",
+    "L": 10.69,
+    "W": 9.97,
+    "H": 0.4,
+    "faces_getPolygonCount": 6136
+   },
+   "npm_tris_each_est": 1000,
+   "npm_tris_total_est": 3000,
+   "note": "Large curved bench; block base point at a corner. 1 drawing point has no viz object."
+  },
+  {
+   "pos": 10,
+   "ledger_name": "Малые архитектурные формы \"Плато 1\"",
+   "code": "6W3000.1",
+   "manufacturer": "Робинзон",
+   "blocks": [
+    "Робинзон скамья 6W3000.1"
+   ],
+   "count_drawing_in_gpzu": 9,
+   "count_ledger": 9.0,
+   "count_viz": 9,
+   "count_plan": 9,
+   "library": "new",
+   "manufacturer_url": "https://robinzon-maf.ru/malye-arhitekturnye-formy/6w30001-bezhevyy",
+   "dims_m": {
+    "L": 1.49,
+    "W": 0.91,
+    "H": 0.43
+   },
+   "colour_material": "beige (also blue/red); concrete base + boards (viz)",
+   "viz_dummy": {
+    "objects": "Робинзон скамья 6W3000.*",
+    "L": 1.42,
+    "W": 0.98,
+    "H": 0.43,
+    "faces_getPolygonCount": 28914
+   },
+   "npm_tris_each_est": 150,
+   "npm_tris_total_est": 1350,
+   "note": "3 viz benches of the south cluster sit ~2 m off the drawing points."
+  },
+  {
+   "pos": 11,
+   "ledger_name": "Малые архитектурные формы \"Хитроу гранд\"",
+   "code": "6W2006.1",
+   "manufacturer": "Робинзон",
+   "blocks": [
+    "Робинзон скамья 6W2006.1"
+   ],
+   "count_drawing_in_gpzu": 3,
+   "count_ledger": 12.0,
+   "count_viz": 3,
+   "count_plan": 3,
+   "library": "new",
+   "manufacturer_url": "https://robinzon-maf.ru/malye-arhitekturnye-formy/6w20061-bezhevyy",
+   "dims_m": {
+    "L": 2.0,
+    "W": 1.2,
+    "H": 0.7
+   },
+   "colour_material": "beige; galvanized steel + larch/thermowood/composite (category text)",
+   "viz_dummy": {
+    "objects": "Скамья_9_max..002",
+    "L": 2.0,
+    "W": 1.2,
+    "H": 0.71,
+    "faces_getPolygonCount": 15220
+   },
+   "npm_tris_each_est": 400,
+   "npm_tris_total_est": 1200,
+   "note": "Ledger 12."
+  },
+  {
+   "pos": 17,
+   "ledger_name": "Стол теннисный",
+   "code": "СО 0216-3",
+   "manufacturer": "Тайга",
+   "blocks": [
+    "Тайга стол тен. СО 0216-3"
+   ],
+   "count_drawing_in_gpzu": 4,
+   "count_ledger": 7.0,
+   "count_viz": 4,
+   "count_plan": 4,
+   "library": "new",
+   "manufacturer_url": "https://playtaiga.ru/product/2574-stol-tennisnyy-so-02163/",
+   "dims_m": {
+    "L": 2.7,
+    "W": 1.5,
+    "H": null
+   },
+   "colour_material": "5 colour options",
+   "viz_dummy": {
+    "objects": "СО 0216-3..006",
+    "L": 2.75,
+    "W": 1.53,
+    "H": 0.91,
+    "faces_getPolygonCount": 469674
+   },
+   "npm_tris_each_est": 300,
+   "npm_tris_total_est": 1200,
+   "note": "Page height 100 mm is a site error; viz 0.91 / standard 0.76 -> review. Ledger 7."
+  },
+  {
+   "pos": 19,
+   "ledger_name": "Баскетбольная стойка",
+   "code": "СО-012",
+   "manufacturer": "Поколение",
+   "blocks": [
+    "Поколение СО-012"
+   ],
+   "count_drawing_in_gpzu": 2,
+   "count_ledger": null,
+   "count_viz": 2,
+   "count_plan": 2,
+   "library": "new",
+   "manufacturer_url": "NOT FOUND (pokolenie-pk.ru catalogue is script-loaded)",
+   "dims_m": {
+    "L": null,
+    "W": null,
+    "H": null
+   },
+   "colour_material": "unknown",
+   "viz_dummy": {
+    "objects": "backboard001/002",
+    "L": 2.07,
+    "W": 1.2,
+    "H": 3.79,
+    "faces_getPolygonCount": 33623
+   },
+   "npm_tris_each_est": 400,
+   "npm_tris_total_est": 800,
+   "note": "Ledger count empty. One block mirrored."
+  },
+  {
+   "pos": 21,
+   "ledger_name": "Спортивный комплекс (волейбол) с возможностью регулирования крепления сетки по высоте, оборудован сеткой, от 6лет",
+   "code": "СО053",
+   "manufacturer": "Поколение",
+   "blocks": [
+    "СВ001"
+   ],
+   "count_drawing_in_gpzu": 1,
+   "count_ledger": 1.0,
+   "count_viz": 1,
+   "count_plan": 1,
+   "library": "new",
+   "manufacturer_url": "NOT FOUND (Поколение СО053)",
+   "dims_m": {
+    "L": null,
+    "W": null,
+    "H": null
+   },
+   "colour_material": "unknown",
+   "viz_dummy": {
+    "objects": "SETKA",
+    "L": 10.16,
+    "W": 0.16,
+    "H": 2.66,
+    "faces_getPolygonCount": 53380
+   },
+   "npm_tris_each_est": 300,
+   "npm_tris_total_est": 300,
+   "note": "Volleyball posts + net; block extents 14.2 x 5.1 m (court marking incl.)."
+  },
+  {
+   "pos": 23,
+   "ledger_name": "Уличный флагшток из алюминия",
+   "code": "AL-L-06-11",
+   "manufacturer": "Grand-mag",
+   "blocks": [
+    "флагшток"
+   ],
+   "count_drawing_in_gpzu": 3,
+   "count_ledger": 3.0,
+   "count_viz": 3,
+   "count_plan": 3,
+   "library": "new",
+   "manufacturer_url": "https://www.grand-mag.ru/catalog/flagshtoki_statsionarnye/flagshtok_statsionarnyy_6_12_metrov_iz_alyuminiya/",
+   "dims_m": {
+    "L": null,
+    "W": null,
+    "H": "6-12"
+   },
+   "colour_material": "aluminium АД31Т1, RAL 7040 standard",
+   "viz_dummy": {
+    "objects": "RUS002 / IND002 / BELRUS002",
+    "L": 0.3,
+    "W": 0.3,
+    "H": 9.35,
+    "faces_getPolygonCount": 8682
+   },
+   "npm_tris_each_est": 150,
+   "npm_tris_total_est": 450,
+   "note": "Height not fixed by the ledger; viz 9.35 m incl. flag -> question."
+  },
+  {
+   "pos": 24,
+   "ledger_name": "Стол со скамейкой и диваном",
+   "code": "ВСТ 9504/1",
+   "manufacturer": "Высота",
+   "blocks": [
+    "Столс лавками Высота ВСТ 9504_1"
+   ],
+   "count_drawing_in_gpzu": 7,
+   "count_ledger": 4.0,
+   "count_viz": 7,
+   "count_plan": 7,
+   "library": "candidate: GKVysota_StolSoSkameykoyIDivanom_VST9504-1 (staged G:/Мой диск/AGR-assets/_inbox/vst9504-2026-11-19, not accepted into library); geometry accepted 2026-11-19 (C:/x/vst9504-table)",
+   "manufacturer_url": "https://gk-vysota.ru/catalog/parkovaya-mebel/tproduct/673007226-539081018201-stol-so-skameikoi-i-divanom",
+   "dims_m": {
+    "L": 1.8,
+    "W": 2.02,
+    "H": 0.855
+   },
+   "colour_material": "ФСФ plywood + powder-coated metal (page); model IDs wood_light + paint_ral7016",
+   "viz_dummy": {
+    "objects": "DET_STL-M-0007_001..007",
+    "L": 2.11,
+    "W": 1.8,
+    "H": 0.86,
+    "faces_getPolygonCount": 780
+   },
+   "npm_tris_each_est": 636,
+   "npm_tris_total_est": 4452,
+   "note": "Low 636 / High 1020 tris. Ledger 4."
+  },
+  {
+   "pos": 25,
+   "ledger_name": "Пергола",
+   "code": "ВСТ 9614/4",
+   "manufacturer": "Высота",
+   "blocks": [
+    "Высота Пергола ВСТ 9612_6 (14 blocks = 7 back-to-back pairs)"
+   ],
+   "count_drawing_in_gpzu": 14,
+   "count_ledger": 14.0,
+   "count_viz": 7,
+   "count_plan": 7,
+   "library": "new",
+   "manufacturer_url": "https://davinci-play.ru/catalog/ulichnaya-mebel/pergoly/%D0%92%D0%A1%D0%A2-9614-4/ (dealer); drawn type 9612/6: https://davinci-play.ru/catalog/ulichnaya-mebel/pergoly/%D0%92%D0%A1%D0%A2-9612-6/",
+   "dims_m": {
+    "L": 5.8,
+    "W": 2.0,
+    "H": 2.7
+   },
+   "colour_material": "not stated",
+   "viz_dummy": {
+    "objects": "Group4258..4264 (pergola + 2 Аданат benches)",
+    "L": 5.82,
+    "W": 2.0,
+    "H": 2.7,
+    "faces_getPolygonCount": 51220
+   },
+   "npm_tris_each_est": 600,
+   "npm_tris_total_est": 4200,
+   "note": "Ledger type 9614/4 is 5.8 m = one pair of 3.0 m 9612/6 blocks; viz has 7 x 5.82 m at the pair centres. Plan 7 (14 if Artem keeps the ledger count)."
+  },
+  {
+   "pos": 26,
+   "ledger_name": "Навес для МГН",
+   "code": "ВСТ 9624/3",
+   "manufacturer": "Высота",
+   "blocks": [
+    "Высота_навес_9624_3"
+   ],
+   "count_drawing_in_gpzu": 1,
+   "count_ledger": 2.0,
+   "count_viz": 1,
+   "count_plan": 1,
+   "library": "new",
+   "manufacturer_url": "NOT FOUND (ВСТ 9624/3)",
+   "dims_m": {
+    "L": null,
+    "W": null,
+    "H": null
+   },
+   "colour_material": "unknown",
+   "viz_dummy": {
+    "objects": "ВЫСОТА_ВСТ 9624/004",
+    "L": 5.01,
+    "W": 1.77,
+    "H": 2.0,
+    "faces_getPolygonCount": 721
+   },
+   "npm_tris_each_est": 400,
+   "npm_tris_total_est": 400,
+   "note": "Size only from viz/DWG (block 5.0 x 1.76). Ledger 2."
+  },
+  {
+   "pos": 27,
+   "ledger_name": "Скамейка «Скарлет» с подлокотниками",
+   "code": "10027-1",
+   "manufacturer": "Аданат",
+   "blocks": [
+    "Аданат скамья 10027-1"
+   ],
+   "count_drawing_in_gpzu": 19,
+   "count_ledger": 16.0,
+   "count_viz": 19,
+   "count_plan": 19,
+   "library": "new",
+   "manufacturer_url": "https://adanatgroup.ru/katalog/ulichnaya-mebel/ulichnye-skameiki/skamejka-skarlet-s-podlokotnikami/",
+   "dims_m": {
+    "L": 1.8,
+    "W": 0.65,
+    "H": 0.805
+   },
+   "colour_material": "cast iron RAL 7016 shagreen; pine/larch «светлый дуб»",
+   "viz_dummy": {
+    "objects": "10027-1.0.00 СБ003..021",
+    "L": 1.8,
+    "W": 0.65,
+    "H": 0.81,
+    "faces_getPolygonCount": 25320
+   },
+   "npm_tris_each_est": 500,
+   "npm_tris_total_est": 9500,
+   "note": "14 of 19 sit in the pergola groups. Ledger 16."
+  },
+  {
+   "pos": 28,
+   "ledger_name": "Урны \"Город\"",
+   "code": "9004",
+   "manufacturer": "Аданат",
+   "blocks": [
+    "Робинзон урна 6W9006"
+   ],
+   "count_drawing_in_gpzu": 11,
+   "count_ledger": 14.0,
+   "count_viz": 11,
+   "count_plan": 11,
+   "library": "new",
+   "manufacturer_url": "https://adanatgroup.ru/katalog/ulichnaya-mebel/urny-ulichnye/urna-gorod/",
+   "dims_m": {
+    "L": 0.4,
+    "W": 0.4,
+    "H": 1.0
+   },
+   "colour_material": "steel RAL 7016 shagreen; pine/larch «светлый дуб»",
+   "viz_dummy": {
+    "objects": "Робинзон урна 6W9006..6W9016 (Robinzon cube, not Аданат)",
+    "L": 0.47,
+    "W": 0.4,
+    "H": 0.87,
+    "faces_getPolygonCount": 5466
+   },
+   "npm_tris_each_est": 230,
+   "npm_tris_total_est": 2530,
+   "note": "Ledger type Аданат 9004 «Город» wins over block Robinzon 6W9006 (0.47x0.40x0.88). Ledger 14."
+  },
+  {
+   "pos": 32,
+   "ledger_name": "Контейнерная площадка  на 3 контейнера",
+   "code": null,
+   "manufacturer": "Аданат",
+   "blocks": [
+    "Усл конт площ"
+   ],
+   "count_drawing_in_gpzu": 1,
+   "count_ledger": 6.0,
+   "count_viz": 4,
+   "count_plan": 4,
+   "library": "new",
+   "manufacturer_url": "https://adanatgroup.ru/katalog/ulichnaya-mebel/kontejnernye-ploshadki/kontejnernaya-ploshhadka-bunker-na-3-konteynera/ (closest; no code in ledger)",
+   "dims_m": {
+    "L": 4.54,
+    "W": 2.51,
+    "H": 2.49
+   },
+   "colour_material": "steel RAL 7016, pine/larch walls, galvanized roof",
+   "viz_dummy": {
+    "objects": "STF_Musor_Block_000..004 (enclosure + 3 dumpster proxies)",
+    "L": 7.24,
+    "W": 2.53,
+    "H": 2.48,
+    "faces_getPolygonCount": 5678
+   },
+   "npm_tris_each_est": 400,
+   "npm_tris_total_est": 1600,
+   "note": "Drawing: 1 yard outline + 4 ТБО непищ groups inside (1 more 2.6 m outside). Viz: 4 enclosures on the ТБО points. Model choice open (Бункер 5003-1 / Панель 5029-2 / ...). Ledger 6."
+  },
+  {
+   "pos": 34,
+   "ledger_name": "Контейнер для мусора с крышкой",
+   "code": "МК001",
+   "manufacturer": "Поколение",
+   "blocks": [
+    "ТБО непищ"
+   ],
+   "count_drawing_in_gpzu": 4,
+   "count_ledger": 18.0,
+   "count_viz": "12 dumpster proxies in 4 enclosures",
+   "count_plan": 12,
+   "library": "new",
+   "manufacturer_url": "NOT FOUND (Поколение МК001)",
+   "dims_m": {
+    "L": 1.4,
+    "W": 1.4,
+    "H": 0.9
+   },
+   "colour_material": "unknown (ledger dims)",
+   "viz_dummy": {
+    "objects": "Dumpster00x CProxy",
+    "L": 1.74,
+    "W": 1.11,
+    "H": 1.58,
+    "faces_getPolygonCount": null
+   },
+   "npm_tris_each_est": 200,
+   "npm_tris_total_est": 2400,
+   "note": "Ledger 18 containers (= 6 yards x 3). Plan 4 yards x 3 = 12 (follows the pos 32 answer)."
+  },
+  {
+   "pos": "37/38",
+   "ledger_name": "Калитка периметрального ограждения",
+   "code": null,
+   "manufacturer": "Индивидуальный проект",
+   "blocks": [
+    "Калитка 1.2 (shared)"
+   ],
+   "count_drawing_in_gpzu": 4,
+   "count_ledger": [
+    3.0,
+    3.0
+   ],
+   "count_viz": 0,
+   "count_plan": 0,
+   "library": "new (fence item)",
+   "manufacturer_url": "individual project",
+   "dims_m": {
+    "L": 1.2,
+    "W": null,
+    "H": null
+   },
+   "colour_material": "fence",
+   "viz_dummy": {
+    "objects": "none",
+    "L": null,
+    "W": null,
+    "H": null,
+    "faces_getPolygonCount": null
+   },
+   "npm_tris_each_est": 0,
+   "npm_tris_total_est": 0,
+   "note": "4 gates inside ГПЗУ (+1 on the boundary). Fences are out of MAF scope here: modelled with the fence or not at all -> question; not in the budget."
+  }
+ ],
+ "total_tris_est": 49432,
+ "total_tris_est_if_pos25_is_14": 53632,
+ "over_budget": false
+}

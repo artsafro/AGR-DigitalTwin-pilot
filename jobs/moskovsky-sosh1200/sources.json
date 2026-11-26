@@ -1,0 +1,42 @@
+{
+ "manifest": "external-inputs/1",
+ "registry": "job-sources/1",
+ "job": "moskovsky-sosh1200",
+ "asset_store": "G:/Мой диск/AGR-assets/",
+ "why": "Customer sources of the moskovsky-sosh1200 site NPM (TASK.md Sources), hashes from SHA256SUMS.txt in the source folder (read only, outside git).",
+ "files": [
+  {
+   "path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/SHA256SUMS.txt",
+   "sha256": "076323aa707ab4fcce6818ce164eb5537cbb0d652eec5e0b430561e8ab0f0c29",
+   "location": "asset-store",
+   "folder": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/",
+   "kind": "hash-list",
+   "role": "hash list of the three source files"
+  },
+  {
+   "path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/33_п.Московский Школа 1200_13.11.26.dwg",
+   "sha256": "ed87f7f9e49f257c2914e0d0dfef3bf679447869509d4fad59d94de87e501b9d",
+   "location": "asset-store",
+   "folder": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/",
+   "kind": "customer-source",
+   "role": "SPOZU DWG (МСК-77, m): GPZU boundary, covers, MAF/planting blocks and ledgers"
+  },
+  {
+   "path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/_ резинаV1_1.dwg",
+   "sha256": "bbf22dce52f1cdee1daac2ce76d829a9a4698ef287afd80705763ab5a7b81133",
+   "location": "asset-store",
+   "folder": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/",
+   "kind": "customer-source",
+   "role": "rubber zones DWG (colours, drawings), sent by the architects 2026-11-26"
+  },
+  {
+   "path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/ЛСР-МОСК-ШК1200_ФР_03_09_2026.pdf",
+   "sha256": "02732ba5cf060ca968ffe7f1b2cea37e9782a4f746b3ae896b2d36966592bb06",
+   "location": "asset-store",
+   "folder": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/",
+   "kind": "customer-source",
+   "role": "PDF (ФР 03.09.2026), reference"
+  }
+ ],
+ "synthetic": false
+}

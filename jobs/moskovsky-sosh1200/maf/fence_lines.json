@@ -1,0 +1,885 @@
+{
+ "source": {
+  "dxf": "C:/x/moskovsky-env/inspect/school.dxf",
+  "crs": "MSK-77 m",
+  "boundary_handle": "2B6",
+  "boundary_layer": "_GL_01_Границы_ГПЗУ",
+  "boundary_area_m2": 22021.7,
+  "on_boundary_tol_m": 0.3,
+  "arc_chord_error_m": 0.05,
+  "local_origin_offset": [
+   -9840,
+   -7150
+  ]
+ },
+ "lines": [
+  {
+   "handle": "11544B",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 6,
+   "bulges": false,
+   "length_total": 99.78,
+   "length_inside_incl_on_boundary": 99.78,
+   "length_strictly_inside": 0.4,
+   "length_on_boundary": 99.78,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9576.38,
+      -6897.22
+     ],
+     [
+      -9555.84,
+      -6938.31
+     ],
+     [
+      -9553.33,
+      -6937.01
+     ],
+     [
+      -9552.42,
+      -6938.88
+     ],
+     [
+      -9531.26,
+      -6982.56
+     ],
+     [
+      -9531.456,
+      -6982.21
+     ]
+    ]
+   ],
+   "role": "perimeter, on GPZU boundary (NE side)",
+   "in_model_scope": true,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "11544C",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 5,
+   "bulges": false,
+   "length_total": 413.35,
+   "length_inside_incl_on_boundary": 413.35,
+   "length_strictly_inside": 126.34,
+   "length_on_boundary": 413.35,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9777.75,
+      -7134.93
+     ],
+     [
+      -9780.77,
+      -7129.03
+     ],
+     [
+      -9777.62,
+      -7126.75
+     ],
+     [
+      -9831.55,
+      -7019.87
+     ],
+     [
+      -9576.38,
+      -6897.22
+     ]
+    ]
+   ],
+   "role": "perimeter, on GPZU boundary (W/NW side)",
+   "in_model_scope": true,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "7D3188",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 3,
+   "bulges": false,
+   "length_total": 165.64,
+   "length_inside_incl_on_boundary": 11.67,
+   "length_strictly_inside": 11.37,
+   "length_on_boundary": 0.6,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9651.199,
+      -6983.659
+     ],
+     [
+      -9646.142,
+      -6994.18
+     ]
+    ]
+   ],
+   "role": "perimeter spur: sport-court corner -> across GPZU -> stadium (11.7 m inside)",
+   "in_model_scope": true,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "7D3189",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 1.7,
+   "length_inside_incl_on_boundary": 1.7,
+   "length_strictly_inside": 1.7,
+   "length_on_boundary": 0.3,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9566.205,
+      -6921.387
+     ],
+     [
+      -9564.669,
+      -6920.647
+     ]
+    ]
+   ],
+   "role": "perimeter link: sport-court N corner -> GPZU boundary",
+   "in_model_scope": true,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "9506F9",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 18.99,
+   "length_inside_incl_on_boundary": 18.99,
+   "length_strictly_inside": 18.99,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9639.195,
+      -6977.881
+     ],
+     [
+      -9647.422,
+      -6960.766
+     ]
+    ]
+   ],
+   "role": "sport partition across the court",
+   "in_model_scope": true,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "9506FA",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 18.99,
+   "length_inside_incl_on_boundary": 18.99,
+   "length_strictly_inside": 18.99,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9613.959,
+      -6965.751
+     ],
+     [
+      -9622.185,
+      -6948.636
+     ]
+    ]
+   ],
+   "role": "sport partition across the court",
+   "in_model_scope": true,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "95088B",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 6.46,
+   "length_inside_incl_on_boundary": 0.0,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [],
+   "role": "legend sample (x~-9010), ignore",
+   "in_model_scope": false,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "950964",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 7.68,
+   "length_inside_incl_on_boundary": 0.0,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [],
+   "role": "legend sample (x~-9008), ignore",
+   "in_model_scope": false,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "95B1AB",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 18.99,
+   "length_inside_incl_on_boundary": 18.99,
+   "length_strictly_inside": 18.99,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9588.722,
+      -6953.623
+     ],
+     [
+      -9596.949,
+      -6936.508
+     ]
+    ]
+   ],
+   "role": "sport partition across the court",
+   "in_model_scope": true,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "95B1AC",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 43.93,
+   "length_inside_incl_on_boundary": 0.0,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [],
+   "role": "sport, stadium, outside GPZU",
+   "in_model_scope": false,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "95B1AD",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 43.77,
+   "length_inside_incl_on_boundary": 0.0,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [],
+   "role": "sport, stadium, outside GPZU",
+   "in_model_scope": false,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "95B1AE",
+   "layer": "232_Огр_СПОРТ",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 5,
+   "bulges": false,
+   "length_total": 232.46,
+   "length_inside_incl_on_boundary": 232.46,
+   "length_strictly_inside": 232.46,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9651.205,
+      -6983.662
+     ],
+     [
+      -9659.568,
+      -6966.262
+     ],
+     [
+      -9566.205,
+      -6921.387
+     ],
+     [
+      -9557.84,
+      -6938.789
+     ],
+     [
+      -9639.192,
+      -6977.889
+     ]
+    ]
+   ],
+   "role": "sport court enclosure (open 13.3 m at the SW end), 3 wickets",
+   "in_model_scope": true,
+   "fence_type": "sport_h4"
+  },
+  {
+   "handle": "95B4C2",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": true,
+   "vertex_count": 2,
+   "bulges": false,
+   "length_total": 0.0,
+   "length_inside_incl_on_boundary": 0.0,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.0,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [],
+   "role": "zero-length closed stub, ignore",
+   "in_model_scope": false,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "95EDF9",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 7,
+   "bulges": false,
+   "length_total": 247.55,
+   "length_inside_incl_on_boundary": 0.3,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.3,
+   "const_width": 0.2,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9777.75,
+      -7134.93
+     ],
+     [
+      -9777.626,
+      -7135.203
+     ]
+    ]
+   ],
+   "role": "perimeter around stadium, outside GPZU (touches it at the SW end); gate 4.5 sits on it",
+   "in_model_scope": false,
+   "fence_type": "perimeter_pro_h2_5"
+  },
+  {
+   "handle": "95EDFA",
+   "layer": "232_Ог_Внешние_вар2",
+   "type": "LWPOLYLINE",
+   "closed": false,
+   "vertex_count": 9,
+   "bulges": false,
+   "length_total": 189.0,
+   "length_inside_incl_on_boundary": 0.3,
+   "length_strictly_inside": 0.0,
+   "length_on_boundary": 0.3,
+   "const_width": 0,
+   "ltscale": 4.0,
+   "clipped_parts": [
+    [
+     [
+      -9531.223,
+      -6982.858
+     ],
+     [
+      -9531.26,
+      -6982.56
+     ]
+    ]
+   ],
+   "role": "perimeter around stadium, outside GPZU (touches it at the NE end)",
+   "in_model_scope": false,
+   "fence_type": "perimeter_pro_h2_5"
+  }
+ ],
+ "gates": [
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3A5",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -10339.831,
+    -7403.653
+   ],
+   "rotation_deg": 0,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "outside",
+   "dist_to_boundary_m": 622.87,
+   "nearest_fence": [
+    {
+     "handle": "11544C",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 622.87
+    },
+    {
+     "handle": "95EDF9",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 622.87
+    }
+   ],
+   "block_points_world": [
+    [
+     -10339.831,
+     -7403.653
+    ],
+    [
+     -10339.819,
+     -7402.153
+    ],
+    [
+     -10341.348,
+     -7403.653
+    ]
+   ],
+   "role": "legend sample next to the ledger table",
+   "scope": "none",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Ворота 4.5",
+   "handle": "95F3A6",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9775.993,
+    -7138.693
+   ],
+   "rotation_deg": 295.83,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "outside",
+   "dist_to_boundary_m": 4.15,
+   "nearest_fence": [
+    {
+     "handle": "95EDF9",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 0.05
+    },
+    {
+     "handle": "11544C",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 4.15
+    }
+   ],
+   "block_points_world": [
+    [
+     -9775.0,
+     -7140.745
+    ],
+    [
+     -9772.996,
+     -7139.741
+    ],
+    [
+     -9776.011,
+     -7138.702
+    ],
+    [
+     -9775.033,
+     -7135.759
+    ],
+    [
+     -9776.984,
+     -7136.72
+    ]
+   ],
+   "role": "pos 36 gate 4.5, on 95EDF9 4.15 m outside GPZU",
+   "scope": "out of scope (outside)",
+   "opening_m": 4.5,
+   "block_symbol_note": "block leaf drawn 2 x 2.25 m (opening 4.49 m) centred on insert"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3A7",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9638.502,
+    -6977.557
+   ],
+   "rotation_deg": 205.67,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "inside",
+   "dist_to_boundary_m": 9.64,
+   "nearest_fence": [
+    {
+     "handle": "95B1AE",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 0.0
+    },
+    {
+     "handle": "9506F9",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 0.76
+    }
+   ],
+   "block_points_world": [
+    [
+     -9638.502,
+     -6977.557
+    ],
+    [
+     -9637.863,
+     -6978.914
+    ],
+    [
+     -9637.135,
+     -6976.9
+    ]
+   ],
+   "role": "pos 38 sport wicket",
+   "scope": "in scope",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3A8",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9613.266,
+    -6965.427
+   ],
+   "rotation_deg": 205.67,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "inside",
+   "dist_to_boundary_m": 6.36,
+   "nearest_fence": [
+    {
+     "handle": "95B1AE",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 0.0
+    },
+    {
+     "handle": "9506FA",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 0.77
+    }
+   ],
+   "block_points_world": [
+    [
+     -9613.266,
+     -6965.427
+    ],
+    [
+     -9612.626,
+     -6966.784
+    ],
+    [
+     -9611.898,
+     -6964.77
+    ]
+   ],
+   "role": "pos 38 sport wicket",
+   "scope": "in scope",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3A9",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9588.03,
+    -6953.297
+   ],
+   "rotation_deg": 205.67,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "inside",
+   "dist_to_boundary_m": 3.66,
+   "nearest_fence": [
+    {
+     "handle": "95B1AE",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 0.0
+    },
+    {
+     "handle": "95B1AB",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 0.77
+    }
+   ],
+   "block_points_world": [
+    [
+     -9588.03,
+     -6953.297
+    ],
+    [
+     -9587.39,
+     -6954.654
+    ],
+    [
+     -9586.662,
+     -6952.64
+    ]
+   ],
+   "role": "pos 38 sport wicket",
+   "scope": "in scope",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3AA",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    0.69,
+    0.332
+   ],
+   "rotation_deg": 205.67,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "outside",
+   "dist_to_boundary_m": 11802.39,
+   "nearest_fence": [
+    {
+     "handle": "950964",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 11578.7
+    },
+    {
+     "handle": "95088B",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 11585.62
+    }
+   ],
+   "block_points_world": [
+    [
+     0.69,
+     0.332
+    ],
+    [
+     1.329,
+     -1.025
+    ],
+    [
+     2.057,
+     0.989
+    ]
+   ],
+   "role": "stray copy at the drawing origin",
+   "scope": "none",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3AB",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9532.787,
+    -6979.3
+   ],
+   "rotation_deg": 122.34,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "on_boundary",
+   "dist_to_boundary_m": 0.05,
+   "nearest_fence": [
+    {
+     "handle": "11544B",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 0.05
+    },
+    {
+     "handle": "95EDFA",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 3.6
+    }
+   ],
+   "block_points_world": [
+    [
+     -9532.787,
+     -6979.3
+    ],
+    [
+     -9534.061,
+     -6980.093
+    ],
+    [
+     -9531.976,
+     -6980.581
+    ]
+   ],
+   "role": "pos 37 perimeter wicket, on 11544B (on the GPZU line)",
+   "scope": "in scope",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3AC",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9593.732,
+    -7022.729
+   ],
+   "rotation_deg": 205.65,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "outside",
+   "dist_to_boundary_m": 52.49,
+   "nearest_fence": [
+    {
+     "handle": "7D3188",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 0.03
+    },
+    {
+     "handle": "95B1AC",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 13.54
+    }
+   ],
+   "block_points_world": [
+    [
+     -9593.732,
+     -7022.729
+    ],
+    [
+     -9593.093,
+     -7024.086
+    ],
+    [
+     -9592.364,
+     -7022.073
+    ]
+   ],
+   "role": "pos 37 perimeter wicket, on 7D3188 52 m outside GPZU",
+   "scope": "out of scope (outside)",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  },
+  {
+   "block": "Калитка 1.2",
+   "handle": "95F3AD",
+   "layer": "230_Зд_Контура",
+   "insert": [
+    -9646.987,
+    -6992.373
+   ],
+   "rotation_deg": 115.99,
+   "scale": [
+    1,
+    1
+   ],
+   "status": "inside",
+   "dist_to_boundary_m": 1.68,
+   "nearest_fence": [
+    {
+     "handle": "7D3188",
+     "layer": "232_Ог_Внешние_вар2",
+     "dist_m": 0.02
+    },
+    {
+     "handle": "95B1AE",
+     "layer": "232_Огр_СПОРТ",
+     "dist_m": 9.68
+    }
+   ],
+   "block_points_world": [
+    [
+     -9646.987,
+     -6992.373
+    ],
+    [
+     -9648.34,
+     -6993.019
+    ],
+    [
+     -9646.322,
+     -6993.736
+    ]
+   ],
+   "role": "pos 37 perimeter wicket, on 7D3188 1.7 m inside GPZU",
+   "scope": "in scope",
+   "opening_m": 1.2,
+   "block_symbol_note": "block: hinge at insert, leaf drawn 1.52 m along local -X, swing arc to +Y; name says 1.2"
+  }
+ ],
+ "totals": {
+  "232_Ог_Внешние_вар2": {
+   "entities": 8,
+   "length_total": 1123.5,
+   "length_inside": 527.1,
+   "length_on_boundary": 514.6
+  },
+  "232_Огр_СПОРТ": {
+   "entities": 7,
+   "length_total": 384.8,
+   "length_inside": 289.4,
+   "length_on_boundary": 0.0
+  }
+ },
+ "totals_note": "length_inside includes pieces lying on the GPZU line within 0.3 m; arcs: none (no bulges in any fence entity)",
+ "ledger": {
+  "35_perimeter_pro_h2_5_m": 635,
+  "39_sport_h4_m": 391,
+  "36_gate_4_5": 1,
+  "37_wicket_perimeter": 3,
+  "38_wicket_sport": 3
+ },
+ "ring_length_m": 863.06,
+ "schema": "fence-lines/v1 (job-local, moskovsky-sosh1200)"
+}

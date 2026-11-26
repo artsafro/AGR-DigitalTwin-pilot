@@ -1,0 +1,244 @@
+{
+ "site": "MoskovskySosh1200Uncut",
+ "zero": {
+  "project_zero_m": 0.0,
+  "source": "±0.000 of the school building (DWG layer 'Высотные отметки': 4 x '+0,000'; no absolute Baltic mark found in the DWG). Flat Ground at local Z 0 = ±0.000; skipped relief: flat, confirmed by user 2026-11-26"
+ },
+ "base_id": 5,
+ "unhatched": {
+  "cover_id": 5,
+  "reason": "unhatched slivers between source hatches (< 2 m2 each, ~3.5 m2 in GPZU; uncut: + closing strips) put on base ID05 Lawn - agent choice, disclosed, open for user confirmation"
+ },
+ "params": {
+  "cell": 54.0,
+  "chord": 0.02,
+  "step": 0.006,
+  "snap": 0.003,
+  "relief_tol": 0.01,
+  "skirt_m": 1.0,
+  "tex_px": 2048,
+  "origin_xy": [
+   -9840,
+   -7150
+  ],
+  "surfaces": "shared",
+  "footprint_min_area": 1000.0
+ },
+ "materials": {
+  "library": "C:/x/moskovsky-sosh1200/materials/npm-tiled-v001",
+  "decision": "agent proposal 2026-11-26, NOT yet confirmed by Artem: NPM-tiled copies (jobs/moskovsky-sosh1200/scripts/npm_tiled_maps.py, manifest.json) of library v001 maps 19/22/25/27/42; cell 54 m -> 37.9 px/m (GND-08 10-40)",
+  "by_cover": {
+   "1": {
+    "diffuse": "22/22_asphalt_d_1024_tiled54m_2048.png",
+    "reason": "asphalt -> 22 asphalt (name match)"
+   },
+   "2": {
+    "diffuse": "19/19_paving_100x300_light_d_npm_2048_tiled54m_2048.png",
+    "reason": "concrete paving AR-BRSTD -> 19 paving 100x300 light (closest library paving; proposal)"
+   },
+   "3": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber crumb (Tip3) -> 27 rubber crumb (name match)"
+   },
+   "4": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "artificial football turf -> 42 rolled lawn (no turf map in the library; proposal)"
+   },
+   "5": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "seeded lawn -> 42 rolled lawn (as SIL13 decision 1; proposal)"
+   },
+   "6": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "rolled lawn -> 42 rolled lawn (name match)"
+   },
+   "7": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "hedge bed -> 25 mulch (ground under the Flora hedge; proposal)"
+   },
+   "8": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "shrub/perennial bed -> 25 mulch (proposal)"
+   },
+   "9": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "shrub/perennial bed -> 25 mulch (proposal)"
+   },
+   "10": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "shrub/perennial bed -> 25 mulch (proposal)"
+   },
+   "11": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "flower bed -> 25 mulch (as SIL13 decision 2; proposal)"
+   },
+   "12": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "flower bed -> 25 mulch (proposal)"
+   }
+  }
+ },
+ "note": "moskovsky-sosh1200 ground-npm v001 UNCUT working version (site + adjacent stadium + adjacent covers outside GPZU), boundary derived by jobs/moskovsky-sosh1200/scripts/uncut_adapter.py (no closed source polyline exists; 28946.1 m2; left out: paving 869.5 m2 80 m away). Same covers/IDs/priority/params as specs/ground_site_v001.json (see its note). Not the deliverable; not delivery acceptance.",
+ "adapter": {
+  "path": "C:/x/moskovsky-sosh1200/inspect/v001/uncut_adapter.json",
+  "sha256": "14333ca289bb5774b5ab43482686a72466d7e5b8596016fa7bf2907ffbde2578"
+ },
+ "covers": [
+  {
+   "id": 1,
+   "name": "Asphalt",
+   "adapter_keys": [
+    "1"
+   ],
+   "colour": [
+    163,
+    163,
+    163
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 2,
+   "name": "Paving",
+   "adapter_keys": [
+    "2"
+   ],
+   "colour": [
+    163,
+    163,
+    163
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 3,
+   "name": "RubberCrumb",
+   "adapter_keys": [
+    "3"
+   ],
+   "colour": [
+    227,
+    217,
+    198
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 4,
+   "name": "SportTurf",
+   "adapter_keys": [
+    "4"
+   ],
+   "colour": [
+    211,
+    230,
+    167
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 5,
+   "name": "Lawn",
+   "adapter_keys": [
+    "5"
+   ],
+   "colour": [
+    201,
+    208,
+    159
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 6,
+   "name": "RolledLawn",
+   "adapter_keys": [
+    "6"
+   ],
+   "colour": [
+    187,
+    196,
+    135
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 7,
+   "name": "Hedge",
+   "adapter_keys": [
+    "7"
+   ],
+   "colour": [
+    119,
+    174,
+    71
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 8,
+   "name": "ShrubBedA",
+   "adapter_keys": [
+    "8"
+   ],
+   "colour": [
+    137,
+    194,
+    138
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 9,
+   "name": "ShrubBedB",
+   "adapter_keys": [
+    "9"
+   ],
+   "colour": [
+    118,
+    152,
+    112
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 10,
+   "name": "ShrubBedC",
+   "adapter_keys": [
+    "10"
+   ],
+   "colour": [
+    209,
+    156,
+    199
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 11,
+   "name": "FlowerBedWood",
+   "adapter_keys": [
+    "11"
+   ],
+   "colour": [
+    0,
+    171,
+    120
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  },
+  {
+   "id": 12,
+   "name": "FlowerBedCross",
+   "adapter_keys": [
+    "12"
+   ],
+   "colour": [
+    91,
+    122,
+    102
+   ],
+   "colour_reason": "hatch-bgcolor read by ground_site.covers_from_dxf from the same hatch rows as the GPZU spec"
+  }
+ ]
+}
