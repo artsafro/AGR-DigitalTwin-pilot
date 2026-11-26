@@ -11,3 +11,27 @@
 - Frozen synthetic witnesses (computed each pair): closed unit tetrahedron with one face using exact duplicate indices (3 geometrical split seams, raw one-incidence count 6 → 0; no collapse or >2); same closed tetrahedron unmodified (0 → 0, no reindex); missing face plus exact split on a retained face (5 → 3 if one remaining shared edge splits, or 7 → 3 if two split; fixed case uses two); one shifted duplicate corner by 1/1024 along X (6 → 4, no collapse or >2). These exercise index splitting and real boundary preservation, not Artem's approval.
 - Command: `uv run python -X utf8 docs/research/trainer_open_edges_r110/run_pair.py <full-variant-SHA> tmp/r110-NEW.json` (fresh output; run from repo root). Pin replay code at variant and verify source against SHA before the series, on each fresh read and after. For each of three fresh paired raw/exact censuses record wall, aggregate hashes, gains and spread. A completed first pair is confirmation only; if its elapsed time times two exceeds the remaining 180 s process budget, stop with an inconclusive partial receipt. Budget: three total pairs, zero new candidates. No repeated scoring of a frozen dump. No production KEEP under any outcome.
 - H110 observational verdict: `confirmed` only if parity and controls pass for all 3 identical pairs and median M110 ≥ 74 (half of the 148 raw-open geometries). `refuted` if those checks pass and median < 74; otherwise `inconclusive`. Held-out accepted and rejected *model* checks and passage of the trainer failure are `not measured` under this diagnostic contract; no generalization or calibration claim. Do not change tests, tolerances, validators, delivered packages or read hidden keys.
+
+## Result
+
+**Итог (RU).** H110 **опровергнута для этого FBX**: точное совпадение XYZ не закрывает ни одну из 148 геометрий `Вентфасад 250 250` с открытыми рёбрами. Открытых рёбер осталось 2 628, ни один индекс угла полигона не изменился. Это исключает объяснение через точные дубликаты координат в этой выборке; не доказывает отсутствия слоёв, наличия дыр или пригодности обхода для `bounds`. Замена фильтра, качество модели и прохождение тренажёра не проверялись. Без KEEP и без PR.
+
+| Check | Observation |
+| --- | --- |
+| Clean source, target family (1,210 geometries) | 148 → 148 with an edge of incidence 1; 2,628 → 2,628 edges; 0 changed corners, no additional high-incidence or collapsed edges. |
+| Clean source, all wall families (9,118 geometries, includes target) | 683 → 683 with an edge of incidence 1; 0 changed geometries: native reindex `not_exercised`. |
+| Injected exact split; split with missing face; shifted corner | Open edges 6 → 0, 7 → 3, 6 → 4; changed corners 3, 3, 2 respectively, with no collapsed or high-incidence edge. |
+| Unchanged synthetic tetrahedron | 0 → 0; `not_exercised` for reindex. |
+| Not measured | Active native positive/collateral controls, independent etalon, accepted/rejected scoring, trainer artifact or bounds pass. |
+
+Run status `complete`, wall 38.186 s, pairs 12.950 / 11.824 / 12.450 s (median wall per pair 12.450 s). Gains `[0, 0, 0]`, median 0, paired spread 0. All row digests and control digests agreed. This refutes the narrow exact-duplicate mechanism, not approximate coincidences, nonconforming tessellation or missing surface.
+
+Replay: `uv run python -X utf8 docs/research/trainer_open_edges_r110/run_pair.py 36b401bb8c17d8443eb96250d182401b504fc43b tmp/r110-NEW.json`. Fetch `origin/research/autoresearch-standing-109` if the pinned reader is missing. Replay is limited to lanes with the pinned Drive asset. The SHA-256 of the [receipt](trainer_open_edges_r110/receipt.json) is `5e65ee0aad3c969e4ea8b0c6e4add58a3a4d782f323bebf85262f211c2ab8cd4`. Per-geometry rows are in `G:/Мой диск/AGR-evidence/1855-r110-open-edges/geometry-rows.json.gz`; uncompressed SHA-256 `1c944c67f8f7dacec61b53d76a34fe95afea15d83ec11ca8a765d6a72c21e3ff`. The Drive `SHA256SUMS.txt` digest is `7ea6681289ae609c48b072606cf3c80be62515e94e1f1c3fb358ca2f5af5dc85`.
+
+Next: let the bank owner bind an authoritative layer-bearing export or a per-face envelope instruction; use any new ledger row to reprioritize before running another 63B bounds round. If boundary analysis is later authorized, test collinear A–M–B versus A–B index seams before considering any distance weld, with an independently labelled active control and actual gap witnesses.
+
+Affected tests: `uv run pytest -q tests/research/test_trainer_open_edges_r110.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 111 passed, 1 basetemp warning; RED on raw-only implementation: 5 failed, 1 passed.
+
+Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)
