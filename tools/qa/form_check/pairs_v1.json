@@ -6,8 +6,9 @@
   {
    "id": "G22 k2",
    "kind": "scene",
-   "key": "C:/x/t_563a40f7/key/heldout-key-v001.json", "key_sha": "843197137db10cdc",
-   "sections": "C:/x/t_563a40f7/key/heldout-sections-v001.json", "sections_sha": "270e83dedbbae380",
+   "key": "G:/Мой диск/AGR-evidence/1855-trainer-v0/keys/heldout-key-v001.json", "key_sha": "843197137db10cdc",
+   "sections": "G:/Мой диск/AGR-evidence/1855-trainer-v0/keys/heldout-sections-v002.json", "sections_sha": "d565545ef6e79551",
+   "key_note": "#1955: C:/x/t_563a40f7 was lost; key restored byte-identical from a key_used.json dump, sections re-extracted from bank k2_v002r1 (#117 substitution, 15/15 stored detector rows, 443 items); keys/SHA256SUMS.txt",
    "interior_side": 1,
    "corner_source": {
     "path": "C:/x/ev_1619/g22_k2_src.npz",
