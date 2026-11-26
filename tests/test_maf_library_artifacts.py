@@ -6,6 +6,9 @@ is an internal-library check, not NPM/VPM delivery acceptance.
 import json
 import os
 from pathlib import Path
+import runpy
+import sys
+from types import SimpleNamespace
 
 import pytest
 from PIL import Image
@@ -57,3 +60,35 @@ def test_native_maf_library_renderability():
     disabled = [row["id"] for row in rows if not row["renderable"]]
     assert not disabled, f"library objects saved non-renderable: {disabled}"
     assert all(row["meshes"] == 1 for row in rows)
+
+
+def test_readback_default_uses_published_maf_library(tmp_path, monkeypatch):
+    published = "G:/Мой диск/AGR-assets/maf/union_v001"
+    fbx_dir = tmp_path / "fbx"
+    fbx_dir.mkdir()
+    fbx = fbx_dir / "synthetic.fbx"
+    fbx.write_bytes(b"synthetic path witness; not native geometry")
+    output = tmp_path / "report.json"
+    import_calls = []
+
+    def glob(path, pattern):
+        if path.as_posix() == f"{published}/fbx" and pattern == "*.fbx":
+            yield fbx
+
+    monkeypatch.setattr(Path, "glob", glob)
+    monkeypatch.delenv("AGR_MAF_LIB", raising=False)
+    monkeypatch.setenv("AGR_MAF_READBACK", str(output))
+    monkeypatch.setitem(sys.modules, "bpy", SimpleNamespace(
+        app=SimpleNamespace(version_string="synthetic"),
+        data=SimpleNamespace(objects=[]),
+        ops=SimpleNamespace(
+            wm=SimpleNamespace(read_factory_settings=lambda **kw: None),
+            import_scene=SimpleNamespace(fbx=lambda *, filepath: import_calls.append(filepath)),
+        ),
+    ))
+    script = Path(__file__).resolve().parents[1] / "tools/library/maf_blender_readback.py"
+    runpy.run_path(str(script))
+    assert import_calls == [str(fbx)]
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert [row["fbx"] for row in report["files"]] == [fbx.as_posix()]
+    assert "error" not in report["files"][0]
