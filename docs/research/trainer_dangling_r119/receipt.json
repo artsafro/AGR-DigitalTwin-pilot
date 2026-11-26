@@ -1,0 +1,2180 @@
+{
+ "schema": "r119/1",
+ "inputs": {
+  "head": "8a2fa635469d346009c60a922c9438e3dc20b77f",
+  "bank_sha256": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+  "trainer_py_sha256": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5",
+  "measure_py_sha256": "439c3a420712ce055560da3379a2f790f51713e7039ea30ef1b422c7989c2735",
+  "audit_sha256": "e78e4927947eab306b6fc004c98a0f1f9140ef752eab35eb5bdd93feb5f96ec3"
+ },
+ "series": [
+  {
+   "etalon": "g22-k2-stage1",
+   "rep": 1,
+   "wall_s": 9.8,
+   "removed": 11,
+   "route_critical_removed": [],
+   "M119": 5,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/G22/npm2vpm-1630/RESULT.md",
+    "jobs/G22/npm2vpm-1630/skeleton.json",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/G22/npm2vpm-1630/RESULT.md": [
+     "docs/agents/CAPABILITIES.md",
+     "docs/scenarios/npm-to-vpm.md"
+    ],
+    "jobs/G22/npm2vpm-1630/skeleton.json": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ]
+   },
+   "stale": 373,
+   "perturb": {
+    "P1_hidden_full_path": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `jobs/G22/npm2vpm-1630/CHECKPOINT.md`",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P4_backslash": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run jobs\\G22\\npm2vpm-1630\\CHECKPOINT.md",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P5_non_route_file": {
+     "file": "docs/research/r119_probe.md",
+     "line": "run `jobs/G22/npm2vpm-1630/CHECKPOINT.md`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P2_existing": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `tools/trainer/trainer.py`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P3_nowhere_in_head": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `tools/none/r119_absent_tool.py`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 1,
+     "ok": true
+    },
+    "P6_bare_hidden_tool": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "then envelope_check.py",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    }
+   }
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "rep": 2,
+   "wall_s": 9.8,
+   "removed": 11,
+   "route_critical_removed": [],
+   "M119": 5,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/G22/npm2vpm-1630/RESULT.md",
+    "jobs/G22/npm2vpm-1630/skeleton.json",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/G22/npm2vpm-1630/RESULT.md": [
+     "docs/agents/CAPABILITIES.md",
+     "docs/scenarios/npm-to-vpm.md"
+    ],
+    "jobs/G22/npm2vpm-1630/skeleton.json": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ]
+   },
+   "stale": 373
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "rep": 3,
+   "wall_s": 9.0,
+   "removed": 11,
+   "route_critical_removed": [],
+   "M119": 5,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/G22/npm2vpm-1630/RESULT.md",
+    "jobs/G22/npm2vpm-1630/skeleton.json",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/G22/npm2vpm-1630/RESULT.md": [
+     "docs/agents/CAPABILITIES.md",
+     "docs/scenarios/npm-to-vpm.md"
+    ],
+    "jobs/G22/npm2vpm-1630/skeleton.json": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ]
+   },
+   "stale": 373
+  },
+  {
+   "etalon": "63a-stage1",
+   "rep": 1,
+   "wall_s": 8.8,
+   "removed": 8,
+   "route_critical_removed": [],
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/POLY63-A/hooks/pockets_self.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/hooks/zones_from_types.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/assemble63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/gates63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/stack63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/build_body.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/check_corners.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/stage2_63c.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/stage2_views.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ]
+   },
+   "stale": 373,
+   "perturb": {
+    "P1_hidden_full_path": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `jobs/POLY63-A/README.md`",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P4_backslash": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run jobs\\POLY63-A\\README.md",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P5_non_route_file": {
+     "file": "docs/research/r119_probe.md",
+     "line": "run `jobs/POLY63-A/README.md`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P2_existing": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `tools/trainer/trainer.py`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P3_nowhere_in_head": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `tools/none/r119_absent_tool.py`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 1,
+     "ok": true
+    },
+    "P6_bare_hidden_tool": {
+     "status": "not_exercised"
+    }
+   }
+  },
+  {
+   "etalon": "63a-stage1",
+   "rep": 2,
+   "wall_s": 8.8,
+   "removed": 8,
+   "route_critical_removed": [],
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/POLY63-A/hooks/pockets_self.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/hooks/zones_from_types.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/assemble63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/gates63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/stack63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/build_body.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/check_corners.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/stage2_63c.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/stage2_views.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ]
+   },
+   "stale": 373
+  },
+  {
+   "etalon": "63a-stage1",
+   "rep": 3,
+   "wall_s": 8.9,
+   "removed": 8,
+   "route_critical_removed": [],
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/POLY63-A/hooks/pockets_self.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/hooks/zones_from_types.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/assemble63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/gates63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/hooks/stack63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/build_body.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/check_corners.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/stage2_63c.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/POLY63-C/hooks/stage2_views.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ]
+   },
+   "stale": 373
+  },
+  {
+   "etalon": "kpp1-v004",
+   "rep": 1,
+   "wall_s": 9.3,
+   "removed": 3,
+   "route_critical_removed": [],
+   "M119": 15,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/KPP1/build-manifest-1423/REPORT.md",
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py",
+    "jobs/KPP1/site-1255/REPORT.md",
+    "jobs/KPP1/vpm-to-npm-1737/skeleton.json"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/KPP1/build-manifest-1423/REPORT.md": [
+     "docs/domain/export-import.md"
+    ],
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md",
+     "docs/domain/areas/package.md"
+    ],
+    "jobs/KPP1/quad-1372/build_quad_master.py": [
+     "docs/agents/SKELETONS-stages.md",
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py": [
+     "docs/agents/SKELETONS-stages.md",
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/scripts/dump_source.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/export_vpm.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/scripts/extract_openings.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/inspect_source.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/match_ids.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/qa_checktoolbox.py": [
+     "docs/agents/CAPABILITIES.md"
+    ],
+    "jobs/KPP1/scripts/seal.py": [
+     "docs/agents/NAMING.md"
+    ],
+    "jobs/KPP1/scripts/vpm_ucx.py": [
+     "docs/agents/CAPABILITIES.md"
+    ],
+    "jobs/KPP1/site-1255/REPORT.md": [
+     "docs/domain/geometry.md"
+    ],
+    "jobs/KPP1/vpm-to-npm-1737/skeleton.json": [
+     "docs/scenarios/vpm-to-npm.md"
+    ]
+   },
+   "stale": 373,
+   "perturb": {
+    "P1_hidden_full_path": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `jobs/KPP1/LESSONS.md`",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P4_backslash": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run jobs\\KPP1\\LESSONS.md",
+     "expected_delta": 1,
+     "delta": 1,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P5_non_route_file": {
+     "file": "docs/research/r119_probe.md",
+     "line": "run `jobs/KPP1/LESSONS.md`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P2_existing": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `tools/trainer/trainer.py`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 0,
+     "ok": true
+    },
+    "P3_nowhere_in_head": {
+     "file": "docs/agents/r119_probe.md",
+     "line": "run `tools/none/r119_absent_tool.py`",
+     "expected_delta": 0,
+     "delta": 0,
+     "stale_delta": 1,
+     "ok": true
+    },
+    "P6_bare_hidden_tool": {
+     "status": "not_exercised"
+    }
+   }
+  },
+  {
+   "etalon": "kpp1-v004",
+   "rep": 2,
+   "wall_s": 9.4,
+   "removed": 3,
+   "route_critical_removed": [],
+   "M119": 15,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/KPP1/build-manifest-1423/REPORT.md",
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py",
+    "jobs/KPP1/site-1255/REPORT.md",
+    "jobs/KPP1/vpm-to-npm-1737/skeleton.json"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/KPP1/build-manifest-1423/REPORT.md": [
+     "docs/domain/export-import.md"
+    ],
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md",
+     "docs/domain/areas/package.md"
+    ],
+    "jobs/KPP1/quad-1372/build_quad_master.py": [
+     "docs/agents/SKELETONS-stages.md",
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py": [
+     "docs/agents/SKELETONS-stages.md",
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/scripts/dump_source.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/export_vpm.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/scripts/extract_openings.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/inspect_source.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/match_ids.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/qa_checktoolbox.py": [
+     "docs/agents/CAPABILITIES.md"
+    ],
+    "jobs/KPP1/scripts/seal.py": [
+     "docs/agents/NAMING.md"
+    ],
+    "jobs/KPP1/scripts/vpm_ucx.py": [
+     "docs/agents/CAPABILITIES.md"
+    ],
+    "jobs/KPP1/site-1255/REPORT.md": [
+     "docs/domain/geometry.md"
+    ],
+    "jobs/KPP1/vpm-to-npm-1737/skeleton.json": [
+     "docs/scenarios/vpm-to-npm.md"
+    ]
+   },
+   "stale": 373
+  },
+  {
+   "etalon": "kpp1-v004",
+   "rep": 3,
+   "wall_s": 9.2,
+   "removed": 3,
+   "route_critical_removed": [],
+   "M119": 15,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "dangling": [
+    "docs/trainer/ETALONS.md",
+    "jobs/KPP1/build-manifest-1423/REPORT.md",
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py",
+    "jobs/KPP1/site-1255/REPORT.md",
+    "jobs/KPP1/vpm-to-npm-1737/skeleton.json"
+   ],
+   "referenced_by": {
+    "docs/trainer/ETALONS.md": [
+     "docs/agents/SKELETONS-stages.md"
+    ],
+    "jobs/KPP1/build-manifest-1423/REPORT.md": [
+     "docs/domain/export-import.md"
+    ],
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md",
+     "docs/domain/areas/package.md"
+    ],
+    "jobs/KPP1/quad-1372/build_quad_master.py": [
+     "docs/agents/SKELETONS-stages.md",
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py": [
+     "docs/agents/SKELETONS-stages.md",
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/scripts/dump_source.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/export_vpm.py": [
+     "docs/agents/skeleton-harvest/2026-11-23.md"
+    ],
+    "jobs/KPP1/scripts/extract_openings.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/inspect_source.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/match_ids.py": [
+     "routes/revit-intake.md"
+    ],
+    "jobs/KPP1/scripts/qa_checktoolbox.py": [
+     "docs/agents/CAPABILITIES.md"
+    ],
+    "jobs/KPP1/scripts/seal.py": [
+     "docs/agents/NAMING.md"
+    ],
+    "jobs/KPP1/scripts/vpm_ucx.py": [
+     "docs/agents/CAPABILITIES.md"
+    ],
+    "jobs/KPP1/site-1255/REPORT.md": [
+     "docs/domain/geometry.md"
+    ],
+    "jobs/KPP1/vpm-to-npm-1737/skeleton.json": [
+     "docs/scenarios/vpm-to-npm.md"
+    ]
+   },
+   "stale": 373
+  }
+ ],
+ "summary": {
+  "g22-k2-stage1": {
+   "reps": 3,
+   "M119_median": 5,
+   "spread": [
+    5,
+    5
+   ],
+   "M119_tools_median": 2,
+   "tools_spread": [
+    2,
+    2
+   ]
+  },
+  "63a-stage1": {
+   "reps": 3,
+   "M119_median": 15,
+   "spread": [
+    15,
+    15
+   ],
+   "M119_tools_median": 14,
+   "tools_spread": [
+    14,
+    14
+   ]
+  },
+  "kpp1-v004": {
+   "reps": 3,
+   "M119_median": 15,
+   "spread": [
+    15,
+    15
+   ],
+   "M119_tools_median": 11,
+   "tools_spread": [
+    11,
+    11
+   ]
+  }
+ },
+ "criteria": {
+  "a_witness_3of3": true,
+  "b_held_out_tools": true,
+  "c_perturbations": true
+ },
+ "hypothesis": "confirmed",
+ "stored_runs": {
+  "63a-stage1-codex-20261124": {
+   "etalon": "63a-stage1",
+   "head": "c20ef4efd0afe0a60f3507088f46f7fc84a2b89c",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r111-1": {
+   "etalon": "63a-stage1",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": true,
+   "escape_count": 10,
+   "fbx": true
+  },
+  "63a-stage1-codex-r111-2": {
+   "etalon": "63a-stage1",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r111-3": {
+   "etalon": "63a-stage1",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r81-1": {
+   "etalon": "63a-stage1",
+   "head": "7f005be553650a91f58d0520dd1e4a40fb4f4ce2",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r81-2": {
+   "etalon": "63a-stage1",
+   "head": "7f005be553650a91f58d0520dd1e4a40fb4f4ce2",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r81-3": {
+   "etalon": "63a-stage1",
+   "head": "7f005be553650a91f58d0520dd1e4a40fb4f4ce2",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r87-1": {
+   "etalon": "63a-stage1",
+   "head": "73bf58902ef4926420beb396b7614697bbb42e97",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r87-2": {
+   "etalon": "63a-stage1",
+   "head": "cbd62fda4cd8bae336d4a2951087f9e30215ee3c",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63a-stage1-codex-r87-3": {
+   "etalon": "63a-stage1",
+   "head": "08015022acc2a140994eeb188444f68a4388c15c",
+   "M119": 14,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": true,
+   "escape_count": 18,
+   "fbx": true
+  },
+  "63b-stage1-codex-r81-1": {
+   "etalon": "63b-stage1",
+   "head": "7f005be553650a91f58d0520dd1e4a40fb4f4ce2",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": true,
+   "escape_count": 10,
+   "fbx": false
+  },
+  "63b-stage1-codex-r81-2": {
+   "etalon": "63b-stage1",
+   "head": "7f005be553650a91f58d0520dd1e4a40fb4f4ce2",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63b-stage1-codex-r81-3": {
+   "etalon": "63b-stage1",
+   "head": "7f005be553650a91f58d0520dd1e4a40fb4f4ce2",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63b-stage1-codex-r87-1": {
+   "etalon": "63b-stage1",
+   "head": "73bf58902ef4926420beb396b7614697bbb42e97",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63b-stage1-codex-r87-2": {
+   "etalon": "63b-stage1",
+   "head": "cbd62fda4cd8bae336d4a2951087f9e30215ee3c",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "63b-stage1-codex-r87-3": {
+   "etalon": "63b-stage1",
+   "head": "08015022acc2a140994eeb188444f68a4388c15c",
+   "M119": 15,
+   "M119_tools": 14,
+   "tools": [
+    "jobs/POLY63-A/hooks/pockets_self.py",
+    "jobs/POLY63-A/hooks/zones_from_types.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py",
+    "jobs/POLY63-A/stage2-1619/hooks/stage2_sheet.py",
+    "jobs/POLY63-B/hooks/assemble63b.py",
+    "jobs/POLY63-B/hooks/gates63b.py",
+    "jobs/POLY63-B/hooks/stack63b.py",
+    "jobs/POLY63-B/stage2/hooks/sheet_63b.py",
+    "jobs/POLY63-C/hooks/build_body.py",
+    "jobs/POLY63-C/hooks/check_corners.py",
+    "jobs/POLY63-C/hooks/stage2_63c.py",
+    "jobs/POLY63-C/hooks/stage2_views.py",
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "assemble63b.py",
+    "floor_from_dump.py",
+    "gates63b.py",
+    "pockets_self.py",
+    "stack63b.py",
+    "zones_from_types.py"
+   ],
+   "escape": true,
+   "escape_count": 49,
+   "fbx": true
+  },
+  "g22-k2-stage1-codex-20261124": {
+   "etalon": "g22-k2-stage1",
+   "head": "c20ef4efd0afe0a60f3507088f46f7fc84a2b89c",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r111-1": {
+   "etalon": "g22-k2-stage1",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 5,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": true,
+   "escape_count": 5,
+   "fbx": true
+  },
+  "g22-k2-stage1-codex-r111-2": {
+   "etalon": "g22-k2-stage1",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 5,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r111-3": {
+   "etalon": "g22-k2-stage1",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 5,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r115-C1": {
+   "status": "not_measured",
+   "reason": "head 88ef77fa95b13d5981ef7e6785c2d6ffde39c76b not in this repo"
+  },
+  "g22-k2-stage1-codex-r115-C2": {
+   "status": "not_measured",
+   "reason": "head 88ef77fa95b13d5981ef7e6785c2d6ffde39c76b not in this repo"
+  },
+  "g22-k2-stage1-codex-r115-C3": {
+   "status": "not_measured",
+   "reason": "head 88ef77fa95b13d5981ef7e6785c2d6ffde39c76b not in this repo"
+  },
+  "g22-k2-stage1-codex-r115-D1": {
+   "status": "not_measured",
+   "reason": "head 88ef77fa95b13d5981ef7e6785c2d6ffde39c76b not in this repo"
+  },
+  "g22-k2-stage1-codex-r115-D2": {
+   "status": "not_measured",
+   "reason": "head 88ef77fa95b13d5981ef7e6785c2d6ffde39c76b not in this repo"
+  },
+  "g22-k2-stage1-codex-r115-D3": {
+   "status": "not_measured",
+   "reason": "head 88ef77fa95b13d5981ef7e6785c2d6ffde39c76b not in this repo"
+  },
+  "g22-k2-stage1-codex-r83-B1": {
+   "etalon": "g22-k2-stage1",
+   "head": "ba0ce9de19a0b90988b554e727a74932fbd3aad4",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-B2": {
+   "etalon": "g22-k2-stage1",
+   "head": "ba0ce9de19a0b90988b554e727a74932fbd3aad4",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-B3": {
+   "etalon": "g22-k2-stage1",
+   "head": "ba0ce9de19a0b90988b554e727a74932fbd3aad4",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-C1": {
+   "etalon": "g22-k2-stage1",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-C2": {
+   "etalon": "g22-k2-stage1",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-C3": {
+   "etalon": "g22-k2-stage1",
+   "head": "ba0ce9de19a0b90988b554e727a74932fbd3aad4",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": true,
+   "escape_count": 1,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-C4": {
+   "etalon": "g22-k2-stage1",
+   "head": "ba0ce9de19a0b90988b554e727a74932fbd3aad4",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": true,
+   "escape_count": 3,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r83-C5": {
+   "etalon": "g22-k2-stage1",
+   "head": "ba0ce9de19a0b90988b554e727a74932fbd3aad4",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r95-B1": {
+   "etalon": "g22-k2-stage1",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r95-B2": {
+   "etalon": "g22-k2-stage1",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": true,
+   "escape_count": 8,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r95-B3": {
+   "etalon": "g22-k2-stage1",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r95-C1": {
+   "etalon": "g22-k2-stage1",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r95-C2": {
+   "etalon": "g22-k2-stage1",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r95-C3": {
+   "etalon": "g22-k2-stage1",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py",
+    "module_build.py"
+   ],
+   "escape": true,
+   "escape_count": 5,
+   "fbx": true
+  },
+  "g22-k2-stage1-codex-r97-B1": {
+   "etalon": "g22-k2-stage1",
+   "head": "e01aafc9c3ad31ad924d230a5d2ed92445ee13a7",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": true,
+   "escape_count": 8,
+   "fbx": true
+  },
+  "g22-k2-stage1-codex-r97-B2": {
+   "etalon": "g22-k2-stage1",
+   "head": "e01aafc9c3ad31ad924d230a5d2ed92445ee13a7",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r97-B3": {
+   "etalon": "g22-k2-stage1",
+   "head": "e01aafc9c3ad31ad924d230a5d2ed92445ee13a7",
+   "M119": 4,
+   "M119_tools": 2,
+   "tools": [
+    "jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py",
+    "jobs/garibaldi22/body-training-1619/hooks/module_build.py"
+   ],
+   "hit": [
+    "floor_from_dump.py"
+   ],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "g22-k2-stage1-codex-r97-C1": {
+   "status": "not_measured",
+   "reason": "head 97c92f1ec6872fbc2f0f4137798a935ebe2ba351 not in this repo"
+  },
+  "g22-k2-stage1-codex-r97-C2": {
+   "status": "not_measured",
+   "reason": "head 97c92f1ec6872fbc2f0f4137798a935ebe2ba351 not in this repo"
+  },
+  "g22-k2-stage1-codex-r97-C3": {
+   "status": "not_measured",
+   "reason": "head 97c92f1ec6872fbc2f0f4137798a935ebe2ba351 not in this repo"
+  },
+  "kpp1-v004-codex-20261124": {
+   "etalon": "kpp1-v004",
+   "head": "c20ef4efd0afe0a60f3507088f46f7fc84a2b89c",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r111-1": {
+   "etalon": "kpp1-v004",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 15,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r111-2": {
+   "etalon": "kpp1-v004",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 15,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r111-3": {
+   "etalon": "kpp1-v004",
+   "head": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "M119": 15,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r83-B1": {
+   "etalon": "kpp1-v004",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r83-B2": {
+   "etalon": "kpp1-v004",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r83-B3": {
+   "etalon": "kpp1-v004",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r83-C1": {
+   "etalon": "kpp1-v004",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r83-C2": {
+   "etalon": "kpp1-v004",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r83-C3": {
+   "etalon": "kpp1-v004",
+   "head": "eab3875654202863a97aa19927b1e098cca5ec02",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r95-B1": {
+   "etalon": "kpp1-v004",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r95-B2": {
+   "etalon": "kpp1-v004",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r95-B3": {
+   "etalon": "kpp1-v004",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": false
+  },
+  "kpp1-v004-codex-r95-C1": {
+   "etalon": "kpp1-v004",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r95-C2": {
+   "etalon": "kpp1-v004",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r95-C3": {
+   "etalon": "kpp1-v004",
+   "head": "afc930ea0d668f83616ead331a671b023d197546",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r99-C1": {
+   "etalon": "kpp1-v004",
+   "head": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r99-C2": {
+   "etalon": "kpp1-v004",
+   "head": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r99-C3": {
+   "etalon": "kpp1-v004",
+   "head": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r99-D1": {
+   "etalon": "kpp1-v004",
+   "head": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r99-D2": {
+   "etalon": "kpp1-v004",
+   "head": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  },
+  "kpp1-v004-codex-r99-D3": {
+   "etalon": "kpp1-v004",
+   "head": "c42d7fbc1097e10baf1db6747641b144e46109a8",
+   "M119": 14,
+   "M119_tools": 11,
+   "tools": [
+    "jobs/KPP1/ground-budget-1416/derive_ground_v003.py",
+    "jobs/KPP1/quad-1372/build_quad_master.py",
+    "jobs/KPP1/quad-1372/provenance-1563/hooks/quad_provenance.py",
+    "jobs/KPP1/scripts/dump_source.py",
+    "jobs/KPP1/scripts/export_vpm.py",
+    "jobs/KPP1/scripts/extract_openings.py",
+    "jobs/KPP1/scripts/inspect_source.py",
+    "jobs/KPP1/scripts/match_ids.py",
+    "jobs/KPP1/scripts/qa_checktoolbox.py",
+    "jobs/KPP1/scripts/seal.py",
+    "jobs/KPP1/scripts/vpm_ucx.py"
+   ],
+   "hit": [],
+   "escape": false,
+   "escape_count": 0,
+   "fbx": true
+  }
+ },
+ "association": {
+  "hit": {
+   "n": 25,
+   "escape_or_no_fbx": 25,
+   "rate": 1.0
+  },
+  "not_hit": {
+   "n": 34,
+   "escape_or_no_fbx": 25,
+   "rate": 0.735
+  }
+ },
+ "wall_s": 221.1,
+ "run_status": "finished"
+}

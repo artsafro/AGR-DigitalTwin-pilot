@@ -5,7 +5,26 @@ product, bank, task-text, scorer or delivered-package change.
 
 ## Краткое содержание (RU)
 
-Заполняется после замера (раздел Result). Контракт ниже заморожен до первого замера.
+**Гипотеза H119: подтверждена (статически). Готовность к ревью: отдельно, OBSERVE, без изменений продукта.**
+
+- Практические деревья тренера (git archive + неизменённый `scrub_worktree`) на head `8a2fa635` содержат
+  маршрутные документы, которые называют файлы, удалённые скрабом. M119 (медиана 3 повторов, разброс 0):
+  G22 **5** (из них инструментов 2), 63A **15** (14), KPP1 **15** (11).
+- Свидетель: `floor_from_dump.py` на G22 найден 3/3. Класс не только G22: на 63A и KPP1 (не использованы для
+  поиска свидетеля) 14 и 11 скрытых инструментов. 16 возмущений из 16 сдвинули счёт как ожидалось, 2 не
+  применимы (`not_exercised`). Маршрутные файлы скраб не удаляет (0 на всех).
+- Кто ссылается: `docs/agents/skeleton-harvest/2026-11-23.md` (18), `docs/agents/SKELETONS-stages.md` (8, в т.ч.
+  `floor_from_dump.py`, `build_quad_master.py` и банк `docs/trainer/ETALONS.md` на всех трёх эталонах),
+  `routes/revit-intake.md` (4: `jobs/KPP1/scripts/{dump_source,extract_openings,inspect_source,match_ids}.py` —
+  маршрут Revit-приёма в практике KPP1 указывает на скрытые скрипты), `docs/agents/CAPABILITIES.md` (3).
+- Сохранённые прогоны (59 измерено, 9 `not_measured`: их head нет в репозитории): 25 из 37 прогонов G22/63A/63B
+  называли в командах `floor_from_dump.py` — инструмент, которого нет в их дереве. Но влияние на побег и
+  артефакт **не показано**: побег 7/25 против 3/12 у не искавших, чистых FBX 0 в обеих группах. Связь слабая и
+  смешана с эталоном (все 9 чистых FBX — KPP1, где ни один прогон не искал скрытые инструменты).
+- Что бы изменили (не применено): владелец тренера добавляет предполётную проверку практического дерева,
+  перечисляющую висячие маршрутные ссылки, а банк/владельцы маршрутов решают: продвинуть инструмент из `jobs/`
+  в `tools/` (как #1928 для `floor_from_dump`) или не называть его в маршруте. Живая проверка эффекта на
+  артефакт — следующий шаг, не этот.
 
 ## Why this target
 
@@ -103,8 +122,47 @@ uv run --frozen python docs/research/trainer_dangling_r119/measure.py --audit .r
 
 ## Round log
 
-(after measurement)
+Contract frozen in 7d4560a4 (before any number); harness f89f4858, perturbation selection amended before the
+first measurement (P6 / P1 pick the first hidden file not already counted); full head sha pinned a1bbf310.
+One run, `C:/x/ev_t_f454aa44/r119-1` (host-local, trees 264 MB not kept in git), copied receipt below.
+
+| Etalon | reps | M119 median [min,max] | M119_tools median [min,max] | tree build s | stale names |
+| --- | --- | --- | --- | --- | --- |
+| g22-k2-stage1 | 3 | 5 [5,5] | 2 [2,2] | 9.0-9.8 | 373 |
+| 63a-stage1 | 3 | 15 [15,15] | 14 [14,14] | 8.8-8.9 | 373 |
+| kpp1-v004 | 3 | 15 [15,15] | 11 [11,11] | 9.2-9.4 | 373 |
+
+Perturbations (rep-1 tree, expected / observed delta): G22 P1 +1/+1, P4 +1/+1, P5 0/0, P2 0/0, P3 0/0,
+P6 (`envelope_check.py`) +1/+1; 63A and KPP1 P1/P4/P5/P2/P3 all as expected, P6 `not_exercised`.
+Route-critical files removed by the scrub: 0 on every tree (clean check). Wall 221.1 s, run_status `finished`.
+
+Stored runs (own `wt/` vs own `origin_main`): 59 measured, 9 `not_measured` (g22 r115 C1-C3/D1-D3, r97 C1-C3:
+head not in this repo). Hit = a command names a dangling tool basename.
+
+| Group | n | escape (E93) | FBX | FBX and no escape |
+| --- | --- | --- | --- | --- |
+| hit (all `floor_from_dump.py`) | 25 | 7 | 5 | 0 |
+| not hit, non-KPP1 | 12 | 3 | 1 | 0 |
+| not hit, KPP1 | 22 | 0 | 9 | 9 |
 
 ## Result
 
-(after measurement)
+**H119 confirmed** (criteria a/b/c all true in the receipt). Dangling route references are a deterministic,
+measured property of every ready practice tree; the class is not the single #1928 instance.
+**Not measured:** any effect on `artifact` passage or escape rate — the stored association is weak and
+confounded by etalon (non-KPP1 escape 7/25 hit vs 3/12 not hit; 0 clean FBX in both). No live runs, no KEEP,
+no product change.
+
+Receipt: `docs/research/trainer_dangling_r119/receipt.json` (raw bytes sha256
+`ca56fe35f7fff3062b027db7150f4379b004c873073a8098ed696c793b93520c`), inputs: head 8a2fa635, bank
+`016aab0c…6635`, trainer.py `16fd8edb…4b5`, measure.py `439c3a42…735`, E93 audit `e78e4927…ec3`.
+Replay of the current-head series is fully Git-bound; the stored-run table is replay limited
+(`C:/x/trainer/runs` lives on this host only).
+
+Next targets:
+1. Trainer owner: a practice preflight that lists dangling route references per etalon (would-change of #119),
+   and a decision per reference: promote the tool to `tools/` or hide/neutralise the route line in practice.
+2. Live A/B on G22 after #1928 lands: count runs that search for `floor_from_dump.py` outside the tree and
+   escape-free FBX passes (baseline from this table: 14/21 measured stored G22 runs named it).
+3. KPP1 Revit intake: `routes/revit-intake.md` points at 4 hidden `jobs/KPP1/scripts/*`; check whether the
+   KPP1 practice task is meant to use the Revit trail at all (bank owner), before any KPP1 intake research.
