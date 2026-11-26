@@ -230,3 +230,42 @@ def test_repo_jobs_have_no_unpublished_maf_master():
     for y in sorted((ROOT / "jobs").rglob("job.yaml")):
         paths = pub.job_artifacts(y.parent)
         assert pub.unpublished_maf(paths, cat, unified) == [], y
+
+
+def test_closeout_guard_refuses_when_nothing_to_check(tmp_path, capsys):
+    """Review r1 P1-2: a job with no job.yaml artifacts and no --outputs is not 'clean', it is unchecked."""
+    job = tmp_path / "jobs" / "EMPTY"
+    job.mkdir(parents=True)
+    catp = tmp_path / "cat.json"
+    catp.write_text(json.dumps(catalogue()), encoding="utf-8")
+    idx = unified_file(tmp_path)
+    assert pub.main(["check-job", str(job), "--catalogue", str(catp), "--index", str(idx)]) == 2
+    assert "nothing to check: no job.yaml artifacts and no --outputs" in capsys.readouterr().err
+    (job / "job.yaml").write_text(yaml.safe_dump({"job_id": "EMPTY", "artifacts": []}), encoding="utf-8")
+    assert pub.main(["check-job", str(job), "--catalogue", str(catp), "--index", str(idx)]) == 2
+
+
+def test_closeout_guard_refuses_a_missing_output_path(tmp_path, capsys):
+    job = tmp_path / "jobs" / "MISS"
+    job.mkdir(parents=True)
+    catp = tmp_path / "cat.json"
+    catp.write_text(json.dumps(catalogue()), encoding="utf-8")
+    idx = unified_file(tmp_path)
+    gone = tmp_path / "no_such_dir"
+    assert pub.main(["check-job", str(job), "--outputs", str(gone), "--catalogue", str(catp),
+                     "--index", str(idx)]) == 2
+    assert f"output path not found: {gone}" in capsys.readouterr().err
+
+
+def test_closeout_guard_prints_scanned_counts(tmp_path, capsys):
+    out = _outputs(tmp_path)
+    job = tmp_path / "jobs" / "CNT"
+    job.mkdir(parents=True)
+    catp = tmp_path / "cat.json"
+    catp.write_text(json.dumps(catalogue(rec("AGR_maf_M1_001", "draft", obj="M1"))), encoding="utf-8")
+    idx = unified_file(tmp_path)
+    assert pub.main(["check-job", str(job), "--outputs", str(out), "--catalogue", str(catp),
+                     "--index", str(idx)]) == 0
+    line = capsys.readouterr().out
+    n_files = sum(1 for p in out.rglob("*") if p.is_file())
+    assert f"scanned {n_files} file(s), {len(pub.maf_masters([out]))} MAF master(s)" in line

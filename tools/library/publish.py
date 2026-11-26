@@ -915,10 +915,23 @@ def main(argv=None):
         if a.cmd == "check-job":
             ip = index_path(a.catalogue, a.index)
             unified = json.loads(ip.read_text(encoding="utf-8")) if ip.is_file() else {"records": []}
-            miss = unpublished_maf(job_artifacts(a.job) + [Path(o) for o in a.outputs], cat, unified)
+            paths = job_artifacts(a.job) + [Path(o) for o in a.outputs]
+            if not paths:
+                print(f"check-job {a.job}: REFUSED: nothing to check: no job.yaml artifacts and no --outputs",
+                      file=sys.stderr)
+                return 2
+            gone = [p for p in paths if not p.exists()]
+            if gone:
+                for p in gone:
+                    print(f"check-job {a.job}: REFUSED: output path not found: {p}", file=sys.stderr)
+                return 2
+            n_files = sum(1 for b in paths for p in ([b] if b.is_file() else b.rglob("*")) if p.is_file())
+            n_masters = len(maf_masters(paths))
+            miss = unpublished_maf(paths, cat, unified)
             for m in miss:
                 print(f"UNPUBLISHED MAF: {m['path']} (object {m['key']}): {m['reason']}", file=sys.stderr)
-            print(f"check-job {a.job}: {len(miss)} unpublished MAF master(s)")
+            print(f"check-job {a.job}: scanned {n_files} file(s), {n_masters} MAF master(s), "
+                  f"{len(miss)} unpublished MAF master(s)")
             return 1 if miss else 0
         if a.cmd == "publish":
             if _inside(a.catalogue, a.batch):

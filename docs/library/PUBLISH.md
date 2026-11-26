@@ -82,7 +82,15 @@ accepted-only list. A101 archives outside the publish layout are unchanged.
 agr library check-job jobs/<ID> [--outputs <job outputs folder>]   # exit 1 = an unpublished MAF master
 ```
 
+Exit codes: 0 = every MAF master found has a library entry; 1 = an unpublished master; 2 = refused: nothing to
+check (no `job.yaml` artifacts and no `--outputs`) or an output / artifact path that does not exist. The summary
+line prints the scanned file and master counts, so a 0-file pass is visible.
+
 A MAF master is an object FBX / MAX `<key>_GroundEl*` or `<key>_high|_low`, or an A101 archive with a `_high.fbx`
 member, among the `job.yaml` artifacts and the `--outputs` folders; delivery objects `SM_<Address>_...` are not
 masters. It has a library entry when a catalogue record (any status) has its SHA-256, its name or its object as
 `origin.object`, or an A101 / indexed record has its name. Publish it as a draft before closing the job.
+
+Limits: a master named without a `_GroundEl` or `_high|_low` suffix (e.g. `Bench99.max`) is not recognised, so
+name masters by the convention. The match is by object, so a new unpublished version of an already published
+object (`MG3402_GroundEl_v002.fbx`) passes; publish the new version when it replaces the old one.
