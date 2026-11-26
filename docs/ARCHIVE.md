@@ -433,3 +433,7 @@ The referenced KPP1 and 4bk course-grid inputs, current TEC26 evidence, and the 
 - `jobs/TEC26-OKS/AC08/pilot-v009/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
 - `jobs/TEC26-OKS/AC08/pilot-v009/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
 - `jobs/TEC26-OKS/AC08/pilot-v009/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+
+### Batch 5d (#1936): adapters, library and tools
+
+- `technical_library/glb_atlas/SOURCE.json` — Historical A/B atlas migration provenance with no live consumer; the renderer, its scenario data, and linked QA remain visible.
