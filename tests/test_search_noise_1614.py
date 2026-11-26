@@ -285,7 +285,7 @@ def _linked_archive_repo(tmp_path, entry, extra=None, archive_extra=""):
     ("one-hop", "[a](docs/domain/a.md) [archive](docs/ARCHIVE.md)\n", None, "docs/domain/a.md"),
     ("two-hop", "[b](docs/domain/b.md) [archive](docs/ARCHIVE.md)\n",
      {"docs/domain/b.md": "[a](a.md)\n"}, "docs/domain/a.md"),
-    ("code", "[archive](docs/ARCHIVE.md)\n", {"tools/use_old.py": f"P = '{OLD}'\n"}, "tools/use_old.py"),
+    ("code", "[archive](docs/ARCHIVE.md)\n", {"tools/use_old.py": f"# reads `{OLD}`\n"}, "tools/use_old.py"),
     ("active-plan", "[archive](docs/ARCHIVE.md)\n",
      {"docs/plans/p.md": f"# P\nStatus: active (2026-11-26)\n\nRead `{OLD}`.\n"}, "docs/plans/p.md"),
 ])
@@ -298,6 +298,19 @@ def test_archive_refuses_a_file_a_live_doc_links(tmp_path, capsys, case, entry, 
     err = capsys.readouterr().err
     assert OLD in err and referrer in err and "linked by live" in err
     assert ignore.read_bytes() == b"# unchanged\n" and (root / OLD).read_bytes() == b"old"
+
+
+def test_archive_mixed_rows_alias_link_names_only_the_linked_file(tmp_path):
+    """A valid unlinked row next to a row a live doc links through a relative alias: only the latter is named."""
+    ok = "evidence/ok.json"
+    root = _linked_archive_repo(tmp_path, "[a](docs/domain/a.md) [archive](docs/ARCHIVE.md)\n", {
+        "docs/domain/a.md": "[old](../../evidence/./old.json)\n", ok: "ok",
+        "docs/ARCHIVE.md": HIDE_OLD + f"- `{ok}` — unlinked receipt.\n"})
+    with pytest.raises(ValueError, match="linked by live") as exc:
+        sn.state(root)
+    assert f"{OLD} <- docs/domain/a.md" in str(exc.value) and ok not in str(exc.value)
+    (root / "docs/domain/a.md").write_text("# no link\n", encoding="utf-8")
+    assert set(sn.state(root)["archive"]) == {OLD, ok}
 
 
 def test_archive_entry_link_control_still_refused(tmp_path):
