@@ -1,4 +1,4 @@
-"""Sokolniki #1925 step 4 [D412, D413]: finish zones, UV report table and the uv_config.json spec.
+"""Sokolniki #1925 step 4 [D412, D413, D416]: finish zones, UV report table, uv_config.json, windows as texture.
 
 Pattern: n/a | new-case: tests of jobs/sokolniki-uvk1000/hooks/inset_build.py (body_finish, ring_relation),
 inset_sheet.py (uv_rows) and uv_config.json against the shared atlas spec validator (no DCC).
@@ -78,7 +78,8 @@ def test_uv_config_is_a_valid_shared_atlas_spec():
     for t in CFG['finishes'].values():   # tools/blender/vpm_uv.lmax contract for textured finishes
         if t['kind'] == 'full':
             assert len(t['P']) == 2 and all(type(s) is bool for s in t['shift'])
-            assert t['S'] - 2 * CFG['pad_m'] - max(t['P']) > 1.5
+            per = max([p for p, s in zip(t['P'], t['shift']) if s] or [0.0])
+            assert t['S'] - 2 * CFG['pad_m'] - per > 1.5
 
 
 def test_uv_rows_scales_texel_to_the_atlas_region():
@@ -111,3 +112,108 @@ def test_before_after_pairs_v009_vs_atlas_same_views(tmp_path):
     (tmp_path / 'v009_F05.png').unlink()
     with pytest.raises(FileNotFoundError, match='v009_F05'):
         sh.before_after_pairs(str(tmp_path))
+
+
+# ---------------------------------------------------------------- #1925 r4 [D416]: windows shown as texture
+W1 = {'type': 'WB_Окно_2Створки_1Фрамуга_Слева', 'c': [0.0, 0.0], 'r': [1.0, 0.0], 'box': [-1.15, 1.15, 0.6, 3.04],
+      'panes': [[-1.06, 0.19, 0.71, 2.95], [0.26, 1.06, 0.71, 1.2], [0.31, 1.01, 1.32, 2.9]]}
+
+
+def _mirror(it):
+    u0, u1 = it['box'][:2]
+    return dict(it, panes=[[u0 + u1 - b, u0 + u1 - a, c, d] for a, b, c, d in it['panes']])
+
+
+def test_window_hand_and_panes_seen_from_outside():
+    assert not ib.window_hand(W1['box'], W1['panes'])            # big fixed pane left = Revit 'Слева'
+    assert ib.window_hand(W1['box'], _mirror(W1)['panes'])
+    assert ib.window_panes(W1['box'], W1['panes'], False)[0] == [0.09, 1.34, 0.11, 2.35]
+    assert ib.window_panes(W1['box'], W1['panes'], True)[-1] == [0.96, 2.21, 0.11, 2.35]
+
+
+def test_pack_cells_largest_common_scale_without_overlap():
+    sizes = {'a': (3.7, 2.94), 'b': (2.3, 2.44), 'c': (1.1, 2.44), 'd': (2.8, 3.24)}
+    k, boxes = ib.pack_cells(sizes, 4.0, 0.04)
+    assert 0.3 < k < 1.0
+    for n, (x0, y0, x1, y1) in boxes.items():
+        assert 0 < x0 < x1 < 4.0 and 0 < y0 < y1 < 4.0
+        assert x1 - x0 == pytest.approx(sizes[n][0] * k, abs=1e-3)
+        for m, b in boxes.items():
+            assert m == n or not (x0 < b[2] and b[0] < x1 and y0 < b[3] and b[1] < y1)
+    assert ib.pack_cells({'a': (1.0, 1.0)}, 4.0, 0.04)[0] == 1.0
+
+
+def _cfg():
+    cfg = json.loads(json.dumps(CFG))
+    for f in ('07_window_RAL7016', '08_door_RAL7016'):
+        for k in ('cells', 'cell_scale'):
+            cfg['finishes'][f].pop(k, None)
+    cfg['window_texture'].pop('instances', None)
+    return cfg
+
+
+def test_wintex_one_drawing_per_type_size_and_hand():
+    scan = {'a': W1, 'b': dict(W1, c=[10.0, 0.0]), 'm': dict(_mirror(W1), c=[20.0, 0.0])}
+    out = ib.wintex(scan, _cfg())
+    t = out['finishes']['07_window_RAL7016']
+    assert t['pattern'] == 'elevations' and t['shift'] == [False, False]
+    assert set(t['cells']) == {'W1_2.3x2.4', 'W1_2.3x2.4_M', '_face'}
+    assert t['cells']['W1_2.3x2.4']['instances'] == 2
+    assert t['cells']['W1_2.3x2.4']['panes'][0] == [0.09, 1.34, 0.11, 2.35]
+    assert t['cells']['W1_2.3x2.4_M']['panes'][-1] == [0.96, 2.21, 0.11, 2.35]
+    assert [r[0] for r in out['window_texture']['instances']] == ['W1_2.3x2.4', 'W1_2.3x2.4', 'W1_2.3x2.4_M']
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from tools.derive import finish_map
+    finish_map.validate_spec(out)
+
+
+def test_match_window_maps_the_instance_box_onto_its_drawing():
+    out = ib.wintex({'a': W1}, _cfg())
+    cells = out['finishes']['07_window_RAL7016']['cells']
+    rows = out['window_texture']['instances']
+    row = ib.match_window((0.6, 0.15, 1.8), (0.0, -1.0, 0.0), cells, rows, 0.6)   # right strip, 0.15 m set back
+    assert row is rows[0]
+    assert ib.match_window((0.6, 0.15, 1.8), (1.0, 0.0, 0.0), cells, rows, 0.6) is None   # jamb, not the window
+    assert ib.match_window((0.6, 0.9, 1.8), (0.0, -1.0, 0.0), cells, rows, 0.6) is None   # too deep
+    b = cells[row[0]]['box']
+    assert ib.window_uv((-1.15, 0.15, 0.6), row, cells[row[0]]) == pytest.approx((b[0], b[1]))
+    assert ib.window_uv((1.15, 0.15, 3.04), row, cells[row[0]]) == pytest.approx((b[2], b[3]))
+    assert ib.window_uv((0.0, 0.15, 1.82), row, cells[row[0]]) == pytest.approx(((b[0] + b[2]) / 2, (b[1] + b[3]) / 2))
+
+
+def test_uv_config_window_rows_point_at_drawn_cells():
+    wt = CFG['window_texture']
+    cells = {n: f for f, t in CFG['finishes'].items() if t.get('pattern') == 'elevations' for n in t['cells']}
+    assert set(cells) and all(r[0] in cells for r in wt['instances'])
+    assert len(wt['instances']) == 244 and wt['source']['sha256'].startswith('feaae527')
+    assert sorted({f for f in cells.values()}) == ['07_window_RAL7016', '08_door_RAL7016']
+
+
+def test_elevations_painter_draws_glass_panes_inside_the_profile():
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from tools.derive import finish_painter
+    t = {'S': 4.0, 'rgb': [56, 62, 66], 'glass_rgb': [92, 120, 138], 'rough': 0.1, 'metal': 0.0,
+         'pattern': 'elevations', 'cells': {'w': {'box': [0.0, 0.0, 2.0, 2.0], 'size': [2.0, 2.0],
+                                                  'panes': [[0.1, 0.9, 0.1, 1.9], [1.1, 1.9, 0.1, 1.9]]}}}
+    dif, alpha, _, _ = finish_painter.make_full(t, 400)
+    assert alpha is None
+    px = 100                                           # px per metre; image rows from the top, v up
+    glass = dif[400 - 1 * px, int(0.5 * px)]
+    mullion = dif[400 - 1 * px, int(1.0 * px)]
+    assert glass[2] > 110 and abs(int(mullion[0]) - 56) < 8
+    assert abs(int(dif[100, 300][0]) - 56) < 8          # outside every cell = profile colour
+
+
+def test_elevations_spec_refuses_overlap_and_panes_outside():
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from tools.derive import finish_map
+    t = {'S': 4.0, 'glass_rgb': [1, 2, 3], 'cells': {'a': {'box': [0, 0, 2, 2], 'size': [1, 1], 'panes': []},
+                                                    'b': {'box': [1, 1, 3, 3], 'size': [1, 1], 'panes': []}}}
+    with pytest.raises(ValueError, match='overlaps'):
+        finish_map.validate_elevations('x', t)
+    t['cells'] = {'a': {'box': [0, 0, 2, 2], 'size': [1, 1], 'panes': [[0.5, 1.5, 0, 1]]}}
+    with pytest.raises(ValueError, match='outside'):
+        finish_map.validate_elevations('x', t)

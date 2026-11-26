@@ -1054,7 +1054,188 @@ def body_finish(vol, n, z, ring_dist, along_cos, area, rules):
     raise ValueError(f"{vol}: no band above z {zc:.3f}")
 
 
+# ---------------------------------------------- #1925 r4 [D416]: windows / doors drawn in the facade atlas
+# The window / door insets stay one flat face per opening strip (no frame geometry); each Revit instance gets a
+# whole-window drawing (its own glass panes, the rest is profile) in a trim cell of its finish's UDIM tile.
+# winscan (inset_write_blender.py) -> wintex (here, writes uv_config.json) -> uv mode maps faces by instance box.
+
+def window_hand(box, panes):
+    """True when the instance is the mirror of the canonical hand (largest pane left of centre, Revit 'Слева')."""
+    if not panes:
+        return False
+    big = max(panes, key=lambda p: (p[1] - p[0]) * (p[3] - p[2]))
+    return (big[0] + big[1]) / 2 - box[0] > (box[1] - box[0]) / 2 + 1e-3
+
+
+def window_panes(box, panes, mirror):
+    """Pane rectangles in metres from the box's lower-left corner as seen from outside; mirrored if asked."""
+    u0, u1, z0 = box[0], box[1], box[2]
+    w = u1 - u0
+    out = []
+    for a, b, c, d in panes:
+        x0, x1 = (w - (b - u0), w - (a - u0)) if mirror else (a - u0, b - u0)
+        out.append([round(x0, 3), round(x1, 3), round(c - z0, 3), round(d - z0, 3)])
+    return sorted(out)
+
+
+def pack_cells(sizes, span, gap):
+    """Shelf packing of drawings {name: (w, h)} at one common scale into a span x span tile (metres, v up from 0).
+    Returns (scale, {name: [u0, v0, u1, v1]}); the scale is the largest that fits (bisection, 1e-4)."""
+    order = sorted(sizes, key=lambda n: (-sizes[n][1], -sizes[n][0], n))
+
+    def place(k):
+        boxes, x, y, row_h = {}, gap, gap, 0.0
+        for n in order:
+            w, h = sizes[n][0] * k, sizes[n][1] * k
+            if x + w + gap > span + 1e-9:
+                x, y, row_h = gap, y + row_h + gap, 0.0
+            if x + w + gap > span + 1e-9 or y + h + gap > span + 1e-9:
+                return None
+            boxes[n] = [round(x, 4), round(y, 4), round(x + w, 4), round(y + h, 4)]
+            x, row_h = x + w + gap, max(row_h, h)
+        return boxes
+    lo, hi = 0.0, 1.0
+    if place(hi):
+        return hi, place(hi)
+    while hi - lo > 1e-4:
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if place(mid) else (lo, mid)
+    if lo <= 0:
+        raise ValueError("drawings do not fit the tile")
+    return round(lo, 4), place(lo)
+
+
+def wintex(scan, cfg, gap=0.04, round_m=0.1):
+    """winscan instances -> a NEW uv_config dict: finishes get `pattern: elevations` cells (one drawing per
+    type x size class x hand, panes of the most frequent instance) and `window_texture.instances` rows
+    [cell, cx, cy, rx, ry, U0, U1, Z0, Z1] (box in the instance frame: u along r from (cx, cy), world z)."""
+    wt = cfg["window_texture"]
+    classes, rows = {}, []
+    for name in sorted(scan):
+        it = scan[name]
+        typ = next((t for t in sorted(wt["types"]) if it["type"].startswith(t)), None)
+        if typ is None:
+            raise ValueError(f"{name}: type {it['type']} is not in window_texture.types")
+        code, fin = wt["types"][typ]["code"], wt["types"][typ]["finish"]
+        box = it["box"]
+        w, h = box[1] - box[0], box[3] - box[2]
+        mirror = window_hand(box, it["panes"])
+        cell = "%s_%.1fx%.1f%s" % (code, round(w / round_m) * round_m, round(h / round_m) * round_m,
+                                    "_M" if mirror else "")
+        key = tuple(tuple(round(x, 2) for x in p) for p in window_panes(box, it["panes"], False))
+        classes.setdefault((fin, cell), {}).setdefault(key, []).append((round(w, 3), round(h, 3)))
+        rows.append([cell, round(it["c"][0], 3), round(it["c"][1], 3), round(it["r"][0], 5), round(it["r"][1], 5),
+                     *[round(b, 3) for b in box]])
+    out = json.loads(json.dumps(cfg))
+    per_fin = {}
+    for (fin, cell), variants in sorted(classes.items()):
+        key, sizes = max(variants.items(), key=lambda kv: (len(kv[1]), kv[0]))
+        per_fin.setdefault(fin, {})[cell] = {"size": list(sizes[0]), "panes": [list(p) for p in key],
+                                             "instances": sum(len(v) for v in variants.values())}
+    for fin in sorted(set(per_fin) | set(wt["fallback"])):
+        cells = per_fin.setdefault(fin, {})
+        t = out["finishes"][fin]
+        fb = wt["fallback"][fin]
+        cells["_face"] = {"size": fb["size"], "panes": fb["panes"], "instances": 0}
+        k, boxes = pack_cells({n: c["size"] for n, c in cells.items()}, t["S"], gap)
+        for n, c in cells.items():
+            c["box"] = boxes[n]
+        t.update({"pattern": "elevations", "P": [t["S"], t["S"]], "shift": [False, False],
+                  "cells": cells, "cell_scale": k})
+        t.pop("h_joints", None)
+    out["window_texture"] = dict(wt, instances=rows)
+    return out
+
+
+def match_window(c, n, cells, rows, tol):
+    """Instance row whose box holds face centre `c` (world) with the face normal `n` along the instance normal."""
+    best = None
+    for row in rows:
+        if row[0] not in cells:
+            continue
+        cx, cy, rx, ry, u0, u1, z0, z1 = row[1:]
+        dx, dy = c[0] - cx, c[1] - cy
+        along, u = dx * ry - dy * rx, dx * rx + dy * ry
+        if abs(n[0] * ry - n[1] * rx) < 0.9 or abs(along) > tol:
+            continue
+        if not (u0 - 0.05 <= u <= u1 + 0.05 and z0 - 0.05 <= c[2] <= z1 + 0.05):
+            continue
+        d = math.hypot(u - (u0 + u1) / 2, c[2] - (z0 + z1) / 2)
+        if best is None or d < best[0]:
+            best = (d, row)
+    return best and best[1]
+
+
+def window_uv(p, row, cell):
+    """Tile-metre UV of world point `p` on a face of instance `row`: box fraction -> the cell's drawing box
+    (clamped to the box; a mirrored cell already holds the mirrored drawing, UV winding stays the face's)."""
+    cx, cy, rx, ry, u0, u1, z0, z1 = row[1:]
+    fx = ((p[0] - cx) * rx + (p[1] - cy) * ry - u0) / (u1 - u0)
+    fz = (p[2] - z0) / (z1 - z0)
+    fx, fz = min(1.0, max(0.0, fx)), min(1.0, max(0.0, fz))
+    b = cell["box"]
+    return (b[0] + fx * (b[2] - b[0]), b[1] + fz * (b[3] - b[1]))
+
+
+def face_uv(pts, cell):
+    """Fallback (no Revit instance): the face's own extent in its plane -> the `_face` drawing."""
+    xs = [q[0] for q in pts]
+    zs = [q[1] for q in pts]
+    b = cell["box"]
+    sx, sz = (max(xs) - min(xs)) or 1.0, (max(zs) - min(zs)) or 1.0
+    return [(b[0] + (x - min(xs)) / sx * (b[2] - b[0]), b[1] + (z - min(zs)) / sz * (b[3] - b[1])) for x, z in pts]
+
+
+def wintex_main(argv):
+    """inset_build.py wintex WINSCAN.json UV_CONFIG.json NEW_UV_CONFIG.json"""
+    scan_p, cfg_p, out_p = argv
+    if os.path.exists(out_p) and os.path.realpath(out_p) != os.path.realpath(cfg_p):
+        print("refused: %s exists" % out_p, file=sys.stderr)
+        return 2
+    with open(scan_p, encoding="utf-8") as fh:
+        scan = json.load(fh)
+    with open(cfg_p, encoding="utf-8") as fh:
+        cfg = json.load(fh)
+    out = wintex(scan["instances"], cfg)
+    out["window_texture"]["source"] = scan.get("source")
+    with open(out_p, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(dump_uv_config(out))
+    for fin, t in out["finishes"].items():
+        if t.get("pattern") == "elevations":
+            print(fin, "cells", len(t["cells"]), "scale", t["cell_scale"])
+    return 0
+
+
+def dump_uv_config(cfg):
+    """uv_config.json text: one finish / one instance row per line (reviewable diffs)."""
+    lines = ["{"]
+    keys = list(cfg)
+    for i, k in enumerate(keys):
+        end = "," if i < len(keys) - 1 else ""
+        v = cfg[k]
+        if k in ("finishes", "source_ids", "material_map", "zoning", "window_texture"):
+            lines.append(" %s: {" % json.dumps(k))
+            sub = list(v)
+            for j, s in enumerate(sub):
+                e2 = "," if j < len(sub) - 1 else ""
+                if k == "window_texture" and s == "instances":
+                    lines.append("  \"instances\": [")
+                    for r, row in enumerate(v[s]):
+                        lines.append("   %s%s" % (json.dumps(row, ensure_ascii=False), "," if r < len(v[s]) - 1 else ""))
+                    lines.append("  ]%s" % e2)
+                else:
+                    lines.append("  %s: %s%s" % (json.dumps(s, ensure_ascii=False),
+                                                 json.dumps(v[s], ensure_ascii=False), e2))
+            lines.append(" }%s" % end)
+        else:
+            lines.append(" %s: %s%s" % (json.dumps(k), json.dumps(v, ensure_ascii=False), end))
+    return "\n".join(lines + ["}"]) + "\n"
+
+
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] == "wintex":
+        return wintex_main(argv[1:])
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("obb")
     ap.add_argument("volume_lines")

@@ -261,3 +261,27 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv>
   sheet `step4-uv-atlas-v001/question-windows/sok-question-windows-v001.png` (sha `a44cc4ba…`; 6 types W1-W4 / D1 / CW,
   Revit | v009 | NPM atlas, 3/4 + straight-on, measured numbers; `SHA256SUMS.txt` 98 files); no window rework before
   Artem's answer.
+
+### Windows as facade texture ([D416])
+
+Artem 2026-11-26 ~10:10 («окна показываем текстурой на фасаде»): no frame / mullion geometry; the window / door insets
+keep their flat v009 faces and get a whole-window drawing of their own Revit instance in the atlas:
+
+```
+blender44 ... hooks/inset_write_blender.py -- winscan <step3>/assembly/body_v009.blend <revit sokolniki_ar_r23_v1.fbx> <winscan.json>
+uv run python jobs/sokolniki-uvk1000/hooks/inset_build.py wintex <winscan.json> jobs/sokolniki-uvk1000/uv_config.json jobs/sokolniki-uvk1000/uv_config.json
+(then the step-4 chain above: uv -> agr vpm-to-npm -> xview / readback / render)
+```
+
+- `winscan` (read-only) pairs every v009 window / door face with the Revit instance whose box holds it (369 / 369 window
+  faces, 22 / 27 door faces; 244 instances) and reads that instance's glass panes. `wintex` writes `uv_config.json`:
+  finishes 07 / 08 become `pattern: elevations` (shared `tools/derive/finish_painter.py`): one drawing per type x size class x
+  hand (07: 15 + `_face`, scale 0.33; 08: 9 + `_face`, scale 0.60), RAL 7016 profile, glass panes of the most frequent
+  instance; `window_texture.instances` = one row per Revit instance. `uv` maps each face's corners by the instance box onto
+  its drawing (explicit UVs, no cuts, no vertex moved); 5 door faces without an instance get the `_face` drawing.
+- Result: 32 073 triangles (was 32 731: the window / door faces are no longer cut by the old periodic grid); max vertex move
+  0.0 m; UV overflow 0; V006 PASS; xView per object PASS; readback ok. NPM density: windows ~31 px/m, doors ~56 px/m.
+- Curtain walls (`Glazing` 06, F05 05) keep the periodic grid: open question to Artem (sheet item 2).
+- Evidence: `step4-uv-atlas-v001/windows-texture-v001/sok-windows-texture-v001.png` + `.pdf` (Revit | v009 | NPM before |
+  NPM after on the question-sheet cameras, atlas regions, F01 before / after), atlas, master, NPM FBX, winscan;
+  `SHA256SUMS.txt` 129 files. Waiting for Artem's picture approval.

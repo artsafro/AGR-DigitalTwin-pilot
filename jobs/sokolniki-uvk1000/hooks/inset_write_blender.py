@@ -264,6 +264,44 @@ def split_overflow(bm, names, cfg, vpm_uv):
     return len(bad)
 
 
+def window_faces(bm, fl, names, cfg, ib):
+    """#1925 r4 [D416] windows shown as texture: every face of a `pattern: elevations` finish gets explicit
+    tile-metre UVs (layer UVM + face flag uvx, honoured by vpm_uv.texel_cut / pack_uv) - the box of its Revit
+    instance (uv_config window_texture.instances) onto that instance's drawing cell; without an instance the
+    face's own extent onto the `_face` drawing. No vertex is touched. Returns per-cell face counts."""
+    uvm = bm.loops.layers.uv.get("UVM") or bm.loops.layers.uv.new("UVM")
+    flag = bm.faces.layers.int.get("uvx") or bm.faces.layers.int.new("uvx")
+    wt = cfg["window_texture"]
+    stats = {"faces": 0, "matched": 0, "fallback": 0, "reversed": 0, "cells": {}}
+    for f in bm.faces:
+        t = cfg["finishes"][names[f[fl]]]
+        if t.get("pattern") != "elevations":
+            continue
+        cells, n = t["cells"], f.normal
+        row = ib.match_window(tuple(f.calc_center_median()), (n.x, n.y, n.z), cells, wt["instances"],
+                              wt["match_tol_m"]) if abs(n.z) < 0.3 else None
+        if row:
+            uvs = [ib.window_uv(tuple(l.vert.co), row, cells[row[0]]) for l in f.loops]
+            if n.x * row[4] - n.y * row[3] < 0:       # face normal against the instance's outward normal
+                stats["reversed"] += 1
+            name = row[0]
+        else:
+            if abs(n.z) < 0.3:
+                ln = math.hypot(n.x, n.y)
+                pts = [((l.vert.co.x * -n.y + l.vert.co.y * n.x) / ln, l.vert.co.z) for l in f.loops]
+            else:
+                pts = [(l.vert.co.x, l.vert.co.y) for l in f.loops]
+            name = "_face"
+            uvs = ib.face_uv(pts, cells[name])
+        for l, uv in zip(f.loops, uvs):
+            l[uvm].uv = uv
+        f[flag] = 1
+        stats["faces"] += 1
+        stats["matched" if row else "fallback"] += 1
+        stats["cells"][name] = stats["cells"].get(name, 0) + 1
+    return stats
+
+
 def uv(argv):
     """#1925 step 4: finish IDs + texel cuts + periodic UDIM UV on a NEW master copy of the accepted v009 assembly.
 
@@ -337,6 +375,8 @@ def uv(argv):
             f[fl] = names.index(fin)
             report["finish_faces_before"][fin] = report["finish_faces_before"].get(fin, 0) + 1
         textured = any(cfg["finishes"][names[f[fl]]]["kind"] == "full" for f in bm.faces)
+        if any(cfg["finishes"][names[f[fl]]].get("pattern") == "elevations" for f in bm.faces):
+            report.setdefault("window_texture", {})[ob.name] = window_faces(bm, fl, names, cfg, ib)
         before = (len(bm.faces), sum(len(f.verts) - 2 for f in bm.faces), edge_census(bm))
         nb = vpm_uv.texel_cut(bm, names, cfg) if textured else bm
         qa = vpm_uv.pack_uv(nb, names, cfg)
@@ -404,11 +444,118 @@ def uv(argv):
     print("UV", report["main"], "max move", report["orig_vertex_max_move_m"])
 
 
+def winscan(argv):
+    """#1925 r4 [D416] read-only: every v009 window / door face -> the Revit window / door instance whose box holds
+    it; per instance the frame (c, r = right as seen from outside), its box (u along r from c, world z) and the
+    glass pane rectangles (Revit triangles facing out and thicker than 0.12 m). Never saves.
+
+        blender44 -b --factory-startup --python inset_write_blender.py -- winscan V009.blend REVIT.fbx NEW.json"""
+    import collections
+    import re
+    import numpy as np
+    v009, revit, out = argv
+    if os.path.exists(out):
+        print("refused: output exists", file=sys.stderr)
+        sys.exit(2)
+    bpy.ops.wm.open_mainfile(filepath=v009)
+    win = re.compile(r"OKS_(Windows|Doors)$")
+    faces = []
+    for o in bpy.context.scene.objects:
+        if o.type != "MESH" or not win.search(o.name):
+            continue
+        for p in o.data.polygons:
+            n = np.array((o.matrix_world.to_3x3() @ p.normal).normalized())
+            pts = np.array([o.matrix_world @ o.data.vertices[i].co for i in p.vertices])
+            if abs(n[2]) <= 0.3:
+                n[2] = 0.0
+                faces.append((o.name, p.index, pts.mean(0), n / np.linalg.norm(n)))
+    before = set(bpy.data.objects)
+    bpy.ops.import_scene.fbx(filepath=revit, use_image_search=False)
+    fam = re.compile(r"^(WB_Окно|WB_Дверь|AC_Дверь)")
+    inst = []
+    for o in bpy.data.objects:
+        if o in before or o.type != "MESH" or not fam.search(o.name):
+            continue
+        o.data.calc_loop_triangles()
+        V = np.array([o.matrix_world @ v.co for v in o.data.vertices])
+        T = np.array([t.vertices[:] for t in o.data.loop_triangles], dtype=np.int64).reshape(-1, 3)
+        if len(T):
+            inst.append((o.name, re.sub(r"_[0-9a-f]{6,8}$", "", o.name).strip(), V, T))
+
+    def panes(V, T, n, r, c):
+        P = V[T]
+        cr = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
+        a = np.linalg.norm(cr, axis=1)
+        nn = cr / np.maximum(a[:, None], 1e-12)
+        e = np.stack([P[:, 1] - P[:, 0], P[:, 2] - P[:, 1], P[:, 0] - P[:, 2]], 1)
+        glass = (np.abs(nn @ n) > 0.98) & (a / np.maximum(np.linalg.norm(e, axis=2).max(1), 1e-9) > 0.12)
+        idx = np.where(glass)[0]
+        parent = list(range(len(idx)))
+
+        def find(x):
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+        key = {}
+        for k, f in enumerate(idx):
+            for v in T[f]:
+                kk = tuple(np.round(V[v] / 0.01).astype(int))
+                if kk in key:
+                    parent[find(k)] = find(key[kk])
+                else:
+                    key[kk] = k
+        groups = collections.defaultdict(list)
+        for k, f in enumerate(idx):
+            groups[find(k)].append(f)
+        rects = []
+        for fs in groups.values():
+            W = V[np.unique(T[fs])]
+            u = (W - c) @ r
+            rr = [float(u.min()), float(u.max()), float(W[:, 2].min()), float(W[:, 2].max())]
+            if not any(all(abs(x - y) < 0.02 for x, y in zip(rr, q)) for q in rects):
+                rects.append([round(x, 3) for x in rr])
+        return sorted(rects)
+
+    res, unmatched = {}, []
+    for oname, pi, c, n in faces:
+        r = np.cross([0.0, 0.0, 1.0], n)
+        best = None
+        for name, typ, V, T in inst:
+            d = V.mean(0) - c
+            if abs(d @ n) > 0.6:
+                continue
+            u, z = (V - c) @ r, V[:, 2]
+            if u.min() - 0.05 <= 0 <= u.max() + 0.05 and z.min() - 0.05 <= c[2] <= z.max() + 0.05:
+                dd = math.hypot(float(d @ r), float(d[2]))
+                if best is None or dd < best[0]:
+                    best = (dd, name, typ, V, T)
+        if best is None:
+            unmatched.append([oname, pi, [round(float(x), 3) for x in c]])
+            continue
+        _, name, typ, V, T = best
+        if name not in res:
+            u = (V - c) @ r
+            res[name] = {"type": typ, "c": [round(float(x), 3) for x in c[:2]], "r": [round(float(x), 5) for x in r[:2]],
+                         "box": [round(float(u.min()), 3), round(float(u.max()), 3), round(float(V[:, 2].min()), 3),
+                                 round(float(V[:, 2].max()), 3)], "panes": panes(V, T, n, r, c), "faces": 0,
+                         "tris": int(len(T))}
+        res[name]["faces"] += 1
+    with open(revit, "rb") as fh:
+        sha = hashlib.sha256(fh.read()).hexdigest()
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump({"source": {"revit": os.path.basename(revit), "sha256": sha[:16], "v009": os.path.basename(v009)},
+                   "faces": len(faces), "unmatched": unmatched, "instances": res}, fh, ensure_ascii=False, indent=1)
+    print("WINSCAN faces", len(faces), "instances", len(res), "unmatched", len(unmatched))
+
+
 if __name__ == "__main__":
     _args = sys.argv[sys.argv.index("--") + 1:]
     if _args and _args[0] == "render":
         render(_args[1:])
     elif _args and _args[0] == "uv":
         uv(_args[1:])
+    elif _args and _args[0] == "winscan":
+        winscan(_args[1:])
     else:
         main(_args)
