@@ -24,6 +24,7 @@ PKG = ROOT / 'adapters/max/agr_tools'
 sys.path.insert(0, str(ROOT / 'tests' / 'qa'))
 from test_validator import geojson as good_geojson  # noqa: E402
 from test_validator_corpus_979 import light_fbx  # noqa: E402
+from test_archive_diff import encode, node  # noqa: E402
 
 sys.path.pop(0)
 
@@ -53,6 +54,126 @@ def _png(colour):
 MAPS = {'Diffuse': (120, 110, 100), 'ERM': (0, 170, 0), 'Normal': (128, 128, 255)}
 
 
+def ground_fbx(stem='X_Ground', tiles=(1001,), slots=(1,), *, mutate_uv=None, material_indices=None):
+    """Synthetic binary FBX; connection order intentionally differs from numeric slot order."""
+    uv = []
+    for tile in tiles:
+        v, u = divmod(tile - 1001, 10)
+        uv.extend((u + .125, v + .125, u + .875, v + .125, u + .125, v + .875))
+    if mutate_uv:
+        mutate_uv(uv)
+    slot_order = sorted(set(slots), reverse=True) or [1]
+    materials = material_indices if material_indices is not None else [slot_order.index(s) for s in slots]
+    kids = [node('Vertices', [[0., 0., 0., 1., 0., 0., 0., 1., 0.]]),
+            node('PolygonVertexIndex', [[0, 1, -3] * len(tiles)]),
+            node('LayerElementUV', [0], [node('MappingInformationType', ['ByPolygonVertex']),
+                                         node('ReferenceInformationType', ['IndexToDirect']),
+                                         node('UV', [uv]), node('UVIndex', [list(range(len(tiles) * 3))])]),
+            node('LayerElementMaterial', [0], [node('MappingInformationType', ['ByPolygon']),
+                                               node('ReferenceInformationType', ['IndexToDirect']),
+                                               node('Materials', [materials])])]
+    objects = [node('Geometry', [1, 'mesh', 'Mesh'], kids), node('Model', [2, 'SM_' + stem, 'Mesh'])]
+    links = [node('C', ['OO', 1, 2]), node('C', ['OO', 2, 0])]
+    for i, slot in enumerate(slot_order, 3):
+        objects.append(node('Material', [i, f'M_{stem}_{slot}', '']))
+        links.append(node('C', ['OO', i, 2]))
+    data = FBX[:27]
+    for tree in (node('Objects', children=objects), node('Connections', children=links)):
+        data += encode(tree, len(data))
+    return data + bytes(13)
+
+
+def ground_package(folder, tiles=(1001, 1002, 1003), slots=(2, 1, 2), **fbx_options):
+    folder.mkdir()
+    (folder / 'SM_X_Ground.fbx').write_bytes(ground_fbx(tiles=tiles, slots=slots, **fbx_options))
+    (folder / 'SM_X_Ground.geojson').write_text(good_geojson(), encoding='utf-8')
+    for tile, slot in zip(tiles, slots):
+        for role, colour in MAPS.items():
+            (folder / f'T_X_Ground_{role}_{slot}.{tile}.png').write_bytes(_png(colour))
+    return folder
+
+
+def test_ground_zip_has_tables_from_binary_fbx(tmp_path):
+    folder = ground_package(tmp_path / 'source')
+    target = tmp_path / 'SM_X_Ground.zip'
+    [archive] = pc.zip_plan(folder)['archives']
+    pc._write_zip(folder, archive, str(target))
+    table = json.loads((tmp_path / 'ground-udim.json').read_text(encoding='utf-8'))
+    md = (tmp_path / 'ground-udim.md').read_text(encoding='utf-8')
+    with zipfile.ZipFile(target) as packed:
+        assert set(packed.namelist()) == {p.name for p in folder.iterdir()}
+        assert table['fbx_sha256'] == hashlib.sha256(packed.read('SM_X_Ground.fbx')).hexdigest()
+    assert table['archive_sha256'] == _sha(target)
+    assert [(r['udim'], r['slot'], r['material'], r['maps']) for r in table['tiles']] == [
+        (tile, slot, f'M_X_Ground_{slot}', {role: f'T_X_Ground_{role}_{slot}.{tile}.png' for role in MAPS})
+        for tile, slot in [(1001, 2), (1002, 1), (1003, 2)]]
+    for row in table['tiles']:
+        assert f"| {row['udim']} | {row['slot']} | `{row['material']}` |" in md
+        assert all(f'`{name}`' in md for name in row['maps'].values())
+
+
+def test_ground_cli_replaces_neither_input_tables_nor_their_contents(tmp_path):
+    folder = ground_package(tmp_path / 'source')
+    tex = tmp_path / 'textures'
+    tex.mkdir()
+    for p in folder.glob('*.png'):
+        p.rename(tex / p.name)
+    (folder / 'SM_X_Ground.geojson').unlink()
+    fbx = 'SM_X_Ground.fbx'
+    (folder / 'export_meta.json').write_text(json.dumps({
+        'address': 'X_Ground', 'h_otn_model_max_z_m': 0.2, 'thumbnail': 'unknown',
+        'exported_files': [fbx], 'exported_sha256': {fbx: _sha(folder / fbx)},
+    }), encoding='utf-8')
+    for name in ('ground-udim.json', 'ground-udim.md'):
+        (folder / name).write_bytes(b'stale build table')
+    args = [PY, str(ROOT / 'tools/derive/package_vpm.py'), str(folder), str(tex), '--no-geojson']
+    result = subprocess.run(args, capture_output=True, cwd=tmp_path)
+    assert result.returncode == 0, result.stderr.decode(errors='replace')
+    target = tmp_path / 'SM_X_Ground.zip'
+    with zipfile.ZipFile(target) as packed:
+        assert set(packed.namelist()) == {fbx, *(p.name for p in tex.iterdir())}
+    assert json.loads((tmp_path / 'ground-udim.json').read_text(encoding='utf-8'))['archive_sha256'] == _sha(target)
+    assert (tmp_path / 'ground-udim.md').is_file()
+    assert all((folder / name).read_bytes() == b'stale build table' for name in ('ground-udim.json', 'ground-udim.md'))
+
+
+@pytest.mark.parametrize('case, message', [
+    ('empty', 'empty'), ('unsupported', 'binary FBX'), ('truncated', 'truncated'),
+    ('nan', 'finite'), ('inf', 'finite'), ('threshold', 'UDIM'), ('crossing', 'crosses'),
+    ('slot', 'slot 9'), ('partial', 'partial material'), ('missing', '1002'),
+    ('foreign', '1004'), ('swapped', '1001'), ('alternate_slot', '02'),
+    ('alias', 'ground-udim.md'), ('partial_alias', 'ground-udim.json.partial'),
+    ('stale', 'ground-udim.json'),
+])
+def test_ground_zip_refuses_unprovable_or_occupied_output(tmp_path, case, message):
+    folder = ground_package(tmp_path / 'source')
+    fbx = folder / 'SM_X_Ground.fbx'
+    if case in ('nan', 'inf', 'threshold', 'crossing'):
+        value = {'nan': float('nan'), 'inf': float('inf'), 'threshold': 30., 'crossing': 1.5}[case]
+        fbx.write_bytes(ground_fbx(tiles=(1001, 1002, 1003), slots=(2, 1, 2),
+                                   mutate_uv=lambda uvs: uvs.__setitem__(0, value)))
+    elif case in ('slot', 'partial', 'swapped'):
+        indices = {'slot': [9, 1, 0], 'partial': [0], 'swapped': [1, 0, 0]}[case]
+        fbx.write_bytes(ground_fbx(tiles=(1001, 1002, 1003), slots=(2, 1, 2), material_indices=indices))
+    elif case in ('empty', 'unsupported', 'truncated'):
+        fbx.write_bytes({'empty': b'', 'unsupported': b'ASCII FBX', 'truncated': fbx.read_bytes()[:100]}[case])
+    elif case == 'missing':
+        (folder / 'T_X_Ground_Diffuse_1.1002.png').unlink()
+    elif case == 'foreign':
+        (folder / 'T_X_Ground_Diffuse_2.1004.png').write_bytes(_png(MAPS['Diffuse']))
+    elif case == 'alternate_slot':
+        (folder / 'T_X_Ground_Diffuse_2.1001.png').rename(folder / 'T_X_Ground_Diffuse_02.1001.png')
+    elif case in ('alias', 'partial_alias'):
+        os.link(fbx, tmp_path / ('ground-udim.md' if case == 'alias' else 'ground-udim.json.partial'))
+    elif case == 'stale':
+        (tmp_path / 'ground-udim.json').write_text('{}', encoding='utf-8')
+    before = {p: _sha(p) for p in tmp_path.rglob('*') if p.is_file()}
+    [archive] = pc.zip_plan(folder)['archives']
+    with pytest.raises((ValueError, FileExistsError), match=message):
+        pc._write_zip(folder, archive, str(tmp_path / 'SM_X_Ground.zip'))
+    assert {p: _sha(p) for p in tmp_path.rglob('*') if p.is_file()} == before
+
+
 def acceptance_folder(tmp_path):
     """export.zip.md minimal acceptance: NPM (2 parts + Ground), VPM OKS (fbx, _Light, geojson, 3 PNG), VPM Ground
     (same) and decoys SM_X_0011.*, 0123_Other_01.fbx, notes.txt."""
@@ -60,7 +181,7 @@ def acceptance_folder(tmp_path):
     d.mkdir()
     files = {'0123_X_01.fbx': FBX, '0123_X_02.fbx': FBX, '0123_X_Ground.fbx': FBX,
              'SM_X.fbx': FBX, 'SM_X_Light.fbx': LIGHT, 'SM_X.geojson': good_geojson(),
-             'SM_X_Ground.fbx': FBX, 'SM_X_Ground_Light.fbx': GROUND_LIGHT, 'SM_X_Ground.geojson': good_geojson(),
+             'SM_X_Ground.fbx': ground_fbx(), 'SM_X_Ground_Light.fbx': GROUND_LIGHT, 'SM_X_Ground.geojson': good_geojson(),
              'SM_X_0011.fbx': FBX, 'SM_X_0011.geojson': good_geojson(), 'T_X_0011_Diffuse_1.1001.png': _png((1, 2, 3)),
              '0123_Other_01.fbx': FBX, 'notes.txt': b'decoy'}
     for m, c in MAPS.items():
@@ -195,7 +316,8 @@ def test_export_zip_acceptance(tmp_path):
     assert sorted(set(os.listdir(d)) - set(before)) == [run.name]  # the delivery folder gets only the run folder
     assert sorted(os.listdir(run)) == sorted(
         r['plan']['done'] + [n + suffix for n in r['plan']['done']
-                            for suffix in ('.validation.json', '.delivery.json')] + ['report.json', pc.MARK_FAIL])
+                            for suffix in ('.validation.json', '.delivery.json')]
+        + ['ground-udim.json', 'ground-udim.md', 'report.json', pc.MARK_FAIL])
     assert json.loads((run / 'report.json').read_text(encoding='utf-8')) == r
     with zipfile.ZipFile(run / 'SM_X.zip') as z:
         names = z.namelist()
