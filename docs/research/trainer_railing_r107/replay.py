@@ -19,6 +19,18 @@ SCOPE = {'63A': (10.15, 47.95), '63B': (4.65, 51.90)}
 FLOOR, RAIL = 'Перекрытие', 'Ограждение'
 FACES = ('xmin', 'ymin', 'zmin', 'xmax', 'ymax', 'zmax')
 ORDER, HEADROOM_M, STEP_M = ('xmax', 'xmin', 'ymax', 'ymin'), 0.60, 0.50
+COLLATERAL_M, EPS = 0.05, 1e-9  # frozen: 63A |S107-S106| <= 0.05 m; 63B S107 <= S106
+
+
+def bound_check(tag, baseline, native):
+    """Frozen per-pair numeric bound on the S106 -> S107 change; a missing number is a violation."""
+    before, after = baseline.get('max_corner_dev_m'), native.get('max_corner_dev_m')
+    if not all(isinstance(v, (int, float)) and math.isfinite(v) for v in (before, after)):
+        return {'rule': 'missing deviation', 'ok': False}
+    delta = after - before
+    if tag == '63A':
+        return {'rule': '|S107-S106| <= 0.05 m', 'delta_m': delta, 'ok': abs(delta) <= COLLATERAL_M + EPS}
+    return {'rule': 'S107 <= S106', 'delta_m': delta, 'ok': delta <= EPS}
 
 
 def stated(rows, scope, drop_rails=True):
@@ -93,6 +105,7 @@ def probe(runner, rows, box, built, key):
     shifted = stated(inside, tuple(z + .25 for z in scope))
     face = pick_face(s107, box)
     native, baseline = score(s107), score(s106)
+    bound = bound_check(tag, baseline, native)
     cov = {'order_changed_ids': len(set(ordered['ids']) ^ ids) if ordered else None,
            'rail_removed_ids': len(removed), 'rail_rule': 'exercised' if removed else 'not_exercised',
            'witness_face': face[0] if face else None,
@@ -128,6 +141,7 @@ def probe(runner, rows, box, built, key):
         'shift': len(z_deltas) == 2 and all(math.isclose(d, .25, abs_tol=1e-9) for d in z_deltas)
         and shift_native.get('status') == 'fail' and shift_native.get('max_corner_dev_m', -1) >= .24,
         'absent_scope_refuses': stated(inside, None) is None,
+        'frozen_bound': bound['ok'],
     }
     return {
         'status': native['status'] if all(ok.values()) else 'inconclusive',
@@ -135,13 +149,15 @@ def probe(runner, rows, box, built, key):
         'selected_rows': len(ids), 's106_rows': len(ids106), 'bounds_m': s107['bounds_m'],
         's106_bounds_m': s106['bounds_m'], 'signed_face_deltas_m': [a - b for a, b in zip(faces(s107), klo + khi)],
         'extremum_names': extremum_names(inside, s107), 'removed_name_prefixes': sorted({n[:40] for n in removed_names})[:10],
-        'controls': ok, 'coverage': cov,
+        'controls': ok, 'coverage': cov, 'bound_check': bound,
     }
 
 
 def verdict(pairs, status):
     if status != 'complete' or len(pairs) != 3 or any(p['status'] != 'complete' for p in pairs):
         return 'inconclusive'
+    if any(p[t].get('bound_check', {}).get('ok') is not True for p in pairs for t in SCOPE):
+        return 'inconclusive'  # frozen 63A collateral / 63B direction bound violated or not recorded
     if any(p['63A']['status'] != 'pass' for p in pairs):
         return 'inconclusive'
     outcomes = [p['63B']['status'] for p in pairs]
