@@ -262,7 +262,7 @@ uv run python jobs/sokolniki-uvk1000/hooks/inset_sheet.py uvsheet <renders> <uv>
   Revit | v009 | NPM atlas, 3/4 + straight-on, measured numbers; `SHA256SUMS.txt` 98 files); no window rework before
   Artem's answer.
 
-### Windows as facade texture ([D416])
+### Windows as facade texture ([D417])
 
 Artem 2026-11-26 ~10:10 («окна показываем текстурой на фасаде»): no frame / mullion geometry; the window / door insets
 keep their flat v009 faces and get a whole-window drawing of their own Revit instance in the atlas:

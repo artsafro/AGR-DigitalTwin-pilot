@@ -1054,7 +1054,7 @@ def body_finish(vol, n, z, ring_dist, along_cos, area, rules):
     raise ValueError(f"{vol}: no band above z {zc:.3f}")
 
 
-# ---------------------------------------------- #1925 r4 [D416]: windows / doors drawn in the facade atlas
+# ---------------------------------------------- #1925 r4 [D417]: windows / doors drawn in the facade atlas
 # The window / door insets stay one flat face per opening strip (no frame geometry); each Revit instance gets a
 # whole-window drawing (its own glass panes, the rest is profile) in a trim cell of its finish's UDIM tile.
 # winscan (inset_write_blender.py) -> wintex (here, writes uv_config.json) -> uv mode maps faces by instance box.

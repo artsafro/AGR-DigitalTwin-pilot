@@ -265,7 +265,7 @@ def split_overflow(bm, names, cfg, vpm_uv):
 
 
 def window_faces(bm, fl, names, cfg, ib):
-    """#1925 r4 [D416] windows shown as texture: every face of a `pattern: elevations` finish gets explicit
+    """#1925 r4 [D417] windows shown as texture: every face of a `pattern: elevations` finish gets explicit
     tile-metre UVs (layer UVM + face flag uvx, honoured by vpm_uv.texel_cut / pack_uv) - the box of its Revit
     instance (uv_config window_texture.instances) onto that instance's drawing cell; without an instance the
     face's own extent onto the `_face` drawing. No vertex is touched. Returns per-cell face counts."""
@@ -445,7 +445,7 @@ def uv(argv):
 
 
 def winscan(argv):
-    """#1925 r4 [D416] read-only: every v009 window / door face -> the Revit window / door instance whose box holds
+    """#1925 r4 [D417] read-only: every v009 window / door face -> the Revit window / door instance whose box holds
     it; per instance the frame (c, r = right as seen from outside), its box (u along r from c, world z) and the
     glass pane rectangles (Revit triangles facing out and thicker than 0.12 m). Never saves.
 

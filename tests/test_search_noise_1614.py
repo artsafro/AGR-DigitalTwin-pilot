@@ -245,6 +245,33 @@ def _rg(root):
 ARCHIVE_SECTION = "## Hidden from search (still in the tree)\n"
 
 
+@pytest.mark.parametrize("case", ["exact", "sibling", "overlap", "entry", "stale", "directory", "outside", "duplicate"])
+def test_live_subtree_archive_exception_is_exact(tmp_path, case):
+    old = "jobs/DONE/open-1/pilot/old.json"
+    sibling = "jobs/DONE/open-1/pilot/old-copy.json"
+    exception = {"directory": old.rsplit("/", 1)[0], "outside": "jobs/DONE/STATE.md"}.get(case, old)
+    config = CONFIG + f"    archive_exceptions:\n      - {exception}\n"
+    if case == "overlap":
+        config += "  - path: jobs/DONE/open-1/pilot\n    ru: другая защита\n"
+    if case == "duplicate":
+        config += f"      - {exception}\n"
+    index = ARCHIVE_SECTION + ("" if case == "stale" else f"- `{old}` — Historical receipt.\n")
+    if case == "sibling":
+        index += f"- `{sibling}` — Still protected.\n"
+    root = _repo(tmp_path, {
+        old: "old", sibling: "sibling", "docs/ARCHIVE.md": index,
+        "AGENTS.md": f"Read `{old}`.\n" if case == "entry" else "# Entry\n",
+    }, config=config)
+    if case == "exact":
+        state = sn.state(root)
+        assert set(state["archive"]) == {old}
+        assert not {old, sibling} & set(state["data"])
+    else:
+        match = "explicitly live" if case in {"sibling", "overlap", "entry"} else "archive_exceptions"
+        with pytest.raises(ValueError, match=match):
+            sn.state(root)
+
+
 @needs_rg
 def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
     historical = {
@@ -271,6 +298,19 @@ def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
     assert historical | retained <= tracked
     assert retained <= visible
     assert not historical & visible
+
+
+@needs_rg
+def test_batch_5b_receipts_stay_tracked_and_only_exact_paths_leave_search():
+    ac08 = "jobs/TEC26-OKS/AC08"
+    tracked = set(sn.tracked(ROOT))
+    _, _, exceptions, _ = sn.load_config(ROOT, tracked)
+    hidden = exceptions[ac08]
+    visible = _rg(ROOT)
+    assert len(hidden) == 30
+    assert hidden <= tracked and not hidden & visible
+    assert f"{ac08}/pilot-v010/qa_master.json" in visible
+    assert f"{ac08}/kernel-ops-v001/evidence/kernel_ops.json" in visible
 
 
 @needs_rg

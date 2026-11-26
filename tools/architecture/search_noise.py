@@ -178,14 +178,15 @@ def entry_named(root, files):
 
 
 def load_config(root, files):
-    """Read kept jobs, live paths and the exact legacy doc exemption cut."""
+    """Read job classification, live paths, exact archive exceptions and legacy docs."""
     cfg = mini_yaml.load(Path(root) / CONFIG)
     if not isinstance(cfg, dict):
         raise ValueError(f"{CONFIG}: expected a mapping")
     unknown = set(cfg) - {"kept_jobs", "live_paths", "legacy_hidden_docs"}
     if unknown:
         raise ValueError(f"{CONFIG}: unknown keys {sorted(unknown)}")
-    kept, parts = {}, {}
+    kept, parts, exceptions = {}, {}, {}
+    fileset = set(files)
     for i, e in enumerate(cfg.get("kept_jobs") or []):
         job, ru = str(e.get("job", "")), str(e.get("ru", "")).strip()
         if not re.match(r"^jobs/[^/]+$", job) or not ru:
@@ -202,13 +203,21 @@ def load_config(root, files):
         if path not in files and not any(f.startswith(path + "/") for f in files):
             raise ValueError(f"{CONFIG}: live_paths {path} holds no tracked file")
         parts[path] = ru
+        allowed = e.get("archive_exceptions", [])
+        if (not isinstance(allowed, list)
+                or any(not isinstance(rel, str) or rel not in fileset
+                       or not rel.startswith(path + "/") for rel in allowed)
+                or len(set(allowed)) != len(allowed)):
+            raise ValueError(f"{CONFIG}: archive_exceptions for {path} must be unique tracked descendant files")
+        if allowed:
+            exceptions[path] = set(allowed)
     legacy = cfg.get("legacy_hidden_docs", [])
     if (not isinstance(legacy, list)
             or any(not isinstance(p, str) or not p.startswith("docs/") or "\\" in p
                    or posixpath.normpath(p) != p for p in legacy)
             or len(set(legacy)) != len(legacy)):
         raise ValueError(f"{CONFIG}: legacy_hidden_docs must list unique canonical docs paths")
-    return kept, parts, set(legacy)
+    return kept, parts, exceptions, set(legacy)
 
 
 def job_folders(files):
@@ -634,7 +643,7 @@ def state(root):
     files = tracked(root)
     contexts = mini_yaml.load(Path(root) / CONTEXTS)
     finished = dg.finished_jobs(root, contexts)
-    kept, parts, legacy = load_config(root, files)
+    kept, parts, exceptions, legacy = load_config(root, files)
     live = live_closure(root, files)
     statuses, plan_problems = plan_statuses(root, files)
     live.update(rel for rel, status in statuses.items() if status == "active")
@@ -642,12 +651,19 @@ def state(root):
     live.difference_update(inactive)
     data = historical_job_data(root, files, finished, parts, live)
     archive = search_archive(root, files)
+    excepted = set().union(*exceptions.values())
+    stale = excepted.difference(archive)
+    if stale:
+        raise ValueError(f"{CONFIG}: archive_exceptions missing from {ARCHIVE}: {sorted(stale)}")
     if archive:
         named = entry_named(root, files)
         # The archive's own old tag inventory may name its evidence. Entry links, unlike
         # those inventory pointers, must stay visible when a path is adopted again.
         for rel in archive:
-            if rel in named or statuses.get(rel) == "active" or under(rel, parts) or rel.startswith(ENTRY_DIRS):
+            # An exception lifts only its own live_paths row, never an independent guard.
+            protected = under(rel, (p for p in parts if rel not in exceptions.get(p, ())))
+            if (rel in named or statuses.get(rel) == "active" or protected or rel.startswith(ENTRY_DIRS)
+                    or (rel in excepted and rel in live)):
                 raise ValueError(f"{ARCHIVE}: {rel} is explicitly live and cannot be archived")
     return {"files": files, "contexts": contexts, "finished": finished, "kept": kept, "parts": parts, "live": live,
             "data": data, "docs": sorted(set(historical_docs(files, live, parts)) | inactive),

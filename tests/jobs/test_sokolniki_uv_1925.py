@@ -1,4 +1,4 @@
-"""Sokolniki #1925 step 4 [D412, D413, D416]: finish zones, UV report table, uv_config.json, windows as texture.
+"""Sokolniki #1925 step 4 [D412, D413, D417]: finish zones, UV report table, uv_config.json, windows as texture.
 
 Pattern: n/a | new-case: tests of jobs/sokolniki-uvk1000/hooks/inset_build.py (body_finish, ring_relation),
 inset_sheet.py (uv_rows) and uv_config.json against the shared atlas spec validator (no DCC).
@@ -114,7 +114,7 @@ def test_before_after_pairs_v009_vs_atlas_same_views(tmp_path):
         sh.before_after_pairs(str(tmp_path))
 
 
-# ---------------------------------------------------------------- #1925 r4 [D416]: windows shown as texture
+# ---------------------------------------------------------------- #1925 r4 [D417]: windows shown as texture
 W1 = {'type': 'WB_Окно_2Створки_1Фрамуга_Слева', 'c': [0.0, 0.0], 'r': [1.0, 0.0], 'box': [-1.15, 1.15, 0.6, 3.04],
       'panes': [[-1.06, 0.19, 0.71, 2.95], [0.26, 1.06, 0.71, 1.2], [0.31, 1.01, 1.32, 2.9]]}
 
