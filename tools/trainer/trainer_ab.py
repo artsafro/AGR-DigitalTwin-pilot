@@ -1,4 +1,4 @@
-"""Trainer A/B probe of one harness edit [D414] (#1924, Harness2 arXiv 2610.14224).
+"""Trainer A/B probe of one harness edit [D415] (#1924, Harness2 arXiv 2610.14224).
 
 Pattern: n/a | new-case: A/B contrast of two harness variants (rule/skill/doc text) on one trainer etalon.
 
@@ -229,7 +229,7 @@ def contrast(old, new, variants):
 def render_md(rep):
     """Human contrast sheet (English; the JSON is the machine record)."""
     e = rep["edit"]
-    lines = [f"# Trainer A/B [D414] - {rep.get('etalon', '?')}", "",
+    lines = [f"# Trainer A/B [D415] - {rep.get('etalon', '?')}", "",
              f"Verdict: **{rep['verdict']}**" + (f" ({rep['inconclusive_reason']})" if rep["inconclusive_reason"]
                                                  else ""),
              f"Edit ({e['scope']}): {', '.join(e['files'])}",

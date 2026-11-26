@@ -1,4 +1,4 @@
-"""LESSONS evidence check [D414] (#1924): each new job lesson = situation / lesson / evidence.
+"""LESSONS evidence check [D415] (#1924): each new job lesson = situation / lesson / evidence.
 
 Pattern: n/a | new-case: tests of the warn-only job LESSONS.md evidence check.
 """
@@ -61,7 +61,7 @@ def test_added_legacy_line_warns_unchanged_legacy_does_not():
 def test_fenced_examples_and_template_are_not_lessons():
     tpl = (ROOT / "jobs/_template/LESSONS.md").read_text(encoding="utf-8")
     assert L.parse_lessons(tpl) == [] and L.warnings_for(tpl) == []
-    assert "Situation" in tpl and "Evidence" in tpl and "D414" in tpl
+    assert "Situation" in tpl and "Evidence" in tpl and "D415" in tpl
 
 
 def test_duplicate_lesson_id_warns():

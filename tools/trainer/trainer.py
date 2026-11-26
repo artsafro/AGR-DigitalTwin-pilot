@@ -7,7 +7,7 @@ Pattern: n/a | new-case: trainer v0 - practice-run recorder and step scorer over
     uv run agr trainer score ETALON --built FILE.fbx|DIR --out NEW.json [--png NEW.png] [--vlm] [--date D]
     uv run agr trainer calibrate --out NEW_DIR    # accepted vs rejected of every scorable etalon
     uv run agr trainer ledger [--add SCORE.json --lane L --run RUN_DIR]   # headline: share passed first try
-    uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR   # [D414] A/B probe
+    uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR   # [D415] A/B probe
 
 A practice run gets ONLY the task text and the source copies (never the key, rejected versions or the job's
 history: the practice dir is `git archive` + scrub + `git init` with one commit, no origin). Score steps run the existing checkers in
@@ -336,7 +336,7 @@ def new_code_lines(wt):
 
 
 def apply_overlay(wt, variant_dir, e):
-    """[D414] Lay a harness variant (repo-relative files) over the practice tree and commit it as a second
+    """[D415] Lay a harness variant (repo-relative files) over the practice tree and commit it as a second
     commit, so the agent's own diff (new_code_lines) stays separate. Refused (TrainerError) when a file names the
     key or a rejected version. Empty variant = baseline, no commit. -> {rel: sha256}."""
     from trainer_ab import AbError, variant_files
@@ -790,7 +790,7 @@ def main(argv=None):
     lg.add_argument("--lane")
     lg.add_argument("--run")
     lg.add_argument("--date", default=dt.date.today().isoformat())
-    ab = sub.add_parser("ab", help="[D414] A/B probe of one harness edit on one etalon")
+    ab = sub.add_parser("ab", help="[D415] A/B probe of one harness edit on one etalon")
     ab.add_argument("etalon")
     ab.add_argument("--ab", nargs=2, metavar=("OLD_DIR", "NEW_DIR"), required=True)
     ab.add_argument("--scope", required=True, help="INVARIANT (entry, context, tools) or DOMAIN (OKS/Ground/...)")
