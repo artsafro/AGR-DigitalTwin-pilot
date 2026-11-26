@@ -1,0 +1,89 @@
+{
+ "agent_requests": [],
+ "created": "2026-11-26T16:31:50+01:00",
+ "gaps": [
+  "K2: the spec names window_type as an int; the opening marker stores a string library id (agr_window_type). The spec is not changed in this wave (#1024)."
+ ],
+ "journal": {
+  "lines": 0,
+  "path": "journal.jsonl",
+  "tail": []
+ },
+ "materials": [],
+ "normalization": {
+  "grid_zero_m": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "origin_m": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "scale": 1.0,
+  "units": "m",
+  "up_axis": "Z"
+ },
+ "openings": [],
+ "parts": [],
+ "project_id": "mafs-b3",
+ "questions": [
+  "Source level A/B/C is not defined in #1024; default rule: A shell, B panelised, C ambiguous/unclassified (scene10_core.LEVEL_RULE)."
+ ],
+ "schema": 1,
+ "source": {
+  "class": "unclassified",
+  "level": "C",
+  "note": "not classified yet: run source.intake / scene.source_class",
+  "path": "C:/x/library-publish/inbox/mafs-b3-2026-11-26"
+ },
+ "stages": [
+  {
+   "id": 0,
+   "status": "todo"
+  },
+  {
+   "id": 1,
+   "status": "todo"
+  },
+  {
+   "id": 2,
+   "status": "todo"
+  },
+  {
+   "id": 3,
+   "status": "todo"
+  },
+  {
+   "id": 4,
+   "status": "todo"
+  },
+  {
+   "id": 5,
+   "status": "todo"
+  },
+  {
+   "id": 6,
+   "status": "todo"
+  },
+  {
+   "id": 7,
+   "status": "todo"
+  },
+  {
+   "id": 8,
+   "status": "todo"
+  },
+  {
+   "id": 9,
+   "status": "todo"
+  },
+  {
+   "id": "agent",
+   "status": "todo"
+  }
+ ],
+ "title": "MAF batch 3 (5 quad MAFs) - library-publish drafts",
+ "updated": "2026-11-26T16:31:50+01:00"
+}

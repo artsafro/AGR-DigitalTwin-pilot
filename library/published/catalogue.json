@@ -1,4 +1,668 @@
 {
  "schema": "agr-library-publish/1",
- "records": []
+ "records": [
+  {
+   "name": "Adanat_NavesLianaSPolikarbonatom_40074",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-26T16:31:59+01:00",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "AD40074",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '40074'"
+   },
+   "card": {
+    "manufacturer": "Adanat",
+    "title_ru": "Навес Лиана с поликарбонатом",
+    "article": "40074",
+    "size_m": [
+     3.0,
+     2.005,
+     2.782
+    ],
+    "tris": {
+     "vpm": 1200,
+     "npm": null
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016",
+      "31_polycarbonate"
+     ],
+     "npm": []
+    }
+   },
+   "preview": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_front.png",
+   "files": [
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/AD40074_GroundEl_v001.fbx",
+     "sha256": "d5274de53e3e32ee50207158966614df6868a9dfe05a7bb1696a35581e40477e",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/AD40074_GroundEl_v001.max",
+     "sha256": "b4c815f4299c90236fde9b5b22fdd584019b292c6bf1917868b85a28d35c257f",
+     "role": "max"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/adanat-liana-40074_v001.blend",
+     "sha256": "eee04f397c4ea9ad349c8c27b27bc612d12645754d1f1fdfa2c7636194083f63",
+     "role": "blend"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/BREAKDOWN_adanat-liana-40074.md",
+     "sha256": "824dc3cb15694c1176787331a76a6b577dc3e399cfdd148ac81c420981500cb6",
+     "role": "other"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_front.png",
+     "sha256": "70ab15da07194c19751bf0f2b5d414f4a4fc44a1bef530255dca06243acb0649",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_iso_nw.png",
+     "sha256": "056b42bd39c05c5799adefa0473e1d45eb1484d8bff46aec15e735771a1ea581",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_iso_se.png",
+     "sha256": "1539d867a975dbc0333f0f65c3934a5da248756ea16d9054c7b3630055b9489e",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_iso_sw.png",
+     "sha256": "124ce3cbb79e4337dc4df8128ce4d259d808d18c4896a2311698ac102e98a013",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/readback_v001.txt",
+     "sha256": "35d65e8185ade36c2788d325225e386341632d6aa8e82464c25b00a0d0c066e3",
+     "role": "other"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/Adanat_draw_40072_series.dwg",
+     "sha256": "a80a2efc06d5b6cb0dd5d5b3cb3c33efa943c1c73596f5b922ea1848c2b63274",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/drawing_large_38315.jpg",
+     "sha256": "ab6b4c65ca9e0993f7bb91271a3dffd5c39bca889f58299018b3802868032f1c",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/image_47337_57.jpg",
+     "sha256": "c88c4542f2e29f1687ac382df672d22ca771748aae11b6c3dc8b3263a15a88cd",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/image_47528_57.jpg",
+     "sha256": "2fbbdaff65c689b755a609043236faccdd6006dad9aa5a888579a597bad3a558",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/image_48168_57.jpg",
+     "sha256": "90f4e0ad7e7568772cbbc4f69561936afef55127f74317e7518dbb52aff721da",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/image_55336_57.jpg",
+     "sha256": "ebedcd1182e9a087441901d5a9438fdd002f5e1199ba65af8b1e90682a76317b",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/image_8514_57.jpg",
+     "sha256": "707c55bbc8663ae493775183a6d328ca1dc38f202dc6d1b5a1d78954a9e91ab3",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/image_8516_57.jpg",
+     "sha256": "8eb7cda1a08814f709025caa03456ef9e8f49c59cec4f2cb25fcf0338f6aa6dc",
+     "role": "source"
+    },
+    {
+     "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/source/page.md",
+     "sha256": "f755ccd1190e34bd13faab3e07fb5bb700405ac3d7c2dd272fd6952fb937916c",
+     "role": "other"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.020 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016', '31_polycarbonate']",
+     "npm: no NPM version in the object"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Feniks_InformatsionnyyStendZapovednik_187150",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-26T16:32:01+01:00",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "FX187150",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '187150'"
+   },
+   "card": {
+    "manufacturer": "Феникс",
+    "title_ru": "Информационный стенд Заповедник",
+    "article": "187150",
+    "size_m": [
+     0.844,
+     0.145,
+     1.82
+    ],
+    "tris": {
+     "vpm": 394,
+     "npm": null
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "19_plywood",
+      "20_steel_stainless",
+      "3_paint_ral7040",
+      "5_paint_ral9003"
+     ],
+     "npm": []
+    }
+   },
+   "preview": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_front.png",
+   "files": [
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/BREAKDOWN_rf-info-stend.md",
+     "sha256": "86db68a5417e63a5672ce619a655f803a335c868ead080ba7c5f29a2aebc8828",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/FX187150_GroundEl_v001.fbx",
+     "sha256": "5886c9327d731cee1eefadc67d897b64eec8e48172c72e223cef10397bfb8259",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/FX187150_GroundEl_v001.max",
+     "sha256": "022e827d8d6d669e1b430559a9f65500f7f59bbddae2b7de8c7e8fbf4389ecb6",
+     "role": "max"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_front.png",
+     "sha256": "6bcb59665508cec3e9b8afd70bc7e45010bf06caf3afa2d0df212030d670cb6f",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_iso_nw.png",
+     "sha256": "f0cf30024c56c39e5cb82be8f3bb132f8758787dc2055b7c7b322d8575c4400f",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_iso_se.png",
+     "sha256": "a5a10c09e84fa380c5cc9a0e95ea751c369bb8e8e904f3a77d3cc385975906c3",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_iso_sw.png",
+     "sha256": "6a32d84720328ccd4eea59b8150b9fbb22459b98a5118ac68ec764e70255e2fe",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/readback_v001.txt",
+     "sha256": "98b5febd1c3ad195ef05f480b1830cb5690d8977a7a8c306dceedbd77cb493ef",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/rf-info-stend_v001.blend",
+     "sha256": "f57c8f6eb062b1b2ef1377adbe8e6d5575e037b4431115790922f3b1fc314d2d",
+     "role": "blend"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/source/187150pl.dwg",
+     "sha256": "9022187fa68e6e16d83b88ca7b35ef07c19baf5455cbceecbdccc2093ffc767f",
+     "role": "source"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/source/3696_informatsionnyy-stend.webp",
+     "sha256": "bc5a26141b5a5d350de0db358d57010aafa683ed7cfdfb4c17c3f7298f958b02",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/source/3697_informatsionnyy-stend.webp",
+     "sha256": "dd17c2c6278cbea53950efe9feb8c6f320732f82ba7888e071af9148ebe600bf",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/source/4082_informatsionnyy-stend.webp",
+     "sha256": "5ecf86fd392785059ac178aa248076a6747c53a0661acc16d3d0b7b4eb4b6c0a",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/source/page.md",
+     "sha256": "60d301c0adc6837c03ef7aef85ee1f3f072dc07d3d45901b9201e2169e4a21bd",
+     "role": "other"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.020 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '19_plywood', '20_steel_stainless', '3_paint_ral7040', '5_paint_ral9003']",
+     "vpm: MAF smoothing: fail: vpm: FX187150_GroundEl: 26 soft edges > 40 deg (max 45.00 deg)",
+     "vpm: MAF flipped normals: fail: vpm: FX187150_GroundEl: flipped 4, inconsistent 8, undetermined 0",
+     "npm: no NPM version in the object"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Feniks_SportivnyyVorkautKompleksZapovednik_217280",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-26T16:32:03+01:00",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "FX217280",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '217280'"
+   },
+   "card": {
+    "manufacturer": "Феникс",
+    "title_ru": "Спортивный воркаут-комплекс Заповедник",
+    "article": "217280",
+    "size_m": [
+     4.02,
+     2.8355,
+     2.553
+    ],
+    "tris": {
+     "vpm": 1900,
+     "npm": null
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "20_steel_stainless",
+      "4_paint_ral7047"
+     ],
+     "npm": []
+    }
+   },
+   "preview": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_front.png",
+   "files": [
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/BREAKDOWN_rf-workout-nature.md",
+     "sha256": "066d022c5b4541818e667eeacde39939e8419be0780d9d5beb80d29502c2b72d",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/FX217280_GroundEl_v001.fbx",
+     "sha256": "ca4fa14a1bc93693c64105b8b1dcd173bed9e89cda4488298e99c3a1e0088ec7",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/FX217280_GroundEl_v001.max",
+     "sha256": "9b7a4a9b6e94bd34cbd5b50d69b3ffd325301a296baa7905c2140a40d22844ba",
+     "role": "max"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_front.png",
+     "sha256": "f74a43fa07d2f78d76ffb0f24215b31fb28e01a00db9014da69205693a612099",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_iso_nw.png",
+     "sha256": "c6fa5d17a30c12bce6ee97194b0a12c0c8fcd4f06efc13aef25a82d85a129a9b",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_iso_se.png",
+     "sha256": "b48759694240f2dba4e4b7e64ea8a17166b7096b47f3873d715ed72bb507c854",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_iso_sw.png",
+     "sha256": "26b286b21eef1119496a96daa3bae7d3e25dfda5c9950a618b7c3d425d806d02",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/readback_v001.txt",
+     "sha256": "f2a8e4484ecb1eb417f417d74b07e7ff662d7fa39f1013ed570391daf3dbd9fc",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/rf-workout-nature_v001.blend",
+     "sha256": "194b65f6cec892c6bee78bfa739cd8bf555f17a4844d8f446f918a0eb5183e90",
+     "role": "blend"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/source/217280pl.dwg",
+     "sha256": "3827f3f56b2db5636cf3c2fc35115dffbc86bd6d69378d19d418f8de70271145",
+     "role": "source"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/source/4338_sportivnoe-oborudovanie-work.webp",
+     "sha256": "54b1665d7fbe216edb5c4d222d99191ce7e4a0cb0d17446e31a008e657b697e1",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/source/4339_sportivnoe-oborudovanie-work.webp",
+     "sha256": "460a56230948320623be7ff2cbe40b2c054230d6954c85a760af1162cdaa8656",
+     "role": "other"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/source/7174_sportivnoe-oborudovanie-work.jpg",
+     "sha256": "69d213d83d71f94b7ca29439261d1af70cc2ec8bf68dcf62bd82b8923179ab5b",
+     "role": "source"
+    },
+    {
+     "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/source/page.md",
+     "sha256": "89828b3c4f19c3ef0cc962685b91d2045bfaafa18e768fd03037455be3be752b",
+     "role": "other"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.020 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '20_steel_stainless', '4_paint_ral7047']",
+     "vpm: MAF smoothing: fail: vpm: FX217280_GroundEl: 306 soft edges > 40 deg (max 45.00 deg)",
+     "npm: no NPM version in the object"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Millenium_RazvivayuschiyElement_MG3402",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-26T16:32:06+01:00",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "MG3402",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'MG3402'"
+   },
+   "card": {
+    "manufacturer": "Millenium",
+    "title_ru": "Развивающий элемент",
+    "article": "MG3402",
+    "size_m": [
+     2.134,
+     2.4356,
+     1.305
+    ],
+    "tris": {
+     "vpm": 1410,
+     "npm": null
+    },
+    "materials": {
+     "vpm": [
+      "20_steel_stainless",
+      "2_paint_ral7016",
+      "33_wood_pine"
+     ],
+     "npm": []
+    }
+   },
+   "preview": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_front.png",
+   "files": [
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/BREAKDOWN_leber-razv-element.md",
+     "sha256": "502d1275ac52d399a9f4823fc302ffa18c532b7200343fc2838fb48834462952",
+     "role": "other"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/leber-razv-element_v001.blend",
+     "sha256": "cf8c5244350751a74ef3ee476e84c855dfa712192c3854934e48c98ba4d4d47c",
+     "role": "blend"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/MG3402_GroundEl_v001.fbx",
+     "sha256": "49b1154f4e41e018e49705790ca9b251e1f2acad90c650a7d4416bf45f3fd52c",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/MG3402_GroundEl_v001.max",
+     "sha256": "117ed1a8441c4200ee3da18c41aab6dcfa271cae846bda3b8cefd3e767ba5da6",
+     "role": "max"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_front.png",
+     "sha256": "5ec35ec6b4f15dd4ad7df8bff54f40187734566672c27be1451c46c5b01f5b64",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_iso_nw.png",
+     "sha256": "6b192c80c552739c7a3eca2c1983128f14d3e45763a46b9eb37eff9f1c76066f",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_iso_se.png",
+     "sha256": "6cbafe1ba1a3b6d52164a241fa9d768f17caffa1f785f68ef4fd36d98ab498e0",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_iso_sw.png",
+     "sha256": "b9c6c61e3c2fbed74553fce83923ab400ad5230b9815e428f70b8c53cda7588a",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/readback_v001.txt",
+     "sha256": "84d673faedb133bf38b49b449294f8d41b1526c29aa0c32c7d74a1d3b4da3920",
+     "role": "other"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_0.DWG",
+     "sha256": "d99979ac93842021a497994531a324a8b764098adf41c07a55704171403401ff",
+     "role": "source"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_0.png",
+     "sha256": "28fb1db7c14644851c045d0c355f367ef042d04fd4404a11542ab6535e9c8870",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_1.png",
+     "sha256": "a3eb0ae43822d08c973a5759733baeeeea87809250ec771becd8241fd972daf1",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_200.jpg",
+     "sha256": "fe40ad17fe7f91a01049925c2aacbca1d08477f8feeb7c1ac9c3f4e34b8b0f2a",
+     "role": "source"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_201.jpg",
+     "sha256": "69e96880d413aaf1991e46e73bea28064bb39429ad75f6c6db787d3b376420d4",
+     "role": "source"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_202.jpg",
+     "sha256": "9ea26bef3cb633928804a8c09f58ee08c628769464af130fed29027e386a43c1",
+     "role": "source"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_SideView.png",
+     "sha256": "7de704d62d0ebf5e96bb235127250336b3aefafdd5e829a3e3ff75640342e7c3",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/MG3402_TopView.png",
+     "sha256": "a64b002c6203e8e2b12c9332abfbc91621d96041f9164c1cd4517e2de6d505ab",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/source/page.md",
+     "sha256": "d5d201a36f2fa3700315675c5fc4c86e87b4e016fa79057d0c61a7ad4e3ceeb8",
+     "role": "other"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.020 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['20_steel_stainless', '2_paint_ral7016', '33_wood_pine']",
+     "vpm: MAF smoothing: fail: vpm: MG3402_GroundEl: 220 soft edges > 40 deg (max 45.00 deg)",
+     "npm: no NPM version in the object"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Millenium_Pereprava_MG3518",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-26T16:32:08+01:00",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "MG3518",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'MG3518'"
+   },
+   "card": {
+    "manufacturer": "Millenium",
+    "title_ru": "Переправа",
+    "article": "MG3518",
+    "size_m": [
+     3.0,
+     0.526,
+     2.07
+    ],
+    "tris": {
+     "vpm": 1028,
+     "npm": null
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "20_steel_stainless",
+      "29_rope_pp",
+      "2_paint_ral7016"
+     ],
+     "npm": []
+    }
+   },
+   "preview": "maf/Millenium_Pereprava_MG3518/v001/prev_front.png",
+   "files": [
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/BREAKDOWN_leber-perehod-16187.md",
+     "sha256": "56d0ce5bdbcd4c81fbc351dd29b0a0deee7c4e4668e58a622970f295c6ff451f",
+     "role": "other"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/leber-perehod-16187_v001.blend",
+     "sha256": "b1bad5e31dae418ea36b30ab9f3e364a8bb28f22a7946651c72c04fe22fe12df",
+     "role": "blend"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/MG3518_GroundEl_v001.fbx",
+     "sha256": "fa0a1740cfd8468746efff7f7ea9a0d607329c00314e048466ffe5c9c27ed038",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/MG3518_GroundEl_v001.max",
+     "sha256": "ae8e3bdbc85cb0474f85754b7e0447b406e50386d97a695089d4c97a63fd0e3b",
+     "role": "max"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/prev_front.png",
+     "sha256": "1aaab7987c6a216f56c7e1221b05a0eb29878bfe4e750efb1afbda486d8cc1fb",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/prev_iso_nw.png",
+     "sha256": "e8b20a2c1e29e3de8794964b40d9669008337919a3f0b0f656292072d7b7ea72",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/prev_iso_se.png",
+     "sha256": "c8fcdfb34125fbdc0a43d25bb3672180c64f72838c3c4d0d7e8f66a13b750c60",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/prev_iso_sw.png",
+     "sha256": "32e4c75b08bb36e1d1dc576434efc3c77cdea342f53422b3fde472cfc7a1d13a",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/readback_v001.txt",
+     "sha256": "82e4aea256528e1ef0bcee2ef17d0ef921e3f19ec1bfcf123cdd3ae9987cffdb",
+     "role": "other"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/source/MG3518_0.DWG",
+     "sha256": "8e89a0cf889ae91955745bfa288116b4ef63d8d1712455ef38209ec70e4c9c55",
+     "role": "source"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/source/MG3518_0.png",
+     "sha256": "1cf69a3d643bec7d0a19ed76d9af721870e9eb7a7c8fdaf8567eafd9bb4fc3ef",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/source/MG3518_SideView.png",
+     "sha256": "8a11a3eb775d4d9b614294abfa14c96bedba175789cd0247d165517b3c506f70",
+     "role": "preview"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/source/page.md",
+     "sha256": "7eb9338da6c11842132fdbdcccb4227a43d77410c911713f8f29af62962f51aa",
+     "role": "other"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/source/project_DSC08505.JPG",
+     "sha256": "81ae8e91b255add63b8b54ef7dab532dc2bc71279f38289aedea28e0ff11cb10",
+     "role": "source"
+    },
+    {
+     "path": "maf/Millenium_Pereprava_MG3518/v001/source/project_DSC08609.JPG",
+     "sha256": "b59970602281d60707b85571a46d2d8640f3c76f11564d1e43b728aa42f223c3",
+     "role": "source"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.020 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '20_steel_stainless', '29_rope_pp', '2_paint_ral7016']",
+     "vpm: MAF smoothing: fail: vpm: MG3518_GroundEl: 112 soft edges > 40 deg (max 45.00 deg)",
+     "npm: no NPM version in the object"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  }
+ ]
 }
