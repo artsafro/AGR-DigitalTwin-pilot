@@ -35,6 +35,8 @@ FACES = ('x_min', 'y_min', 'z_min', 'x_max', 'y_max', 'z_max')
 SPAN = {'X': 27000.0, 'Y': 11000.0}                  # axes 1-4 and А-В (mm)
 VIEW_REACH = 5000.0                                 # facade entity centre to its view's axes (mm)
 TOL = 0.10
+# Review round 1 counterexample (dt-reviewer, comment 10617): registered bboxes of these entities, door leaf included.
+SELECTION_S = {'L03': ('1195', '1562', '15E8'), 'L01': ('ADC', '1832'), 'L02': ('13C2',)}
 BUDGET_S, MIN_LEFT_S = 300, 60
 
 sys.path.insert(0, str(ROOT))
@@ -60,14 +62,49 @@ def layer_sets():
     return {'P': p, 'A': a, 'A-door': lambda layer: a(layer) and not layer.startswith('A-DOOR-')}
 
 
+UNREAD = ('missing_def', 'bbox_error', 'no_extent')  # geometry the DXF could not give us -> inconclusive
+
+
+def classify(e):
+    """('ok', bbox) or (status, None); status in empty_def (inventoried) or UNREAD (blocks a verdict)."""
+    block = None
+    if e.dxftype() == 'INSERT':  # check the definition first: ezdxf raises on a missing one
+        block = e.doc.blocks.get(e.dxf.name) if e.doc is not None else None
+        if block is None:
+            return 'missing_def', None
+    try:
+        b = bbox.extents([e], fast=True)
+    except Exception:  # noqa: BLE001 - recorded as bbox_error, never silently skipped
+        return 'bbox_error', None
+    if b.has_data:
+        return 'ok', (b.extmin.x, b.extmin.y, b.extmax.x, b.extmax.y)
+    if block is not None and len(block) == 0:
+        return 'empty_def', None
+    return 'no_extent', None
+
+
 def boxes(entities):
     for e in entities:
-        try:
-            b = bbox.extents([e], fast=True)
-        except Exception:  # noqa: BLE001 - unreadable entity is skipped, as in r101
+        status, b = classify(e)
+        if status == 'ok' and b is not None:
+            yield e, b
+
+
+def inventory(entities, keep):
+    """Per-status counts on the kept layers; empty definitions listed by block name."""
+    counts, empty, unread = {}, {}, []
+    for e in entities:
+        if not keep(e.dxf.layer):
             continue
-        if b.has_data:
-            yield e, (b.extmin.x, b.extmin.y, b.extmax.x, b.extmax.y)
+        status, _ = classify(e)
+        counts[status] = counts.get(status, 0) + 1
+        if status == 'empty_def':
+            empty[e.dxf.name] = empty.get(e.dxf.name, 0) + 1
+        elif status in UNREAD:
+            unread.append({'status': status, 'layer': e.dxf.layer, 'type': e.dxftype(),
+                           'handle': e.dxf.handle, 'block': getattr(e.dxf, 'name', '')})
+    return {'counts': dict(sorted(counts.items())), 'empty_def_blocks': dict(sorted(empty.items())),
+            'unread': unread[:20], 'complete': not unread}
 
 
 def label(text):
@@ -151,11 +188,72 @@ def reach(rows, key, keep):
         if not keep(e.dxf.layer):
             continue
         for face, value in ed.items():
-            d = value - key[face]
-            if face not in best or abs(d) < abs(best[face]['signed_m']):
-                best[face] = {'abs_m': round(abs(d), 4), 'signed_m': round(d, 4), 'sheet': sheet, 'view': view,
-                              'layer': e.dxf.layer, 'type': e.dxftype(), 'block': getattr(e.dxf, 'name', '')[:60]}
-    return {f: best.get(f, {'abs_m': None, 'status': 'not_measured'}) for f in FACES}
+            d = value - key[face]  # raw; rounding is for display only, never before a comparison
+            if face not in best or abs(d) < best[face]['abs_raw_m']:
+                best[face] = {'abs_raw_m': abs(d), 'abs_m': round(abs(d), 4), 'signed_m': round(d, 4),
+                              'sheet': sheet, 'view': view, 'layer': e.dxf.layer, 'type': e.dxftype(),
+                              'handle': e.dxf.handle, 'block': getattr(e.dxf, 'name', '')[:60]}
+    return {f: best.get(f, {'abs_raw_m': None, 'abs_m': None, 'status': 'not_measured'}) for f in FACES}
+
+
+def decide(union_raw, valid, complete):
+    """H103 verdict from raw per-face distances (lists over repeats). 0.10000 reachable, 0.10004 not."""
+    if not (valid and complete):
+        return 'inconclusive', []
+    unreachable = [f for f, v in union_raw.items() if v and all(x is not None and x > TOL for x in v)]
+    if unreachable:
+        return 'refuted', unreachable
+    if all(v and all(x is not None and x <= TOL for x in v) for v in union_raw.values()):
+        return 'confirmed (reachable only; no rule, no transfer)', []
+    return 'inconclusive', []
+
+
+def selection_envelope(rows, handles):
+    """Envelope of a named selection {sheet: [handle]} as a synthetic readback for trainer.bounds_step."""
+    lo, hi, found = {}, {}, set()
+    for sheet, e, _view, ed in rows:
+        if e.dxf.handle not in handles.get(sheet, ()):
+            continue
+        found.add((sheet, e.dxf.handle))
+        for face, v in ed.items():
+            side, store = (min, lo) if face.endswith('_min') else (max, hi)
+            store[face] = side(store.get(face, v), v)
+    missing = sorted(f'{s}:{h}' for s, hs in handles.items() for h in hs if (s, h) not in found)
+    if missing or len(lo) + len(hi) != 6:
+        return None, missing
+    return {'meshes': [{'bounds_m': [[lo['x_min'], lo['y_min'], lo['z_min']],
+                                     [hi['x_max'], hi['y_max'], hi['z_max']]]}]}, missing
+
+
+def review_checks():
+    """Synthetic, source-free rows for review round 1 inputs 2 and 3 (re-run in every repeat)."""
+    doc = ezdxf.new()
+    msp = doc.modelspace()
+    gone = doc.blocks.new('R103_GONE')
+    gone.add_line((0, 0), (1000, 0))
+    doc.blocks.new('R103_EMPTY')
+    msp.add_blockref('R103_GONE', (0, 0), dxfattribs={'layer': 'A-WALL-____-MCUT'})
+    msp.add_blockref('R103_EMPTY', (0, 0), dxfattribs={'layer': 'A-WALL-____-MCUT'})
+    wall = msp.add_line((0, 0), (1000, 0), dxfattribs={'layer': 'A-WALL-____-MCUT'})
+    doc.blocks.delete_block('R103_GONE', safe=False)
+    inv = inventory(msp, layer_sets()['P'])
+    missing = {'counts': inv['counts'], 'complete': inv['complete'],
+               'verdict': decide({f: [0.0] * 3 for f in FACES}, True, inv['complete'])[0]}
+    missing['ok'] = (inv['counts'] == {'empty_def': 1, 'missing_def': 1, 'ok': 1} and not inv['complete']
+                     and missing['verdict'] == 'inconclusive')
+    key = dict.fromkeys(FACES, 0.0)
+    boundary = {}
+    for dist in (0.10004, 0.10000):
+        got = reach([('L03', wall, 'plan', {**key, 'x_min': dist})], key, lambda layer: True)
+        raw = {f: [got[f]['abs_raw_m']] * 3 for f in FACES}
+        native = trainer.bounds_step({'meshes': [{'bounds_m': [[dist, 0.0, 0.0], [0.0, 0.0, 0.0]]}]},
+                                     {'meshes': [{'bounds_m': [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]}]})['status']
+        boundary[f'{dist:.5f}'] = {'oracle': decide(raw, True, True)[0], 'native_bounds': native}
+    boundary['ok'] = (boundary['0.10004'] == {'oracle': 'refuted', 'native_bounds': 'fail'}
+                      and boundary['0.10000']['oracle'].startswith('confirmed')
+                      and boundary['0.10000']['native_bounds'] == 'pass')
+    return {'missing_def_inconclusive': missing, 'tolerance_boundary_raw': boundary,
+            'ok': missing['ok'] and boundary['ok']}
 
 
 def key_faces(rb):
@@ -242,8 +340,17 @@ def one_repeat(k, out, sheets_src):
                  'clean_refilter_parity': clean,
                  'ok': (w_phys['abs_m'] == 0.0 and w_iden == result['P']['union']['x_min']
                         and w_fac['abs_m'] == 0.0 and clean)}
+    sel_rb, sel_missing = selection_envelope(rows, SELECTION_S)
+    selection = {'handles': {s: list(h) for s, h in SELECTION_S.items()}, 'missing': sel_missing,
+                 'bounds_step': trainer.bounds_step(sel_rb, rb['key']) if sel_rb else
+                 {'status': 'not_measured', 'reason': 'selection incomplete'},
+                 'envelope_m': sel_rb['meshes'][0]['bounds_m'] if sel_rb else None,
+                 'note': 'numerical counterexample to a general no-selection claim; includes the open door leaf'}
+    inv = {set_name: {sheet: inventory(ents, keep) for sheet, ents in sheets.items()} for set_name, keep in sets.items()}
+    complete = {set_name: all(v['complete'] for v in per.values()) for set_name, per in inv.items()}
     return {'registration': reg, 'calibration': calibration, 'key_faces_m': {f: round(v, 4) for f, v in key.items()},
-            'reach': result, 'witnesses': witnesses, 'counts': {s: len(v) for s, v in sheets.items()}}
+            'reach': result, 'witnesses': witnesses, 'counts': {s: len(v) for s, v in sheets.items()},
+            'inventory': inv, 'complete': complete, 'selection_S': selection, 'review_checks': review_checks()}
 
 
 def main():
@@ -291,23 +398,26 @@ def main():
     wall = round(time.monotonic() - started, 3)
     if wall > BUDGET_S:
         stop = 'budget exceeded'
-    union = {f: [r['reach']['P']['union'][f]['abs_m'] for r in reps] for f in FACES}
+    union = {f: [r['reach']['P']['union'][f]['abs_raw_m'] for r in reps] for f in FACES}
     valid = stop == 'complete' and len(reps) == 3 and all(
-        r['registration']['ok'] and r['calibration']['ok'] and r['witnesses']['ok'] for r in reps)
-    unreachable = [f for f, v in union.items() if v and all(x is not None and x > TOL for x in v)]
-    if not valid:
-        verdict = 'inconclusive'
-    elif unreachable:
-        verdict = 'refuted'
-    elif all(v and all(x is not None and x <= TOL for x in v) for v in union.values()):
-        verdict = 'confirmed (reachable only; no rule, no transfer)'
-    else:
-        verdict = 'inconclusive'
-    summary = {'verdict': verdict, 'run_status': stop, 'repeats': len(reps), 'wall_s': wall, 'input_parity': True,
-               'P_union_median_abs_m': {f: statistics.median(v) if v and None not in v else None
+        r['registration']['ok'] and r['calibration']['ok'] and r['witnesses']['ok'] and r['review_checks']['ok']
+        for r in reps)
+    complete_p = bool(reps) and all(r['complete']['P'] for r in reps)
+    verdict, unreachable = decide(union, valid, complete_p)
+    a_door = {f: [r['reach']['A-door']['union'][f]['abs_raw_m'] for r in reps] for f in FACES}
+    summary = {'verdict': verdict, 'scope': 'H103 on frozen layer set P only (union of three DXF sheets)',
+               'run_status': stop, 'repeats': len(reps), 'wall_s': wall, 'input_parity': True,
+               'P_complete': complete_p,
+               'P_union_median_abs_m': {f: round(statistics.median(v), 5) if v and None not in v else None
                                         for f, v in union.items()},
-               'unreachable_faces_P': unreachable, 'held_out': 'not measured (no eligible independent etalon)'}
-    receipt = {'schema': 'r103-receipt/1', 'base': BASE, 'prior': PRIOR, 'summary': summary,
+               'unreachable_faces_P': unreachable,
+               'A_minus_door_union_median_abs_m': {f: round(statistics.median(v), 5) if v and None not in v else None
+                                                   for f, v in a_door.items()},
+               'selection_S_bounds': [r['selection_S']['bounds_step'] for r in reps],
+               'empty_def_inserts_P': {s: v['counts'].get('empty_def', 0) for s, v in reps[0]['inventory']['P'].items()}
+               if reps else None,
+               'held_out': 'not measured (no eligible independent etalon)'}
+    receipt = {'schema': 'r103-receipt/2', 'base': BASE, 'prior': PRIOR, 'summary': summary,
                'manifest': manifest, 'repeats': reps}
     (out / 'receipt.json').write_text(json.dumps(receipt, indent=2, ensure_ascii=False) + '\n',
                                       encoding='utf-8', newline='\n')

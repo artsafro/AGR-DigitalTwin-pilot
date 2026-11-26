@@ -1,6 +1,6 @@
 # Autoresearch #103 — can any source-only envelope pass KPP1 `bounds`? (per-face reachability)
 
-**Кратко.** #102 оставил 110 мм на западной грани KPP1 (E1b). Следующая цель из backlog #102 — «вынос столбов с западного фасада из исходника». Вместо подбора ещё одного правила проверяем необходимое условие для ЛЮБОГО правила: есть ли в трёх листах DWG банка (план L03, фасады L01 и L02 с привязкой по осям) хоть одна физическая кромка в пределах 0,10 м от каждой грани ключа. Если на грани такой кромки нет, ни одно правило «объединение габаритов исходных элементов» не пройдёт `bounds`, и вопрос уходит владельцу банка, а не в следующий раунд подбора. OBSERVE: без пересборки, без изменения допусков, без публикации пакетов.
+**Кратко.** #102 оставил 110 мм на западной грани KPP1 (E1b). Следующая цель из backlog #102 — «вынос столбов с западного фасада из исходника». Вместо подбора ещё одного правила проверяем необходимое условие для ЛЮБОГО правила: есть ли в трёх листах DWG банка (план L03, фасады L01 и L02 с привязкой по осям) хоть одна физическая кромка в пределах 0,10 м от каждой грани ключа. Проверяется только замороженный набор слоёв P (см. ниже); вывод о всех возможных правилах выбора этим условием не доказывается (ревью, раунд 1). OBSERVE: без пересборки, без изменения допусков, без публикации пакетов.
 
 ## Frozen contract (committed before the replay script)
 
@@ -23,29 +23,44 @@ uv run --frozen python docs/research/trainer_bounds_r103/measure.py --out <new e
 
 Needs the r101 commit `d51167a2` locally (`git fetch origin research/autoresearch-standing-101`), the pinned Drive inputs and Blender; replay is limited to hosts with them. The script checks every input SHA-256 before and after and refuses a code drift of `tools/trainer/trainer.py` / `tools/blender/fbx_readback.py` from base. Driver committed at `5381eb17` (SHA-256 `4106480f6a6d4191c9d037763cfcb402476933b677c132cba3d7073467781d98`) before the series; contract at `a97dfb24`.
 
-## Result — OBSERVE, no KEEP
 
-**Гипотеза H103 опровергнута.** Ни одно правило «габарит = объединение/выбор исходных элементов» не может пройти `bounds` KPP1 по трём листам DWG банка: западная грань ключа (угловые стойки `SM_Kpp_1_Main_Post_NW/SW` и рама `Frame_W01`, −15,185 м) на 110 мм западнее самой западной физической кромки в любом листе — импоста витража 200x75 (`A-GLAZ-CWMG-OTLN`, −15,0745 м) на плане L03 и на фасадах L01 и L02. Допуск 100 мм. Остальные пять граней достижимы (≤ 20 мм). Единственный элемент, который «достаёт» до плоскости стоек, — открытое полотно наружной двери на плане (`A-DOOR-____-OTLN`, −15,205 м, 20 мм): это не граница здания, совпадение, а не правило. Значит, 110 мм остатка #102 — не дефект фильтра, а данные, которых нет в исходниках задачи: стойки ключа взяты из квад-сетки v003 по R1 (`jobs/KPP1/lattice-1609/README.md`, шаг 3; [D376]). Вопрос владельцу банка (#1861 / #1855), не новый раунд подбора.
+## Result — OBSERVE, no KEEP (review round 1 rework, receipt schema `r103-receipt/2`)
 
-Three complete repeats, wall 121.934 s (40.124 / 40.919 / 40.209 s per repeat), no budget stop, input parity before/after passed. Receipt [`receipt.json`](trainer_bounds_r103/receipt.json) SHA-256 `0bc8d2e79c091793d180804ea45bb7585050dba5b7e610077a6e193ecce01245`; Drive copy + L02 DXF in `G:/Мой диск/AGR-evidence/1855-r103-bounds-reach/SHA256SUMS.txt` (SHA-256 `9a97e52af6621bffb5dbcef31ee827cfd21a2c034acf4e79eb7f719c3a7a7db6`).
+**Итог.** Гипотеза H103 **опровергнута, но только для замороженного набора слоёв P** (`A-WALL-`, `A-GLAZ-`, `S-STRS-` после фильтра E1b), объединённого по трём листам DXF: ни одна читаемая кромка P не подходит к западной грани ключа (−15,185 м) ближе 0,11002 м при допуске 0,10 м. Ближайшая кромка — импост витража 200x75 (`A-GLAZ-CWMG-OTLN`, −15,0750 м), одинаковая на L03, L01 и L02. Остальные пять граней в пределах 0,02 м.
 
-| Face (key, m) | P union: min abs edge distance, m | witness | A union | A − door |
-| --- | ---: | --- | ---: | ---: |
-| x_min (−15.185) | **0.1100** (×3) | L03 plan / L01, L02 view S: `A-GLAZ-CWMG-OTLN` mullion | 0.0200 (door leaf, spurious) | **0.1100** |
-| y_min (−6.385) | 0.0000 | L03 `A-WALL-____-MCUT` | 0.0000 | 0.0000 |
-| z_min (0.0) | 0.0200 | L01/L02 `A-WALL-____-PATT` | 0.0000 | 0.0000 |
-| x_max (16.6755) | 0.0005 | — | — | — |
-| y_max (6.6746) | 0.0004 | — | — | — |
-| z_max (8.65) | 0.0000 | facade top | — | — |
+Чего этот результат **не** доказывает (исправление вывода раунда 1):
+- Он не доказывает, что `bounds` нельзя пройти никаким выбором элементов. Выбор S из ревью (L03 `1195`, `1562`, `15E8`; L01 `ADC`, `1832`; L02 `13C2`) даёт в штатном `trainer.bounds_step` **pass**, `max_corner_dev_m = 0.02`, ×3. В S входит открытое дверное полотно `15E8` (`A-DOOR-____-OTLN`, −15,2050 м). Как замена стойкам это архитектурно недопустимо, но численно это контрпример к общему утверждению.
+- Он не доказывает, что стоек нет во всех исходниках. Проверена только читаемая непустая геометрия DXF. На L01 и L02 по 245 INSERT слоёв P имеют пустые определения блоков (системные панели — 99 имён, `MEP_Окно_Витражное` — 21, решётки `MEP_Веза_Р50` — 11). Есть ли в них геометрия в самом DWG, **не измерено**.
+- Отдельное наблюдение, без вердикта: в наборе A−door (все слои без аннотаций и без `A-DOOR-*`) западная грань тоже даёт 0,11002 м.
 
-Identical in all three repeats (paired spread 0). Per sheet, P x_min is 0.1100 on L03, L01 and L02 separately — three independent drawings agree.
+Вопрос владельцу банка остаётся тем же, но теперь это открытый вопрос, а не доказанный факт: стойки ключа (`SM_Kpp_1_Main_Post_NW/SW`, `Frame_W01`) взяты из квад-сетки v003 по R1 (`jobs/KPP1/lattice-1609/README.md`, шаг 3; [D376]).
 
-- Calibration (fresh Blender readbacks each repeat): accepted key vs itself `pass` 0.0000 (identity only), Artem-rejected D380 lattice `fail` 3.8005 m — ok ×3.
-- Registration: plan axes 1-4 = 27 000.0 mm, А-В = 11 000.0 mm; four elevations per facade sheet found by axis pairs, all spans within 5 mm on L01 and L02 — ok ×3.
-- Injected witnesses (synthetic copies, sources untouched): plan `A-WALL-` LINE moved to the key west face -> P x_min 0.0000; same copy relabelled `A-WALL-TEST-IDEN` -> 0.1100 unchanged (filter exercised); L01 view-S `A-GLAZ-____-OTLN` insert moved so its registered west edge hits the face -> L01 x_min 0.0000 (facade registration exercised). Clean re-filter parity true. All ok ×3.
-- **Not measured:** transfer to an independent OKS etalon (none eligible: AC08 #101, AC05 #102, Drive census here); rules with constant offsets (e.g. «posts 200 mm proud»), which are outside the claim; fresh-agent behaviour; packaging.
-- Disclosed pre-series runs: `dry1` crashed (facade views rebuilt from a pre-filtered stream), `dry2` used a wall hatch instead of the frozen A-GLAZ entity for the facade witness; both fixed before the commit `5381eb17`. Same numbers as the series; not used as evidence.
+Three complete repeats, wall 142.696 s (43.927 / 46.405 / 51.786 s), no budget stop, input parity before/after passed, `P_complete` true. Receipt [`receipt.json`](trainer_bounds_r103/receipt.json) SHA-256 `9afa26e3bda240a492b37736bb6bf923e0f401c2d191a2ab094a7265d8cf1e51`; Drive copy `r103-receipt-r2.json` + L02 DXF + round-0 receipt in `G:/Мой диск/AGR-evidence/1855-r103-bounds-reach/SHA256SUMS.txt` (SHA-256 `7983ecd73c897284cb5217dc8ef1ab80fdc82e631ad7133b5fd3907d22c513b0`). Driver `measure.py` SHA-256 `e13fdf71dcbebcd88da5a95728c6e358e1b930b859313cce3244881c6b96efa4`.
+
+| Face (key, m) | P union, raw min abs distance, m | witness | A − door union |
+| --- | ---: | --- | ---: |
+| x_min (−15.185) | **0.11002** (×3, > 0.10) | L03 / L01 / L02: `A-GLAZ-CWMG-OTLN` mullion | 0.11002 |
+| y_min (−6.385) | 0.00000 | L03 `A-WALL-____-MCUT` | 0.00000 |
+| z_min (0.0) | 0.02000 | L01/L02 `A-WALL-____-PATT` | 0.00000 |
+| x_max (16.6755) | 0.00048 | — | 0.00048 |
+| y_max (6.6746) | 0.00037 | — | 0.00037 |
+| z_max (8.65) | 0.00000 | facade top | 0.00000 |
+
+Decisions use raw distances; the table and `abs_m` fields are rounded for display only. Paired spread 0 across repeats.
+
+### Checks (clean, injected, review rows, not measured)
+
+- Calibration (fresh Blender readbacks each repeat): key vs itself `pass` 0.0000, Artem-rejected D380 `fail` 3.8005 m — ok ×3.
+- Registration: plan 1-4 = 27 000.0 mm, А-В = 11 000.0 mm; 4 elevations per facade sheet, spans within 5 mm — ok ×3.
+- Injected witnesses (synthetic copies): plan `A-WALL-` LINE on the key face -> P x_min 0; relabelled `-IDEN` -> unchanged; L01 `A-GLAZ-` insert on the face -> L01 x_min 0; clean re-filter parity — ok ×3.
+- Source inventory per sheet and set (`inventory` in the receipt): every entity on kept layers is `ok`, `empty_def` (definition exists, no entities; listed by block name) or unread (`missing_def`, `bbox_error`, `no_extent`). Any unread entity in P makes the verdict `inconclusive`. Measured: unread 0 on all sheets and sets; `empty_def` P: L03 0, L01 245, L02 245.
+- Review row 1 (selection S, real sources): `trainer.bounds_step` pass 0.02 ×3; envelope x_min −15.2050 (door leaf).
+- Review row 2 (synthetic, per repeat): `A-WALL-____-MCUT` INSERT with a deleted definition + an empty-definition INSERT + a valid wall -> counts `missing_def 1 / empty_def 1 / ok 1`, `complete false`, verdict `inconclusive` — ok ×3. (Round 0 silently dropped such an INSERT: ezdxf raises on the missing definition and the old `except: continue` hid it.)
+- Review row 3 (synthetic, per repeat): raw distance 0.10004 -> oracle `refuted`, native `bounds` `fail`; 0.10000 -> oracle reachable, native `pass` — ok ×3.
+- Regression tests: `tests/research/test_trainer_bounds_r103.py` (7 tests: missing definition, empty definition, bbox error, tolerance boundary ×2, selection envelope, in-run checks): 7 failed on the round-0 driver, 7 passed on this one.
+- **Not measured:** transfer to an independent OKS etalon (none eligible: AC08 #101, AC05 #102, Drive census); geometry inside the empty-definition blocks in the DWG; rules with constant offsets; fresh-agent behaviour; packaging.
+- Disclosed: round-0 series (`8a77ee8f`, receipt `0bc8d2e7…1245`, 121.9 s) gave the same P numbers; it is superseded, not reused as evidence. Pre-series `dry1`/`dry2` as disclosed in round 0.
 
 Full suite: deferred to merge batch (rule 68). No product code changed.
 
-Next: (1) bank owner decision for KPP1: add the R1 source that carries the corner posts to the task, or document that the bounds key includes inset posts not in the DWG sheets (then a 0.11 m west miss is expected); (2) only after that, re-run the r102 E1b envelope; (3) an independent AIA plan/facade + accepted FBX pair is still needed for any transfer claim.
+Next: (1) bank owner decision for KPP1 (#1861/#1855): add the R1 source that carries the corner posts, or document that the bounds key includes inset posts not in the DWG sheets; (2) check whether the empty-definition curtain-wall blocks carry geometry in the DWG (a DWG-side read, e.g. Core Console `LIST`/`BCOUNT`, or the #1866 converter) before any "absent from sources" claim; (3) an independent AIA plan/facade + accepted FBX pair is still needed for any transfer claim.
