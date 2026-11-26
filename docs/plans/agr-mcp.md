@@ -2,6 +2,9 @@
 
 Status: superseded by docs/plans/agr-mcp-target.md (2026-11-24)
 
+> **Historical plan (#1870).** Current, shipped design: `src/agr_mcp/README.md` and the `agr-mcp` entry in
+> `docs/agents/CAPABILITIES.md` [D394]; closed target design: `docs/plans/agr-mcp-target.md`.
+
 Карточка: issue #807. Исходно это был только план; сервер с тех пор написан (`src/agr_mcp`, фаза 0 #841, каталог v2 #1024 — см. §2a). Разделы 1–7 ниже — исторический план v1.
 
 Ветка issue в тексте карточки — `plan/agr-mcp`. Этот worktree уже на `improve/issue-807-plan-our-own-agr-mcp-server-for-3ds-max`; план лежит здесь, переименование не делалось.

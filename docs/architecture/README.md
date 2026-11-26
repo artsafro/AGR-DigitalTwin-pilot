@@ -72,6 +72,18 @@ Update search visibility with `uv run python tools/architecture/search_noise.py 
 Check ownership and status with `uv run python tools/architecture/search_noise.py --check-docs`.
 Finished plans stay readable by direct link but are hidden from ordinary agent search.
 
+## Planning owners
+
+One owner per planning responsibility (#1868, #1869, #1870); the others are historical and point to it.
+
+| Responsibility | Owner | Historical |
+|---|---|---|
+| Idea intake | `hermes_kanban/moltbook/ideas.md` (outside this repo) | - |
+| Actionable queue | [backlog.md](../backlog.md) | - |
+| Roadmap record | [research/roadmap-149-audit.md](../research/roadmap-149-audit.md) | [research/capability-roadmap.md](../research/capability-roadmap.md) |
+| AGR Tools scope [D393] | [agr-tools/OVERVIEW.md](../agr-tools/OVERVIEW.md) | [plans/agr-tools-1.x.md](../plans/agr-tools-1.x.md), [plans/agr-tools-suite.md](../plans/agr-tools-suite.md), [plans/manual-mode-no-ai.md](../plans/manual-mode-no-ai.md) |
+| MCP design, shipped [D394] | `src/agr_mcp/README.md`, `agr-mcp` in [agents/CAPABILITIES.md](../agents/CAPABILITIES.md) | [plans/agr-mcp-target.md](../plans/agr-mcp-target.md) (closed target), [plans/agr-mcp.md](../plans/agr-mcp.md) |
+
 ## Documentation ownership
 
 | Topic | Owner | Related |
@@ -104,7 +116,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | agr-tools/assets | [agr-tools/assets.md](../agr-tools/assets.md) |  |
 | agr-tools/flow-svg | [agr-tools/flow.svg](../agr-tools/flow.svg) |  |
 | agr-tools/guide | [agr-tools/GUIDE.md](../agr-tools/GUIDE.md) |  |
-| agr-tools/overview | [agr-tools/OVERVIEW.md](../agr-tools/OVERVIEW.md) |  |
+| agr-tools/overview | [agr-tools/OVERVIEW.md](../agr-tools/OVERVIEW.md) | [plans/agr-tools-1.x.md](../plans/agr-tools-1.x.md), [plans/agr-tools-suite.md](../plans/agr-tools-suite.md), [plans/manual-mode-no-ai.md](../plans/manual-mode-no-ai.md) |
 | agr-tools/release-0-9-0-acceptance | [agr-tools/release-0.9.0-acceptance.md](../agr-tools/release-0.9.0-acceptance.md) |  |
 | agr/adapter-extraction | [agr/ADAPTER_EXTRACTION.md](../agr/ADAPTER_EXTRACTION.md) |  |
 | agr/adapter-report | [agr/ADAPTER_REPORT.md](../agr/ADAPTER_REPORT.md) |  |
@@ -361,9 +373,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | pipeline-tools | [pipeline-tools.md](../pipeline-tools.md) |  |
 | planning/agr-mcp-target-design | [plans/agr-mcp-target.md](../plans/agr-mcp-target.md) | [plans/agr-mcp.md](../plans/agr-mcp.md) |
 | planning/agr-tools-command-catalogue | [plans/agr-tools-suite.json](../plans/agr-tools-suite.json) |  |
-| planning/agr-tools-product-roadmap | [plans/agr-tools-1.x.md](../plans/agr-tools-1.x.md) | [plans/agr-tools-suite.md](../plans/agr-tools-suite.md) |
 | planning/capability-roadmap-149-closure | [research/roadmap-149-audit.md](../research/roadmap-149-audit.md) | [research/capability-roadmap.md](../research/capability-roadmap.md) |
-| planning/manual-mode-inventory | [plans/manual-mode-no-ai.md](../plans/manual-mode-no-ai.md) |  |
 | planning/unsolved-work-backlog | [backlog.md](../backlog.md) |  |
 | plans/425-maf-route-2026-11 | [plans/425-maf-route-2026-11.md](../plans/425-maf-route-2026-11.md) |  |
 | plans/flora-426-route-2026-11 | [plans/flora-426-route-2026-11.md](../plans/flora-426-route-2026-11.md) |  |
