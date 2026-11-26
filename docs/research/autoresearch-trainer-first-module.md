@@ -25,4 +25,28 @@ uv run -q agr trainer ab kpp1-v004 --ab "$root/old" "$root/same" --scope INVARIA
 
 Expected: KPP1 A/B reports one AGENTS.md edit, the identical variant is refused, and no output path is created. An admission refusal on Sokolniki stops before overlay/application or input hashing: report that treatment as not exercised. KPP1 `run --dry-run` checks source path existence but not content hashes. No builder, key open or native acceptance measurement in this round.
 
-**Conditional next command (bank owner, only after admission/isolation):** verify the bank manifest + every source SHA-256, pin `origin/main` and overlay base/hash before each pair, then run `uv run -q agr trainer --bank "$bank" ab "$etalon" --ab "$root/old" "$root/new" --scope INVARIANT --lane codex --timeout-s 1800 --out "$root/$etalon-pair-$i"` for `i=1..3`. Check the pinned revision in each arm, record independent post-run read audits and native accepted/rejected controls. Do not use the superseded one-off 63B approval for this series.
+**Conditional next command (bank owner, only after admission/isolation):** verify the bank manifest + every source SHA-256, pin `origin/main` and overlay base/hash before each pair, then run `uv run -q agr trainer --bank "$bank" ab "$etalon" --ab "$root/old" "$root/new" --scope INVARIANT --lane codex --timeout-s 1800 --out "$root/$etalon-pair-$i"` for `i=1..3`. Check the pinned revision in each arm, record independent post-run read audits and native accepted/rejected controls. Do not use the one-off 63B approval for this series.
+
+## Admission receipt — 2026-11-26
+
+**Результат H122: inconclusive.** Проверка допуска повторилась трижды: KPP1 принял оверлей с одной правкой, Sokolniki отказал до чтения оверлея. Холодный эффект формулировки не измерен. Изменения в рабочие инструкции не внесены.
+
+Contract committed before execution as `d840f942`. Raw SHA-256 of replay inputs:
+
+| Input | SHA-256 / identity |
+| --- | --- |
+| Base `AGENTS.md` (Git bytes) | `0cc3820ad0ff4f946aaa04846e4873f9939187cf1b2fd7d49cc488c355d2d881` |
+| NEW `AGENTS.md` (rebuild from frozen one-paragraph recipe above) | `144773457a1bc35514b22ec07186b706bc3f10224eb179d8c4b62d6091fda0ab` |
+| Bank (same Git and local bytes) | `016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635` |
+| Local ledger | `230eace1a0a434cb25091f449760d3895d5b7d169086a2f2ba049db88a8496a7` |
+
+| Preflight check | Exit codes | Wall seconds | Effect |
+| --- | --- | --- | --- |
+| Clean, `kpp1-v004` A/B admission | 0, 0, 0 | 0.609, 0.550, 0.723 | One AGENTS.md edit, no scope warnings, all three. This is a bank/CLI control, not a native accepted model control. |
+| Clean, `sokolniki-body-v005` A/B admission | 2, 2, 2 | 0.511, 0.539, 0.512 | `is not practice_ready`; zero overlay checks because admission stops first (`not_exercised`). |
+| Clean, separate run admission, KPP1 / Sokolniki | 0 / 2 | 0.663 / 0.588 | KPP1 prompt printed; Sokolniki source set DWG/PDF not hash-bound in the bank. No builder or source hashing. |
+| Injected, two distinct but byte-identical overlays (KPP1) | 2 | 0.557 | `variants are identical: nothing to probe`; zero changed files. |
+
+No output path created in 9/9 probes. 5.252 s summed CLI wall time. A/B admission timing medians were 0.609 s / 0.512 s, paired KPP1 minus Sokolniki spread 0.011–0.211 s; these are timings of different admission paths, **not** an estimate of the candidate's effect. Initial setup attempt exited 1 (`WinError 3`, absent `tmp/` parent) before any probe; switched to creating parents in the owned worktree. The full preflight commands above can be replayed; the KPP1 run-admission control requires the bank's Drive source paths to resolve.
+
+**Not measured:** fresh cold `artifact` passes and paired deltas (0 valid pairs), native accepted/rejected ranking, first-module feasibility, collateral geometry, isolation, copied source hashes and post-run reads. Not a rejection of H122 or proof that packaging questions were the sole blocker. No KEEP, no PR. Ready for independent review of this admission receipt only, not for adopting the paragraph. Reopening the experiment requires the bank owner to bind and admit the independent source set, and to verify builder isolation before the first pair.
