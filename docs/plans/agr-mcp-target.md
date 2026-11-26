@@ -4,6 +4,10 @@ Status: done (2026-11-25)
 
 > **Off the trail 2026-11-25 [D394]:** `agr-mcp` works but is not on the trail; the entry does not show it and its tests stay. The target design below is closed, not finished.
 
+> **Owner (#1870):** the current, shipped design is `src/agr_mcp/README.md` (server) with the `agr-mcp` entry in
+> `docs/agents/CAPABILITIES.md` (registry); this file is the closed target design and review of 0.9.0/1.0; the
+> phase-0 implementation plan `docs/plans/agr-mcp.md` is historical.
+
 > **Статус: ПЛАН и ревью, не факт.** Это независимое ревью MCP на момент релиза R 0.9.0 (06.11.2026) и целевой дизайн, который из него вырос. Метки в тексте: **[стат.]** — прочитано в коде или документах, **[тест]** — закреплено тестом, **[гип.]** — вывод, который не проверялся. Измерений в ревью нет: DCC, MCP-сервер и pytest при его написании не запускались. Часть дефектов раздела 2 уже исправлена в 1.0.0 (таблица ниже); номера строк кода в разделах 2–3 относятся к 0.9.0 и могли сместиться. Действующее описание сервера — `src/agr_mcp/README.md`; исходный план фазы 0 — `docs/plans/agr-mcp.md`; рабочий реестр инструментов — `docs/agents/CAPABILITIES.md` (раздел `agr-mcp`).
 >
 > Сокращения ссылок: `grill:N` — `docs/grill/modeling-architecture-2026-10-16.md`, строка N; «#1024» — тело issue волны 1.0 в GitHub (контракты К1–К6) и его разбиение на ветки.
