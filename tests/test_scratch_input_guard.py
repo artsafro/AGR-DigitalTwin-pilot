@@ -11,8 +11,25 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def scratch_files(root: Path, allowed: set[str]) -> list[str]:
-    # Tests-first seam: the existing checkout does not reject a new scratch path.
-    return []
+    # Check the index so a clean post-merge checkout enforces the same rule as a
+    # staged change, without fetching history. Treat textual occurrences in new
+    # non-Markdown files conservatively; a new receipt needs exact-path review.
+    command = ["git", "grep", "--cached", "-alizE", r"c:[/\\]+x[/\\]+", "--"]
+    result = subprocess.run(command, cwd=root, capture_output=True)
+    if result.returncode == 1 and not result.stderr:
+        return []  # git grep: no matches
+    result.check_returncode()
+    names = result.stdout.decode("utf-8").split("\0")
+    return sorted(name for name in names
+                  if name and not name.lower().endswith(".md") and name not in allowed)
+
+
+def test_no_new_scratch_files() -> None:
+    baseline = Path(__file__).with_name("fixtures") / "scratch-input-baseline.txt"
+    allowed = {line for line in baseline.read_text(encoding="utf-8").splitlines()
+               if line and not line.startswith("#")}
+    offenders = scratch_files(ROOT, allowed)
+    assert not offenders, f"Use a durable input instead of workstation scratch: {offenders}"
 
 
 def git(root: Path, *args: str) -> None:
@@ -58,9 +75,9 @@ def test_replacing_input_clears_finding(checkout):
     assert scratch_files(checkout, set()) == []
 
 
-@pytest.mark.parametrize("drive,folder,first,second", itertools.product(
+@pytest.mark.parametrize("drive,folder,first,second", list(itertools.product(
     (b"C", b"c"), (b"X", b"x"), (b"/", b"\\", b"\\\\"), (b"/", b"\\", b"\\\\"),
-))
+)))
 def test_scratch_aliases(checkout, drive, folder, first, second):
     alias = drive + b":" + first + folder + second + b"file.fbx"
     stage(checkout, "mixed.cfg", b"valid=G:/source.fbx\nstale=" + alias + b"\n")
