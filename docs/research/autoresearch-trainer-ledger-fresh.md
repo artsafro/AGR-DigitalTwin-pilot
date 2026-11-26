@@ -70,20 +70,33 @@ delivered packages or bank keys, touching other cards' files (#1917/#1928 branch
 
 Runs under `C:/x/trainer/runs/*-r111-*` (local; replay limited); hashes of `run.json`, `score.json` and built FBX
 in `docs/research/trainer_ledger_fresh_r111/receipt.json`.
+Replay limit (review r1 P3): the archived `series_r111.py` hard-codes `WT`, `RUNS=C:/x/trainer/runs` and
+`EV=C:/x/ev_t_cd81155d` and rewrites `series.json` and score receipts in `EV`; do NOT re-run it over the stored
+series. A fresh replay = a copy of the script with new `RUNS`/`EV` directories and new run names, `WT` checked out
+at `7762dcfe2e78219155461bb633faaca2015e259b` (check `origin_main` in each `run.json`). Otherwise replay is limited
+to re-scoring stored materials (`agr trainer score <etalon> --built <run>/built --out <new dir>/score.json`) and
+checking hashes against `SHA256SUMS.txt`.
 
 ## Round log (after the frozen contract 8beb3c80)
 
 ### Итог по-русски
 
-H111 **опровергнута**. На голове 7762dcfe свежие холодные прогоны (codex, harness без изменений) по-прежнему
-чаще всего падают первыми на `artifact`: 7 из 8 оценённых прогонов (8/9 по соглашению #95, где отказ скорера
-«несколько FBX» считается непройденным artifact). Единственный прошедший artifact прогон (63A k=1, все
-геометрические шаги pass, отклонение 0.0 м) **загрязнён**: агент прочитал папку принятой версии
-`AGR-evidence/1619-body-training/tower-A/v005` (5 команд) — фактически копия ответа. Чистых прохождений artifact: 0/9.
-Причина остановок одна и та же во всех прогонах: агент ставит вопросы в QUESTIONS.md и останавливается до
-первого модуля («Первый модуль не построен, BM-12 не отмечен») — правило «первый кусок принят, потом остальное».
-Ledger прав: цель для следующей карточки остаётся `artifact`, механизм — остановка на Gate 1, а не bounds.
-Продуктовых изменений и строк ledger нет (по контракту строки добавляются только при подтверждении).
+H111 **inconclusive** (исправлено по ревью r1): по замороженному правилу «fewer than 9 scored runs → inconclusive»
+оценены 8 из 9 прогонов — на G22 k=1 скорер вернул exit 2 («несколько FBX»), score не получен.
+Наблюдение (не итог гипотезы): на голове 7762dcfe `artifact` — первый отказ в 7 из 8 оценённых прогонов.
+Цифра 8/9 (отказ скорера считается непройденным artifact, соглашение #95) — только **незамороженная
+sensitivity check**, итог она не меняет. Строк ledger нет (по контракту — только при подтверждении).
+
+Классификация прогонов раздельная; общей причины «все остановились до первого модуля» нет:
+- **7 прогонов** (KPP1 k1-3, G22 k2-3, 63A k2-3): `artifact` fail, FBX в `built/` нет; в `last.txt` каждого —
+  «первый модуль не построен / BM-12 не достигнут», вопросы в QUESTIONS.md (остановка на Gate 1).
+- **G22 k=1 — контрпример**: построены промежуточные FBX `built/module/body.fbx` и `built/typical/body.fbx`;
+  `last.txt` сообщает о модуле в 431 квад, записях Gate 1/BM-12 и промежуточном типовом участке; скорер
+  отказался оценивать (exit 2, несколько FBX) → `not_scored`. До первого модуля этот прогон не остановился.
+- **63A k=1 — контрпример**: экспортирован FBX `built/tower_A_body_meters.fbx`, скорер прошёл `artifact`
+  (геометрия pass, отклонение 0.0 м, первый стоп `vlm` not_run), но прогон **загрязнён**: в журнале пять
+  завершившихся команд к папке принятой версии `AGR-evidence/1619-body-training/tower-A/v005`. Это загрязнение,
+  а не доказательство копирования FBX. Чистых прохождений artifact: 0/9.
 
 ### Numbers
 
@@ -99,8 +112,17 @@ Ledger прав: цель для следующей карточки остаё�
 | g22-k2-stage1 | 3 | artifact | fail | no | 116.9 | 746 124 | 3 |
 | 63a-stage1 | 3 | artifact | fail | no | 248.2 | 2 511 765 | 3 |
 
-- M111 = 7/8 scored (8/9 by the #95 convention). Refuted is robust to the unscored run: even if it were a
-  non-artifact stop, M111 >= 7 >= 5. Per-etalon fresh first stop (>= 2/3 agree): artifact on all three.
+- Hypothesis (frozen rule): 8 scored + 1 not_scored -> **inconclusive**. Observation: M111 = 7/8 scored runs
+  with `artifact` first stop. Sensitivity check, NOT frozen: counting the G22 k1 several-FBX refusal as an
+  artifact fail gives 8/9; it does not change the result. Per-etalon (>= 2/3 scored repeats agree): artifact on all three.
+- Testable counterexamples (inputs + expected classification; the original series is unchanged):
+
+  | run | input (`built/`) | SHA-256 | expected classification |
+  |---|---|---|---|
+  | g22-k2-stage1 k1 | `module/body.fbx` | b3b6e6d6b35584df0d65254ada4a7aa42225d1e6f2f9636dac1ac4f7cd064593 | `agr trainer score` exit 2 (several FBX) -> `not_scored`; last.txt: module 431 quads, Gate 1/BM-12 recorded |
+  | g22-k2-stage1 k1 | `typical/body.fbx` | c1e37f05a02b36631916ff635fb241b3b902aef0260ac6e74dcb6bceec86884b | same run, second FBX (intermediate typical section) |
+  | 63a-stage1 k1 | `tower_A_body_meters.fbx` | f3accaf5784dd52bd3960191167008e297078e5dd8a01e7cb39502245b35d9dc | artifact pass, first stop `vlm` (not_run); contaminated (5 cmds to 1619 v005 evidence) |
+  | other 7 | no FBX | - | artifact fail; last.txt «первый модуль не построен / BM-12 не достигнут» |
 - All 9 runs: exit 0, `origin_main` 7762dcfe (invariance held), no overlay. Series wall 2039.7 s (budget 9000 s).
 - Checks: witness (empty built, KPP1) -> `artifact` fail as expected; accepted control (stored #99 C1 FBX)
   -> artifact pass, first stop `bounds` as expected. Calibration: not measured in #111.
@@ -114,7 +136,7 @@ Ledger прав: цель для следующей карточки остаё�
 
 ### Next targets
 
-1. Gate-1 stop is the artifact mechanism on fresh runs: A/B (`agr trainer ab`, #1927) of the #95 FBX-first
+1. Gate-1 stop is the observed artifact mechanism in 7/9 fresh runs (not in G22 k1 / 63A k1): A/B (`agr trainer ab`, #1927) of the #95 FBX-first
    practice sentence (PR #1917) on a clean, NOT-tuned etalon (63A or G22 with #1928 adapter); count artifact passes /3.
 2. Escape guard: 63A practice can read `AGR-evidence/1619-body-training` (answer); add the Drive evidence
    path of each etalon's accepted lineage to the scrub/hide list and count escaped runs (owner: trainer #1855/#1859).
