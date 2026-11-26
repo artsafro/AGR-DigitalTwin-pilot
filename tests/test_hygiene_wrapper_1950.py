@@ -122,6 +122,27 @@ def test_hook_denies_a_new_duplicate_script_under_three_seconds():
     assert elapsed < 3.0, f"hook took {elapsed:.2f} s"
 
 
+def test_a_moved_clone_runs_the_pin_from_a_detached_worktree(tmp_path, monkeypatch):
+    clone = tmp_path / "repo-hygiene"
+    clone.mkdir()
+    git(clone, "init", "-q")
+    put(clone, "pyproject.toml", "[project]\nname = 'x'\n")
+    git(clone, "add", ".")
+    git(clone, "commit", "-qm", "pinned")
+    pin = git(clone, "rev-parse", "HEAD").strip()
+    put(clone, "later.txt", "moved on\n")
+    git(clone, "add", ".")
+    git(clone, "commit", "-qm", "later")
+    monkeypatch.setattr(hygiene, "PIN", pin)
+    target = hygiene.pinned_checkout(clone)
+    assert target == clone / ".worktrees" / f"pin-{pin[:12]}" and not (target / "later.txt").exists()
+    assert hygiene.pinned_checkout(clone) == target  # reused, not re-created
+    assert hygiene.command({"HYGIENE_PROJECT": str(clone)})[-2:] == [str(target), "hygiene"]
+    monkeypatch.setattr(hygiene, "PIN", "0" * 40)
+    with pytest.raises(hygiene.Unresolved, match="lacks the pinned commit"):
+        hygiene.pinned_checkout(clone)
+
+
 def test_pin_is_a_full_commit_and_the_wiring_names_one_entry():
     assert len(hygiene.PIN) == 40 and int(hygiene.PIN, 16) >= 0
     assert hygiene.command({})[-2:] == [f"git+{hygiene.URL}@{hygiene.PIN}", "hygiene"]
