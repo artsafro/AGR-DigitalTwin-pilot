@@ -120,6 +120,32 @@ def test_unavailable_claim_detector_probe():
     assert [m.group(1) for m in _UNAVAILABLE.finditer(bad)] == ["ucx"]
 
 
+def test_site_stages_point_to_live_owners():
+    rows = [line.strip("|").split("|") for line in live_text("routes/site.md").splitlines()
+            if re.match(r"^\| \d+ \|", line)]
+    assert rows, "Site stage table is missing"
+    checked = set()
+    for number, stage, owner, rule, evidence in rows:
+        probes = re.findall(r"`uv run ((?:agr|dt|python) [^`]+) --help`", owner)
+        assert probes, f"Site stage {number.strip()} ({stage.strip()}) lacks an owner help command"
+        assert re.search(r"\[D\d+\]", rule), stage
+        assert evidence.strip(), stage
+        for probe in probes:
+            if probe in checked:
+                continue
+            tool, *args = probe.split()
+            if tool == "python":
+                result = subprocess.run([sys.executable, *args, "--help"], cwd=ROOT,
+                                        capture_output=True, text=True, encoding="utf-8",
+                                        errors="replace", timeout=120)
+            else:
+                result = _help((tool, *args))
+            assert result.returncode == 0 and result.stdout.strip(), (
+                f"Site stage {number.strip()}: `{probe} --help` exit {result.returncode}: {result.stderr[-300:]}"
+            )
+            checked.add(probe)
+
+
 def test_unknown_command_fails_help():
     assert _help(("agr", "no-such-command-1895")).returncode != 0
     assert _help(("dt", "no-such-command-1895")).returncode != 0
