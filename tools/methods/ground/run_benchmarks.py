@@ -5,7 +5,7 @@ Pattern: new-case: methods-catalog batch for the ground-terrain class (#733).
     uv run python tools/methods/ground/run_benchmarks.py [--cell 4 --cell 2 ...] [--variant cdt ...] \\
         [--out C:/x/methods/ground-terrain] [--results docs/methods/ground-terrain/results.jsonl] [--reference-row]
 
-Input: the typed adapter v4 copy under C:/x/methods/src/vatutino-ground/ (sha256 ADAPTER_SHA256 checked by the
+Input: the retained typed adapter v4 from the #1146 run-v003 packet (sha256 ADAPTER_SHA256 checked by the
 driver before any build). Per (variant, cell): tools/methods/ground/build_variant.py in a fresh process into
 <out>/<variant>-<cell>m/ (must not exist yet), then tools/methods/run_variant.py in a fresh process with the
 variant report. Rows are written only by run_variant.py: a failed build appends nothing, is printed with its
@@ -30,7 +30,7 @@ import results_md  # noqa: E402
 from safe_write import Refused, check_target, refuse_aliases  # noqa: E402
 
 CLASS, BENCH = "ground-terrain", "vatutino-ground"
-ADAPTER = Path("C:/x/methods/src/vatutino-ground/paving_ground_inputs_v4.json")
+ADAPTER = Path("G:/Мой диск/AGR-evidence/1146-flora-star/run-v003/inputs/paving_ground_inputs_v4.json")
 ADAPTER_SHA256 = "3b6b433d718c0292f472293849f3363fd2ae90d4892e598efca52be44cd9d502"
 FBX_NAME = "SM_Vatutino_Ground.fbx"
 
