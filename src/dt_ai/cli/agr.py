@@ -27,7 +27,7 @@ SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validat
            "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py",
            "railing": "tools/blender/railing.py",
            "trainer": "tools/trainer/trainer.py",  # #1855 [D387]: etalon bank, practice run, score, ledger
-           "library": "tools/library/publish.py",  # #1743: publish|accept|reject [D372, D368-D371]
+           "library": "tools/library/publish.py",  # #1743, #1980: publish|accept|reject|reindex|check-job [D372, D368-D371, D421]
            # open-review (#1740): skeleton stage review-scene; copy to C:/x/review-<job>/, new Max 2026 or Blender
            "open-review": "tools/open_review_scene.py"}
 

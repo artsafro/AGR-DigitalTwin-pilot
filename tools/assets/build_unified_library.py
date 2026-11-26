@@ -4,6 +4,8 @@ uv run python tools/assets/build_unified_library.py --flora-index <cache>/flora_
     --maf-index <cache>/maf_assets_index.json --out library/assets
 Indexes come from the `assets` scan (AGR Tools window or assets_core.scan_*); they hold names and metadata only.
 Writes flora_unified.json, maf_unified.json and UNIFIED.md; refuses to overwrite unless --replace is given.
+After --replace run `agr library reindex` (tools/library/publish.py, D421): this builder does not add the
+published draft/accepted records, so they stay out of search until the index is rebuilt.
 """
 import argparse
 import importlib.util

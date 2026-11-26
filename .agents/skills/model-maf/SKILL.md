@@ -61,6 +61,7 @@ library scene `МАФы_Union_ALLin.max`, the way the user does it. The catalogu
 identification and not acceptance. When the catalogue does not reach, ask Artem first: he names the library object. Only when he cannot find it either does the agent search by specification / manufacturer on the web and send links for his approval — the photos must match the specification AND the DWG contour. No substitution [D164] («Нет замены модели.»).
 
 - Route: catalogue JSON lookup via the published index `library/assets/maf_unified.json` (from `library/published/catalogue.json`); `library/maf/catalogue.json` is the legacy record only; plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
+- Drafts [D421]: index records with `source: published` carry `status` (`draft` / `accepted`); take an accepted one first, name a reused draft (`<Name>@vNNN`) in the report; acceptance goes only through Artem ([library-publish](../../../docs/scenarios/library-publish.md)).
 - Needs: headless for candidates; human for the visual choice when several candidates remain.
 - Done when: every spec row has a catalogue id (with the reason) or is listed for Step 3.
 
@@ -73,6 +74,7 @@ to the user as a separate verify line — always, even when all checks pass. Mod
 - Route: 3ds Max batch or Blender headless (primitives and extrusions from the scheme).
 - Needs: human (reference reading and the look), no tool yet.
 - Done when: the model exists at a new versioned path, its source reference is recorded, and its separate verify line is opened.
+- Library [D421]: publish the new model right after this step by the [library-publish](../../../docs/scenarios/library-publish.md) route; at job close `agr library check-job jobs/<ID> --outputs <outputs>` exits 0.
 
 ### Step 4 — Check against the specification
 
