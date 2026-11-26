@@ -622,12 +622,84 @@ def cwscan(argv):
     print("CWSCAN faces", len(res), "without panels", sum(1 for f in res if not f["panes"]), "kinds", dict(kinds))
 
 
+def dump(argv):
+    """#1966 [D419] read-only: the joined SM_<A>_Main of MASTER as {v, f, finish} for tools/derive/inset_offset.py
+    (world coordinates, face finish names from the `finish` face int + `finish_names`)."""
+    src, out = argv
+    bpy.ops.wm.open_mainfile(filepath=src)
+    mains = [o for o in bpy.context.scene.objects if o.type == "MESH" and o.name.endswith("_Main")]
+    if len(mains) != 1:
+        raise ValueError("one *_Main expected, got %s" % [o.name for o in mains])
+    ob = mains[0]
+    if any(abs(ob.matrix_world[i][j] - (i == j)) > 1e-9 for i in range(4) for j in range(4)):
+        raise ValueError("%s: identity transform expected (the master is joined at the origin)" % ob.name)
+    me = ob.data
+    names = ob["finish_names"].split(",")
+    fin = me.attributes["finish"].data
+    doc = {"source": os.path.realpath(src), "object": ob.name, "v": [list(v.co) for v in me.vertices],
+           "f": [list(p.vertices) for p in me.polygons], "finish": [names[fin[p.index].value] for p in me.polygons]}
+    with open(out, "w", encoding="utf-8") as fh:
+        json.dump(doc, fh)
+    print("DUMP", ob.name, len(doc["v"]), "verts", len(doc["f"]), "faces")
+
+
+def offset(argv):
+    """#1966 [D419] delivery copy: MASTER + PLAN (tools/derive/inset_offset.py over `dump`) -> NEW master.blend.
+
+    Every inset component moves rigidly by its plan vector (per-vertex moves for the listed few), then the
+    exactly coincident body-volume vertices of the plan are welded (bmesh weld_verts keeps the UV loops; no
+    body vertex moves). Faces, UVs and finishes are kept; writes NEW.json with counts and the max moves."""
+    import bmesh
+    src, plan_path, new = argv
+    if os.path.exists(new):
+        print("refused: output exists", file=sys.stderr)
+        sys.exit(2)
+    with open(plan_path, encoding="utf-8") as fh:
+        plan = json.load(fh)
+    bpy.ops.wm.open_mainfile(filepath=src)
+    ob = [o for o in bpy.context.scene.objects if o.type == "MESH" and o.name.endswith("_Main")][0]
+    bm = bmesh.new()
+    bm.from_mesh(ob.data)
+    bm.verts.ensure_lookup_table()
+    before = (len(bm.verts), len(bm.faces), sum(len(f.verts) - 2 for f in bm.faces))
+    moved = set()
+    for c, t in plan["moves"].items():
+        for i in plan["move_vertices"][c]:
+            bm.verts[i].co += Vector(t)
+            moved.add(i)
+    for i, t in plan["vertex_moves"].items():
+        bm.verts[int(i)].co += Vector(t)
+        moved.add(int(i))
+    tm = {bm.verts[int(a)]: bm.verts[int(b)] for a, b in plan["weld"].items()}
+    gap = max(((a.co - b.co).length for a, b in tm.items()), default=0.0)
+    if gap > 1e-4:
+        raise ValueError("weld pair %.6f m apart: only coincident vertices are welded" % gap)
+    if moved & ({int(a) for a in plan["weld"]} | {int(b) for b in plan["weld"].values()}):
+        raise ValueError("a welded body vertex is also moved")
+    bmesh.ops.weld_verts(bm, targetmap=tm)
+    after = (len(bm.verts), len(bm.faces), sum(len(f.verts) - 2 for f in bm.faces))
+    bm.to_mesh(ob.data)
+    bm.free()
+    ob.data.update()
+    bpy.ops.wm.save_as_mainfile(filepath=new, copy=True)
+    rep = {"source": os.path.realpath(src), "plan": os.path.realpath(plan_path), "object": ob.name,
+           "verts_faces_tris_before": before, "verts_faces_tris_after": after, "moved_vertices": len(moved),
+           "welded": len(tm), "max_move_m": plan["max_move_m"], "target_m": plan["target_m"]}
+    with open(os.path.splitext(new)[0] + ".json", "w", encoding="utf-8") as fh:
+        json.dump(rep, fh, indent=1)
+    print("OFFSET", rep)
+
+
 if __name__ == "__main__":
     _args = sys.argv[sys.argv.index("--") + 1:]
     if _args and _args[0] == "render":
         render(_args[1:])
     elif _args and _args[0] == "uv":
         uv(_args[1:])
+    elif _args and _args[0] == "dump":
+        dump(_args[1:])
+    elif _args and _args[0] == "offset":
+        offset(_args[1:])
     elif _args and _args[0] == "winscan":
         winscan(_args[1:])
     elif _args and _args[0] == "cwscan":
