@@ -153,6 +153,15 @@ def test_cli_publish_and_accept_rebuild_the_index(tmp_path, stub_qa):
     st = {r["name"]: r["status"] for r in json.loads(index.read_text(encoding="utf-8"))["records"]
           if r["source"] == "published"}
     assert st == {"AGR_maf_M1_001": "accepted", "AGR_maf_M2_001": "draft"}
+    # reject also rebuilds the index: a rejected record leaves search (review r1)
+    cat2 = tmp_path / "cat2.json"
+    cat2.write_text(catp.read_text(encoding="utf-8"), encoding="utf-8")
+    index2 = unified_file(tmp_path / "idx")
+    assert pub.main(["reject", "AGR_maf_M2_001", "--words", "нет", "--catalogue", str(cat2), "--index", str(index2),
+                     "--inbox-root", str(tmp_path)]) == 0
+    st = {r["name"]: r["status"] for r in json.loads(index2.read_text(encoding="utf-8"))["records"]
+          if r["source"] == "published"}
+    assert st == {"AGR_maf_M1_001": "accepted"}
     # a catalogue outside the repo never rewrites the repo index; its default index lies next to it
     assert pub.main(["accept", "AGR_maf_M2_001", "--words", "ок", "--catalogue", str(catp)]) == 0
     side = json.loads((tmp_path / "maf_unified.json").read_text(encoding="utf-8"))
