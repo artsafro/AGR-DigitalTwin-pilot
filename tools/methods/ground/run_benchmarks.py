@@ -62,12 +62,16 @@ def main(argv=None) -> int:
     bench = {o["id"]: o for o in json.loads((ROOT / "benchmark" / "methods" / "benchmarks.json").read_text(
         encoding="utf-8"))["objects"]}[BENCH]
     ref = Path(bench["source"]["local_path"])
+    ref_placement = Path(str(ref) + ".placement.json")
     runs = [(v, c, a.out / f"{v}-{fmt_cell(c)}") for c in cells for v in variants]
     try:
         if hashlib.sha256(a.adapter.read_bytes()).hexdigest() != ADAPTER_SHA256:
             raise Refused(f"{a.adapter} sha256 differs from {ADAPTER_SHA256}")
-        refuse_aliases([a.results, a.results.with_name("RESULTS.md")],
-                       [a.adapter, ref, Path(str(ref) + ".placement.json")])
+        refuse_aliases([a.results, a.results.with_name("RESULTS.md")], [a.adapter, ref, ref_placement])
+        if a.reference_row:
+            for source in (ref, ref_placement):
+                if not source.is_file():
+                    raise Refused(f"missing reference-row input: {source}")
         check_target(a.results)
         planned = [d for _, _, d in runs] + ([a.out / "reference-v014"] if a.reference_row else [])
         for d in planned:
@@ -81,7 +85,7 @@ def main(argv=None) -> int:
         d = a.out / "reference-v014"
         d.mkdir(parents=True)
         shutil.copyfile(ref, d / FBX_NAME)
-        shutil.copyfile(Path(str(ref) + ".placement.json"), d / (FBX_NAME + ".placement.json"))
+        shutil.copyfile(ref_placement, d / (FBX_NAME + ".placement.json"))
         codes.append(measure(d / FBX_NAME, "reference-v014", a.results, None))
     for variant, cell, d in runs:
         proc = subprocess.run([sys.executable, str(HERE / "build_variant.py"), variant, str(a.adapter), "--cell",
