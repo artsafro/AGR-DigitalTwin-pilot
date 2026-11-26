@@ -55,4 +55,38 @@ XY-экстремума дают строки `Ограждение Стекля
 
 ## Result
 
-_Not measured yet._
+**Итог.** Исключение ограждений сократило ошибку 63B с **2,2348 м до 0,2002 м** (3/3 одинаково), но `bounds` по-прежнему
+не пройден при допуске 0,10 м. Остаток — одна грань: Xmax +0,2002 м, её задают стены `Базовая стена Вентфасад 250 250 к…`;
+остальные пять граней в пределах 0,05 м. На 63A в полосе нет ни одной строки `Ограждение`, правило там не срабатывает, и
+побочный эффект на принятой башне **не измерен** — по замороженному правилу итог H107 **inconclusive** (63B: fail 3/3, но
+контроль 63A `not_exercised`). KEEP и PR с изменением продукта нет; модели, банк, скорер и пороги не тронуты.
+
+| Tower | S106 median, m | S107 median, m | Paired gain min–max, m | S107 signed face deltas vs key (xmin, ymin, zmin, xmax, ymax, zmax), m |
+| --- | ---: | ---: | ---: | --- |
+| 63A same-site control | 0.0514 | 0.0514 | 0.0000–0.0000 | −0.0514, +0.0438, 0.0000, +0.0267, −0.0009, 0.0000 |
+| 63B tuning-contaminated | 2.2348 | 0.2002 | 2.0346–2.0346 | −0.0342, −0.0499, 0.0000, +0.2002, −0.0416, 0.0000 |
+
+- **Run status `complete`:** three fresh paired imports (72.74 / 73.83 / 72.01 s; 218.90 s series wall, cap 420 s). Hash and
+  code-parity preflight/postflight passed. Contract frozen at `7718f667`, variant at `4795d109` before measurement.
+  The reused runner prints a legacy `m105_*` summary (= S107 values); the sealed `summary` uses S106/S107 names.
+- **Clean:** accepted 63B v007 0.0000 m, rejected v004 0.1993 m, 3/3. S106 parity 63A pass / 63B fail 3/3. Row reversal
+  0 changed IDs; absent band refuses on both towers. Selected IDs 63A 4,702 (= S106), 63B 4,178 (S106 4,241).
+- **Injected, exercised (both towers, 3/3):** headroom preflight picked `xmax` (63A 2.011 m, 63B 2.044 m); the in-box witness
+  was added once and moved only Xmax by +0.50 m, native fail; relabelled `Ограждение SYNTHETIC` it was dropped and the clean
+  selection restored exactly (positive trigger witness of the rule). +0.25 m band shift moved both Z faces by exactly 0.25 m
+  (222 / 262 changed IDs), native fail.
+- **Rule on real data:** 63B 63 removed rows, all `Ограждение Стеклянное огражд_*`. 63A 0 removed rows → **not measured**
+  (no accepted control on which the rule fires); this is the only control that blocks a formal verdict.
+- **Not measured:** fresh agent builds, an independent project/etalon, topology/form, package acceptance. 63B was the source
+  of the hypothesis, so its gain is not transfer evidence.
+
+[Native receipt](trainer_railing_r107/receipt.json), Git-LF SHA-256 `759e94aea0ab11b56894ea8d41242aa5bd1fcd6266ad3096a3687adb68362f85`.
+Readback JSON/logs: `G:/Мой диск/AGR-evidence/1855-r107-railing/` (`SHA256SUMS.txt` sha256
+`4caefa0aec146af207c441252dc36cfb0aa46b366a748c1bded007e20c24dd0d`, 37 files). No binaries committed. Replay limited to
+runners with the pinned Drive fixtures and Blender 4.4. Review readiness is independent of H107.
+
+Affected tests: `uv run pytest -q tests/research/test_trainer_railing_r107.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 107 passed, 1 warning. Pre-implementation run failed at collection (module absent), then 2/2 new tests passed.
+
+Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)

@@ -1,0 +1,898 @@
+{
+  "results": [
+    {
+      "pair": 1,
+      "status": "complete",
+      "source_mesh_rows": 27629,
+      "source_readable_rows": 27629,
+      "calibration": {
+        "accepted": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        }
+      },
+      "63A": {
+        "status": "inconclusive",
+        "native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "baseline_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "submitted_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0442,
+          "tol_m": 0.1
+        },
+        "selected_rows": 4702,
+        "s106_rows": 4702,
+        "bounds_m": [
+          [
+            80.9714,
+            63.778,
+            10.15
+          ],
+          [
+            119.5889,
+            95.5802,
+            47.95
+          ]
+        ],
+        "s106_bounds_m": [
+          [
+            80.9714,
+            63.778,
+            10.15
+          ],
+          [
+            119.5889,
+            95.5802,
+            47.95
+          ]
+        ],
+        "signed_face_deltas_m": [
+          -0.051396630859372294,
+          0.04380047607421744,
+          1.564025878941777e-05,
+          0.026697546386714066,
+          -0.000908093261713816,
+          1.0681152346592171e-05
+        ],
+        "extremum_names": {
+          "xmin": [
+            "Базовая стена Вентфасад +100 100 _03dfa79",
+            "Базовая стена Вентфасад +100 100 _0e6da20",
+            "Базовая стена Вентфасад +100 100 _19e9ca9"
+          ],
+          "ymin": [
+            "Базовая стена Башня 23 Вентфас_1a98716",
+            "Базовая стена Башня 23 Вентфас_1cb1bf4",
+            "Базовая стена Башня 23 Вентфас_22e29a8"
+          ],
+          "xmax": [
+            "Базовая стена Вентфасад +100 100 _243bef2",
+            "Базовая стена Вентфасад +100 100 _4372465",
+            "Базовая стена Вентфасад +100 100 _5368590"
+          ],
+          "ymax": [
+            "Базовая стена Вентфасад +100 100 _1444cca",
+            "Базовая стена Вентфасад +100 100 _2b74e20",
+            "Базовая стена Вентфасад +100 100 _6b308a4"
+          ]
+        },
+        "removed_name_prefixes": [],
+        "controls": {
+          "S106_parity": true,
+          "row_order": true,
+          "rail_rule_fires": false,
+          "witness": true,
+          "rail_relabel": true,
+          "shift": true,
+          "absent_scope_refuses": true
+        },
+        "coverage": {
+          "order_changed_ids": 0,
+          "rail_removed_ids": 0,
+          "rail_rule": "not_exercised",
+          "witness_face": "xmax",
+          "headroom_m": {
+            "xmax": 2.011099999999999,
+            "xmin": 1.9714000000000027,
+            "ymax": 2.0197999999999894,
+            "ymin": 1.9780000000000015
+          },
+          "wide_added_ids": [
+            -1
+          ],
+          "wide_removed_ids": [],
+          "wide_deltas_m": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.0
+          ],
+          "wide_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.5267,
+            "tol_m": 0.1
+          },
+          "relabel_changed_ids_vs_clean": 0,
+          "shift_z_deltas_m": [
+            0.25,
+            0.25
+          ],
+          "shift_changed_ids": 222,
+          "shift_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.25,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "63B": {
+        "status": "fail",
+        "native": {
+          "status": "fail",
+          "max_corner_dev_m": 0.2002,
+          "tol_m": 0.1
+        },
+        "baseline_native": {
+          "status": "fail",
+          "max_corner_dev_m": 2.2348,
+          "tol_m": 0.1
+        },
+        "submitted_native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.67,
+          "tol_m": 0.1
+        },
+        "selected_rows": 4178,
+        "s106_rows": 4241,
+        "bounds_m": [
+          [
+            55.2719,
+            0.6357,
+            4.65
+          ],
+          [
+            96.3558,
+            33.9873,
+            51.9
+          ]
+        ],
+        "s106_bounds_m": [
+          [
+            53.3342,
+            -0.9325,
+            4.65
+          ],
+          [
+            98.3904,
+            35.2875,
+            51.9
+          ]
+        ],
+        "signed_face_deltas_m": [
+          -0.034198937988279,
+          -0.04990075759887691,
+          5.626678467152146e-06,
+          0.20019849853515836,
+          -0.041607775878908626,
+          -1.5258789076710855e-06
+        ],
+        "extremum_names": {
+          "xmin": [
+            "Базовая стена Вентфасад 250 250 к_02a92a9",
+            "Базовая стена Вентфасад 250 250 к_1fee2b2",
+            "Базовая стена Вентфасад 250 250 к_21c2f0f"
+          ],
+          "ymin": [
+            "Базовая стена Вентфасад 250 250 к_1212bbd",
+            "Базовая стена Вентфасад 250 250 к_13364f0",
+            "Базовая стена Вентфасад 250 250 к_13c1e06"
+          ],
+          "xmax": [
+            "Базовая стена Вентфасад 250 250 к_033d153",
+            "Базовая стена Вентфасад 250 250 к_0985708",
+            "Базовая стена Вентфасад 250 250 к_5940b73"
+          ],
+          "ymax": [
+            "Базовая стена Вентфасад 250 250 к_0d3f918",
+            "Базовая стена Вентфасад 250 250 к_26ec4a0",
+            "Базовая стена Вентфасад 250 250 к_2b27ed6"
+          ]
+        },
+        "removed_name_prefixes": [
+          "Ограждение Стеклянное огражд_5be0",
+          "Ограждение Стеклянное огражд_5be0.001",
+          "Ограждение Стеклянное огражд_5be0.002",
+          "Ограждение Стеклянное огражд_5be0.003",
+          "Ограждение Стеклянное огражд_5be0.004",
+          "Ограждение Стеклянное огражд_5be0.005",
+          "Ограждение Стеклянное огражд_5be0.006",
+          "Ограждение Стеклянное огражд_5be0.007",
+          "Ограждение Стеклянное огражд_5be0.008",
+          "Ограждение Стеклянное огражд_5be0.009"
+        ],
+        "controls": {
+          "S106_parity": true,
+          "row_order": true,
+          "rail_rule_fires": true,
+          "witness": true,
+          "rail_relabel": true,
+          "shift": true,
+          "absent_scope_refuses": true
+        },
+        "coverage": {
+          "order_changed_ids": 0,
+          "rail_removed_ids": 63,
+          "rail_rule": "exercised",
+          "witness_face": "xmax",
+          "headroom_m": {
+            "xmax": 2.0442000000000036,
+            "xmin": 1.971900000000005,
+            "ymax": 2.0127000000000024,
+            "ymin": 2.0357
+          },
+          "wide_added_ids": [
+            -1
+          ],
+          "wide_removed_ids": [],
+          "wide_deltas_m": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.0
+          ],
+          "wide_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.7002,
+            "tol_m": 0.1
+          },
+          "relabel_changed_ids_vs_clean": 0,
+          "shift_z_deltas_m": [
+            0.25,
+            0.25
+          ],
+          "shift_changed_ids": 262,
+          "shift_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.25,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "wall_s": 72.7399371000065
+    },
+    {
+      "pair": 2,
+      "status": "complete",
+      "source_mesh_rows": 27629,
+      "source_readable_rows": 27629,
+      "calibration": {
+        "accepted": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        }
+      },
+      "63A": {
+        "status": "inconclusive",
+        "native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "baseline_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "submitted_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0442,
+          "tol_m": 0.1
+        },
+        "selected_rows": 4702,
+        "s106_rows": 4702,
+        "bounds_m": [
+          [
+            80.9714,
+            63.778,
+            10.15
+          ],
+          [
+            119.5889,
+            95.5802,
+            47.95
+          ]
+        ],
+        "s106_bounds_m": [
+          [
+            80.9714,
+            63.778,
+            10.15
+          ],
+          [
+            119.5889,
+            95.5802,
+            47.95
+          ]
+        ],
+        "signed_face_deltas_m": [
+          -0.051396630859372294,
+          0.04380047607421744,
+          1.564025878941777e-05,
+          0.026697546386714066,
+          -0.000908093261713816,
+          1.0681152346592171e-05
+        ],
+        "extremum_names": {
+          "xmin": [
+            "Базовая стена Вентфасад +100 100 _03dfa79",
+            "Базовая стена Вентфасад +100 100 _0e6da20",
+            "Базовая стена Вентфасад +100 100 _19e9ca9"
+          ],
+          "ymin": [
+            "Базовая стена Башня 23 Вентфас_1a98716",
+            "Базовая стена Башня 23 Вентфас_1cb1bf4",
+            "Базовая стена Башня 23 Вентфас_22e29a8"
+          ],
+          "xmax": [
+            "Базовая стена Вентфасад +100 100 _243bef2",
+            "Базовая стена Вентфасад +100 100 _4372465",
+            "Базовая стена Вентфасад +100 100 _5368590"
+          ],
+          "ymax": [
+            "Базовая стена Вентфасад +100 100 _1444cca",
+            "Базовая стена Вентфасад +100 100 _2b74e20",
+            "Базовая стена Вентфасад +100 100 _6b308a4"
+          ]
+        },
+        "removed_name_prefixes": [],
+        "controls": {
+          "S106_parity": true,
+          "row_order": true,
+          "rail_rule_fires": false,
+          "witness": true,
+          "rail_relabel": true,
+          "shift": true,
+          "absent_scope_refuses": true
+        },
+        "coverage": {
+          "order_changed_ids": 0,
+          "rail_removed_ids": 0,
+          "rail_rule": "not_exercised",
+          "witness_face": "xmax",
+          "headroom_m": {
+            "xmax": 2.011099999999999,
+            "xmin": 1.9714000000000027,
+            "ymax": 2.0197999999999894,
+            "ymin": 1.9780000000000015
+          },
+          "wide_added_ids": [
+            -1
+          ],
+          "wide_removed_ids": [],
+          "wide_deltas_m": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.0
+          ],
+          "wide_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.5267,
+            "tol_m": 0.1
+          },
+          "relabel_changed_ids_vs_clean": 0,
+          "shift_z_deltas_m": [
+            0.25,
+            0.25
+          ],
+          "shift_changed_ids": 222,
+          "shift_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.25,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "63B": {
+        "status": "fail",
+        "native": {
+          "status": "fail",
+          "max_corner_dev_m": 0.2002,
+          "tol_m": 0.1
+        },
+        "baseline_native": {
+          "status": "fail",
+          "max_corner_dev_m": 2.2348,
+          "tol_m": 0.1
+        },
+        "submitted_native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.67,
+          "tol_m": 0.1
+        },
+        "selected_rows": 4178,
+        "s106_rows": 4241,
+        "bounds_m": [
+          [
+            55.2719,
+            0.6357,
+            4.65
+          ],
+          [
+            96.3558,
+            33.9873,
+            51.9
+          ]
+        ],
+        "s106_bounds_m": [
+          [
+            53.3342,
+            -0.9325,
+            4.65
+          ],
+          [
+            98.3904,
+            35.2875,
+            51.9
+          ]
+        ],
+        "signed_face_deltas_m": [
+          -0.034198937988279,
+          -0.04990075759887691,
+          5.626678467152146e-06,
+          0.20019849853515836,
+          -0.041607775878908626,
+          -1.5258789076710855e-06
+        ],
+        "extremum_names": {
+          "xmin": [
+            "Базовая стена Вентфасад 250 250 к_02a92a9",
+            "Базовая стена Вентфасад 250 250 к_1fee2b2",
+            "Базовая стена Вентфасад 250 250 к_21c2f0f"
+          ],
+          "ymin": [
+            "Базовая стена Вентфасад 250 250 к_1212bbd",
+            "Базовая стена Вентфасад 250 250 к_13364f0",
+            "Базовая стена Вентфасад 250 250 к_13c1e06"
+          ],
+          "xmax": [
+            "Базовая стена Вентфасад 250 250 к_033d153",
+            "Базовая стена Вентфасад 250 250 к_0985708",
+            "Базовая стена Вентфасад 250 250 к_5940b73"
+          ],
+          "ymax": [
+            "Базовая стена Вентфасад 250 250 к_0d3f918",
+            "Базовая стена Вентфасад 250 250 к_26ec4a0",
+            "Базовая стена Вентфасад 250 250 к_2b27ed6"
+          ]
+        },
+        "removed_name_prefixes": [
+          "Ограждение Стеклянное огражд_5be0",
+          "Ограждение Стеклянное огражд_5be0.001",
+          "Ограждение Стеклянное огражд_5be0.002",
+          "Ограждение Стеклянное огражд_5be0.003",
+          "Ограждение Стеклянное огражд_5be0.004",
+          "Ограждение Стеклянное огражд_5be0.005",
+          "Ограждение Стеклянное огражд_5be0.006",
+          "Ограждение Стеклянное огражд_5be0.007",
+          "Ограждение Стеклянное огражд_5be0.008",
+          "Ограждение Стеклянное огражд_5be0.009"
+        ],
+        "controls": {
+          "S106_parity": true,
+          "row_order": true,
+          "rail_rule_fires": true,
+          "witness": true,
+          "rail_relabel": true,
+          "shift": true,
+          "absent_scope_refuses": true
+        },
+        "coverage": {
+          "order_changed_ids": 0,
+          "rail_removed_ids": 63,
+          "rail_rule": "exercised",
+          "witness_face": "xmax",
+          "headroom_m": {
+            "xmax": 2.0442000000000036,
+            "xmin": 1.971900000000005,
+            "ymax": 2.0127000000000024,
+            "ymin": 2.0357
+          },
+          "wide_added_ids": [
+            -1
+          ],
+          "wide_removed_ids": [],
+          "wide_deltas_m": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.0
+          ],
+          "wide_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.7002,
+            "tol_m": 0.1
+          },
+          "relabel_changed_ids_vs_clean": 0,
+          "shift_z_deltas_m": [
+            0.25,
+            0.25
+          ],
+          "shift_changed_ids": 262,
+          "shift_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.25,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "wall_s": 73.83404079999309
+    },
+    {
+      "pair": 3,
+      "status": "complete",
+      "source_mesh_rows": 27629,
+      "source_readable_rows": 27629,
+      "calibration": {
+        "accepted": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        }
+      },
+      "63A": {
+        "status": "inconclusive",
+        "native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "baseline_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "submitted_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0442,
+          "tol_m": 0.1
+        },
+        "selected_rows": 4702,
+        "s106_rows": 4702,
+        "bounds_m": [
+          [
+            80.9714,
+            63.778,
+            10.15
+          ],
+          [
+            119.5889,
+            95.5802,
+            47.95
+          ]
+        ],
+        "s106_bounds_m": [
+          [
+            80.9714,
+            63.778,
+            10.15
+          ],
+          [
+            119.5889,
+            95.5802,
+            47.95
+          ]
+        ],
+        "signed_face_deltas_m": [
+          -0.051396630859372294,
+          0.04380047607421744,
+          1.564025878941777e-05,
+          0.026697546386714066,
+          -0.000908093261713816,
+          1.0681152346592171e-05
+        ],
+        "extremum_names": {
+          "xmin": [
+            "Базовая стена Вентфасад +100 100 _03dfa79",
+            "Базовая стена Вентфасад +100 100 _0e6da20",
+            "Базовая стена Вентфасад +100 100 _19e9ca9"
+          ],
+          "ymin": [
+            "Базовая стена Башня 23 Вентфас_1a98716",
+            "Базовая стена Башня 23 Вентфас_1cb1bf4",
+            "Базовая стена Башня 23 Вентфас_22e29a8"
+          ],
+          "xmax": [
+            "Базовая стена Вентфасад +100 100 _243bef2",
+            "Базовая стена Вентфасад +100 100 _4372465",
+            "Базовая стена Вентфасад +100 100 _5368590"
+          ],
+          "ymax": [
+            "Базовая стена Вентфасад +100 100 _1444cca",
+            "Базовая стена Вентфасад +100 100 _2b74e20",
+            "Базовая стена Вентфасад +100 100 _6b308a4"
+          ]
+        },
+        "removed_name_prefixes": [],
+        "controls": {
+          "S106_parity": true,
+          "row_order": true,
+          "rail_rule_fires": false,
+          "witness": true,
+          "rail_relabel": true,
+          "shift": true,
+          "absent_scope_refuses": true
+        },
+        "coverage": {
+          "order_changed_ids": 0,
+          "rail_removed_ids": 0,
+          "rail_rule": "not_exercised",
+          "witness_face": "xmax",
+          "headroom_m": {
+            "xmax": 2.011099999999999,
+            "xmin": 1.9714000000000027,
+            "ymax": 2.0197999999999894,
+            "ymin": 1.9780000000000015
+          },
+          "wide_added_ids": [
+            -1
+          ],
+          "wide_removed_ids": [],
+          "wide_deltas_m": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.0
+          ],
+          "wide_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.5267,
+            "tol_m": 0.1
+          },
+          "relabel_changed_ids_vs_clean": 0,
+          "shift_z_deltas_m": [
+            0.25,
+            0.25
+          ],
+          "shift_changed_ids": 222,
+          "shift_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.25,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "63B": {
+        "status": "fail",
+        "native": {
+          "status": "fail",
+          "max_corner_dev_m": 0.2002,
+          "tol_m": 0.1
+        },
+        "baseline_native": {
+          "status": "fail",
+          "max_corner_dev_m": 2.2348,
+          "tol_m": 0.1
+        },
+        "submitted_native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.67,
+          "tol_m": 0.1
+        },
+        "selected_rows": 4178,
+        "s106_rows": 4241,
+        "bounds_m": [
+          [
+            55.2719,
+            0.6357,
+            4.65
+          ],
+          [
+            96.3558,
+            33.9873,
+            51.9
+          ]
+        ],
+        "s106_bounds_m": [
+          [
+            53.3342,
+            -0.9325,
+            4.65
+          ],
+          [
+            98.3904,
+            35.2875,
+            51.9
+          ]
+        ],
+        "signed_face_deltas_m": [
+          -0.034198937988279,
+          -0.04990075759887691,
+          5.626678467152146e-06,
+          0.20019849853515836,
+          -0.041607775878908626,
+          -1.5258789076710855e-06
+        ],
+        "extremum_names": {
+          "xmin": [
+            "Базовая стена Вентфасад 250 250 к_02a92a9",
+            "Базовая стена Вентфасад 250 250 к_1fee2b2",
+            "Базовая стена Вентфасад 250 250 к_21c2f0f"
+          ],
+          "ymin": [
+            "Базовая стена Вентфасад 250 250 к_1212bbd",
+            "Базовая стена Вентфасад 250 250 к_13364f0",
+            "Базовая стена Вентфасад 250 250 к_13c1e06"
+          ],
+          "xmax": [
+            "Базовая стена Вентфасад 250 250 к_033d153",
+            "Базовая стена Вентфасад 250 250 к_0985708",
+            "Базовая стена Вентфасад 250 250 к_5940b73"
+          ],
+          "ymax": [
+            "Базовая стена Вентфасад 250 250 к_0d3f918",
+            "Базовая стена Вентфасад 250 250 к_26ec4a0",
+            "Базовая стена Вентфасад 250 250 к_2b27ed6"
+          ]
+        },
+        "removed_name_prefixes": [
+          "Ограждение Стеклянное огражд_5be0",
+          "Ограждение Стеклянное огражд_5be0.001",
+          "Ограждение Стеклянное огражд_5be0.002",
+          "Ограждение Стеклянное огражд_5be0.003",
+          "Ограждение Стеклянное огражд_5be0.004",
+          "Ограждение Стеклянное огражд_5be0.005",
+          "Ограждение Стеклянное огражд_5be0.006",
+          "Ограждение Стеклянное огражд_5be0.007",
+          "Ограждение Стеклянное огражд_5be0.008",
+          "Ограждение Стеклянное огражд_5be0.009"
+        ],
+        "controls": {
+          "S106_parity": true,
+          "row_order": true,
+          "rail_rule_fires": true,
+          "witness": true,
+          "rail_relabel": true,
+          "shift": true,
+          "absent_scope_refuses": true
+        },
+        "coverage": {
+          "order_changed_ids": 0,
+          "rail_removed_ids": 63,
+          "rail_rule": "exercised",
+          "witness_face": "xmax",
+          "headroom_m": {
+            "xmax": 2.0442000000000036,
+            "xmin": 1.971900000000005,
+            "ymax": 2.0127000000000024,
+            "ymin": 2.0357
+          },
+          "wide_added_ids": [
+            -1
+          ],
+          "wide_removed_ids": [],
+          "wide_deltas_m": [
+            0.0,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.0
+          ],
+          "wide_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.7002,
+            "tol_m": 0.1
+          },
+          "relabel_changed_ids_vs_clean": 0,
+          "shift_z_deltas_m": [
+            0.25,
+            0.25
+          ],
+          "shift_changed_ids": 262,
+          "shift_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.25,
+            "tol_m": 0.1
+          }
+        }
+      },
+      "wall_s": 72.00598250000621
+    }
+  ],
+  "summary": {
+    "63A": {
+      "S106_median_m": 0.0514,
+      "S107_median_m": 0.0514,
+      "paired_gain_range_m": [
+        0.0,
+        0.0
+      ]
+    },
+    "63B": {
+      "S106_median_m": 2.2348,
+      "S107_median_m": 0.2002,
+      "paired_gain_range_m": [
+        2.0345999999999997,
+        2.0345999999999997
+      ]
+    }
+  },
+  "hypothesis": "inconclusive",
+  "status": "complete",
+  "wall_s": 218.90077290000045,
+  "inputs": {
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "G:/Мой диск/AGR-evidence/1619-body-training/gate1/boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-1-aligned/body.fbx": "6b5e5ec58f6210bba4667f215740fca654cc6ea44dc0bc3fad3baae6e025e250",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-1-aligned/body.fbx": "aa6820088d16b5d3847b2b1ecdeab65d0b9375d07b875caf9b2e4127f299fa8e",
+    "C:/Program Files/Blender Foundation/Blender 4.4/blender.exe": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"
+  },
+  "code_sha256": {
+    "tools/methods/body/revit_fbx_dump_blender.py": "8c8a21537f7afea5cdf99daa8f29d20f4f369fa2282be4a08c738b1af5039bd9",
+    "tools/blender/fbx_readback.py": "09c9e9bcfbc75598dd483b39a2e48c3f23cc2be7719d85583d7cbd1a0f1e095b",
+    "tools/trainer/trainer.py": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5",
+    "src/dt_ai/core/blender_runner.py": "6b0ec90794ded4274580ad05bd15b59b6eefdfa9b364538409c3f2a20b07b236",
+    "src/twinqa/geometry/topology.py": "6481c145c45cb259cb35c24e04c6174d01034cc3addfb419070aef3047299dc9",
+    "src/twinqa/geometry/maf_surface.py": "f55c9d0332b5b9fae3fa34b8ced28de006e00cc6af0cd0d8f8208ff59cc30135",
+    "adapters/max/agr_tools/udimtile_core.py": "222cc8f4059d26a5fac6540f8d5d490da318549ba011498561daecf960df09cd"
+  },
+  "replay_sha256_git_lf": "085675eef4fd0a5f66e3ecfe83402aa1cf0aaa38d8db71012a418e1a703d9a6a",
+  "variant_commit": "4795d1099cc832665264a874844df68a1b7b0752",
+  "known_scope_m": {
+    "63A": [
+      10.15,
+      47.95
+    ],
+    "63B": [
+      4.65,
+      51.9
+    ]
+  },
+  "scope_blob_sha256": {
+    "docs/trainer/ledger.json": "230eace1a0a434cb25091f449760d3895d5b7d169086a2f2ba049db88a8496a7",
+    "docs/trainer/etalons.json": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+    "jobs/POLY63-B/REPORT.md": "d3f814739806d478e6f685afe033f90b7786965fcaf5e96b2d73d08a5b3b220b"
+  },
+  "previous_commit": "95ae5adb1bf907e927b994296c51ad321edd18b7",
+  "previous_driver_sha256": "4c632a1d684c7d9e446f1a98e2ece5dd0203addcdf839ad6e2350c6cd6d87c99",
+  "previous_manifest_sha256": "77f0674fc246bf0fac5492b5b814764187d6dd1a8d0dc8d48b55dea844876a42"
+}
