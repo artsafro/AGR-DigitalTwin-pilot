@@ -100,6 +100,8 @@ checked against the receipt before measuring; stored #111 trees read-only.
 Что **не измерено**: доля побегов у живых агентов (папка `G:/Мой диск/AGR-evidence/` остаётся доступной для
 листинга и без указателя) и прохождение `artifact`. Код продукта, банк и ledger не менялись; PR нет.
 
+Receipt `docs/research/trainer_lineage_r113/receipt.json`: written bytes SHA-256 `f693377b…01c26`, Git-LF blob SHA-256
+`68de722a17bafa019c44a67786ca2f061eb5f1d44403707a37ab380a90c4338e`.
 Run `C:/x/ev_t_70d0913e/r113-1`, status `finished`, wall 470.7 s (first 63A pair 45.5 s, derived cap 2047.9 s).
 Measured harness = committed `404bffa2` bytes (SHA-256 `f0cb9f96…0d26c3`). Inputs pre = post: bank
 `016aab0c…36635`, `trainer.py` `16fd8edb…aa4b5`. Tokens actually derived: 63A/G22 `1619-body-training`,
@@ -133,6 +135,8 @@ Next command (live check, not run here; ~2M input tokens and 2-5 min per run): b
 `uv run agr trainer --bank <scratch bank> run 63a-stage1 --lane codex --out C:/x/trainer/runs/63a-stage1-codex-r113-L<k>`
 and count escape commands to `AGR-evidence/1619-body-training` (r111 baseline: 1/3 escaped).
 
-Affected tests: none changed (harness + docs only); `tests/tools/test_trainer.py` run as a regression guard.
+Affected tests: none changed (harness + docs only); `uv run --frozen pytest -q -p no:cacheprovider --basetemp=C:/x/t_70d0913e-pt tests/tools/test_trainer.py` — 73 passed.
+
+Repo guards: `PYTEST_ADDOPTS=--basetemp=C:/x/t_70d0913e-guards bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 563 passed, GREEN.
 
 Full suite: deferred to merge batch (rule 68).
