@@ -1,5 +1,7 @@
 # Autoresearch #108 — facade-family omission at the trainer bounds gate (OBSERVE)
 
+**Итог.** Удаление целого семейства стен не решило `bounds` на 63B. Оно приблизило Xmax к ключу (+0,2002 → +0,0481 м), но сдвинуло Ymin (−0,0499 → +0,3909 м). Наихудшая ошибка выросла с **0,2002 до 0,3909 м** при допуске 0,10 м во всех трёх парах. H108 **inconclusive** по замороженному контракту; вариант не применять. Модели, банк и скорер не менялись.
+
 ## Frozen contract
 
 - Source of focus: `7762dcfe2e78219155461bb633faaca2015e259b:docs/trainer/ledger.json`, historical first failure `artifact` 3/4, `sources-dwg` 1/4. #100 recovered stored artifacts (not new agent runs); #107 leaves `bounds` failed with Xmax +0.2002 m on 63B after railing exclusion. Not duplicated: #1866 owns DWG integrity; bank owners own stage scope; #1928 owns G22 adapter; #1924/#1927 own A/B method. Form closed, atlas fallback inactive.
@@ -10,3 +12,27 @@
 - Verdict: confirmed if all 3 complete pairs have valid calibration/parity/controls, actual drops on both inputs, and meet both target bounds and direction; refuted if all 3 complete pairs meet those controls and 63A collateral condition but 63B fails 3/3 (a numeric direction failure cannot be counted as a win). Otherwise inconclusive. Review readiness separate. No PR/product changes, no threshold relaxation, no edits to delivered packages or other cards' files, no deselecting tests, no Max.
 - Budget: one candidate, no follow-up variants, exactly three fresh sequential pairs via #105's 140 s/pair and 420 s series cap (first pair ×3 check); failure to complete is inconclusive, not KEEP. Record series wall and status separately. Native Blender headless readback because no scene editing or render is needed.
 - Replay: `uv run python docs/research/trainer_facade_r108/replay.py tmp/r108-NEW <full variant commit>`. Reuse exact #105 runner and full eight-input SHA-256 manifest at `95ae5adb1bf907e927b994296c51ad321edd18b7`; runner checks native input/code parity before and after. Use exact #107 selector/witness and reference receipt from `12708f1afc0cdd87a7d629419eeb40dfbfca1bb3`; verify wrapper against its Git-LF blob and ledger/bank/report against the frozen origin/main revision. Replay limited to lanes with the pinned Drive inputs and Blender 4.4; use a fresh, nonexistent output folder.
+
+## Result
+
+Contract `a0cb60f3`; measured variant `de5fd35e29035d5338f670222eb40f7e34adcb9d`. Run `complete`, series wall 223.25 s (78.14 / 73.71 / 71.06 s; first pair ×3 = 234.42 s). Full input manifest and native code parity passed.
+
+| Fixture | Clean removed IDs per pair | Median S107 → S108 (m) | S107−S108 paired min/max (m) | Candidate six signed face deltas (m: xmin, ymin, zmin, xmax, ymax, zmax) |
+| --- | ---: | ---: | ---: | --- |
+| 63A, same-site accepted control | 0/0/0 | 0.0514 → 0.0514 | 0.0000 / 0.0000 | −0.0514, +0.0438, 0.0000, +0.0267, −0.0009, 0.0000 |
+| 63B, tuning | 907/907/907 | 0.2002 → 0.3909 | −0.1907 / −0.1907 | +0.0408, +0.3909, 0.0000, +0.0481, −0.0497, 0.0000 |
+
+- **Clean:** accepted v007 0.0000 m (pass), rejected v004 0.1993 m (fail), 3/3. ABSENT-band refusal, order parity (0 ID changes), prefix-only removal and S107 score parity passed on both inputs. 63B removed row X spans range 0.3278–18.4295 m (not layer thickness). Its new Xmax comes from `СТН-022` and `Семейство1/2` rows; this does not identify a structural layer.
+- **Injected:** each pair on both towers: ordinary witness added one ID to S108; relabel added one ID to S107 and zero to S108 (exact restoration). On 63A only Xmax moved (+0.5000 m, native fail 0.5267 m). On 63B the ordinary witness also restored three previously changed XY faces: deltas from clean S108 `−0.0750, −0.4408, 0, +0.6521, +0.0081, 0`. Native fail 0.7002 m, but the frozen single-face witness control failed 3/3. The witness was exercised, not a no-op.
+- **Not measured:** collateral on a native accepted fixture with a matching wall family (63A `not_exercised`), independent etalon transfer, fresh-agent rebuilds, layer thickness, topology and package acceptance. The bank lists 63C as incomplete; 63B was already inspected for tuning. Do not generalize the measured regression to a structural-layer method.
+- **Next:** locate a source type/layer schedule or Revit wall compound structure tied to the 63B row IDs, then test a face-level selection with an isolated perturbation on an active untuned accepted control. Do not broaden the name filter based on the same scores. Until the bank binds such a control, transfer remains unmeasured.
+
+Replay: `uv run python docs/research/trainer_facade_r108/replay.py tmp/r108-NEW de5fd35e29035d5338f670222eb40f7e34adcb9d`.
+[Receipt](trainer_facade_r108/receipt.json) SHA-256 `14dfc0144f8d89cc846c9a44cad4e88a4790e8c2ad46c34d6519e80d5b7265e8`.
+Native readbacks/logs: `G:/Мой диск/AGR-evidence/1855-r108-facade/SHA256SUMS.txt` (37 entries), SHA-256 `4242e0a5e01ce517ddd78ca24ecd04af6cc5827287b2c1aaeaabab1cd8b1aa24`.
+
+Affected tests: `uv run pytest -q tests/research/test_trainer_facade_r108.py tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 110 passed, 1 warning. New controls: 5 failed before the replay existed, then 5 passed.
+
+Repo guards: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 563 passed, 1 warning.
+
+Full suite: deferred to merge batch (rule 68)
