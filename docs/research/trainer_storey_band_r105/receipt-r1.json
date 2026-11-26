@@ -1,0 +1,612 @@
+{
+  "results": [
+    {
+      "pair": 1,
+      "status": "complete",
+      "source_mesh_rows": 27629,
+      "source_readable_rows": 27629,
+      "calibration": {
+        "accepted": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        }
+      },
+      "63A": {
+        "contained_rows": 9497,
+        "key_bounds_m": [
+          [
+            81.02279663085938,
+            63.73419952392578,
+            10.149984359741211
+          ],
+          [
+            119.56220245361328,
+            95.58110809326172,
+            47.949989318847656
+          ]
+        ],
+        "baseline_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0442,
+          "tol_m": 0.1
+        },
+        "baseline_signed_deltas_m": [
+          -0.04419708251953125,
+          0.0093994140625,
+          0.0,
+          -0.0095062255859375,
+          -0.0110015869140625,
+          0.0
+        ],
+        "selection": {
+          "pitch_m": 3.15,
+          "storeys": 12,
+          "levels": [
+            10.14,
+            13.29,
+            16.44,
+            19.59,
+            22.74,
+            25.89,
+            29.04,
+            32.19,
+            35.34,
+            38.49,
+            41.64,
+            44.79
+          ],
+          "n_longest_same_pitch": 2,
+          "band_rows": 4716,
+          "bounds_m": [
+            [
+              80.9714,
+              63.778,
+              10.14
+            ],
+            [
+              119.5889,
+              95.5802,
+              47.94
+            ]
+          ]
+        },
+        "native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "signed_deltas_m": [
+          -0.051396630859372294,
+          0.04380047607421744,
+          -0.009984359741210369,
+          0.026697546386714066,
+          -0.000908093261713816,
+          -0.009989318847658524
+        ],
+        "status": "pass",
+        "order_parity": true,
+        "injected": {
+          "positive_xy_added": 1,
+          "positive_xy_pass": true,
+          "positive_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.5267,
+            "tol_m": 0.1
+          },
+          "negative_floor_added": 1,
+          "negative_floor_unchanged": true,
+          "negative_outside_added": 1,
+          "negative_outside_unchanged": true
+        }
+      },
+      "63B": {
+        "contained_rows": 5166,
+        "key_bounds_m": [
+          [
+            55.30609893798828,
+            0.685600757598877,
+            4.649994373321533
+          ],
+          [
+            96.15560150146484,
+            34.028907775878906,
+            51.900001525878906
+          ]
+        ],
+        "baseline_native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.67,
+          "tol_m": 0.1
+        },
+        "baseline_signed_deltas_m": [
+          -0.033599853515625,
+          -0.0984007716178894,
+          0.679999828338623,
+          0.120697021484375,
+          -0.04160308837890625,
+          -27.670001983642578
+        ],
+        "selection": {
+          "pitch_m": 3.15,
+          "storeys": 6,
+          "levels": [
+            5.35,
+            8.5,
+            11.65,
+            14.8,
+            17.95,
+            21.1
+          ],
+          "n_longest_same_pitch": 3,
+          "band_rows": 1666,
+          "bounds_m": [
+            [
+              55.2719,
+              0.6357,
+              5.35
+            ],
+            [
+              96.3558,
+              33.9873,
+              24.25
+            ]
+          ]
+        },
+        "native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.65,
+          "tol_m": 0.1
+        },
+        "signed_deltas_m": [
+          -0.034198937988279,
+          -0.04990075759887691,
+          0.7000056266784664,
+          0.20019849853515836,
+          -0.041607775878908626,
+          -27.650001525878906
+        ],
+        "status": "fail",
+        "order_parity": true,
+        "injected": {
+          "positive_xy_added": 1,
+          "positive_xy_pass": true,
+          "positive_native": {
+            "status": "fail",
+            "max_corner_dev_m": 27.65,
+            "tol_m": 0.1
+          },
+          "negative_floor_added": 1,
+          "negative_floor_unchanged": true,
+          "negative_outside_added": 1,
+          "negative_outside_unchanged": true
+        }
+      },
+      "wall_s": 104.33677860000171
+    },
+    {
+      "pair": 2,
+      "status": "complete",
+      "source_mesh_rows": 27629,
+      "source_readable_rows": 27629,
+      "calibration": {
+        "accepted": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        }
+      },
+      "63A": {
+        "contained_rows": 9497,
+        "key_bounds_m": [
+          [
+            81.02279663085938,
+            63.73419952392578,
+            10.149984359741211
+          ],
+          [
+            119.56220245361328,
+            95.58110809326172,
+            47.949989318847656
+          ]
+        ],
+        "baseline_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0442,
+          "tol_m": 0.1
+        },
+        "baseline_signed_deltas_m": [
+          -0.04419708251953125,
+          0.0093994140625,
+          0.0,
+          -0.0095062255859375,
+          -0.0110015869140625,
+          0.0
+        ],
+        "selection": {
+          "pitch_m": 3.15,
+          "storeys": 12,
+          "levels": [
+            10.14,
+            13.29,
+            16.44,
+            19.59,
+            22.74,
+            25.89,
+            29.04,
+            32.19,
+            35.34,
+            38.49,
+            41.64,
+            44.79
+          ],
+          "n_longest_same_pitch": 2,
+          "band_rows": 4716,
+          "bounds_m": [
+            [
+              80.9714,
+              63.778,
+              10.14
+            ],
+            [
+              119.5889,
+              95.5802,
+              47.94
+            ]
+          ]
+        },
+        "native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "signed_deltas_m": [
+          -0.051396630859372294,
+          0.04380047607421744,
+          -0.009984359741210369,
+          0.026697546386714066,
+          -0.000908093261713816,
+          -0.009989318847658524
+        ],
+        "status": "pass",
+        "order_parity": true,
+        "injected": {
+          "positive_xy_added": 1,
+          "positive_xy_pass": true,
+          "positive_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.5267,
+            "tol_m": 0.1
+          },
+          "negative_floor_added": 1,
+          "negative_floor_unchanged": true,
+          "negative_outside_added": 1,
+          "negative_outside_unchanged": true
+        }
+      },
+      "63B": {
+        "contained_rows": 5166,
+        "key_bounds_m": [
+          [
+            55.30609893798828,
+            0.685600757598877,
+            4.649994373321533
+          ],
+          [
+            96.15560150146484,
+            34.028907775878906,
+            51.900001525878906
+          ]
+        ],
+        "baseline_native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.67,
+          "tol_m": 0.1
+        },
+        "baseline_signed_deltas_m": [
+          -0.033599853515625,
+          -0.0984007716178894,
+          0.679999828338623,
+          0.120697021484375,
+          -0.04160308837890625,
+          -27.670001983642578
+        ],
+        "selection": {
+          "pitch_m": 3.15,
+          "storeys": 6,
+          "levels": [
+            5.35,
+            8.5,
+            11.65,
+            14.8,
+            17.95,
+            21.1
+          ],
+          "n_longest_same_pitch": 3,
+          "band_rows": 1666,
+          "bounds_m": [
+            [
+              55.2719,
+              0.6357,
+              5.35
+            ],
+            [
+              96.3558,
+              33.9873,
+              24.25
+            ]
+          ]
+        },
+        "native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.65,
+          "tol_m": 0.1
+        },
+        "signed_deltas_m": [
+          -0.034198937988279,
+          -0.04990075759887691,
+          0.7000056266784664,
+          0.20019849853515836,
+          -0.041607775878908626,
+          -27.650001525878906
+        ],
+        "status": "fail",
+        "order_parity": true,
+        "injected": {
+          "positive_xy_added": 1,
+          "positive_xy_pass": true,
+          "positive_native": {
+            "status": "fail",
+            "max_corner_dev_m": 27.65,
+            "tol_m": 0.1
+          },
+          "negative_floor_added": 1,
+          "negative_floor_unchanged": true,
+          "negative_outside_added": 1,
+          "negative_outside_unchanged": true
+        }
+      },
+      "wall_s": 101.39638570000534
+    },
+    {
+      "pair": 3,
+      "status": "complete",
+      "source_mesh_rows": 27629,
+      "source_readable_rows": 27629,
+      "calibration": {
+        "accepted": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0,
+          "tol_m": 0.1
+        },
+        "rejected": {
+          "status": "fail",
+          "max_corner_dev_m": 0.1993,
+          "tol_m": 0.1
+        }
+      },
+      "63A": {
+        "contained_rows": 9497,
+        "key_bounds_m": [
+          [
+            81.02279663085938,
+            63.73419952392578,
+            10.149984359741211
+          ],
+          [
+            119.56220245361328,
+            95.58110809326172,
+            47.949989318847656
+          ]
+        ],
+        "baseline_native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0442,
+          "tol_m": 0.1
+        },
+        "baseline_signed_deltas_m": [
+          -0.04419708251953125,
+          0.0093994140625,
+          0.0,
+          -0.0095062255859375,
+          -0.0110015869140625,
+          0.0
+        ],
+        "selection": {
+          "pitch_m": 3.15,
+          "storeys": 12,
+          "levels": [
+            10.14,
+            13.29,
+            16.44,
+            19.59,
+            22.74,
+            25.89,
+            29.04,
+            32.19,
+            35.34,
+            38.49,
+            41.64,
+            44.79
+          ],
+          "n_longest_same_pitch": 2,
+          "band_rows": 4716,
+          "bounds_m": [
+            [
+              80.9714,
+              63.778,
+              10.14
+            ],
+            [
+              119.5889,
+              95.5802,
+              47.94
+            ]
+          ]
+        },
+        "native": {
+          "status": "pass",
+          "max_corner_dev_m": 0.0514,
+          "tol_m": 0.1
+        },
+        "signed_deltas_m": [
+          -0.051396630859372294,
+          0.04380047607421744,
+          -0.009984359741210369,
+          0.026697546386714066,
+          -0.000908093261713816,
+          -0.009989318847658524
+        ],
+        "status": "pass",
+        "order_parity": true,
+        "injected": {
+          "positive_xy_added": 1,
+          "positive_xy_pass": true,
+          "positive_native": {
+            "status": "fail",
+            "max_corner_dev_m": 0.5267,
+            "tol_m": 0.1
+          },
+          "negative_floor_added": 1,
+          "negative_floor_unchanged": true,
+          "negative_outside_added": 1,
+          "negative_outside_unchanged": true
+        }
+      },
+      "63B": {
+        "contained_rows": 5166,
+        "key_bounds_m": [
+          [
+            55.30609893798828,
+            0.685600757598877,
+            4.649994373321533
+          ],
+          [
+            96.15560150146484,
+            34.028907775878906,
+            51.900001525878906
+          ]
+        ],
+        "baseline_native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.67,
+          "tol_m": 0.1
+        },
+        "baseline_signed_deltas_m": [
+          -0.033599853515625,
+          -0.0984007716178894,
+          0.679999828338623,
+          0.120697021484375,
+          -0.04160308837890625,
+          -27.670001983642578
+        ],
+        "selection": {
+          "pitch_m": 3.15,
+          "storeys": 6,
+          "levels": [
+            5.35,
+            8.5,
+            11.65,
+            14.8,
+            17.95,
+            21.1
+          ],
+          "n_longest_same_pitch": 3,
+          "band_rows": 1666,
+          "bounds_m": [
+            [
+              55.2719,
+              0.6357,
+              5.35
+            ],
+            [
+              96.3558,
+              33.9873,
+              24.25
+            ]
+          ]
+        },
+        "native": {
+          "status": "fail",
+          "max_corner_dev_m": 27.65,
+          "tol_m": 0.1
+        },
+        "signed_deltas_m": [
+          -0.034198937988279,
+          -0.04990075759887691,
+          0.7000056266784664,
+          0.20019849853515836,
+          -0.041607775878908626,
+          -27.650001525878906
+        ],
+        "status": "fail",
+        "order_parity": true,
+        "injected": {
+          "positive_xy_added": 1,
+          "positive_xy_pass": true,
+          "positive_native": {
+            "status": "fail",
+            "max_corner_dev_m": 27.65,
+            "tol_m": 0.1
+          },
+          "negative_floor_added": 1,
+          "negative_floor_unchanged": true,
+          "negative_outside_added": 1,
+          "negative_outside_unchanged": true
+        }
+      },
+      "wall_s": 76.86738390001119
+    }
+  ],
+  "summary": {
+    "63A": {
+      "m105_median_m": 0.0514,
+      "m105_range_m": [
+        0.0514,
+        0.0514
+      ],
+      "baseline_m": 0.0442
+    },
+    "63B": {
+      "m105_median_m": 27.65,
+      "m105_range_m": [
+        27.65,
+        27.65
+      ],
+      "baseline_m": 27.67
+    }
+  },
+  "hypothesis": "refuted",
+  "status": "complete",
+  "wall_s": 282.93266950000543,
+  "inputs": {
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/STLB-04_RR_AR.fbx": "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7",
+    "G:/Мой диск/AGR-evidence/1619-body-training/gate1/boxes63.json": "e8a41981ecaa7603ec4c8ef28098388ee2fcbf7cc8e341eaf5d08ed4f5d987e7",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63a-stage1/63A_Stage1_v005.fbx": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v007.fbx": "53189b830418a328f3159172c5c1c7eff826c5a9eff568cad0b9187b63332bd7",
+    "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/63b-stage1/v004.fbx": "6d22c572ab18d9722dcf2296dcca77525ae26265114ba6ff922c3d82f4ce26ae",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63A-1-aligned/body.fbx": "6b5e5ec58f6210bba4667f215740fca654cc6ea44dc0bc3fad3baae6e025e250",
+    "G:/Мой диск/AGR-evidence/1855-r91-artifact-route/63B-1-aligned/body.fbx": "aa6820088d16b5d3847b2b1ecdeab65d0b9375d07b875caf9b2e4127f299fa8e",
+    "C:/Program Files/Blender Foundation/Blender 4.4/blender.exe": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"
+  },
+  "code_sha256": {
+    "tools/methods/body/revit_fbx_dump_blender.py": "8c8a21537f7afea5cdf99daa8f29d20f4f369fa2282be4a08c738b1af5039bd9",
+    "tools/blender/fbx_readback.py": "09c9e9bcfbc75598dd483b39a2e48c3f23cc2be7719d85583d7cbd1a0f1e095b",
+    "tools/trainer/trainer.py": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5",
+    "src/dt_ai/core/blender_runner.py": "6b0ec90794ded4274580ad05bd15b59b6eefdfa9b364538409c3f2a20b07b236",
+    "src/twinqa/geometry/topology.py": "6481c145c45cb259cb35c24e04c6174d01034cc3addfb419070aef3047299dc9",
+    "src/twinqa/geometry/maf_surface.py": "f55c9d0332b5b9fae3fa34b8ced28de006e00cc6af0cd0d8f8208ff59cc30135",
+    "adapters/max/agr_tools/udimtile_core.py": "222cc8f4059d26a5fac6540f8d5d490da318549ba011498561daecf960df09cd"
+  },
+  "replay_sha256_git_lf": "4c632a1d684c7d9e446f1a98e2ece5dd0203addcdf839ad6e2350c6cd6d87c99"
+}

@@ -28,6 +28,7 @@ CODE = (DUMP, READBACK, 'tools/trainer/trainer.py', 'src/dt_ai/core/blender_runn
         'src/twinqa/geometry/topology.py', 'src/twinqa/geometry/maf_surface.py',
         'adapters/max/agr_tools/udimtile_core.py')
 MIN_ROWS, SIM, FLOOR = 20, 0.9, 'Перекрытие'
+POSITIVE_MIN_M = 0.5
 CAP_S, PAIR_S = 420, 140
 
 
@@ -122,6 +123,38 @@ def box_of(doc):
             [max(m['bounds_m'][1][i] for m in doc['meshes']) for i in range(3)])
 
 
+def is_number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def positive_bound_ok(pos_native):
+    """Frozen positive-witness bound: the injected +0.5 m row must score M105 >= 0.5 m."""
+    dev = (pos_native or {}).get('max_corner_dev_m')
+    return is_number(dev) and dev >= POSITIVE_MIN_M
+
+
+def control_status(parity, pos_ok, neg_floor_ok, neg_out_ok, dev):
+    """Any failed control or a missing/near-threshold deviation makes the tower inconclusive."""
+    if not (parity and pos_ok and neg_floor_ok and neg_out_ok and is_number(dev)) \
+            or abs(dev - TOL['bounds_m']) <= .0001:
+        return 'inconclusive'
+    return 'pass' if dev < TOL['bounds_m'] else 'fail'
+
+
+def decide(results, stop):
+    """Verdict: refuted/confirmed only on a complete series where every tower repeat has green controls."""
+    if len(results) != 3 or stop != 'complete' or any(r.get('status') != 'complete' for r in results):
+        return 'inconclusive'
+    st = {t: [r[t]['status'] for r in results] for t in ('63A', '63B')}
+    if any(s not in ('pass', 'fail') for v in st.values() for s in v):
+        return 'inconclusive'
+    if st['63B'] == ['fail'] * 3:
+        return 'refuted'
+    if st['63A'] == ['pass'] * 3 and st['63B'] == ['pass'] * 3:
+        return 'confirmed'
+    return 'inconclusive'
+
+
 def tower(rows, box, built, key):
     inside = contained(rows, box)
     sel = select(inside)
@@ -149,14 +182,12 @@ def tower(rows, box, built, key):
               and abs(pos['bounds_m'][1][0] - shi[0] - .5) < 1e-9)
     same = lambda s: bool(s) and s['levels'] == sel['levels'] and s['bounds_m'] == sel['bounds_m'] \
         and s['band_rows'] == sel['band_rows']
-    dev = native.get('max_corner_dev_m')
-    status = 'inconclusive'
-    if parity and pos_ok and same(neg_floor) and neg_out == sel and dev is not None \
-            and abs(dev - TOL['bounds_m']) > .0001:
-        status = 'pass' if dev < TOL['bounds_m'] else 'fail'
+    pos_native = bounds_step(as_readback(pos), key) if pos else None
+    pos_ok = pos_ok and positive_bound_ok(pos_native)
+    status = control_status(parity, pos_ok, same(neg_floor), neg_out == sel, native.get('max_corner_dev_m'))
     return record | {'status': status, 'order_parity': parity,
                      'injected': {'positive_xy_added': 1, 'positive_xy_pass': pos_ok,
-                                  'positive_native': bounds_step(as_readback(pos), key) if pos else None,
+                                  'positive_native': pos_native,
                                   'negative_floor_added': 1, 'negative_floor_unchanged': same(neg_floor),
                                   'negative_outside_added': 1, 'negative_outside_unchanged': neg_out == sel}}
 
@@ -241,11 +272,7 @@ def main():
             if len(devs) == 3:
                 summary[t] = {'m105_median_m': statistics.median(devs), 'm105_range_m': [min(devs), max(devs)],
                               'baseline_m': results[0][t]['baseline_native']['max_corner_dev_m']}
-        st = {t: [r[t]['status'] for r in results] for t in ('63A', '63B')}
-        if st['63B'] == ['fail'] * 3:
-            verdict = 'refuted'
-        elif st['63A'] == ['pass'] * 3 and st['63B'] == ['pass'] * 3:
-            verdict = 'confirmed'
+    verdict = decide(results, stop)
     receipt = {'results': results, 'summary': summary, 'hypothesis': verdict, 'status': stop,
                'wall_s': time.monotonic() - series, 'inputs': {p.as_posix(): h for p, h in inputs.items()},
                'code_sha256': signatures, 'replay_sha256_git_lf': hashlib.sha256(

@@ -63,9 +63,10 @@
 
 **Итог.** Правило «самая длинная серия одинаковых этажей» без ключа на 63A проходит `bounds` (0,0514 м), но на
 отложенной 63B даёт **27,65 м** во всех трёх повторах — почти ровно то же, что построил агент #91 (27,67 м): шесть этажей
-5,35…24,25 м против принятых 4,65…51,90 м. Значит, остановка 63B на `bounds` — не ошибка агента и не «нечитаемый
-источник»: по одному источнику однозначно не выводится, какие этажи входят в «этап 1». Нужен диапазон этажей в тексте
-задачи 63B (как у 63A) — это решение владельца банка, не исследование.
+5,35…24,25 м против принятых 4,65…51,90 м. Опровергнут конкретный селектор S105 на 63B. Это не доказывает, что ошибка
+агента исключена или что никакое правило по источнику не выберет диапазон; это показывает, что S105 воспроизводит выбор
+агента #91. Рекомендация (обоснованная, не проверенная): вписать диапазон этажей и отметку в текст задачи 63B (как у 63A) —
+решение владельца банка, не исследование.
 
 | Tower | Role | Selected band (pitch, storeys) | Signed face deltas vs key (xmin, ymin, zmin, xmax, ymax, zmax), m | M105 (3/3 same) | #91 baseline |
 | --- | --- | --- | --- | ---: | ---: |
@@ -84,8 +85,9 @@
   `4.65 + 3.15k` (153 rows each), with two different storeys at 23.55 and 39.30 (55/54 rows), plus window rows at the +0.70
   phase. The accepted 63B range bridges those two storeys (similarity ~0.36), while the accepted 63A range stops at 47.25
   where similarity is ~0.78 and identical storeys continue to 69.3 m. The datum also differs: 63A key starts at the
-  window phase (10.15, slabs at 9.45), 63B key at the slab phase (4.65, windows at 5.35). No single repetition threshold or
-  phase rule reproduces both accepted ranges, so the stage-1 storey scope is a task specification, not source geometry.
+  window phase (10.15, slabs at 9.45), 63B key at the slab phase (4.65, windows at 5.35). Neither the frozen S105 threshold
+  nor a single phase rule we inspected reproduces both accepted ranges; this suggests (not proves) that the stage-1 storey
+  scope is a task specification rather than source geometry.
 - **Would change next (OBSERVE, not applied):** bank owner (#1855/#1861) adds the explicit typical-storey range and Z datum
   to the 63B task, as the 63A task has (`+4.65 .. +51.90 m` per the accepted v007 readback) — user decision because it is
   key-derived scope. Then re-run 63B practice and count the `bounds` step. Remaining XY/phase residuals after a stated
@@ -97,6 +99,25 @@ Receipt: [`trainer_storey_band_r105/receipt.json`](trainer_storey_band_r105/rece
 `G:/Мой диск/AGR-evidence/1855-r105-storey-band/SHA256SUMS.txt` (41 files, list SHA-256
 `21b8412d32f9f2c7af9278ec37a5af0a9ff61e060000bf61392ae49eb89d6bfe`). Replay limited to runners with the hash-pinned Drive
 inputs and Blender 4.4. Branch-only OBSERVE; no production change. Hypothesis result (refuted) is separate from review readiness.
+
+### Review r1 fixes (driver now enforces its frozen contract; selector S105 and the original receipt unchanged)
+
+Исправления по ревью r1: драйвер теперь сам соблюдает замороженный контракт; S105 и исходная квитанция не тронуты.
+
+| Check | Input | Before (94f8a90d) | After |
+| --- | --- | --- | --- |
+| P1.1 verdict gate (`decide`) | stored receipt, 63B `fail` 3/3, 63A pair 1 `order_parity=false` -> `inconclusive` | `refuted` | `inconclusive` |
+| P1.1 control | stored receipt unchanged | `refuted` | `refuted` |
+| P1.2 positive bound (`positive_bound_ok`, frozen `M105 >= 0.5 m`) | key `Xmax` = selection `Xmax + 0.05 m` -> witness M105 0.45 m | `positive_xy_pass=true`, `pass` | `false`, `inconclusive` |
+| P1.2 control | exact key -> witness M105 0.50 m; stored 63A witness 0.5267 m | pass | pass |
+| P1.2 missing / non-numeric / NaN / bool witness value | `None`, `'0.6'`, `nan`, `True` | not checked | fails |
+
+- Regressions: `tests/research/test_trainer_storey_band_r105.py` — 15 passed after; 14 failed on the 94f8a90d driver.
+- Fresh native replay with the fixed driver: `uv run python docs/research/trainer_storey_band_r105/replay.py .r105-r1-replay`
+  -> `complete`, 3/3, 282.9 s, 63A pass 0.0514 / 63B fail 27.65, witness 0.5267 m on 63A in 3/3, hypothesis `refuted`.
+  Receipt [`receipt-r1.json`](trainer_storey_band_r105/receipt-r1.json), SHA-256
+  `cf29c2786b3eabcbdfb09831aed9aa3d8b943975d1881d8f107934f930079e64`; fixed driver Git-LF SHA-256
+  `4c632a1d684c7d9e446f1a98e2ece5dd0203addcdf839ad6e2350c6cd6d87c99`. The original `receipt.json` stays as measured.
 
 Affected tests: `uv run pytest -q tests/tools/test_trainer.py tests/test_trainer_inspect.py -p no:cacheprovider` — 105 passed, 1 warning (no product code changed; driver imports `trainer.bounds_step` unchanged).
 
