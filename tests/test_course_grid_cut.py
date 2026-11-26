@@ -1,8 +1,14 @@
-"""new-case: synthetic authorized planar joint-strip partition regressions."""
+"""new-case: synthetic authorized planar joint-strip partition regressions.
+
+Owner of the course_grid_cut tests; #1960 merged three files into it.
+"""
 import copy
+import math
+import numpy as np
 import pytest
 from shapely.geometry import Polygon
 from tools.materials.course_grid_cut import partition_joint_zones, layout_joint_partition, edge_joint_zone, native_piece_cells
+from tools.materials.course_grid_cut import assemble_support_pages
 
 
 def face():
@@ -150,3 +156,145 @@ def test_exact_ten_mm_inset_keeps_area_surface_winding_and_lineage():
             assert [x,y,z]==pytest.approx([u,0,v])
     assert len(out['new_segments'])==1
     assert sorted(out['new_segments'][0])==[[.01,0],[.01,1]]
+
+
+# --- merged from tests/test_course_grid_cut_generated.py (#1960)
+# new-case: generated exact-edge strip footprints on rotated source charts.
+
+def test_generated_exact_edge_endpoints_no_micro_holes_or_surface_motion():
+    for angle in np.linspace(0,2*math.pi,100,endpoint=False):
+        rotation=np.array([[math.cos(angle),-math.sin(angle)],[math.sin(angle),math.cos(angle)]])
+        base=np.array([[0.,0.],[2.,0.],[2.,1.],[0.,1.]])
+        points=base@rotation.T+np.array([80.,-6.])
+        xyz=np.c_[base[:,0],np.zeros(4),base[:,1]]
+        row=dict(object='synthetic',face=0,material_id=1,chart_m=points.tolist(),xyz=xyz.tolist())
+        a,b=points[:2]; n=np.array([-math.sin(angle),math.cos(angle)])
+        strip=np.array([a,b,b+n*.01,a+n*.01])
+        result=partition_joint_zones(row,[strip.tolist()])
+        assert sum(Polygon(p['chart_m']).area for p in result['pieces'])==pytest.approx(2,abs=1e-11)
+        assert result['joint_area_m2']==pytest.approx(.02,abs=1e-11)
+        assert all(not Polygon(p['chart_m']).interiors for p in result['pieces'])
+
+
+# --- merged from tests/test_course_grid_native_pinches.py (#1960)
+# new-case: native pinch closure below the existing 20um storage envelope.
+
+def test_native_tessellation_reports_and_omits_sub_overlay_collinear_cell():
+    xy=[[106.779152441312,-4.872884263696],[106.768364321559,-4.872884267569],
+        [109.176082668445,-4.872883403301],[108.702272247068,-4.865310649323],
+        [108.694454686826,-4.865310651355],[108.694454489249,-4.757958233974],
+        [108.702272049491,-4.757958231942],[109.176082668445,-4.74870070219],
+        [106.779152212759,-4.748701087886]]
+    piece=dict(source=['synthetic',1],joint=False,chart_m=xy,xyz=[[x,y,0.] for x,y in xy])
+    cells=native_piece_cells(piece)
+    assert all(Polygon(c['chart_m']).area>1e-12 for c in cells)
+    assert sum(Polygon(c['chart_m']).area for c in cells)==pytest.approx(Polygon(xy).area,abs=1e-10)
+    assert any(c.get('native_collapsed_cells') for c in cells)
+
+
+def test_native_fragment_accounting_closes_the_reported_area_balance():
+    xy=[[101.236748525615,-4.446862021089],[99.249740785451,-4.446861946583],
+        [99.249740785451,-4.571047024429],[99.443149966581,-4.571047031681],
+        [99.443149966581,-4.457708205495],[99.453149966581,-4.457708205495],
+        [99.453149966581,-4.571047032015],[99.452052539885,-4.571047032015],
+        [101.042814210303,-4.571047091663],[101.042814210303,-4.45770826544],
+        [101.052814210303,-4.45770826544],[101.052814210303,-4.571047092033],
+        [101.052678420918,-4.571047092033],[101.236748525615,-4.571047098935]]
+    cells=native_piece_cells(dict(source=['synthetic',2],joint=False,chart_m=xy,xyz=[[x,y,0.] for x,y in xy]))
+    dropped=sum(c['area_m2'] for c in cells[0]['native_collapsed_cells'])
+    assert sum(Polygon(c['chart_m']).area for c in cells)+dropped==pytest.approx(Polygon(xy).area,abs=1e-10)
+
+
+def test_native_almost_closed_slit_retains_surface_without_ambiguous_corners():
+    # Synthetic affine-plane reduction of the real source-1499 overlay witness.
+    xy=[[112.588943724691,-4.872886696458],[114.979522951001,-4.872887083888],
+        [114.523786263829,-4.507899927305],[114.52378633566,-4.86476729482],
+        [114.514014403442,-4.864767294959],[114.514014394013,-4.817922546574],
+        [114.51206000757,-4.817922546602],[114.512060006784,-4.81401881757],
+        [114.514014393227,-4.814018817542],[114.514014360619,-4.652014062711],
+        [114.512059974175,-4.652014062739],[114.512059973389,-4.648110333707],
+        [114.514014359833,-4.648110333679],[114.514014331939,-4.50952795304],
+        [114.515968718382,-4.509527953012],[114.515968716811,-4.501720494948],
+        [114.523786263802,-4.507899927284],[114.513917905127,-4.499996626377],
+        [112.600670001776,-4.499996226497],[112.600670076769,-4.87257478023],
+        [112.588943758108,-4.872574780397],[112.588943724691,-4.499996224046]]
+    piece=dict(source=['synthetic',0],joint=False,chart_m=xy,xyz=[[x,y,0.] for x,y in xy])
+    cells=native_piece_cells(piece)
+    assert cells
+    assert all(Polygon(c['chart_m']).is_valid for c in cells)
+    assert all(len(set(map(tuple,c['xyz'])))==len(c['xyz']) for c in cells)
+    assert sum(Polygon(c['chart_m']).area for c in cells)==pytest.approx(Polygon(xy).area,abs=1e-9)
+
+
+# --- merged from tests/test_course_grid_pages.py (#1960)
+# new-case: explicit budget and exact source membership for multi-page support.
+
+def inputs():
+    piece = dict(source=['synthetic', 3], joint=True, patch=['synthetic', 3, 0],
+                 chart_m=[[0, 0], [.02, 0], [.02, 1], [0, 1]],
+                 xyz=[[0, 0, 0], [.02, 0, 0], [.02, 0, 1], [0, 0, 1]])
+    parts = [dict(source=piece['source'], pieces=[piece], dropped_faces=[])]
+    pages = [dict(key=piece['patch'], tile=1002, translation_m=[1, 1],
+                  members=[dict(key=piece['patch'], fold_shift_m=[0, 0])])]
+    return parts, dict(faces=[], unplaced=[], dropped_faces=[]), pages
+
+
+def run(p=None, f=None, pages=None, **kw):
+    a, b, c = inputs()
+    return assemble_support_pages(a if p is None else p, b if f is None else f,
+                                  c if pages is None else pages,
+                                  texel_px_m=512.1, tile_px=4096,
+                                  tile_budget=kw.get('tile_budget', 2))
+
+
+def test_second_page_requires_explicit_budget_and_does_not_grant_qa():
+    with pytest.raises(ValueError, match='budget'):
+        run(tile_budget=1)
+    out = run()
+    assert out['passed'] is False and len(out['faces']) == 1
+    assert out['faces'][0]['tile'] == 1002
+    assert out['faces'][0]['uv'][0] == pytest.approx([1+512.1/4096, 512.1/4096])
+    assert out['source_faces'] == 1 and not out['dropped_faces']
+
+
+@pytest.mark.parametrize('mode', ['empty', 'duplicate_source', 'duplicate_member', 'unknown_member',
+                                  'missing_member', 'nan', 'inf', 'unsupported_tile', 'boolean_tile',
+                                  'missing_patch', 'extra_placement', 'dropped', 'unplaced', 'bad_uv'])
+def test_partial_duplicate_unknown_nonfinite_inputs_refuse(mode):
+    p, f, pages = inputs()
+    if mode == 'empty': p = []
+    elif mode == 'duplicate_source': p *= 2
+    elif mode == 'duplicate_member': pages[0]['members'] *= 2
+    elif mode == 'unknown_member': pages[0]['members'][0]['key'][1] = 999
+    elif mode == 'missing_member': pages[0]['members'] = []
+    elif mode == 'nan': pages[0]['translation_m'][0] = float('nan')
+    elif mode == 'inf': pages[0]['members'][0]['fold_shift_m'][0] = float('inf')
+    elif mode == 'unsupported_tile': pages[0]['tile'] = 1011
+    elif mode == 'boolean_tile': pages[0]['tile'] = True
+    elif mode == 'missing_patch': del p[0]['pieces'][0]['patch']
+    elif mode == 'extra_placement': pages.append(copy.deepcopy(pages[0]))
+    elif mode == 'dropped': p[0]['dropped_faces'] = [3]
+    elif mode == 'unplaced': f['unplaced'] = [3]
+    elif mode == 'bad_uv': p[0]['pieces'][0]['chart_m'][1][0] = float('nan')
+    with pytest.raises(ValueError): run(p, f, pages)
+
+
+def test_plain_fold_and_support_keep_every_piece_without_mutating_inputs():
+    p, f, pages = inputs()
+    brick = copy.deepcopy(p[0]['pieces'][0]);brick['joint'] = False;brick.pop('patch')
+    brick['chart_m'] = [[2, 0], [3, 0], [3, 1], [2, 1]]
+    brick['xyz'] = [[u, 0, v] for u, v in brick['chart_m']]
+    p[0]['pieces'].append(brick)
+    f['faces'] = [dict(object='synthetic', face=0, translation_m=[0, 1])]
+    frozen = copy.deepcopy((p, f, pages))
+    out = run(p, f, pages)
+    assert len(out['faces']) == 2
+    assert {r['tile'] for r in out['faces']} == {1001, 1002}
+    assert (p, f, pages) == frozen
+
+
+def test_unknown_fold_identity_names_key():
+    p, f, pages = inputs()
+    f['faces'] = [dict(object='ghost', face=7, translation_m=[0, 0])]
+    with pytest.raises(ValueError, match='ghost'):
+        run(p, f, pages)
