@@ -1,0 +1,403 @@
+{
+ "schema": "autoresearch-receipt/1",
+ "card": "t_cd81155d",
+ "round": 111,
+ "contract": "docs/research/autoresearch-trainer-ledger-fresh.md",
+ "contract_commit": "8beb3c803b39d6fe055617632fb643a047a63b2f",
+ "head_measured": "7762dcfe2e78219155461bb633faaca2015e259b",
+ "lane": "codex",
+ "model": "gpt-6.1-terra",
+ "harness_variant": null,
+ "bank": "docs/trainer/etalons.json@7762dcfe",
+ "inputs": {
+  "kpp1-v004": {
+   "key_sha256": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8",
+   "sources": [
+    "cb74ba142142e9181dfc14e235f94aed7eabec597e746760e5a972427f0f3648",
+    "428426002f2642d29e97a8db34053546dc1e427bdff8aeef9ad1c81005b73cb2",
+    "ad1de2b203bd4394bd3604642cd41bd8f3b2427ec23b900413bd396612624469"
+   ]
+  },
+  "g22-k2-stage1": {
+   "key_sha256": "5b1e8d76c81de07dd62a94a1419a1f0bb6f5c82bd069592c2453f21b94f0f200",
+   "sources": [
+    "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622"
+   ]
+  },
+  "63a-stage1": {
+   "key_sha256": "f3769c62a7e9fdbfcf7a59624269bcd0374ca494f593e2e85c08474a0007798a",
+   "sources": [
+    "2b4d0201d3d2454344bba263500363fcc528a322bd2702ece0fac38e39a158d7"
+   ]
+  }
+ },
+ "checks": {
+  "witness_empty_built_kpp1": {
+   "rc": 0,
+   "first_failing_step": "artifact",
+   "artifact": "fail",
+   "err": ""
+  },
+  "control_stored_r99C1_kpp1": {
+   "rc": 0,
+   "first_failing_step": "bounds",
+   "artifact": "pass",
+   "err": ""
+  },
+  "calibration": "not measured in #111 (scorer calibrate from #1859)"
+ },
+ "runs": [
+  {
+   "etalon": "kpp1-v004",
+   "k": 1,
+   "run": "C:/x/trainer/runs/kpp1-v004-codex-r111-1",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 203.0,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "fail",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 4,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "ac36ca2ac0f1da4607262447b922e0fd911c17d9ab039a1875d864ed2fb5120d",
+    "score.json": "4a297a88075866eb6b8e61fb9c2337c8f7b7065d5b342cbb2e66be7d7d20be2f",
+    "prompt.txt": "0cbf09d4bde4a9b557709078606138badd950f8d912f652ecd96f3cc4618711f"
+   },
+   "score_err": null,
+   "input_tokens": 1896474
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "k": 1,
+   "run": "C:/x/trainer/runs/g22-k2-stage1-codex-r111-1",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 192.9,
+   "status": "not_scored",
+   "first_failing_step": null,
+   "score": null,
+   "steps": null,
+   "questions": 3,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [
+    {
+     "path": "built/module/body.fbx",
+     "sha256": "b3b6e6d6b35584df0d65254ada4a7aa42225d1e6f2f9636dac1ac4f7cd064593"
+    },
+    {
+     "path": "built/typical/body.fbx",
+     "sha256": "c1e37f05a02b36631916ff635fb241b3b902aef0260ac6e74dcb6bceec86884b"
+    }
+   ],
+   "sha256": {
+    "run.json": "ab170c9f884a8979fad2fcc2fed942fb0ad86aa33c5b013263e4dc0e11fb298d",
+    "score.json": null,
+    "prompt.txt": "031e8db655516ae93ac402232856519e3672a4c879269997774063d93dc62774"
+   },
+   "score_err": "ERROR: several FBX in C:\\x\\trainer\\runs\\g22-k2-stage1-codex-r111-1\\built: ['body.fbx', 'body.fbx']; pass --built FILE\n",
+   "input_tokens": 1305819
+  },
+  {
+   "etalon": "63a-stage1",
+   "k": 1,
+   "run": "C:/x/trainer/runs/63a-stage1-codex-r111-1",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 244.3,
+   "status": "scored",
+   "first_failing_step": "vlm",
+   "score": 0.8333,
+   "steps": {
+    "artifact": "pass",
+    "readback": "pass",
+    "bounds": "pass",
+    "topology": "pass",
+    "form": "pass",
+    "form_v2": "not_applicable",
+    "vlm": "not_run",
+    "package": "not_applicable"
+   },
+   "questions": 4,
+   "escaped": true,
+   "escape_cmds": {
+    "evidence_1619": 5,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [
+    {
+     "path": "built/tower_A_body_meters.fbx",
+     "sha256": "f3accaf5784dd52bd3960191167008e297078e5dd8a01e7cb39502245b35d9dc"
+    }
+   ],
+   "sha256": {
+    "run.json": "270e7319ce25fcb444f9d48ef2bfac575606ea1a0aed94e620482c6e26178246",
+    "score.json": "9d4ee892bfecf1bb8ccf0e61b4e8850fea005699f9d17a61e2a6882221667119",
+    "prompt.txt": "7697df03b6d61079f8c389b35c2dab46e05aea0de6406abf0016e7efb6dc536e"
+   },
+   "score_err": null,
+   "input_tokens": 1797436
+  },
+  {
+   "etalon": "kpp1-v004",
+   "k": 2,
+   "run": "C:/x/trainer/runs/kpp1-v004-codex-r111-2",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 228.8,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "fail",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 5,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "a1d26372dd9c061845091cffa32caad542965e860868b13c1299ffa3014d2a3a",
+    "score.json": "3a9d140ad07f58a931ee3bc39190917166782333bf7a8a8a523ac9879a5ced2f",
+    "prompt.txt": "bc640f049a30eef0d8b248aae11fbe5669d27f76843e419b49da7615b6838411"
+   },
+   "score_err": null,
+   "input_tokens": 1858122
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "k": 2,
+   "run": "C:/x/trainer/runs/g22-k2-stage1-codex-r111-2",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 122.1,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "not_applicable",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 2,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "0c2fb3fa6b7f141d625b1489be18fb7065e48b2ca24f95e124aa0a826aa40481",
+    "score.json": "86f1251bec47b7c588142271c58b69405fb52395f8d4178b971570bd73eeb462",
+    "prompt.txt": "70b053a5ee5bdf1c612875be3a2869490a7e98afbca11b77582a9e29ede6ded5"
+   },
+   "score_err": null,
+   "input_tokens": 765865
+  },
+  {
+   "etalon": "63a-stage1",
+   "k": 2,
+   "run": "C:/x/trainer/runs/63a-stage1-codex-r111-2",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 323.2,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "not_applicable",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 4,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "65e9057929822cd317dcb90debf0a56143f54ebb0117ec1561dabf53c3c2f303",
+    "score.json": "121b47a80a5a40d3f0a054ecaeef3930e2aa23af5d1fac5af4db7132825a6ead",
+    "prompt.txt": "4f826d9f640ececd32be0d01aa7f601b01b8ef526a20c077c9de3dbbcb0c088d"
+   },
+   "score_err": null,
+   "input_tokens": 2920992
+  },
+  {
+   "etalon": "kpp1-v004",
+   "k": 3,
+   "run": "C:/x/trainer/runs/kpp1-v004-codex-r111-3",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 176.5,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "fail",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 3,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "1e0cefee3d28c8f5c2b71f37040bf711eacef4c553c8bb4a680dfbf977b01c5b",
+    "score.json": "ac74595cda62547b29dbfa16af273ce17e35b43bc950f7d5a11a636668f58f04",
+    "prompt.txt": "db114d0413c022e77375badf0ac8591e7d6f2e9b0a044d7d11b96613b5eb140a"
+   },
+   "score_err": null,
+   "input_tokens": 1018087
+  },
+  {
+   "etalon": "g22-k2-stage1",
+   "k": 3,
+   "run": "C:/x/trainer/runs/g22-k2-stage1-codex-r111-3",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 116.9,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "not_applicable",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 3,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "43a8aa39cfcaa6b0f0f213b73094827692b6a2e8efa8063f692cc4121c6c2af4",
+    "score.json": "65b7bf8f8e13a04a6d81d45bda1df576055ddb926178395024ddcd3efe923ae5",
+    "prompt.txt": "54940a44827bf2a240221f303f5b7746445d53e10e15948ac65cc5f1731cf567"
+   },
+   "score_err": null,
+   "input_tokens": 746124
+  },
+  {
+   "etalon": "63a-stage1",
+   "k": 3,
+   "run": "C:/x/trainer/runs/63a-stage1-codex-r111-3",
+   "exit": 0,
+   "origin_main": "7762dcfe2e78219155461bb633faaca2015e259b",
+   "wall_s": 248.2,
+   "status": "scored",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "steps": {
+    "artifact": "fail",
+    "package": "not_applicable",
+    "readback": "not_run",
+    "bounds": "not_run",
+    "topology": "not_run",
+    "form": "not_run",
+    "form_v2": "not_run",
+    "vlm": "not_run"
+   },
+   "questions": 3,
+   "escaped": false,
+   "escape_cmds": {
+    "evidence_1619": 0,
+    "bank_key": 0,
+    "review_dirs": 0,
+    "main_checkout": 0
+   },
+   "fbx": [],
+   "sha256": {
+    "run.json": "5997945389cac381d3b04eeab83c9cc538b5398af3438ff2897c0c16fd66516d",
+    "score.json": "c1ba7d350a71a7d39a286bb489e945494c724fe398eaeafd5557f06eb4d3112d",
+    "prompt.txt": "dabb2824f459e7bf533465fdc820eca49bc887fe2f56c7525389a28667fbc6a3"
+   },
+   "score_err": null,
+   "input_tokens": 2511765
+  }
+ ],
+ "M111": {
+  "artifact_first_stop_scored": 7,
+  "scored": 8,
+  "not_scored": 1,
+  "artifact_incl_several_fbx_refusal_(#95 convention)": 8,
+  "escape_free_artifact_pass": 0,
+  "N": 9
+ },
+ "series_wall_s": 2039.7,
+ "run_status": "complete (9/9 runs finished exit 0, within 150 min budget)",
+ "hypothesis": "H111 refuted",
+ "evidence": "G:/Мой диск/AGR-evidence/1855-r111-ledger-fresh/SHA256SUMS.txt",
+ "evidence_sha256": "7c8be76ce4a2ac22e59fbc1c3f8a7a7279b37fdee868ced7dd22c6f4a1b792ce",
+ "replay": "python C:/x/ev_t_cd81155d/series_r111.py (writes C:/x/trainer/runs/<etalon>-codex-r111-<k>; refuses existing run folders - use new names); then annotate_r111.py. Replay limited: Drive bank + codex lane; fresh agents are not deterministic."
+}

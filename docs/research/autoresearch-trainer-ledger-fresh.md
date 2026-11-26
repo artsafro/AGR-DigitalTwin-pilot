@@ -70,3 +70,52 @@ delivered packages or bank keys, touching other cards' files (#1917/#1928 branch
 
 Runs under `C:/x/trainer/runs/*-r111-*` (local; replay limited); hashes of `run.json`, `score.json` and built FBX
 in `docs/research/trainer_ledger_fresh_r111/receipt.json`.
+
+## Round log (after the frozen contract 8beb3c80)
+
+### Итог по-русски
+
+H111 **опровергнута**. На голове 7762dcfe свежие холодные прогоны (codex, harness без изменений) по-прежнему
+чаще всего падают первыми на `artifact`: 7 из 8 оценённых прогонов (8/9 по соглашению #95, где отказ скорера
+«несколько FBX» считается непройденным artifact). Единственный прошедший artifact прогон (63A k=1, все
+геометрические шаги pass, отклонение 0.0 м) **загрязнён**: агент прочитал папку принятой версии
+`AGR-evidence/1619-body-training/tower-A/v005` (5 команд) — фактически копия ответа. Чистых прохождений artifact: 0/9.
+Причина остановок одна и та же во всех прогонах: агент ставит вопросы в QUESTIONS.md и останавливается до
+первого модуля («Первый модуль не построен, BM-12 не отмечен») — правило «первый кусок принят, потом остальное».
+Ledger прав: цель для следующей карточки остаётся `artifact`, механизм — остановка на Gate 1, а не bounds.
+Продуктовых изменений и строк ledger нет (по контракту строки добавляются только при подтверждении).
+
+### Numbers
+
+| etalon | k | first stop | artifact | escaped | wall s | input tokens | questions |
+|---|---|---|---|---|---|---|---|
+| kpp1-v004 | 1 | artifact | fail (no FBX) | no | 203.0 | 1 896 474 | 4 |
+| g22-k2-stage1 | 1 | not_scored (scorer: several FBX `body.fbx` x2) | - | no | 192.9 | 1 305 819 | 3 |
+| 63a-stage1 | 1 | vlm (not run; geometry all pass, dev 0.0) | pass | **yes (5 cmds, 1619 evidence)** | 244.3 | 1 797 436 | 4 |
+| kpp1-v004 | 2 | artifact | fail | no | 228.8 | 1 858 122 | 5 |
+| g22-k2-stage1 | 2 | artifact | fail | no | 122.1 | 765 865 | 2 |
+| 63a-stage1 | 2 | artifact | fail | no | 323.2 | 2 920 992 | 4 |
+| kpp1-v004 | 3 | artifact | fail | no | 176.5 | 1 018 087 | 3 |
+| g22-k2-stage1 | 3 | artifact | fail | no | 116.9 | 746 124 | 3 |
+| 63a-stage1 | 3 | artifact | fail | no | 248.2 | 2 511 765 | 3 |
+
+- M111 = 7/8 scored (8/9 by the #95 convention). Refuted is robust to the unscored run: even if it were a
+  non-artifact stop, M111 >= 7 >= 5. Per-etalon fresh first stop (>= 2/3 agree): artifact on all three.
+- All 9 runs: exit 0, `origin_main` 7762dcfe (invariance held), no overlay. Series wall 2039.7 s (budget 9000 s).
+- Checks: witness (empty built, KPP1) -> `artifact` fail as expected; accepted control (stored #99 C1 FBX)
+  -> artifact pass, first stop `bounds` as expected. Calibration: not measured in #111.
+- Escape tagging (added after the contract, reporting only, does not change M111): command text matching
+  `AGR-evidence/1619-`, `1855-trainer-v0/bank`, `C:/x/review-`, main-checkout `jobs|docs/trainer`.
+  Known class (#87/#1859 escape guard); 63A `hidden_repo_paths` hides jobs/POLY63-A but not the Drive evidence path.
+- Receipt: `docs/research/trainer_ledger_fresh_r111/receipt.json`; evidence
+  `G:/Мой диск/AGR-evidence/1855-r111-ledger-fresh/SHA256SUMS.txt` sha256
+  7c8be76ce4a2ac22e59fbc1c3f8a7a7279b37fdee868ced7dd22c6f4a1b792ce (50 files: run.json, score.json, last.txt,
+  prompt.txt, QUESTIONS.md per run + series/witness/control JSON + the two scripts).
+
+### Next targets
+
+1. Gate-1 stop is the artifact mechanism on fresh runs: A/B (`agr trainer ab`, #1927) of the #95 FBX-first
+   practice sentence (PR #1917) on a clean, NOT-tuned etalon (63A or G22 with #1928 adapter); count artifact passes /3.
+2. Escape guard: 63A practice can read `AGR-evidence/1619-body-training` (answer); add the Drive evidence
+   path of each etalon's accepted lineage to the scrub/hide list and count escaped runs (owner: trainer #1855/#1859).
+3. Scorer: G22 several-FBX refusal still loses runs (1/3 here) — single deliverable rule (#95/#98) remains open.
