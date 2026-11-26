@@ -48,3 +48,36 @@ actual bytes despite the cited scratch copy being unavailable. #1972 merged a
   A source pair bound here cannot replace explicit approval of trainer scope
   (DWG/PDF required by current bank vs. FBX/PDF actually used in #1784),
   source isolation, calibration, and dry-run admission.
+
+## Result
+
+**RU:** H126 подтверждена только для привязки исходников. Найдены оригинальный
+Revit FBX и фасадный PDF из #1784: `0 → 1` пригодная для фиксации пара в каждом
+из трёх повторов, совпадений с пятью заявленными tuning-хешами нет. Это не
+допуск в тренажёр и не измерение прохождения `artifact`. KEEP и PR нет.
+
+- Contract and measured code frozen at `7dad9a8481a1618c64eb630d6e39d7a1e1fc22a3`.
+  Raw receipt: `trainer_sokolniki_source_binding_r126.jsonl`. Series complete;
+  wall 0.329 s, individual pairs 0.056 / 0.044 / 0.044 s. Deltas +1/+1/+1;
+  median +1, min/max +1/+1, spread 0. All six native reads used the original
+  filenames at the #1784 inbox. The cited scratch copy was missing.
+- Clean: old 0/0/0, candidate 1/1/1. Both full hashes are in every row.
+  Declared overlap 63A↔63B = 1, 63A↔G22 = 0. Injected: all three states
+  refused in every pair; one role changed per state (PDF omitted, FBX digest
+  replaced, FBX prefix altered), the other role not exercised in that state.
+  No native source was modified. Hash-bound replay matched all four records
+  excluding timing. Replay elsewhere is **limited** to hosts with access to
+  the same source bytes; the researcher did not distribute the client files.
+- Not measured: cold artifact passes, accepted/rejected quality separation,
+  source-isolated runner or dry-run admission of this pair, tuning source bytes
+  or semantic equivalence. D409 accepts the body v006; D419 starts packaging,
+  not acceptance of the #1972 diagnostic package. Neither changes the frozen
+  `sokolniki-body-v005` trainer row or authorizes swapping its key.
+- Review readiness: receipt only. Affected tests: `uv run --offline pytest -q tests/tools/test_trainer.py`
+  → 93 passed. `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh`
+  → GREEN, 563 passed. Full suite: deferred to merge batch (rule 68).
+- Next: bank owner and Artem decide whether the #1784 FBX/PDF pair and a
+  specific accepted **body-only** key may replace the unbound DWG/PDF brief;
+  bind matched rejected control separately. After verified isolation and audit
+  (#1973/#1974), admit the held-out fixture and rerun the already-owned
+  artifact interventions (#1917/#1928) on three fresh pairs.
