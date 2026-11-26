@@ -396,3 +396,40 @@ active consumers and their inputs remain visible. Explicit pytest invocations st
 - `experiments/flora-texture-diagnosis/source-integrity-v002.json` — Earlier source-integrity receipt; the cited v003 receipt stays visible.
 - `experiments/flora-texture-diagnosis/test_calibration.py` — Historical experiment tests, still runnable by exact path.
 - `tools/research/pdf_album/dimension-geometry-evidence.json` — Frozen PDF dimension geometry research receipt.
+
+### Batch 5b (#1934): closed-job receipts
+
+Under [D416], the exact historical TEC26 AC08 receipts below leave default search but stay in Git
+at the same paths. The live-path guard still protects the rest of AC08, including v010.
+The referenced KPP1 and 4bk course-grid inputs, current TEC26 evidence, and the exact inputs of retained tests stay in place.
+
+- `jobs/TEC26-OKS/AC08/kernel-ops-v001/evidence/DRIVE-SHA256SUMS.txt` — Historical kernel trial checksum receipt.
+- `jobs/TEC26-OKS/AC08/pilot-v006/DRIVE-SHA256SUMS.txt` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/Nku_1_VPM_master.blend.build.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/export_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/export_npm_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/npm_atlas.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/qa_master.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/qa_packages-review1.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/DRIVE-SHA256SUMS.txt` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/Nku_1_VPM_master.blend.build.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/export_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/export_npm_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/npm_atlas.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/qa_master.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/DRIVE-SHA256SUMS.txt` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/Nku_1_VPM_master.blend.build.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/compare.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/export_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/export_npm_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/npm_atlas.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/qa_master.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
