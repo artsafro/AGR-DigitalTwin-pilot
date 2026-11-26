@@ -41,6 +41,24 @@ def test_batch_reads_drive_adapter_before_planning_writes(tmp_path, monkeypatch,
     assert not results.exists()
 
 
+def test_batch_missing_ground_reference_sidecar_writes_nothing(tmp_path, monkeypatch, capsys):
+    batch = _load("methods_ground_reference_1958", TOOLS / "ground" / "run_benchmarks.py")
+    adapter, ref = tmp_path / "adapter.json", tmp_path / "reference.fbx"
+    adapter.write_bytes(b"synthetic typed adapter")
+    ref.write_bytes(b"synthetic reference")
+    monkeypatch.setattr(batch, "ADAPTER_SHA256", hashlib.sha256(adapter.read_bytes()).hexdigest())
+    monkeypatch.setattr(batch, "ROOT", tmp_path)
+    catalogue = tmp_path / "benchmark/methods/benchmarks.json"
+    catalogue.parent.mkdir(parents=True)
+    catalogue.write_text(json.dumps({"objects": [{"id": "vatutino-ground",
+                                                  "source": {"local_path": str(ref)}}]}), encoding="utf-8")
+    out, results = tmp_path / "out", tmp_path / "results.jsonl"
+    assert batch.main(["--adapter", str(adapter), "--out", str(out), "--results", str(results),
+                       "--reference-row"]) == 4
+    assert "reference.fbx.placement.json" in capsys.readouterr().err
+    assert not out.exists() and not results.exists()
+
+
 def plane(size=120, cell=10, hole=((40, 80), (40, 80)), z=10.0, dz=0.0, shift=(0.0, 0.0), bump=None):
     """Flat square plane of quads (split in two triangles); cells inside `hole` are left out."""
     n = size // cell
