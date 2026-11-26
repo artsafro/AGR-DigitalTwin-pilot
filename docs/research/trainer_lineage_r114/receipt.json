@@ -1,0 +1,533 @@
+{
+  "head": "55b885c1b9ccdbe53df2c0d6ade9d4e5bd8ca364",
+  "inputs": {
+    "trainer": "16fd8edb93be0bb846244498a2490de4f5905f1f34bcacd23fcf22d2e95aa4b5",
+    "bank": "016aab0c7ae3496643fdfdc69582be8e6cb877e2f62d2ff19ebef23a7be36635",
+    "ledger": "230eace1a0a434cb25091f449760d3895d5b7d169086a2f2ba049db88a8496a7",
+    "harness": "c37f01bafe5568ad071b24c20d268d35391271f42e9798bed035bbce6de922ec"
+  },
+  "pairs": [
+    {
+      "etalon": "63a-stage1",
+      "bank_practice_ready": true,
+      "native": {
+        "stock_removed_count": 8,
+        "stock_witness_survives": true,
+        "B": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "changed_B_to_C": 1,
+        "B_only": [
+          "docs/research/autoresearch-trainer-gate1.md"
+        ],
+        "C_only": [],
+        "route_critical": [],
+        "candidate_additional_flags_vs_stock": 4,
+        "candidate_trigger": "exercised"
+      },
+      "injected": {
+        "exact_slash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_json": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        }
+      },
+      "M114": {
+        "B": 4,
+        "C": 0
+      },
+      "all_expected": false,
+      "wall_s": 24.521
+    },
+    {
+      "etalon": "63b-stage1",
+      "bank_practice_ready": false,
+      "native": {
+        "stock_removed_count": 40,
+        "stock_witness_survives": true,
+        "B": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "changed_B_to_C": 0,
+        "B_only": [],
+        "C_only": [],
+        "route_critical": [],
+        "candidate_additional_flags_vs_stock": 2,
+        "candidate_trigger": "exercised"
+      },
+      "injected": {
+        "exact_slash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_json": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        }
+      },
+      "M114": {
+        "B": 4,
+        "C": 0
+      },
+      "all_expected": true,
+      "wall_s": 21.982
+    },
+    {
+      "etalon": "63a-stage1",
+      "bank_practice_ready": true,
+      "native": {
+        "stock_removed_count": 8,
+        "stock_witness_survives": true,
+        "B": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "changed_B_to_C": 1,
+        "B_only": [
+          "docs/research/autoresearch-trainer-gate1.md"
+        ],
+        "C_only": [],
+        "route_critical": [],
+        "candidate_additional_flags_vs_stock": 4,
+        "candidate_trigger": "exercised"
+      },
+      "injected": {
+        "exact_slash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_json": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        }
+      },
+      "M114": {
+        "B": 4,
+        "C": 0
+      },
+      "all_expected": false,
+      "wall_s": 18.438
+    },
+    {
+      "etalon": "63b-stage1",
+      "bank_practice_ready": false,
+      "native": {
+        "stock_removed_count": 40,
+        "stock_witness_survives": true,
+        "B": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "changed_B_to_C": 0,
+        "B_only": [],
+        "C_only": [],
+        "route_critical": [],
+        "candidate_additional_flags_vs_stock": 2,
+        "candidate_trigger": "exercised"
+      },
+      "injected": {
+        "exact_slash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_json": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        }
+      },
+      "M114": {
+        "B": 4,
+        "C": 0
+      },
+      "all_expected": true,
+      "wall_s": 19.624
+    },
+    {
+      "etalon": "63a-stage1",
+      "bank_practice_ready": true,
+      "native": {
+        "stock_removed_count": 8,
+        "stock_witness_survives": true,
+        "B": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-gate1.md",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-body-mesh-quality-harness/calibrate.py",
+          "docs/research/autoresearch-body-mesh-quality-harness/r0.json",
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "changed_B_to_C": 1,
+        "B_only": [
+          "docs/research/autoresearch-trainer-gate1.md"
+        ],
+        "C_only": [],
+        "route_critical": [],
+        "candidate_additional_flags_vs_stock": 4,
+        "candidate_trigger": "exercised"
+      },
+      "injected": {
+        "exact_slash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_json": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        }
+      },
+      "M114": {
+        "B": 4,
+        "C": 0
+      },
+      "all_expected": false,
+      "wall_s": 21.404
+    },
+    {
+      "etalon": "63b-stage1",
+      "bank_practice_ready": false,
+      "native": {
+        "stock_removed_count": 40,
+        "stock_witness_survives": true,
+        "B": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "C": [
+          "docs/research/autoresearch-trainer-tower-id.md",
+          "docs/research/body-training-1619/README.md"
+        ],
+        "changed_B_to_C": 0,
+        "B_only": [],
+        "C_only": [],
+        "route_critical": [],
+        "candidate_additional_flags_vs_stock": 2,
+        "candidate_trigger": "exercised"
+      },
+      "injected": {
+        "exact_slash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_quoted_backslash": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "exact_json": {
+          "label": true,
+          "B": true,
+          "C": true,
+          "changed_B_to_C": 0,
+          "candidate_trigger": "exercised"
+        },
+        "sibling_dash": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_underscore": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_prefix": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        },
+        "sibling_dot": {
+          "label": false,
+          "B": true,
+          "C": false,
+          "changed_B_to_C": 1,
+          "candidate_trigger": "not_exercised"
+        }
+      },
+      "M114": {
+        "B": 4,
+        "C": 0
+      },
+      "all_expected": true,
+      "wall_s": 21.751
+    }
+  ],
+  "run_status": "finished",
+  "not_measured": [
+    "live escapes",
+    "artifact passage",
+    "FBX quality"
+  ],
+  "projected_total_s": 171.648,
+  "wall_s": 127.721,
+  "hypothesis": "refuted",
+  "stats": {
+    "63a-stage1": {
+      "B_median": 4,
+      "C_median": 0,
+      "gain_range": [
+        4,
+        4
+      ]
+    },
+    "63b-stage1": {
+      "B_median": 4,
+      "C_median": 0,
+      "gain_range": [
+        4,
+        4
+      ]
+    }
+  }
+}

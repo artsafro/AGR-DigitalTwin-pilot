@@ -9,3 +9,26 @@ The first failing step at `55b885c1b9ccdbe53df2c0d6ade9d4e5bd8ca364:docs/trainer
 - Inject these seven synthetic, independent one-file witnesses into each V0 tree after its native scan: slash-delimited exact, quoted mixed-case backslash exact, exact token in a JSON escaped path, `-notes` sibling, `_notes` sibling, `copy-` sibling, `.backup` sibling. First three must be flagged by both; last four must be flagged only by B. Literal snippets live in the sealed replay harness. No injection into delivered packages or stored run trees. These are labels for *pointer* classification only; accepted/rejected FBX calibration and live artifact passage remain not measured.
 - Primary metric M114 = labelled synthetic misclassifications per etalon (misses + collateral); require B = 4 and C = 0 in the median of three fresh paired reps and each pair, plus native parity and all triggers. This is a recommendation threshold, never an automatic KEEP. Per input and state record affected file classifications and actual relative names; untouched = `not_exercised`. No new candidates; three paired reps per etalon in interleaved order, max 360 s total checked between fixtures. After first fixture pair additionally estimate remaining series cost as 5x first pair, plus 20% headroom; stop inconclusive if that will not fit. Budget stop does not refute H114. Report wall time, status and hypothesis separately.
 - Replay from this branch: `uv run --frozen python docs/research/trainer_lineage_r114/measure.py --out tmp/r114-replay`. New local output only; immutable Git archive binds all clean inputs including bank and trainer, injected inputs are the committed script. Do not consult hidden model files, launch a practice agent, change the product, alter checkers or tolerances, edit deliveries/other branches, or count evidence from prior arms as fresh. C/B measure decisions only; a clean scan does not make host evidence inaccessible.
+
+## Result — H114 refuted under the frozen native-parity rule
+
+**Кратко (RU).** Матчер целых имён устранил все четыре ложных срабатывания на синтетических соседних папках, но оставил в 63A документ с указанием на ветку журнала тренажёра. Поэтому строгая гипотеза H114 **опровергнута**: замену правила не сохраняем. На 63B оба правила отметили одни и те же два файла; это статическая проверка другого эталона того же проекта, не пробный прогон. Снижение числа выходов к принятым материалам и прохождение `artifact` не измерялись.
+
+| Fixture | Native B → C flags, each rep | Native B/C changed files, each rep | Injected errors B → C (medians) | Paired gain range |
+| --- | ---: | ---: | ---: | ---: |
+| 63A tuning | 5 → 4 | 1 | 4 → 0 | [4, 4] |
+| 63B held out (static) | 2 → 2 | 0 | 4 → 0 | [4, 4] |
+
+Clean: the known README pointer survived V0 and was flagged by both rules in all six pairs; neither proposal flagged any route-critical survivor. The sole B-only file in 63A was `docs/research/autoresearch-trainer-gate1.md` (3/3), which names `origin/research/issue-1855-trainer-v0` and how to inspect its ledger. The prefixed branch name is not a sibling evidence folder; leaving it in view breaks parity. The old remote branch is no longer advertised; current external reachability via that reference was not tested. The zero delta on 63B is not a dormant rule: both rules flagged two native survivors in each pair.
+
+Injected: 18/18 exact-name positives flagged by both rules; 24/24 sibling-folder negatives flagged only by B. `candidate_trigger: not_exercised` for a negative means no candidate flag, not an unmeasured label. Unchanged native files outside the reported flag sets were not individual trigger controls. Not measured: live escape rate, `artifact` passage, accepted-versus-rejected FBX quality, independent project transfer. No trainer, bank or production changes; no PR.
+
+Run `tmp/r114-primary`: `finished`, exit 0, wall 127.721 s. First pair 24.521 s; projected total 171.648 s at the first budget gate. Replay on a slower host can stop with `budget_stop` (exit 3, inconclusive). Measured harness: `b39ad091504e2524bd711049733287209cd676b5`, SHA-256 `c37f01bafe5568ad071b24c20d268d35391271f42e9798bed035bbce6de922ec`. The published `docs/research/trainer_lineage_r114/receipt.json` (SHA-256 `9710b04026a953706f758cd0cf7566f378f5136f65c5e61ff4b892ab82681bdd`) lists remaining input hashes and all decisions. Replay needs no Drive data or DCC.
+
+Next: preserve explicit bank branch references as a separate class while retaining whole-name matching for evidence folders. Before a live `artifact` test, preflight runner isolation and admit a source-only untuned etalon; do not enable 63B by overriding `practice_ready`.
+
+Affected tests: `uv run --frozen pytest -q -p no:cacheprovider --basetemp=tmp/r114-pt tests/tools/test_trainer.py` — 73 passed at the measured harness head; pytest used its standard outside-repo temp fallback (one warning).
+
+Repo guards: `PYTEST_ADDOPTS=--basetemp=C:/x/t_35f40810-guards bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 563 passed, GREEN; measured harness and product unchanged by this report.
+
+Full suite: deferred to merge batch (rule 68).
