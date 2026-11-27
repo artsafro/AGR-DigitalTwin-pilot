@@ -1,0 +1,1550 @@
+{
+  "cases": [
+    {
+      "id": "2.1-2.25/full",
+      "kind": "full",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 89.0,
+      "C": {
+        "best": 90,
+        "score": 0.8659,
+        "margin": 0.485,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8659,
+          "180": -1.0,
+          "270": 0.3809
+        },
+        "offset_px": {
+          "0": null,
+          "90": 0,
+          "180": null,
+          "270": -1
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.0,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": 90,
+        "outcome": "correct",
+        "reason": "baseline_retained",
+        "offset_px": 0,
+        "score": 0.8659326603116233,
+        "second_offset_px": null,
+        "second_score": null
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.25@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 22.2,
+      "C": {
+        "best": 90,
+        "score": 0.7595,
+        "margin": 0.3428,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.7595,
+          "180": -1.0,
+          "270": 0.4168
+        },
+        "offset_px": {
+          "0": null,
+          "90": 588,
+          "180": null,
+          "270": 479
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3537,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 588,
+        "score": 0.7595339533553028,
+        "second_offset_px": 294,
+        "second_score": 0.7594369280564088
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.25@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 22.2,
+      "C": {
+        "best": 90,
+        "score": 0.6706,
+        "margin": 0.2677,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.6706,
+          "180": -1.0,
+          "270": 0.4028
+        },
+        "offset_px": {
+          "0": null,
+          "90": 40,
+          "180": null,
+          "270": 148
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3537,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 40,
+        "score": 0.6705728491519743,
+        "second_offset_px": 334,
+        "second_score": 0.6703166958815847
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.25@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 22.2,
+      "C": {
+        "best": 90,
+        "score": 0.8601,
+        "margin": 0.3799,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8601,
+          "180": -1.0,
+          "270": 0.4802
+        },
+        "offset_px": {
+          "0": null,
+          "90": 373,
+          "180": null,
+          "270": 187
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3537,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 373,
+        "score": 0.8601092910883558,
+        "second_offset_px": 79,
+        "second_score": 0.858618642913691
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.4@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 35.6,
+      "C": {
+        "best": 90,
+        "score": 0.8758,
+        "margin": 0.4117,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8758,
+          "180": -1.0,
+          "270": 0.4641
+        },
+        "offset_px": {
+          "0": null,
+          "90": 294,
+          "180": null,
+          "270": -1
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.6,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 294,
+        "score": 0.8758297199838332,
+        "second_offset_px": 0,
+        "second_score": 0.8669773201219174
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.4@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 35.6,
+      "C": {
+        "best": 90,
+        "score": 0.8694,
+        "margin": 0.3966,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8694,
+          "180": -1.0,
+          "270": 0.4728
+        },
+        "offset_px": {
+          "0": null,
+          "90": 267,
+          "180": null,
+          "270": 8
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.6,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": 90,
+        "outcome": "correct",
+        "reason": "baseline_retained",
+        "offset_px": 267,
+        "score": 0.8694242095007392,
+        "second_offset_px": 526,
+        "second_score": 0.6926973468274831
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.4@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 35.6,
+      "C": {
+        "best": 90,
+        "score": 0.8783,
+        "margin": 0.3975,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8783,
+          "180": -1.0,
+          "270": 0.4807
+        },
+        "offset_px": {
+          "0": null,
+          "90": 239,
+          "180": null,
+          "270": 274
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.6,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 239,
+        "score": 0.8782536991629597,
+        "second_offset_px": 533,
+        "second_score": 0.8732420520230312
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.6@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 53.4,
+      "C": {
+        "best": 90,
+        "score": 0.8648,
+        "margin": 0.4768,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8648,
+          "180": -1.0,
+          "270": 0.388
+        },
+        "offset_px": {
+          "0": null,
+          "90": 294,
+          "180": null,
+          "270": 186
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.4,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 294,
+        "score": 0.8647922664917617,
+        "second_offset_px": 0,
+        "second_score": 0.8629155555917595
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.6@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 53.4,
+      "C": {
+        "best": 90,
+        "score": 0.8703,
+        "margin": 0.3979,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8703,
+          "180": -1.0,
+          "270": 0.4724
+        },
+        "offset_px": {
+          "0": null,
+          "90": 178,
+          "180": null,
+          "270": 177
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.4,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": 90,
+        "outcome": "correct",
+        "reason": "baseline_retained",
+        "offset_px": 178,
+        "score": 0.8702783294438285,
+        "second_offset_px": null,
+        "second_score": null
+      }
+    },
+    {
+      "id": "2.1-2.25/crop0.6@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "width_m": 53.4,
+      "C": {
+        "best": 90,
+        "score": 0.8662,
+        "margin": 0.4425,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8662,
+          "180": -1.0,
+          "270": 0.4238
+        },
+        "offset_px": {
+          "0": null,
+          "90": 356,
+          "180": null,
+          "270": 169
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.4,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 356,
+        "score": 0.8662497252698279,
+        "second_offset_px": 61,
+        "second_score": 0.8639520014859523
+      }
+    },
+    {
+      "id": "2.1-2.25/mirror",
+      "kind": "mirror",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "changed_px": 236418,
+      "width_m": 89.0,
+      "C": {
+        "best": 90,
+        "score": 0.8671,
+        "margin": 0.4881,
+        "answer": 90,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.8671,
+          "180": -1.0,
+          "270": 0.3789
+        },
+        "offset_px": {
+          "0": null,
+          "90": -1,
+          "180": null,
+          "270": -1
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.0,
+        "outcome": "abstain"
+      },
+      "changed_profile_coordinates": 472,
+      "B": {
+        "answer": 90,
+        "outcome": "correct",
+        "reason": "baseline_retained",
+        "offset_px": -1,
+        "score": 0.8670524495075896,
+        "second_offset_px": null,
+        "second_score": null
+      }
+    },
+    {
+      "id": "А.2-Е.2/full",
+      "kind": "full",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 17.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0144
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.0671,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.25@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 4.4,
+      "C": {
+        "best": 270,
+        "score": 0.9917,
+        "margin": 0.5433,
+        "answer": 270,
+        "outcome": "wrong",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4484,
+          "180": -1.0,
+          "270": 0.9917
+        },
+        "offset_px": {
+          "0": null,
+          "90": 271,
+          "180": null,
+          "270": 99
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.7317,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 99,
+        "score": 0.9916780451366848,
+        "second_offset_px": 148,
+        "second_score": 0.9916780451366848
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.25@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 4.4,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.003
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.7317,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.25@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 4.4,
+      "C": {
+        "best": 270,
+        "score": 0.9925,
+        "margin": 0.5547,
+        "answer": 270,
+        "outcome": "wrong",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4379,
+          "180": -1.0,
+          "270": 0.9925
+        },
+        "offset_px": {
+          "0": null,
+          "90": 278,
+          "180": null,
+          "270": 109
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.7317,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 109,
+        "score": 0.9925280863404793,
+        "second_offset_px": 157,
+        "second_score": 0.9925280863404793
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.4@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 7.0,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0166
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.5732,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.4@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 7.0,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0002
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.5732,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.4@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 7.0,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0194
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.5732,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.6@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 10.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0111
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3598,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.6@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 10.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0002
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3598,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/crop0.6@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "width_m": 10.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0129
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3598,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "А.2-Е.2/mirror",
+      "kind": "mirror",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "changed_px": 42904,
+      "width_m": 17.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0144
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.0671,
+        "outcome": "abstain"
+      },
+      "changed_profile_coordinates": 10,
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/full",
+      "kind": "full",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 88.9,
+      "C": {
+        "best": 270,
+        "score": 0.4833,
+        "margin": 0.1721,
+        "answer": 270,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.3112,
+          "180": -1.0,
+          "270": 0.4833
+        },
+        "offset_px": {
+          "0": null,
+          "90": 0,
+          "180": null,
+          "270": 0
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.0011,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": 270,
+        "outcome": "correct",
+        "reason": "baseline_retained",
+        "offset_px": 0,
+        "score": 0.4833281690580215,
+        "second_offset_px": null,
+        "second_score": null
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.25@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 22.2,
+      "C": {
+        "best": 90,
+        "score": 0.4386,
+        "margin": 0.0441,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4386,
+          "180": -1.0,
+          "270": 0.3945
+        },
+        "offset_px": {
+          "0": null,
+          "90": 554,
+          "180": null,
+          "270": 550
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3537,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.25@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 22.2,
+      "C": {
+        "best": 90,
+        "score": 0.4689,
+        "margin": 0.0059,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4689,
+          "180": -1.0,
+          "270": 0.4631
+        },
+        "offset_px": {
+          "0": null,
+          "90": 5,
+          "180": null,
+          "270": 39
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3537,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.25@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 22.2,
+      "C": {
+        "best": 90,
+        "score": 0.4931,
+        "margin": 0.0955,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4931,
+          "180": -1.0,
+          "270": 0.3975
+        },
+        "offset_px": {
+          "0": null,
+          "90": 46,
+          "180": null,
+          "270": 530
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3537,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.4@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 35.6,
+      "C": {
+        "best": 270,
+        "score": 0.5263,
+        "margin": 0.0245,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.5018,
+          "180": -1.0,
+          "270": 0.5263
+        },
+        "offset_px": {
+          "0": null,
+          "90": 260,
+          "180": null,
+          "270": 0
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.6,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.4@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 35.6,
+      "C": {
+        "best": 90,
+        "score": 0.485,
+        "margin": 0.001,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.485,
+          "180": -1.0,
+          "270": 0.484
+        },
+        "offset_px": {
+          "0": null,
+          "90": 525,
+          "180": null,
+          "270": 266
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.6,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.4@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 35.6,
+      "C": {
+        "best": 270,
+        "score": 0.5216,
+        "margin": 0.01,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.5116,
+          "180": -1.0,
+          "270": 0.5216
+        },
+        "offset_px": {
+          "0": null,
+          "90": 499,
+          "180": null,
+          "270": 533
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.6,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.6@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 53.3,
+      "C": {
+        "best": 90,
+        "score": 0.4533,
+        "margin": 0.0008,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4533,
+          "180": -1.0,
+          "270": 0.4525
+        },
+        "offset_px": {
+          "0": null,
+          "90": 260,
+          "180": null,
+          "270": 0
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.4011,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.6@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 53.3,
+      "C": {
+        "best": 270,
+        "score": 0.5252,
+        "margin": 0.0104,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.5147,
+          "180": -1.0,
+          "270": 0.5252
+        },
+        "offset_px": {
+          "0": null,
+          "90": 143,
+          "180": null,
+          "270": 178
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.4011,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/crop0.6@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "width_m": 53.3,
+      "C": {
+        "best": 90,
+        "score": 0.4636,
+        "margin": 0.0142,
+        "answer": null,
+        "outcome": "abstain",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4636,
+          "180": -1.0,
+          "270": 0.4494
+        },
+        "offset_px": {
+          "0": null,
+          "90": 28,
+          "180": null,
+          "270": 61
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.4011,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "2.25-2.1/mirror",
+      "kind": "mirror",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "changed_px": 198142,
+      "width_m": 88.9,
+      "C": {
+        "best": 270,
+        "score": 0.4811,
+        "margin": 0.1703,
+        "answer": 270,
+        "outcome": "correct",
+        "scores": {
+          "0": -1.0,
+          "90": 0.3108,
+          "180": -1.0,
+          "270": 0.4811
+        },
+        "offset_px": {
+          "0": null,
+          "90": 0,
+          "180": null,
+          "270": 0
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 90,
+        "err": 0.0011,
+        "outcome": "abstain"
+      },
+      "changed_profile_coordinates": 462,
+      "B": {
+        "answer": 270,
+        "outcome": "correct",
+        "reason": "baseline_retained",
+        "offset_px": 0,
+        "score": 0.4810503932658354,
+        "second_offset_px": null,
+        "second_score": null
+      }
+    },
+    {
+      "id": "Е.2-А.2/full",
+      "kind": "full",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 17.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0144
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.0671,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.25@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 4.4,
+      "C": {
+        "best": 270,
+        "score": 0.9964,
+        "margin": 0.5514,
+        "answer": 270,
+        "outcome": "wrong",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4451,
+          "180": -1.0,
+          "270": 0.9964
+        },
+        "offset_px": {
+          "0": null,
+          "90": 271,
+          "180": null,
+          "270": 99
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.7317,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 99,
+        "score": 0.9964418039040568,
+        "second_offset_px": 148,
+        "second_score": 0.9964418039040568
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.25@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 4.4,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0009
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.7317,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.25@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 4.4,
+      "C": {
+        "best": 270,
+        "score": 0.9937,
+        "margin": 0.5445,
+        "answer": 270,
+        "outcome": "wrong",
+        "scores": {
+          "0": -1.0,
+          "90": 0.4492,
+          "180": -1.0,
+          "270": 0.9937
+        },
+        "offset_px": {
+          "0": null,
+          "90": 278,
+          "180": null,
+          "270": 109
+        }
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.7317,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "repeated_offset",
+        "offset_px": 109,
+        "score": 0.9936998389442768,
+        "second_offset_px": 157,
+        "second_score": 0.9936998389442768
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.4@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 7.0,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0182
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.5732,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.4@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 7.0,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0033
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.5732,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.4@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 7.0,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0169
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.5732,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.6@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 10.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0121
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3598,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.6@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 10.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0007
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3598,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/crop0.6@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "width_m": 10.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0113
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.3598,
+        "outcome": "abstain"
+      },
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    },
+    {
+      "id": "Е.2-А.2/mirror",
+      "kind": "mirror",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "changed_px": 47450,
+      "width_m": 17.5,
+      "C": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "low_window_evidence",
+        "density": 0.0144
+      },
+      "V0": {
+        "answer": null,
+        "best": 0,
+        "err": 0.0671,
+        "outcome": "abstain"
+      },
+      "changed_profile_coordinates": 48,
+      "B": {
+        "answer": null,
+        "outcome": "abstain",
+        "reason": "baseline_abstain"
+      }
+    }
+  ],
+  "summary": {
+    "long/full": {
+      "A": {
+        "correct": 2
+      },
+      "B": {
+        "correct": 2
+      }
+    },
+    "long/crop": {
+      "A": {
+        "correct": 9,
+        "abstain": 9
+      },
+      "B": {
+        "abstain": 16,
+        "correct": 2
+      }
+    },
+    "long/mirror": {
+      "A": {
+        "correct": 2
+      },
+      "B": {
+        "correct": 2
+      }
+    },
+    "short/full": {
+      "A": {
+        "abstain": 2
+      },
+      "B": {
+        "abstain": 2
+      }
+    },
+    "short/crop": {
+      "A": {
+        "wrong": 4,
+        "abstain": 14
+      },
+      "B": {
+        "abstain": 18
+      }
+    },
+    "short/mirror": {
+      "A": {
+        "abstain": 2
+      },
+      "B": {
+        "abstain": 2
+      }
+    }
+  },
+  "hashes": {
+    "pdf": "d49053aee737518bb7e4eda4407fe001b29d424f19d14b40c064cc64c856f454",
+    "model": "1cdb088043489334b3cc22865fdcc4eccae1ae2cf6919636681b1c21693a024a",
+    "footprint": "106c4a5f4d2ea66449c6595f216d517ac441f540ccf2dcfc843a91c538645019",
+    "blender": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"
+  },
+  "parity_cases": 44,
+  "status": "finished",
+  "hypothesis": "refuted",
+  "baseline_revision": "3716f5395667c17f8be8737313952aaa6285615c",
+  "measured_head": "6a668e7c309dfd74e843ce09f85313fd1528ca1d",
+  "pair_sha256": [
+    "f306ebcd538f6def92981ffa8c03de801773a5628d6a5f00e4161ba88dc4b711",
+    "f306ebcd538f6def92981ffa8c03de801773a5628d6a5f00e4161ba88dc4b711",
+    "f306ebcd538f6def92981ffa8c03de801773a5628d6a5f00e4161ba88dc4b711"
+  ],
+  "times_s": [
+    5.55,
+    4.676,
+    4.67
+  ],
+  "median_pair_s": 4.676,
+  "wall_s": 14.968
+}

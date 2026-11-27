@@ -1,5 +1,30 @@
 # Autoresearch #144 — offset ambiguity in elevation-to-face matching (OBSERVE)
 
+**Итог: гипотеза опровергнута.** Проверка повторного совпадения на той же грани убрала все четыре ошибочные привязки коротких обрезков, но одновременно убрала семь из девяти верных привязок длинных обрезков. Оба верных ответа на цельных видах сохранились. Как общий фильтр для OKS этот вариант не рекомендую.
+
+Для листа «вид ↔ грань» стоит отдельно хранить уверенность в выборе грани и уверенность в положении фрагмента на ней. Повторяющийся рисунок может мешать переносу отделки на конкретный участок, даже когда грань выбрана верно. Если положение неоднозначно, не переносить отделку; сопоставить кандидатов с ключевым планом/осями либо искать неповторяющийся ориентир в геометрии. Для внутреннего угла нужны физические участки стен с независимой разметкой, а не только направления камеры. Сокольники не открывались: #2001 открыт, STOP 04 не проверен.
+
+## Round log
+
+**Hypothesis:** `refuted` on the frozen cohort. **Run:** `finished`. **Handoff:** OBSERVE, review only; no product code or delivery changes.
+
+| Clean cases | A: R2 correct / wrong / abstain | B: same-face veto correct / wrong / abstain |
+| --- | ---: | ---: |
+| Long full | 2 / 0 / 0 | 2 / 0 / 0 |
+| Long synthetic crops | 9 / 0 / 9 | 2 / 0 / 16 |
+| Short full | 0 / 0 / 2 | 0 / 0 / 2 |
+| Short synthetic crops | 0 / 4 / 14 | 0 / 0 / 18 |
+| Total | 11 / 4 / 25 | 4 / 0 / 36 |
+
+- Answered accuracy: A 11/15 (73.3%), B 4/4 (100%); abstention 25/40 (62.5%) → 36/40 (90%). B did not correct any mistaken face. For all four original errors the distinct placement was 4.8–4.9 m away and tied to four NCC decimals. The same rule fired on seven correct synthetic crops, all from one long view, including the two 53.4 m crops. Those are exercised collateral witnesses, not independent buildings. No change to the preregistered threshold.
+- Injected reflections: all four exercised, with changed luma pixels / scorer coordinates of 236418/472, 42904/10, 198142/462 and 47450/48 in receipt order. A and B each retained both long-view answers and abstained on both ends; the veto did not change these verdicts. No claim of mirror/handedness detection.
+- Three fresh native pairs on `6a668e7c309dfd74e843ce09f85313fd1528ca1d`: 5.550 / 4.676 / 4.670 s, median 4.676 s, spread 0.880 s, total 14.968 s. Complete cases matched the R2 oracle 44/44 per pair. Pair outputs were byte-identical; the paired deltas were −4 wrong and −7 correct in all three pairs, spread zero. The 22.2 s reserve for pairs 2–3 fit the frozen budget.
+- Not measured: homologous full-height 2D registration, other buildings, actual untitled partial views/inner corners, finish transfer, and STOP 04. Replay is limited to the pilot host or equivalent access to the pinned native inputs. See [receipt.json](autoresearch-view-face-offset/receipt.json), SHA-256 `a3bb09a9ed08eac45b75a14c719e4ad43d0b6624b8a22faf11d63559725067a0`.
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --extra pdf-review pytest -q -p no:cacheprovider --basetemp tmp/ar144-pytest docs/research/autoresearch-view-face-offset/test_offset.py tests/test_blender_exit_code_guard.py tests/test_scratch_input_guard.py` — 83 passed (the repository redirected the temp path; 1 configuration warning). RED was missing `offset` before implementation. Pinned #141 legacy score tests in the staged upstream directory: `env -u PYTEST_ADDOPTS uv run --offline --extra pdf-review pytest -q -p no:cacheprovider tmp/ar144-series/pair-1/upstream/test_score.py` — 6 passed after staging the test blob. `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — 568 passed, GREEN.
+
+Full suite: deferred to merge batch (rule 68).
+
 ## Frozen contract
 
 H144: checking for a second nearly equal, spatially distinct alignment **on the winning face** suppresses all four confident wrong short crops from #141 R2 without losing either real long full-view answer or more than two of the nine correct synthetic long crops. A repeated motif should not identify a physical wall interval even if the cross-face margin is large. In-sample diagnostic, not independent generalization.
