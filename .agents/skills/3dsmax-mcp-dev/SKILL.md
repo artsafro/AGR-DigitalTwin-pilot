@@ -1,6 +1,6 @@
 ---
 name: 3dsmax-mcp-dev
-description: 'Inspect the configured 3ds Max MCP route and safely authorize versioned scene operations. Use when: «что открыто в 3ds Max?», «проверь MCP 3ds Max», «сохрани сцену новой версией».'
+description: "Use when checking 3ds Max, its MCP connection, or a versioned scene save. Inspect the configured route and gate scene operations."
 ---
 
 # 3ds Max MCP for project agents

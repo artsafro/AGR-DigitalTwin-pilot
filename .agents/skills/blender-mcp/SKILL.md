@@ -1,6 +1,6 @@
 ---
 name: blender-mcp
-description: 'Inspect the open Blender 5.1.2 or later scene through the project''s official Blender Lab MCP route and diagnose connection gaps. Use when: «что открыто в Блендере?», «посмотри объект в сцене Blender», «Blender MCP не отвечает».'
+description: "Use when inspecting an open Blender scene or troubleshooting Blender MCP. Use the official Blender Lab route for Blender 5.1.2 or later."
 ---
 
 # Blender MCP for project agents
@@ -60,7 +60,7 @@ The agent may start its own Blender 5.1.2+ work instance with Online Access and
 bridge on 9877 [D233]; never ask the user to toggle his bridge or preferences.
 
 1. Port 9877 must be free (step 0). If a Blender the agent did not start holds
-   it, that is the user's: inspect it read-only or use `blender -b` on a copy.
+   it, that is the user's: inspect it read-only or use the [shared Blender runner](../../../src/dt_ai/core/blender_runner.py) on a copy.
 2. Copy the scene to a new versioned path (`<name>_agent_v001.blend`) with
    `test ! -e <copy> && cp <source> <copy>`: an existing target or a copy path
    equal to the source stops with exit 1 (`cp -n` would skip silently with exit
@@ -113,7 +113,7 @@ coverage. Inspect fresh tool schemas before using other tools.
   for operators. Reidentify the loaded file before continuing after a failure.
 - Heavy passes (UDIM bake) block the Blender main thread and MCP calls time out;
   sleeping/polling does not help. Run them in a separate background Blender
-  (`blender -b`) on a versioned copy and read the result back (2026-11-05,
+  (the [shared Blender runner](../../../src/dt_ai/core/blender_runner.py)) on a versioned copy and read the result back (2026-11-05,
   «Garibaldi NPM to VPM conversion», G5; retro problem 3).
 
 Connection evidence and pending Codex reload are recorded in

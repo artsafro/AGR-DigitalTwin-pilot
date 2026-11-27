@@ -1,6 +1,6 @@
 ---
 name: model-ground
-description: 'Build a Ground surface (благоустройство) from the SPOZU DWG by the layered-cake method, one master for NPM and VPM. Use when: «сделай Ground по СПОЗУ», «слоёный пирог для Ground», «спроецируй Ground на рельеф».'
+description: "Use when building Ground from a SPOZU DWG or projecting it onto relief. Build one layered-cake master for NPM and VPM."
 ---
 
 # Model Ground from SPOZU
@@ -21,7 +21,7 @@ Every step carries two lines:
 - `Route:` the tool route that exists today ([CAPABILITIES](../../../docs/agents/CAPABILITIES.md),
   headless smoke table). DWG is read through the AutoCAD 2025 core console (`dcc_batch.py acad`, `DXFOUT`) plus
   `ezdxf` (`uv run --extra cad`); meshes through 3ds Max batch (`dcc_batch.py max`) or Blender headless
-  (`blender --background --factory-startup`). Live programs only through `max_exec.py` / `blender_exec.py`
+  (the [shared Blender runner](../../../src/dt_ai/core/blender_runner.py)). Live programs only through `max_exec.py` / `blender_exec.py`
   after a `--ping` (COORDINATION_RULES 22); before any DCC write apply the
   [DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization).
   `dcc_batch.py`, `max_exec.py` and `blender_exec.py` are not in this repo: they live in
@@ -41,7 +41,7 @@ coverings sheet (a layout) or work through model space; inventory layers, hatche
 and the plant/MAF specification tables. SPOZU geometry often sits inside block references: count entities
 through `INSERT` virtual entities, not model space alone.
 
-- Route: `dcc_batch.py acad --dwg <copy> --file dxfout.scr` (`DXFOUT`), then `ezdxf` inventory.
+- Route: `python "$USERPROFILE/hermes_kanban/scripts/dcc_batch.py" acad --dwg <copy> --file dxfout.scr` (`DXFOUT`), then `ezdxf` inventory.
 - Needs: headless; human when several layouts could be "the coverings sheet".
 - Done when: a layer inventory with entity counts per type (including nested ones) and the chosen sheet are recorded.
 
@@ -73,7 +73,7 @@ of overlaps. Subdivide each layer at 3 m and unwrap it as equal stacked polygons
 per covering. The 6 mm step sits inside the spacing band of [geometry.md](../../../docs/domain/geometry.md);
 for VPM cuts [D021] records about 4 m against this 3 m cell — when a VPM project needs one cell size, ask the user.
 
-- Route: 3ds Max batch (`dcc_batch.py max --file <job>.ms`; startup reports a `polyunwrapper_autoload.mse`
+- Route: 3ds Max batch (`python "$USERPROFILE/hermes_kanban/scripts/dcc_batch.py" max --file <job>.ms`; startup reports a `polyunwrapper_autoload.mse`
   error, read the log) or Blender headless (import DXF/curves, fill, subdivide, UV).
 - Needs: headless, no tool yet; live 3ds Max when the user wants the scene in Max.
 - Done when: one plane per covering, base plane covering the whole boundary, layer Z steps of 6 mm, every face inside its covering contour, UV tiling per layer, material per covering.
@@ -107,7 +107,7 @@ open ([C37](../../../docs/domain/conflicts.md)).
   `orig_verts` map; build the mesh with `from_pydata`. Not `bmesh.ops.triangulate`: it splits existing faces and
   gives 0 faces from bare points. 3ds Max `Terrain` (compound object over spline or mesh operands) is not
   verified for this input; not used here.
-- Needs: headless, no tool yet (T-GND-3 in the [roadmap](../../../docs/research/capability-roadmap.md)); human
+- Needs: headless, no tool yet (T-GND-3 in the [roadmap audit](../../../docs/research/roadmap-149-audit.md#every-original-ticket-candidate-7-and-repeated-11)); human
   for contradictory Z, too few or collinear points.
 - Done when: the surface passes through every source point (Z difference below 1 mm), it has at least one face, and the contradictory-Z list is empty or answered by the user.
 
