@@ -408,6 +408,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/agent-step-waste-1273 | [research/agent-step-waste-1273.md](../research/agent-step-waste-1273.md) |  |
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
+| research/autoresearch-flora-bleed-residual | [research/autoresearch-flora-bleed-residual.md](../research/autoresearch-flora-bleed-residual.md) |  |
+| research/autoresearch-flora-bleed-residual-harness/receipt-r133-json | [research/autoresearch-flora-bleed-residual-harness/receipt_r133.json](../research/autoresearch-flora-bleed-residual-harness/receipt_r133.json) |  |
+| research/autoresearch-flora-bleed-residual-harness/run-py | [research/autoresearch-flora-bleed-residual-harness/run.py](../research/autoresearch-flora-bleed-residual-harness/run.py) |  |
+| research/autoresearch-flora-bleed-residual-harness/score-py | [research/autoresearch-flora-bleed-residual-harness/score.py](../research/autoresearch-flora-bleed-residual-harness/score.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
 | research/autoresearch-trainer-artifact-first | [research/autoresearch-trainer-artifact-first.md](../research/autoresearch-trainer-artifact-first.md) |  |
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
