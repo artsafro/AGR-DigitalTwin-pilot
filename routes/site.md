@@ -15,6 +15,24 @@ Run `uv run agr --help` first. Choose Blender or Max per step and record why [D2
 version, document, units and ownership before DCC work. Read the area and skill for that step
 ([stage index](../docs/agents/SKELETONS-stages.md)). Write new versions; leave sources and library originals intact.
 
+### Site intake checklist
+
+Record these site facts in the existing job contract and [intake](../docs/agents/task-intake.md) (`passport.json` /
+Gate 1 PartsList — not a new schema or approval policy), citing the source file/sheet/layer or confirmed user answer
+for each item:
+
+- **Boundary and stage footprint intent:** record source refs for the site/stage boundary and each footprint — keep as
+  a **hole** or **cap** it; if capped, record the confirmed covering ID (never a general default).
+- **Cover groups and IDs:** record source refs for which cover groups stay **distinct** vs **merged**, with explicit
+  source-to-working (or old-to-new) ID mappings (never a general default).
+- **Sport markings:** record source refs for named markings layer(s) and confirmed width, glyph treatment and export
+  role, or record markings explicitly as **out of scope**.
+- **Copied-DXF schedule inventory:** include **nested blocks** and **off-plot tables** (outside the plot boundary) in
+  the stage 1 schedule inventory by citing their block/table source, not as site geometry.
+- **Unresolved items:** if a required item has no source reference or confirmed answer, record it as **unresolved** and
+  stop **only the dependent step** per current intake; never infer a cap, cover merge, width, glyph treatment, or export
+  role.
+
 ## Stages: owner, boundary and evidence
 
 **D293 order:** Flat Ground (hatches → IDs → seams/insets → textures and UV) → relief projection → texture fix
@@ -24,9 +42,9 @@ handoff, the help command identifies the build or evidence owner; it does not au
 
 | # | Stage | Owner command and boundary | Rule | Evidence to retain |
 |---|---|---|---|---|
-| 1 | Sources and Gate 1 | `uv run agr inspect --help`; `uv run python tools/source/inspect_ground_dxf.py --help` inventories a copied DXF, not the original DWG or its intended semantics. | [D186] [D293]: SPOZU coverings, MAF and plant schedules, relief and source authority. | Source/copy SHA-256, units, sheet and hatch inventory, confirmed PartsList hash. |
+| 1 | Sources and Gate 1 | `uv run agr inspect --help`; `uv run python tools/source/inspect_ground_dxf.py --help` inventories a copied DXF, not the original DWG or its intended semantics. | [D186] [D293]: SPOZU coverings, MAF and plant schedules, relief and source authority. | Source/copy SHA-256, units, sheet/hatch and copied-DXF schedule inventory (citing nested blocks and off-plot tables separately from site geometry), [Site intake checklist](#site-intake-checklist) source refs or unresolved items, confirmed PartsList hash. |
 | 2 | Boundary and project zero | `uv run agr zero --help`; the verifier checks the written OBJ against relief and a supplied zero. It does not determine either boundary or zero. | [D279] [D293]: boundary and ±0.000 from the project, or ask. | Boundary and zero citations, separate ground mark and height system, exported Z check. |
-| 3 | Flat Ground | `uv run agr ground site --help`; follow the [Ground sheet](../docs/domain/areas/ground-surface.md) and [R5](../docs/procedure/node-r5-ground.md). The builder writes triangulated OBJ, not a working quad FBX; v015 replays Vatutino only. | [D293] [D312]: hatches → working IDs → seams/insets, quads where possible in the working master. | Flat source overlay, covering and ID inventory, contours/holes, topology before triangulation. |
+| 3 | Flat Ground | `uv run agr ground site --help`; follow the [Ground sheet](../docs/domain/areas/ground-surface.md) and [R5](../docs/procedure/node-r5-ground.md). The builder writes triangulated OBJ, not a working quad FBX; v015 replays Vatutino only. | [D293] [D312]: hatches → working IDs → seams/insets, quads where possible in the working master. | Flat source overlay, covering and ID inventory via [Site intake checklist](#site-intake-checklist) (retained holes or confirmed cap covering IDs, source-to-working / old-to-new cover ID mappings, named marking layers or out-of-scope status), contours/holes, topology before triangulation. |
 | 4 | Flat textures and UV | `uv run agr ground site --help` assigns tile UVs by used covers before projection; delivery maps are a separate check. | [D293] [D399]: new Site/Ground VPM UDIMs run consecutively from 1001 with no gaps, independent of working material IDs (#1898). | Verify tile-to-material mapping against export; keep `ground-udim.json` and `ground-udim.md` beside the archive, outside the ZIP. Leave delivered packages unchanged. |
 | 5 | Relief, texture fix and skirt | `uv run agr ground site --help`; local level differences and steep strips may need separate DCC work. | [D293] [D251]: project in Z, preserve XY and IDs, fix textures, then skirt each outer perimeter ≥1 m down; exclude inner holes. | Relief overlay, projection misses, levels and UV seams; `ground-report.json` and exported skirt drop by outer edge. |
 | 6 | Ground UCX (VPM only) | `uv run agr ucx --help`; `agr ucx MODEL OUT Ground` needs FBX/Blend, not Ground OBJ. That handoff is not wired. | [D330] [D298] [D098] [D134]: surface hulls only, no MAF/Flora UCX; gaps 2 mm–1 cm and Ground-to-UCX distance ≤10 cm. | Fresh hull readback, coverage, convexity/closure, gaps, distance, triangle budget and V010 report. |
