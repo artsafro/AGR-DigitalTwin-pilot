@@ -29,6 +29,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -450,6 +451,47 @@ def origin_main_head():
                           check=True).stdout.strip()
 
 
+def _windows_profile():
+    if os.name != "nt":
+        return None
+    import ctypes
+
+    # Codex resolves the Windows profile through the shell API, not USERPROFILE.
+    profile = ctypes.create_unicode_buffer(260)
+    result = ctypes.windll.shell32.SHGetFolderPathW(None, 0x28, None, 0, profile)  # CSIDL_PROFILE
+    if result != 0 or not profile.value:
+        raise TrainerError(f"cannot locate Windows profile for skill isolation (HRESULT {result})")
+    return Path(profile.value)
+
+
+def _windows_skill_config():
+    profile = _windows_profile()
+    if profile is None:
+        return []
+    root = profile / ".agents" / "skills"
+    # Codex follows directory aliases and matches canonical SKILL.md paths. Visit each
+    # physical directory once, including linked skill directories, without reading skill text.
+    todo, seen, paths = [root], set(), set()
+    while todo:
+        directory = todo.pop().resolve()
+        if directory in seen:
+            continue
+        seen.add(directory)
+        try:
+            for child in directory.iterdir():
+                if child.is_dir():
+                    todo.append(child)
+                elif child.name == "SKILL.md" and child.is_file():
+                    paths.add(child.resolve().as_posix())
+        except FileNotFoundError:
+            if directory != root.resolve():
+                raise
+    if not paths:
+        return []
+    entries = ",".join(f"{{path={json.dumps(path, ensure_ascii=False)},enabled=false}}" for path in sorted(paths))
+    return ["-c", f"skills.config=[{entries}]"]
+
+
 def cmd_run(a, bank):
     e = etalon(bank, a.etalon)
     if not e["practice_ready"]:
@@ -481,15 +523,29 @@ def cmd_run(a, bank):
     (out / "prompt.txt").write_text(text, encoding="utf-8")
     cmd = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--disable", "memories", "-m",
            LANES[a.lane]["model"], "-c", "model_reasoning_effort=high", "--dangerously-bypass-approvals-and-sandbox",
-           "--skip-git-repo-check", "-C", str(wt), "--add-dir", str(out), "--json", "-o", str(out / "last.txt"), "-"]
+           "--skip-git-repo-check", "-C", str(wt), "--add-dir", str(out), "--json", "-o", str(out / "last.txt"),
+           *_windows_skill_config(), "-"]
     t0 = time.time()
-    with open(out / "events.jsonl", "w", encoding="utf-8") as ev, open(out / "stderr.txt", "w", encoding="utf-8") as er:
-        try:
-            p = subprocess.run(cmd if os.name != "nt" else [shutil.which("codex") or "codex", *cmd[1:]],
-                               input=text, stdout=ev, stderr=er, text=True, encoding="utf-8", timeout=a.timeout_s)
-            rc = p.returncode
-        except subprocess.TimeoutExpired:
-            rc = "timeout"
+    # --ignore-user-config does not suppress home skill discovery. Redirect both POSIX and
+    # Windows homes for the child only, leaving the practice repository's own skills in place.
+    auth = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex") / "auth.json"
+    with tempfile.TemporaryDirectory(prefix="trainer-codex-") as private:
+        home = Path(private).resolve()
+        codex_home = home / ".codex"
+        codex_home.mkdir()
+        if auth.is_file():
+            # Preserve file-backed login, not user config, skills or session data. Keep it out of the run evidence.
+            shutil.copyfile(auth, codex_home / "auth.json")
+        env = {**os.environ, "HOME": str(home), "USERPROFILE": str(home), "CODEX_HOME": str(codex_home)}
+        with (out / "events.jsonl").open("w", encoding="utf-8") as ev, \
+                (out / "stderr.txt").open("w", encoding="utf-8") as er:
+            try:
+                p = subprocess.run(cmd if os.name != "nt" else [shutil.which("codex") or "codex", *cmd[1:]],
+                                   input=text, stdout=ev, stderr=er, text=True, encoding="utf-8",
+                                   timeout=a.timeout_s, env=env)
+                rc = p.returncode
+            except subprocess.TimeoutExpired:
+                rc = "timeout"
     wall = round(time.time() - t0, 1)
     tok, cmds, msgs = parse_events((out / "events.jsonl").read_text(encoding="utf-8", errors="replace").splitlines())
     scen = json.loads((ROOT / "docs/agents/skeletons.json").read_text(encoding="utf-8"))["cells"].get(

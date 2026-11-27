@@ -72,6 +72,15 @@ uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out
 - Правило held-out (#1803): изменение, сделанное по провалу на `tuning`-эталоне, перепроверяется на `held_out`-эталоне.
   Сейчас `tuning`: kpp1-v004, g22-k2-stage1, 63a-stage1. `held_out`: 63b-stage1 (полный) и остальные.
 
+## Codex skill discovery
+
+Each `run` (including each A/B arm) starts Codex with a fresh child-only home and `CODEX_HOME`.
+The launcher copies only `auth.json`, if present, into the temporary Codex home and removes the home
+after the child exits or times out. The original file is not modified. On Windows, Codex also discovers
+skills from the OS profile even when `USERPROFILE` is redirected. The launcher explicitly disables
+the skills under that profile's `.agents/skills` by path. The practice repository's `.agents/skills`
+remain enabled. This controls automatic skill availability; it is not a filesystem access boundary.
+
 ## Windows `sources-dwg`
 
 Use the in-sandbox route [D389] for DWG inputs. This procedure assumes a cold
