@@ -1,0 +1,29 @@
+{
+  "schema": "view-face-raster-fixture/1",
+  "card": "t_c97df96b (#141)",
+  "note": "Frozen before scoring. GT from the PDF plan p36 (vector cut walls) registered to the Revit wall footprint: rot180 0.9097 > mirror_y 0.9018 >> identity 0.6902 / mirror_x 0.6853 (overlap of model wall cells, 0.2 m grid; gt/plan_reg.py). Revit plan sheets are never mirrored -> rot180. Long-face GT is robust (both top/bottom flips agree); short-end GT relies on rot180 vs mirror_y (margin 0.008) and on the Revit no-mirror convention: reported separately. Elevation titles (page text) are used ONLY to label GT; the method reads raster images + level marks only.",
+  "inputs": {
+    "pdf": {"path": "C:/Users/artsafro/Desktop/!3D viz/Alex_World/АГР_зона 2.1 — 1.pdf",
+            "sha256": "d49053aee737518bb7e4eda4407fe001b29d424f19d14b40c064cc64c856f454"},
+    "model": {"path": "C:/Users/artsafro/.AGR_Project/jobs/OBR22-K02/outputs/npm_v012/OBR22_K02_v012_NPM_ATLAS.blend",
+              "sha256": "1cdb088043489334b3cc22865fdcc4eccae1ae2cf6919636681b1c21693a024a",
+              "note": "accepted NPM v012 (jobs/OBR22-K02/APPROVED_VERSIONS.json); typical floor with 45 WINDOW_* objects"},
+    "footprint": {"path": "C:/Users/artsafro/.AGR_Project/jobs/OBR22-K02/outputs/footprint-z1.4.geojson",
+                  "sha256": "106c4a5f4d2ea66449c6595f216d517ac441f540ccf2dcfc843a91c538645019"}
+  },
+  "blender": {"path": "C:/Program Files/Blender Foundation/Blender 4.4/blender.exe",
+              "sha256": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"},
+  "faces_az": [0, 90, 180, 270],
+  "clip_pt": [0, 40, 1190, 580],
+  "pages": [
+    {"index": 13, "views": [{"id": "2.1-2.25", "gt_az": 90}, {"id": "А.2-Е.2", "gt_az": 180}]},
+    {"index": 14, "views": [{"id": "2.25-2.1", "gt_az": 270}, {"id": "Е.2-А.2", "gt_az": 0}]}
+  ],
+  "long_views": ["2.1-2.25", "2.25-2.1"],
+  "short_views": ["А.2-Е.2", "Е.2-А.2"],
+  "partials": {"synthetic": true, "fractions": [0.25, 0.4, 0.6], "positions": [0.0, 0.5, 1.0]},
+  "variants": {
+    "V0": "#139 width-only baseline (abstain if two faces within 3 % or error > 15 %)",
+    "C": "window-column rhythm: raster dark-pixel (luma<0.45) column fraction over facade body rows vs model WINDOW_* first-hit column fraction, gaussian s=1.5 px, sliding NCC, slack 0.6 m; answer if best>=0.30 and margin>=0.10"
+  }
+}
