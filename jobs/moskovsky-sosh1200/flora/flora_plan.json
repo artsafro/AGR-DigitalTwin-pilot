@@ -1,0 +1,277 @@
+{
+ "schema": "agr.job.flora_plan/1",
+ "job": "moskovsky-sosh1200",
+ "date": "2026-11-26",
+ "library": {
+  "a101_scene": "G:/Мой диск/AGR-assets/flora/a101/FLORIO_221.max",
+  "sha256": "c9edd5f318e6e2bcbd18170040b0f6faf31d870c61d0ac9363a281518ca2676b",
+  "dump": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/flora/inspect/a101_dump.json",
+  "textures": "G:/Мой диск/AGR-assets/flora/a101/TextureFlora/<object>.png (2048 RGBA)",
+  "catalogue_v003": "library/flora/catalogue.json — v001 maps of every species 'missing' (maps.json), not usable"
+ },
+ "positions": [
+  {
+   "pos": 1,
+   "ledger_ru": "Пихта сибирская",
+   "latin": "Abies sibirica",
+   "kind": "point",
+   "match": "none",
+   "status": "place",
+   "a101_object": "elka_t1_h400_low",
+   "note": "A101 has no Abies (no 'pihta'); catalogue: no Abies mesh (Abies koreana is a shared-mesh gap). Recommended stand-in: A101 elka_t1_h400_low (conical conifer, genus Picea).",
+   "a101_dims_m_wdh": [
+    1.29,
+    1.33,
+    3.93
+   ],
+   "a101_tris": 48,
+   "count_in_gpzu": 1,
+   "count_outside": 0,
+   "tris_estimate": 48,
+   "material_id": 128,
+   "match_decision": "user answer 2026-11-26 (relayed by the coordinator session): substitute approved"
+  },
+  {
+   "pos": 2,
+   "ledger_ru": "Клён остролистный",
+   "latin": "Acer platanoides",
+   "kind": "point",
+   "match": "genus",
+   "status": "place",
+   "a101_object": "klen_t3_h350_low",
+   "note": "A101 klen_t1..t8 are genus-level maples, red/purple cultivars (t7 = 'Royal Red', README: not a replacement for generic Acer platanoides); t3 is the only yellow-green crown. Catalogue Acer_platanoides_NPM (10 tris) has its v001 maps missing.",
+   "a101_dims_m_wdh": [
+    2.95,
+    2.56,
+    3.4
+   ],
+   "a101_tris": 571,
+   "count_in_gpzu": 37,
+   "count_outside": 0,
+   "tris_estimate": 21127,
+   "material_id": 107,
+   "match_decision": "user answer 2026-11-26 (relayed by the coordinator session): substitute approved"
+  },
+  {
+   "pos": 3,
+   "ledger_ru": "Туя западная 'Брабант' (blocks «Сосна обыкн»)",
+   "latin": "Thuja occidentalis 'Brabant'",
+   "kind": "point",
+   "match": "none",
+   "status": "place",
+   "a101_object": "mojevelnik_t2_h400_low",
+   "note": "A101 has no Thuja; catalogue Thuja_occidentalis_NPM (8 tris) has its v001 maps missing. Recommended stand-in: A101 mojevelnik_t2_h400_low (columnar conifer 1.3x3.9 m, genus Juniperus). 6 points outside ГПЗУ dropped.",
+   "a101_dims_m_wdh": [
+    1.29,
+    1.33,
+    3.93
+   ],
+   "a101_tris": 48,
+   "count_in_gpzu": 19,
+   "count_outside": 6,
+   "tris_estimate": 912,
+   "material_id": 119,
+   "match_decision": "user answer 2026-11-26 (relayed by the coordinator session): substitute approved"
+  },
+  {
+   "pos": 4,
+   "ledger_ru": "Клён Гиннала",
+   "latin": "Acer tataricum subsp. ginnala",
+   "kind": "point",
+   "match": "exact species",
+   "status": "place",
+   "a101_object": "klen_ginnala_t1_h150_low",
+   "material_id": 106,
+   "note": "A101 klen_ginnala_t1/t2 (unified library: exact, catalogue ID 106); t1 used; 3 points outside ГПЗУ dropped (ledger 15, drawing 12 inside).",
+   "a101_dims_m_wdh": [
+    1.63,
+    1.62,
+    1.63
+   ],
+   "a101_tris": 4,
+   "count_in_gpzu": 12,
+   "count_outside": 3,
+   "tris_estimate": 48
+  },
+  {
+   "pos": 5,
+   "ledger_ru": "Сирень обыкновенная 'Красавица Москвы'",
+   "latin": "Syringa vulgaris 'Krasavitsa Moskvy'",
+   "kind": "point",
+   "match": "genus",
+   "status": "place",
+   "a101_object": "siren_t1_h160_low",
+   "note": "A101 siren_t1 (pale-pink panicles) / siren_t2 (lilac) are genus-level; cultivar not stated. Recommended: siren_t1 (closest to the white-pink 'Krasavitsa Moskvy'). Catalogue 111 (1266 tris, maps missing) not usable.",
+   "a101_dims_m_wdh": [
+    2.05,
+    2.34,
+    1.74
+   ],
+   "a101_tris": 4,
+   "count_in_gpzu": 59,
+   "count_outside": 0,
+   "tris_estimate": 236,
+   "material_id": 111,
+   "match_decision": "user answer 2026-11-26 (relayed by the coordinator session): substitute approved"
+  },
+  {
+   "pos": 6,
+   "ledger_ru": "Дёрен белый 'Элегантиссима'",
+   "latin": "Cornus alba 'Elegantissima'",
+   "kind": "bed",
+   "match": "genus",
+   "status": "place",
+   "a101_object": "deren_t1_h120_low",
+   "rate_per_m2": 3,
+   "note": "A101 deren_t1..t6 genus-level, none variegated (white-edged leaves); deren_t1 green with red stems is closest. Ledger gives no rate: 3 pcs/m2 proposed.",
+   "a101_dims_m_wdh": [
+    1.32,
+    1.39,
+    1.33
+   ],
+   "a101_tris": 4,
+   "area_in_gpzu_m2": 92.16,
+   "count_in_gpzu": 276,
+   "tris_estimate": 1104,
+   "material_id": 240,
+   "match_decision": "user answer 2026-11-26 (relayed by the coordinator session): substitute approved"
+  },
+  {
+   "pos": 7,
+   "ledger_ru": "Сосна горная 'Мугус'",
+   "latin": "Pinus mugo 'Mughus'",
+   "kind": "bed",
+   "match": "exact species",
+   "status": "place",
+   "a101_object": "sosna_gornaya_t1_h60_low",
+   "rate_per_m2": 6,
+   "material_id": 224,
+   "note": "A101 sosna_gornaya_t1_h60 (unified library: exact, ID 224); dwarf 0.6 m fits 'Mughus'. Ledger rate 6/m2.",
+   "a101_dims_m_wdh": [
+    1.12,
+    1.13,
+    0.64
+   ],
+   "a101_tris": 4,
+   "area_in_gpzu_m2": 66.37,
+   "count_in_gpzu": 398,
+   "tris_estimate": 1592
+  },
+  {
+   "pos": 8,
+   "ledger_ru": "Пузыреплодник калинолистный 'Дартс Голд' (живая изгородь)",
+   "latin": "Physocarpus opulifolius 'Darts Gold'",
+   "kind": "bed",
+   "match": "exact species, colour match",
+   "status": "place",
+   "a101_object": "puzyreplodnik_kalinolistnyj_t1_h150_low",
+   "rate_per_m2": 5,
+   "material_id": 301,
+   "note": "A101 puzyreplodnik_kalinolistnyj_t1 = yellow foliage form of the exact species (Darts Gold is yellow-leaved). Hedge = the 253 Стефанандра-layer hatches (1035 m2 total = ledger 1036; 860 m2 inside ГПЗУ); ledger rate 5/m2; ID 301 (hedge range, job-local).",
+   "a101_dims_m_wdh": [
+    1.89,
+    1.89,
+    1.55
+   ],
+   "a101_tris": 4,
+   "area_in_gpzu_m2": 859.6,
+   "count_in_gpzu": 4298,
+   "tris_estimate": 17192
+  },
+  {
+   "pos": 9,
+   "ledger_ru": "Астильба Арендса 'Айс Глория'",
+   "latin": "Astilbe × arendsii 'Gloria'(?)",
+   "kind": "bed",
+   "match": "none",
+   "status": "waiting_user",
+   "a101_object": "derbennik_ivolistniy_t1_h80_low",
+   "rate_per_m2": 10,
+   "note": "No Astilbe in A101 or catalogue. Stand-in candidate: A101 derbennik_ivolistniy_t1_h80 (Lythrum, pink spikes). Cultivar name in ledger unclear ('айс Глория'). NOT DONE: user 2026-11-26 — do not place; waiting for the user's decision how to show it.",
+   "a101_dims_m_wdh": [
+    0.63,
+    0.67,
+    0.84
+   ],
+   "a101_tris": 4,
+   "area_in_gpzu_m2": 22.99,
+   "count_in_gpzu": 230,
+   "tris_estimate": 0
+  },
+  {
+   "pos": 10,
+   "ledger_ru": "Вейник остроцветковый 'Карл Форстер'",
+   "latin": "Calamagrostis × acutiflora 'Karl Foerster'",
+   "kind": "bed",
+   "match": "genus-level grass",
+   "status": "place",
+   "a101_object": "zlaki_t1_h150_low",
+   "rate_per_m2": 6,
+   "note": "Catalogue ID 409 is exact but its v001 maps are missing; A101 zlaki_t1_h150 = generic plumed grass (looks like Karl Foerster). Ledger gives no rate: 6/m2 proposed.",
+   "a101_dims_m_wdh": [
+    1.16,
+    1.25,
+    1.54
+   ],
+   "a101_tris": 4,
+   "area_in_gpzu_m2": 98.18,
+   "count_in_gpzu": 589,
+   "tris_estimate": 2356,
+   "material_id": 409,
+   "match_decision": "user answer 2026-11-26 (relayed by the coordinator session): substitute approved"
+  },
+  {
+   "pos": 11,
+   "ledger_ru": "Хоста гибридная 'Стилет'",
+   "latin": "Hosta 'Stiletto'",
+   "kind": "bed",
+   "match": "none",
+   "status": "waiting_user",
+   "a101_object": "osoka_palmolistnaya_t1_h80_low",
+   "rate_per_m2": 10,
+   "note": "No Hosta in A101 or catalogue. Stand-in candidate: A101 osoka_palmolistnaya_t1_h80 (Carex) at reduced height, or a new star species via the texture route. NOT DONE: user 2026-11-26 — do not place; waiting for the user's decision how to show it.",
+   "a101_dims_m_wdh": [
+    0.63,
+    0.67,
+    0.84
+   ],
+   "a101_tris": 4,
+   "area_in_gpzu_m2": 127.35,
+   "count_in_gpzu": 1274,
+   "tris_estimate": 0
+  }
+ ],
+ "lawn": [
+  {
+   "pos": 12,
+   "ledger_ru": "Газон посевной",
+   "verdict": "Ground texture (FLO-01)"
+  },
+  {
+   "pos": 13,
+   "ledger_ru": "Газон рулонный",
+   "verdict": "Ground texture (FLO-01)"
+  }
+ ],
+ "tris_total_estimate": 44615,
+ "budget_flora": 70000,
+ "atlas": {
+  "rule": "one 2048 diffuse + opacity [FLO-08]",
+  "tool": "tools/library/flora_atlas_from_scene.py (#217, in tree)",
+  "blocker": null
+ },
+ "version": "v002",
+ "scale_rule": {
+  "scale": 1.0,
+  "jitter": 0.0,
+  "rotation": "random about Z (seeded)",
+  "deviation": "user 2026-11-26: deviation from D100 for this job — every plant at exact library size (scale 1.0), no ±10 % jitter, so textures do not drift"
+ },
+ "maps_approval": {
+  "by": "user (Artem)",
+  "date": "2026-11-26",
+  "scope": "A101 TextureFlora *_low.png of the 9 objects in this plan, for this job's Flora atlas",
+  "source": "user answer relayed by the coordinator session"
+ },
+ "outside_gpzu": "not placed (user 2026-11-26)"
+}

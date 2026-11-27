@@ -1,0 +1,113 @@
+{
+ "schema": 1,
+ "project_id": "moskovsky-sosh1200",
+ "title": "Школа на 1200 мест, г. Московский — НПМ благоустройство (Ground + МАФ + Флора)",
+ "address": "г. Москва, г. Московский, мкр 1, з/у 47А",
+ "created": "2026-11-26T00:00:00+03:00",
+ "updated": "2026-11-27T01:30:00+03:00",
+ "source": {
+  "path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/33_п.Московский Школа 1200_13.11.26.dwg",
+  "sha256": "ed87f7f9e49f257c2914e0d0dfef3bf679447869509d4fad59d94de87e501b9d",
+  "level": "C",
+  "class": "spozu-dwg",
+  "route": "cell ground-npm, trail routes/site.md: agr ground site (Ground), MAF NPM-light + 512 atlas, Flora A101 + 2048 atlas, historical job-local site assembly (see STATE.md evidence), agr package-npm",
+  "note": "SPOZU DWG (МСК-77, m) -> DXF G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/intake/school.dxf; plus rubber DWG and the PDF (sources.json). Level C: the A/B/C rule (A shell, B panelised) is OKS-only, a SPOZU drawing is unclassified."
+ },
+ "normalization": {
+  "units": "m",
+  "source_units": "m",
+  "up_axis": "Z",
+  "source_up_axis": "Z",
+  "scale": 1.0,
+  "origin_m": [
+   -9840.0,
+   -7150.0,
+   0.0
+  ]
+ },
+ "stages": [
+  {
+   "id": 0,
+   "status": "done"
+  },
+  {
+   "id": 1,
+   "status": "todo"
+  },
+  {
+   "id": 2,
+   "status": "todo"
+  },
+  {
+   "id": 3,
+   "status": "todo"
+  },
+  {
+   "id": 4,
+   "status": "todo"
+  },
+  {
+   "id": 5,
+   "status": "work",
+   "blockers": [
+    "Ground v003 texture acceptance open"
+   ]
+  },
+  {
+   "id": 6,
+   "status": "todo"
+  },
+  {
+   "id": 7,
+   "status": "work"
+  },
+  {
+   "id": 8,
+   "status": "todo"
+  },
+  {
+   "id": 9,
+   "status": "blocked",
+   "blockers": [
+    "Address token: regulated Address (reg 1.3.6, building/postal address or cadastral number) not supplied; package uses the provisional working token MoskovskySosh1200",
+    "Territorial code: placeholder 0000 (as D235); the 4-digit code comes from SINTEZ",
+    "Absolute Baltic mark of +-0.000 not in the DWG: delivery Z is relative (0 = +-0.000), reg 2.8.2 / 4.1.4 (110-250 m) open",
+    "No OKS FBX in the NPM ZIP: V001 FBX count fail, package-npm status incomplete (diagnostic archive)",
+    "dt qa xview (D152) fail: GroundEl 13 708 face pairs / 1 339 vertex pairs, Ground 32/12 (markings vs skirt), Flora 54/2",
+    "validate_package V003 skirt 0.018 m (markings components merged into SM_..._Ground), V004 topology/duplicates/smoothing/flipped 220 MAF faces, V006 padding not_run",
+    "7 of 10 Ground diffuse PNG > 3 MiB (reg 2.5.3)",
+    "Ground v003 texture acceptance open; visual acceptance of the package not done; SINTEZ AGR Checker after visual acceptance",
+    "Known open items: fence panels 27/28 without opacity (atlas without alpha, box UV); flags plain; astilbe/hosta not done; 74 marking glyphs not built; long jump outside GPZU",
+    "UKEP signature (reg 2.1.1) not in scope"
+   ]
+  },
+  {
+   "id": "agent",
+   "status": "work"
+  }
+ ],
+ "parts": [],
+ "openings": [],
+ "materials": [],
+ "journal": {
+  "path": "journal.jsonl",
+  "lines": 0,
+  "tail": []
+ },
+ "agent_requests": [],
+ "questions": [
+  "Address token for the delivery names (reg 1.3.6): building/postal address or cadastral number of з/у 47А? Provisional: MoskovskySosh1200.",
+  "4-digit territorial code (reg 2.10.3.1): from SINTEZ on upload (D235 pattern), placeholder 0000.",
+  "Absolute Baltic mark of ±0.000 of the school (not in the DWG): needed for the NPM Z (reg 2.8.2, 4.1.4).",
+  "OKS in this NPM ZIP: delivered by another job, or the site ZIP goes alone with V001 recorded fail (as D235)?",
+  "Markings merged into SM_..._Ground trip the skirt check (0.018 m): accept as a recorded validator artefact or move markings?",
+  "Ground PNGs over 3 MiB (7 of 10): re-encode / reduce, which option?"
+ ],
+ "gaps": [
+  "Stages 1-4 (Бадик/Окна/Капсулы/Крыша) and 6/8 (VPM) are OKS/VPM stages out of this NPM site scope; left todo, the schema has no n/a status.",
+  "normalization.origin_m = local frame origin in МСК-77 XY (local = DWG - origin); Z 0 = ±0.000 of the building, absolute mark unknown (open, not 0 m Baltic).",
+  "Absolute mark of ±0.000 unknown; address token and territorial code provisional (see questions).",
+  "parts/materials left empty: the parts roles enum is OKS-only; Ground cover IDs / MAF atlas cells / Flora tiles are job IDs, not checked against library/materials ids (TASK.md, assembly.json).",
+  "Package site-npm-v001 r3 is a diagnostic archive (no OKS); passed=false."
+ ]
+}

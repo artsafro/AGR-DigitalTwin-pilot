@@ -6,6 +6,8 @@
 # already listed in docs/ARCHIVE.md; siblings and independently live files stay protected.
 # Check: uv run python tools/architecture/search_noise.py
 kept_jobs:
+  - job: jobs/moskovsky-sosh1200
+    ru: "НПМ площадки: Ground v003 и диагностический пакет v001, визуальная приёмка и сдача открыты (#1979)"
   - job: jobs/_template
     ru: "шаблон новой работы (SKELETONS.md), нужен каждой новой задаче"
   - job: jobs/4bk-k3

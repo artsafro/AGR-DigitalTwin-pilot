@@ -1,0 +1,307 @@
+{
+ "source": "school.dxf ACAD_TABLE A00A5A in block A$C7f310a12: Ведомость элементов озеленения (identical copies 9D5B5B in _озеленение, 9FFFCF in A$Caf969edd)",
+ "missing_in_source": "Latin names except pos 7, 10; planting sizes (height/crown/girth) not in ledger",
+ "items": [
+  {
+   "pos": 1,
+   "name_ru": "Пихта сибирская",
+   "name_lat": null,
+   "type": "tree",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "шт.",
+   "area_m2": null,
+   "count": 1.0,
+   "dwg_block": [
+    "Пихта сибирская_105_М5.1"
+   ],
+   "blocks_in_gpzu": 1,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callout_qty_in_gpzu": 1.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": null
+  },
+  {
+   "pos": 2,
+   "name_ru": "Клён остролистный",
+   "name_lat": null,
+   "type": "tree",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "шт.",
+   "area_m2": null,
+   "count": 37.0,
+   "dwg_block": [
+    "Клен остролистный_22_М5"
+   ],
+   "blocks_in_gpzu": 37,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 2,
+   "callout_qty_in_gpzu": 37.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": null
+  },
+  {
+   "pos": 3,
+   "name_ru": "Туя западная Брабант",
+   "name_lat": null,
+   "type": "tree",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "шт.",
+   "area_m2": null,
+   "count": 25.0,
+   "dwg_block": [
+    "Сосна обыкн"
+   ],
+   "blocks_in_gpzu": 19,
+   "blocks_near_outside": 6,
+   "callouts_in_gpzu": 1,
+   "callout_qty_in_gpzu": 20.0,
+   "callout_qty_outside": 5.0,
+   "dwg_hatch": null
+  },
+  {
+   "pos": 4,
+   "name_ru": "Клен Гиннала",
+   "name_lat": null,
+   "type": "shrub",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "шт.",
+   "area_m2": null,
+   "count": 15.0,
+   "dwg_block": [
+    "Клен Гиннала_96"
+   ],
+   "blocks_in_gpzu": 12,
+   "blocks_near_outside": 3,
+   "callouts_in_gpzu": 8,
+   "callout_qty_in_gpzu": 11.0,
+   "callout_qty_outside": 4.0,
+   "dwg_hatch": null
+  },
+  {
+   "pos": 5,
+   "name_ru": "Сирень обыкновенная 'Красавица Москвы'",
+   "name_lat": null,
+   "type": "shrub",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "шт.",
+   "area_m2": null,
+   "count": 59.0,
+   "dwg_block": [
+    "Сирень обыкновенная_110"
+   ],
+   "blocks_in_gpzu": 59,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 13,
+   "callout_qty_in_gpzu": 61.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": null
+  },
+  {
+   "pos": 6,
+   "name_ru": "Дерен белый элегантиссима",
+   "name_lat": null,
+   "type": "shrub",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "кв.м/шт.",
+   "area_m2": 95.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callout_qty_in_gpzu": 95.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "_Кустаринки_Цветники / _ГП_Газон"
+  },
+  {
+   "pos": 7,
+   "name_ru": "Сосна горная \"Мугус\" / Pinus mugo 'Mughus' (Pinus nigra 'Nana')",
+   "name_lat": [
+    "Pinus mugo 'Mughus'",
+    "Pinus nigra 'Nana'"
+   ],
+   "type": "shrub",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": 6,
+   "unit": "кв.м/шт.",
+   "area_m2": 66.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callout_qty_in_gpzu": 66.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "_Кустаринки_Цветники"
+  },
+  {
+   "pos": 8,
+   "name_ru": "Пузыреплодник калинолистный (Дартс Голд)",
+   "name_lat": null,
+   "type": "hedge",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": 5,
+   "unit": "кв.м/шт.",
+   "area_m2": 1036.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 3,
+   "callout_qty_in_gpzu": 0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "253_Озел_Кустарники_Живая изгородь_№250_Стефанандра надрезаннолистная_S + 240_Озел_Живая Изгородь (~1108 m2)"
+  },
+  {
+   "pos": 9,
+   "name_ru": "Астильба Арендса 'айс Глория'",
+   "name_lat": null,
+   "type": "perennial",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": 10,
+   "unit": "кв.м/шт.",
+   "area_m2": 23.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callout_qty_in_gpzu": 23.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "240_Озел_Живая Изгородь / _ГП_Газон (no own layer)"
+  },
+  {
+   "pos": 10,
+   "name_ru": "Вейник остроцветковый \"Карл Форстер\" (Karl Foerster)",
+   "name_lat": [
+    "Karl Foerster"
+   ],
+   "type": "perennial",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "кв.м/шт.",
+   "area_m2": 97.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 5,
+   "callout_qty_in_gpzu": 97.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "240_Озел_Живая Изгородь / _ГП_Газон"
+  },
+  {
+   "pos": 11,
+   "name_ru": "Хоста гибридная «Стилет»",
+   "name_lat": null,
+   "type": "perennial",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": 10,
+   "unit": "кв.м/шт.",
+   "area_m2": 132.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 6,
+   "callout_qty_in_gpzu": 132.0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "240_Озел_Живая Изгородь / _ГП_Газон"
+  },
+  {
+   "pos": 12,
+   "name_ru": "Газон посевной злаковый (сеянный), двойной посев трав",
+   "name_lat": null,
+   "type": "lawn",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "кв.м",
+   "area_m2": 2217.2,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callout_qty_in_gpzu": 0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "_ГП_Газон (7051 m2 hatched in ГПЗУ)"
+  },
+  {
+   "pos": 13,
+   "name_ru": "Газон рулонный (на игровых площадках)",
+   "name_lat": null,
+   "type": "lawn",
+   "size_at_planting": {
+    "height_m": null,
+    "crown_diam_m": null,
+    "trunk_girth_cm": null
+   },
+   "density_per_m2": null,
+   "unit": "кв.м",
+   "area_m2": 935.0,
+   "count": null,
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callout_qty_in_gpzu": 0,
+   "callout_qty_outside": 0,
+   "dwg_hatch": "_ГП_Газлн рулонный (579 m2 hatched)"
+  }
+ ]
+}

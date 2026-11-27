@@ -1,0 +1,849 @@
+{
+ "source": "school.dxf ACAD_TABLE 9D52D2 in block _МАФ: Ведомость малых архитектурных форм и элементов благоустройства",
+ "missing_in_source": "L/W/H except pos 1 and 34; material/colour except pos 8; Визуализация column = external images (IMAGEDEF .\\маф\\...) not present",
+ "items": [
+  {
+   "pos": 1,
+   "name": "Теневой навес 6400x4850x2700 мм",
+   "manufacturer_code": "ВСТ 1519/1",
+   "manufacturer": "Высота",
+   "dimensions_mm": {
+    "L": 6400,
+    "W": 4850,
+    "H": 2700
+   },
+   "material_colour": null,
+   "count": 7.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Высота\"  / арт. ВСТ 1519/1 /   (или аналог))",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 7,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {},
+   "mapping_note": "no block: 7 SOLID hatches on layer 0 inside _МАФ, ~31 m2 each (6.4x4.85) = canopy footprints"
+  },
+  {
+   "pos": 2,
+   "name": "Доска для рисования мелом",
+   "manufacturer_code": "7w2002",
+   "manufacturer": "Робинзон",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 5.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Робинзон\"  / арт. 7w2002 /   (или аналог)",
+   "dwg_block": [
+    "Робинзон доска 7w2002"
+   ],
+   "blocks_in_gpzu": 5,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 5,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Робинзон доска 7w2002": 5
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 3,
+   "name": "Малые архитектурные формы \"Собрание\"",
+   "manufacturer_code": "6W7000",
+   "manufacturer": "Робинзон",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 7.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Робинзон\" ^Jарт. 6W7000^J  (или аналог)",
+   "dwg_block": [
+    "Робинзон стол 6W7000"
+   ],
+   "blocks_in_gpzu": 7,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 6,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Робинзон стол 6W7000": 7
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 4,
+   "name": "Гимнастический комплекс \"БУМ-Бревно\"",
+   "manufacturer_code": "ИК 0209Т-6.1",
+   "manufacturer": "Тайга",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 11.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Тайга\"  / арт. ИК 0209Т-6.1 /   (или аналог)",
+   "dwg_block": [
+    "A$Cb11df218"
+   ],
+   "blocks_in_gpzu": 6,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 5,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Тайга перег_трубы ИО 1215": 1,
+    "Тайга Аэрофон ИО 1204": 1,
+    "Робинзон доска 7w2002": 1
+   },
+   "mapping_note": "block A$Cb11df218 (layer ГП_МАФ, label text ИК 0209Т-6.1): 6 in ГПЗУ vs ledger 11"
+  },
+  {
+   "pos": 5,
+   "name": "Переговорные трубы",
+   "manufacturer_code": "ИО 1215.1",
+   "manufacturer": "Тайга",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 4.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Тайга\"  / арт. ИО 1215.1 /   (или аналог)",
+   "dwg_block": [
+    "Тайга перег_трубы ИО 1215"
+   ],
+   "blocks_in_gpzu": 4,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 2,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Тайга перег_трубы ИО 1215": 4
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 6,
+   "name": "Аэрофон",
+   "manufacturer_code": "ИО 1204",
+   "manufacturer": "Тайга",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 2.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Тайга\"  / арт. ИО 1204 /   (или аналог)",
+   "dwg_block": [
+    "Тайга Аэрофон ИО 1204"
+   ],
+   "blocks_in_gpzu": 2,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 2,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Тайга Аэрофон ИО 1204": 2
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 7,
+   "name": "Язычковый барабан",
+   "manufacturer_code": "ИО 1211",
+   "manufacturer": "Тайга",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 2.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Тайга\"  / арт. ИО 1211 /   (или аналог)",
+   "dwg_block": [
+    "Тайга Барабан ИО 1211"
+   ],
+   "blocks_in_gpzu": 2,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 2,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Тайга Барабан ИО 1211": 2
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 8,
+   "name": "Шахматный стол \"Шах и мат\" (цвет Бежевый)",
+   "manufacturer_code": "6U7004",
+   "manufacturer": "Робинзон",
+   "dimensions_mm": null,
+   "material_colour": "бежевый",
+   "count": 4.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Робинзон\"  / арт. 6U7004 /   (или аналог)",
+   "dwg_block": [
+    "Шахматы 6U7004"
+   ],
+   "blocks_in_gpzu": 10,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 5,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Шахматы 6U7004": 10
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 9,
+   "name": "Скамейка \"Стрела-дуга\"",
+   "manufacturer_code": "6U2023",
+   "manufacturer": "Робинзон",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 3.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Робинзон\"  / арт.  6U2023 /   (или аналог)",
+   "dwg_block": [
+    "Робинзон_6U2023"
+   ],
+   "blocks_in_gpzu": 3,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 3,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Робинзон_6U2023": 2
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 10,
+   "name": "Малые архитектурные формы \"Плато 1\"",
+   "manufacturer_code": "6W3000.1",
+   "manufacturer": "Робинзон",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 9.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Робинзон\"  / арт.  6W3000.1 /   (или аналог)",
+   "dwg_block": [
+    "Робинзон скамья 6W3000.1"
+   ],
+   "blocks_in_gpzu": 9,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Робинзон скамья 6W3000.1": 9
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 11,
+   "name": "Малые архитектурные формы \"Хитроу гранд\"",
+   "manufacturer_code": "6W2006.1",
+   "manufacturer": "Робинзон",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 12.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Робинзон\"  / арт. 6W2006.1 /   (или аналог)",
+   "dwg_block": [
+    "Робинзон скамья 6W2006.1"
+   ],
+   "blocks_in_gpzu": 3,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Робинзон скамья 6W2006.1": 3
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 12,
+   "name": "Комплекс для подтягиваний на высокой перекладине",
+   "manufacturer_code": "KGTO-008",
+   "manufacturer": "Кенгуру",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Кенгуру\"  / арт.KGTO-008 /   (или аналог)",
+   "dwg_block": [
+    "Кенгуру KGTO-008_AL"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 1,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 13,
+   "name": "Брусья двойные для отжиманий разноуровневые",
+   "manufacturer_code": "К-009",
+   "manufacturer": "Кенгуру",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Кенгуру\"  / арт. К-009 /   (или аналог)",
+   "dwg_block": [
+    "Кенгуру  K-009_AL"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 1,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 14,
+   "name": "5 турников, рукоход классический, шведская стенка",
+   "manufacturer_code": "К-027",
+   "manufacturer": "Кенгуру",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Кенгуру\"  / арт. К-027 /   (или аналог)",
+   "dwg_block": [
+    "Кенгуру K-027_AL"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 1,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 15,
+   "name": "3 турника, брусья, наклонная скамья, шведская стенка",
+   "manufacturer_code": "К-013",
+   "manufacturer": "Кенгуру",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Кенгуру\"  / арт. К-013 /   (или аналог)",
+   "dwg_block": [
+    "Кенгуру K-013_AL"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 1,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 16,
+   "name": "3 турника, шведская стенка",
+   "manufacturer_code": "К-024",
+   "manufacturer": "Кенгуру",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Кенгуру\"  / арт. К-024                  (или аналог)",
+   "dwg_block": [
+    "Кенгуру K-024_AL"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 1,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 17,
+   "name": "Стол теннисный",
+   "manufacturer_code": "СО 0216-3",
+   "manufacturer": "Тайга",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 7.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Тайга\"  / арт.СО 0216-3 /   (или аналог)",
+   "dwg_block": [
+    "Тайга стол тен. СО 0216-3"
+   ],
+   "blocks_in_gpzu": 4,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Тайга стол тен. СО 0216-3": 4
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 18,
+   "name": "Ворота футбольные",
+   "manufacturer_code": "СО-002",
+   "manufacturer": "Поколение",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 2.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Поколение\"                                                            /  СО-002                            (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 3,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 19,
+   "name": "Баскетбольная стойка",
+   "manufacturer_code": "СО-012",
+   "manufacturer": "Поколение",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": null,
+   "unit": "шт",
+   "note_raw": "Компания ООО\"Поколение\",арт. СО-012 (или аналог)",
+   "dwg_block": [
+    "Поколение СО-012"
+   ],
+   "blocks_in_gpzu": 2,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Поколение СО-012": 2
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 20,
+   "name": "Велопарковка на 10 мест*",
+   "manufacturer_code": "ВЛП-0022",
+   "manufacturer": "Деткки",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 19.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Деткки\"  / арт.ВЛП-0022  / (или аналог)",
+   "dwg_block": [
+    "ВЛП-0022 Деткки"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 26,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 3,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 21,
+   "name": "Спортивный комплекс (волейбол) с возможностью регулирования крепления сетки по высоте, оборудован сеткой, от 6лет",
+   "manufacturer_code": "СО053",
+   "manufacturer": "Поколение",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания ООО\"Поколение\",арт. СО053 (или аналог)",
+   "dwg_block": [
+    "СВ001"
+   ],
+   "blocks_in_gpzu": 1,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "СВ001": 1
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 22,
+   "name": "Стойки для большого тенниса со стаканами",
+   "manufacturer_code": "11.100",
+   "manufacturer": "ГЛАВСПОРТ",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 2.0,
+   "unit": "шт",
+   "note_raw": "ООО \"ГЛАВСПОРТ\" арт. / 11.100, или аналог",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {},
+   "mapping_note": "no block; callouts point at rubber hatch 250_Покрытия_Тип3 (tennis court)"
+  },
+  {
+   "pos": 23,
+   "name": "Уличный флагшток из алюминия",
+   "manufacturer_code": "AL-L-06-11",
+   "manufacturer": "Grand-mag",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 3.0,
+   "unit": "шт",
+   "note_raw": "Компания ООО\"Grand-mag\", арт.AL-L-06-11 (или аналог)",
+   "dwg_block": [
+    "флагшток"
+   ],
+   "blocks_in_gpzu": 3,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "флагшток": 3
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 24,
+   "name": "Стол со скамейкой и диваном",
+   "manufacturer_code": "ВСТ 9504/1",
+   "manufacturer": "Высота",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 4.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Высота\"  / арт.ВСТ 9504/1 /   (или аналог)",
+   "dwg_block": [
+    "Столс лавками Высота ВСТ 9504_1"
+   ],
+   "blocks_in_gpzu": 7,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 4,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Столс лавками Высота ВСТ 9504_1": 5
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 25,
+   "name": "Пергола",
+   "manufacturer_code": "ВСТ 9614/4",
+   "manufacturer": "Высота",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 14.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Высота\"  / арт.ВСТ 9614/4 /   (или аналог)",
+   "dwg_block": [
+    "Высота Пергола ВСТ 9612_6"
+   ],
+   "blocks_in_gpzu": 14,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 5,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Высота Пергола ВСТ 9612_6": 10,
+    "Аданат скамья 10027-1": 4
+   },
+   "mapping_note": "block code ВСТ 9612_6 differs from ledger ВСТ 9614/4"
+  },
+  {
+   "pos": 26,
+   "name": "Навес для МГН",
+   "manufacturer_code": "ВСТ 9624/3",
+   "manufacturer": "Высота",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 2.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Высота\"  / арт.ВСТ 9624/3 /   (или аналог)",
+   "dwg_block": [
+    "Высота_навес_9624_3"
+   ],
+   "blocks_in_gpzu": 1,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Высота_навес_9624_3": 1
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 27,
+   "name": "Скамейка «Скарлет» с подлокотниками",
+   "manufacturer_code": "10027-1",
+   "manufacturer": "Аданат",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 16.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Аданат\"  / арт.10027-1 /   (или аналог)",
+   "dwg_block": [
+    "Аданат скамья 10027-1"
+   ],
+   "blocks_in_gpzu": 19,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 8,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Высота_навес_9624_3": 1,
+    "Аданат скамья 10027-1": 18
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 28,
+   "name": "Урны \"Город\"",
+   "manufacturer_code": "9004",
+   "manufacturer": "Аданат",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 14.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Аданат\"  / арт. 9004 /   (или аналог)",
+   "dwg_block": [
+    "Робинзон урна 6W9006"
+   ],
+   "blocks_in_gpzu": 11,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 9,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Робинзон урна 6W9006": 10
+   },
+   "mapping_note": "blocks are Робинзон урна 6W9006; ledger says Аданат 9004 Город"
+  },
+  {
+   "pos": 29,
+   "name": "Единая полоса препятствий",
+   "manufacturer_code": "ВПП-005",
+   "manufacturer": "Поколение",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 0.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Поколение\"                                                            /  ВПП-005                            (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 30,
+   "name": "Единая полоса препятствий",
+   "manufacturer_code": "ВПП-002",
+   "manufacturer": "Поколение",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 0.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Поколение\"                                                            /  ВПП-002                            (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 31,
+   "name": "Единая полоса препятствий",
+   "manufacturer_code": "ВПП-001",
+   "manufacturer": "Поколение",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 0.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Поколение\"                                                            /  ВПП-001                            (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 32,
+   "name": "Контейнерная площадка  на 3 контейнера",
+   "manufacturer_code": null,
+   "manufacturer": "Аданат",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 6.0,
+   "unit": "шт",
+   "note_raw": "Компания ООО\"Аданат\",  (или аналог)",
+   "dwg_block": [
+    "Усл конт площ"
+   ],
+   "blocks_in_gpzu": 1,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "ТБО непищ": 4,
+    "Усл конт площ": 1
+   },
+   "mapping_note": "block Усл конт площ"
+  },
+  {
+   "pos": 33,
+   "name": "Хозблок",
+   "manufacturer_code": null,
+   "manufacturer": "Аданат",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Компания ООО\"Аданат\",  (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 1,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Сосна обыкн": 1
+   },
+   "mapping_note": null
+  },
+  {
+   "pos": 34,
+   "name": "Контейнер для мусора с крышкой",
+   "manufacturer_code": "МК001",
+   "manufacturer": "Поколение",
+   "dimensions_mm": {
+    "L": 1400,
+    "W": 1400,
+    "H": 900
+   },
+   "material_colour": null,
+   "count": 18.0,
+   "unit": "шт",
+   "note_raw": "Компания ООО \"Поколение\", арт. МК001, 1400 х 1400 х 900 мм (или аналог)",
+   "dwg_block": [
+    "ТБО непищ"
+   ],
+   "blocks_in_gpzu": 4,
+   "blocks_near_outside": 1,
+   "callouts_in_gpzu": 2,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Сосна обыкн": 1,
+    "Усл конт площ": 2,
+    "ТБО непищ": 12
+   },
+   "mapping_note": "block ТБО непищ (container group)"
+  },
+  {
+   "pos": 35,
+   "name": "Cварное ограждение PRO  H=2,5 м",
+   "manufacturer_code": null,
+   "manufacturer": "Индивидуальный проект",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 635.0,
+   "unit": "п.м.",
+   "note_raw": "Индивидуальный проект  (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {},
+   "mapping_note": "perimeter fence = linework 232_Ог_Внешние_вар2 / 7--ГП--ОГРАЖДЕНИЕ проектируемое"
+  },
+  {
+   "pos": 36,
+   "name": "Ворота распашные L= 4.5 м",
+   "manufacturer_code": null,
+   "manufacturer": "Индивидуальный проект",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 1.0,
+   "unit": "шт",
+   "note_raw": "Индивидуальный проект (или аналог)",
+   "dwg_block": [
+    "Ворота 4.5"
+   ],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 2,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  },
+  {
+   "pos": 37,
+   "name": "Калитка периметрального ограждения",
+   "manufacturer_code": null,
+   "manufacturer": "Индивидуальный проект",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 3.0,
+   "unit": "шт",
+   "note_raw": "Индивидуальный проект (или аналог)",
+   "dwg_block": [
+    "Калитка 1.2"
+   ],
+   "blocks_in_gpzu": 10,
+   "blocks_near_outside": 2,
+   "callouts_in_gpzu": 2,
+   "callouts_outside": 2,
+   "callout_arrow_targets": {
+    "Калитка 1.2": 2
+   },
+   "mapping_note": "block Калитка 1.2 shared by pos 37 and 38"
+  },
+  {
+   "pos": 38,
+   "name": "Калитка в спор. ограждении",
+   "manufacturer_code": null,
+   "manufacturer": "Индивидуальный проект",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 3.0,
+   "unit": "шт",
+   "note_raw": "Индивидуальный проект (или аналог)",
+   "dwg_block": [
+    "Калитка 1.2"
+   ],
+   "blocks_in_gpzu": 10,
+   "blocks_near_outside": 2,
+   "callouts_in_gpzu": 3,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {
+    "Калитка 1.2": 3
+   },
+   "mapping_note": "see pos 37"
+  },
+  {
+   "pos": 39,
+   "name": "Ограждение спортивное H=4 м",
+   "manufacturer_code": null,
+   "manufacturer": "Индивидуальный проект",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 391.0,
+   "unit": "п.м.",
+   "note_raw": "Индивидуальный проект (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {},
+   "mapping_note": "sport fence = linework 232_Огр_СПОРТ"
+  },
+  {
+   "pos": 40,
+   "name": "Искусственная неровность",
+   "manufacturer_code": null,
+   "manufacturer": "Стандарт-Парк",
+   "dimensions_mm": null,
+   "material_colour": null,
+   "count": 4.0,
+   "unit": "шт",
+   "note_raw": "Компания \"Стандарт-Парк\" (или аналог)",
+   "dwg_block": [],
+   "blocks_in_gpzu": 0,
+   "blocks_near_outside": 0,
+   "callouts_in_gpzu": 0,
+   "callouts_outside": 1,
+   "callout_arrow_targets": {},
+   "mapping_note": null
+  }
+ ]
+}
