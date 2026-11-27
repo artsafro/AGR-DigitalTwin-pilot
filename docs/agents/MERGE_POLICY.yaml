@@ -162,7 +162,9 @@ rules:
   - id: agent_working_order
     bucket: artem
     consent: artem_word
-    why: "changes how agents work: hooks, skeleton contract, review rules, agent instructions, trails"
+    # D432: a process change (instruction, skill, tool, memory, architecture) not measured against the
+    # trainer baseline merges only on Artem's word.
+    why: "changes how agents work: hooks, skeleton contract, review rules, agent instructions, trails (unmeasured process change, D432)"
     paths:
       - "AGENTS.md"
       - "*/AGENTS.md"

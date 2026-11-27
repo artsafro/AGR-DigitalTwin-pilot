@@ -72,6 +72,22 @@ uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out
 - Правило held-out (#1803): изменение, сделанное по провалу на `tuning`-эталоне, перепроверяется на `held_out`-эталоне.
   Сейчас `tuning`: kpp1-v004, g22-k2-stage1, 63a-stage1. `held_out`: 63b-stage1 (полный) и остальные.
 
+## Eval-driven acceptance [D432]
+
+- A new or changed agent instruction, skill, tool, memory mechanism or architecture change becomes the default only
+  after `ab` against the unchanged baseline: first on the development set (`tuning`, ~75 %), then on the `held_out`
+  set (~25 %, not used while developing the change). Early on: a few short dev tasks plus one unfamiliar project as
+  the final holdout check. 3 repeats per arm are a preliminary measurement, not statistical proof.
+- No experiment for an obvious bug, vulnerability or broken-link fix: a regression test (fails before, passes after).
+- An unmeasured process change merges only on Artem's word (`docs/agents/MERGE_POLICY.md`, bucket `artem`); Artem's
+  product and architecture decisions stay his.
+- User Proxy and Evaluator are separate roles. The proxy answers a stop only with an already approved answer (key of
+  the past delivery, D-rows, recorded facts and job decisions); it never invents a product decision, hints the method
+  or reveals hidden test criteria; with no approved answer it records an UNRESOLVED question.
+- Stop classes: justified (missing source data; customer/architect decision; sanction for an irreversible
+  operation), unnecessary (answer already in the repo; unsure of a technical choice the agent may make), harness
+  problem (tool broke, no recovery path), context problem (instructions contradict).
+
 ## Codex skill discovery
 
 Each `run` (including each A/B arm) starts Codex with a fresh child-only home and `CODEX_HOME`.
