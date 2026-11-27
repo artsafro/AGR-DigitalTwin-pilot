@@ -536,7 +536,7 @@ def test_q7_ground_coverings_live_in_a_separate_ground_table_referenced_by_the_o
     """RED before Q7: the GRD/PAV records (paving + ground classes) were inside materials_v002.json."""
     import shutil
     folder = ROOT / 'library/materials'
-    oks = json.loads((folder / 'materials_v003.json').read_text(encoding='utf-8'))  # current table [D358]
+    oks = json.loads((folder / 'materials_v003.json').read_text(encoding='utf-8'))  # current table [D423]
     ground = json.loads((folder / 'ground_v001.json').read_text(encoding='utf-8'))
     assert {r['class'] for r in ground['materials']} == {'ground', 'paving'}
     assert not {r['class'] for r in oks['materials']} & {'ground', 'paving'}
@@ -546,7 +546,7 @@ def test_q7_ground_coverings_live_in_a_separate_ground_table_referenced_by_the_o
     gids = {r['library_id'] for r in ground['materials']}
     assert gids == {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 42}                     # ids are stable, none renumbered
     assert gids <= set(lib['by_id']) and not gids & {r['library_id'] for r in oks['materials']}
-    assert sorted(lib['by_id']) == list(lib['by_id']) and len(lib['materials']) == 48  # v003: + 54..59 [D358]
+    assert sorted(lib['by_id']) == list(lib['by_id']) and len(lib['materials']) == 48  # v003: + 54..59 [D423]
     assert lib['by_id'][26]['key'] == 'lawn_reinforced' and lib['by_id'][18]['class'] == 'paving'
     # a changed ground table is refused (the OKS table pins its sha256), a missing one too
     for k in ('materials.json', 'materials_v003.json'):

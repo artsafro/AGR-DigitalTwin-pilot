@@ -1,4 +1,4 @@
-"""MAF material ID list v008 = v007 + IDs 34-39 of the Staropetrovskiy job [D358].
+"""MAF material ID list v008 = v007 + IDs 34-39 of the Staropetrovskiy job [D423].
 
 New-case: `tools/library/maf_ids_version.py` takes one `add` with a spec-row move and a merge undo (v006/v007);
 v008 adds six IDs and neither moves rows nor undoes a merge. Reuses the tool's hashing, flat-tile regex and refusal

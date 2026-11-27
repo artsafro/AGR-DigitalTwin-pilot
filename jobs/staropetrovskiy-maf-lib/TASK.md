@@ -1,6 +1,6 @@
 # Staropetrovskiy ZU_7_A MAF — rules and materials
 
-Level: `standard` (library metadata, not customer delivery). Decisions: [D357], [D358], [D359].
+Level: `standard` (library metadata, not customer delivery). Decisions: [D422], [D423], [D424].
 Artem asked for reusable NPM and VPM versions on 2026-11-21 and answered «Да, все» to the intake recommendations.
 Acceptance of the source job is not acceptance of its library drafts.
 
@@ -21,22 +21,22 @@ The historical [batch report](#historical-rules-and-results) is retained at
 - NPM: export each master from a copy of Artem's `staropetrovskiy_maf_library_v003.max`, not from
   the site package. The master's local Z=0 is ground level; preserve the embedment (T01 post: 0.4 m).
   Lifting T01 to set its lowest point to zero would place the seat at 0.91 m. Keep the delivered
-  51° smoothing and UVs on 512 atlas v002. FBX has no texture links; maps travel with the asset [D357].
+  51° smoothing and UVs on 512 atlas v002. FBX has no texture links; maps travel with the asset [D422].
 - VPM: take one instance per code from the delivered joined GroundEl, transform to master-local
   coordinates, renumber UDIM from 1001 and use v004 maps. Use only codes within 1 cm both ways of NPM;
-  NPM-only on ambiguous identity. Mark vendor originals `vendor-derived` with their source [D357], [D359].
+  NPM-only on ambiguous identity. Mark vendor originals `vendor-derived` with their source [D422], [D424].
 - 51/51 NPM matched masters. VPM: A01, A02, I07, I08, I17, I18, T01, T15, T16, T17, T22, X02.
-  34 placed codes wait for a separate rebuild; I04a, I04b, I05a, T23, X05 are showcase-only [D359].
+  34 placed codes wait for a separate rebuild; I04a, I04b, I05a, T23, X05 are showcase-only [D424].
 - Preserve xView overlap flags on I07, I08, I19, T20. Loose vertices were removed from the historical
   library copies of I01, I03, I04b; this PR does not edit any mesh.
 - Separate VPM rebuild (not started): pilot T02; double segments only on round parts, leave flat parts
-  untouched, redo UVs and measure the two-way tolerance [D359]. Follow #1745/#1754. The old segment
+  untouched, redo UVs and measure the two-way tolerance [D424]. Follow #1745/#1754. The old segment
   script was for reference only: it deformed flat parts (T02 +14 cm, I10/I10a +19 cm).
 
 ## Materials
 
 - `material_ids_v008` adds IDs 34–39 to v007. ID 36 is `#9E5A47` as measured in the delivered diffuse
-  map, not the brief's `#8E402A`. The active MAF pointer stays on v007 [D358].
+  map, not the brief's `#8E402A`. The active MAF pointer stays on v007 [D423].
 - Shared `materials_v003.json` adds the six keys at IDs 54–59. Released v001 and v002 stay byte-for-byte;
   v003 relocates the inherited Verona reference to a SHA-256-matched Drive copy.
 - The v008 change manifest pins the six job inputs and the inherited evidence relocations.

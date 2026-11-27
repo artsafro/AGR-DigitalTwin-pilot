@@ -1,0 +1,407 @@
+"""new-case: source-bound colour splits for mixed NPM atlas cells."""
+from itertools import permutations
+
+import pytest
+from PIL import Image, ImageDraw
+from shapely.geometry import Polygon
+from shapely.ops import unary_union
+
+
+@pytest.mark.parametrize('order', list(permutations(range(3))))
+def test_two_colour_nonrectangular_cell_splits_crossing_triangle(tmp_path, order):
+    from tools.library.npm_ids import recover_regions
+
+    image = Image.new('RGB', (64, 64), (20, 20, 20))
+    ImageDraw.Draw(image).rectangle((16, 16, 47, 47), fill=(220, 220, 220))
+    atlas = tmp_path / 'two.png'
+    image.save(atlas)
+    uv = [(0., 1.), (1., 1.), (0., 0.)]
+    result = recover_regions(atlas, [[uv[i] for i in order]])
+    assert result['status'] == 'ok'
+    assert not result['residual']
+    pieces = result['pieces'][0]
+    assert len({piece['id'] for piece in pieces}) == 2
+    assert {row['color'].lower() for row in result['table']} == {'#141414', '#dcdcdc'}
+    # An independent area oracle: the diagonal bisects the inner square exactly.
+    shapes = [Polygon(piece['uv']) for piece in pieces]
+    union = unary_union(shapes)
+    assert union.symmetric_difference(Polygon(uv)).area < 1e-12
+    assert sum(p.area for p in shapes) == pytest.approx(union.area)
+    by_id = {i: sum(p.area for p, r in zip(shapes, pieces) if r['id'] == i)
+             for i in {r['id'] for r in pieces}}
+    assert sorted(by_id.values()) == pytest.approx([.125, .375])
+    for piece in pieces:
+        assert Polygon(piece['uv']).exterior.is_ccw == Polygon([uv[i] for i in order]).exterior.is_ccw
+
+
+@pytest.mark.parametrize('with_island', [False, True])
+def test_automatic_solid_leaf_does_not_hide_confirmed_colour_island(tmp_path, with_island):
+    from tools.library.npm_ids import recover_regions
+
+    image = Image.new('RGB', (128, 128), (32, 32, 32))
+    if with_island:
+        ImageDraw.Draw(image).rectangle((44, 44, 83, 83), fill=(200, 200, 200))
+    atlas = tmp_path / 'facade.png'
+    image.save(atlas)
+    crossing = [(0, 1), (1, 1), (0, 0)]
+    inside = [(.36, .60), (.53, .60), (.45, .46)]
+    result = recover_regions(atlas, [crossing, inside])
+    assert result['status'] == 'ok'
+    assert result['residual'] == []
+    colours = {row['id']: row['color'].lower() for row in result['table']}
+    assert {colours[p['id']] for p in result['pieces'][0]} == (
+        {'#202020', '#c8c8c8'} if with_island else {'#202020'})
+    expected_inside = '#c8c8c8' if with_island else '#202020'
+    assert {colours[p['id']] for p in result['pieces'][1]} == {expected_inside}
+    for uv, pieces in zip((crossing, inside), result['pieces']):
+        polygons = [Polygon(piece['uv']) for piece in pieces]
+        union = unary_union(polygons)
+        assert sum(p.area for p in polygons) == pytest.approx(union.area)
+        assert union.symmetric_difference(Polygon(uv)).area < 1e-12
+
+
+@pytest.mark.parametrize('order', [(0, 1), (1, 0)])
+@pytest.mark.parametrize('stripe_x', [60, 55, 64, None])
+def test_automatic_patterned_leaf_without_proven_boundaries_stops(tmp_path, stripe_x, order):
+    from shapely.geometry import box, mapping
+    from tools.library.npm_ids import recover_regions
+
+    size = 128
+    image = Image.new('RGB', (size, size))
+    image.putdata([(32 + 88 * ((x + y) % 2),) * 3 for y in range(size) for x in range(size)])
+    x = 60 if stripe_x is None else stripe_x
+    if stripe_x is not None:
+        ImageDraw.Draw(image).line((x, 20, x, 107), fill=(230, 230, 230))
+    atlas = tmp_path / 'checker.png'
+    image.save(atlas)
+    crossing = [(0, 1), (1, 1), (0, 0)]
+    inside = [(u / size, 1 - v / size) for u, v in [(x + .125, 30), (x + .875, 30), (x + .125, 90)]]
+    faces = [(crossing, inside)[i] for i in order]
+
+    result = recover_regions(atlas, faces)
+    assert [(c['kind'], c['unclassified_px2']) for c in result['cells']] == [('patterned', size**2)]
+    assert result['status'] == 'manual_required'
+    assert result['residual'] == [0, 1]
+    assert result['pieces'] == [[], []]
+    assert result['table'] == []
+
+    # A supplied boundary, unlike an automatic texture label, is authoritative.
+    explicit = recover_regions(atlas, faces, cell_regions=[
+        {'id': 'finish', 'kind': 'patterned', 'geometry': mapping(box(0, 0, size, size))}])
+    assert explicit['status'] == 'ok'
+    assert explicit['residual'] == []
+    assert explicit['pieces'] == [[{'id': 1, 'uv': [list(uv) for uv in face]}] for face in faces]
+
+
+@pytest.mark.parametrize('exponent', [7, 9, 12, 16, 20])
+def test_patterned_crossing_is_not_overlay_roundoff(tmp_path, exponent):
+    from shapely.geometry import box, mapping
+    from tools.library.npm_ids import recover_regions
+
+    size, seam = 128, 64
+    image = Image.new('RGB', (size, size))
+    image.putdata([(230 if x < seam else 32 + 88 * ((x + y) % 2),) * 3
+                   for y in range(size) for x in range(size)])
+    atlas = tmp_path / 'solid-checker.png'
+    image.save(atlas)
+    touching = [(.25, .75), (.25, .25), (.5, .5)]
+    crossing = [*touching[:2], ((seam + 2.**-exponent) / size, .5)]
+
+    touch = recover_regions(atlas, [touching])
+    assert touch['status'] == 'ok'
+    assert touch['residual'] == []
+    assert touch['pieces'] == [[{'id': 1, 'uv': [list(uv) for uv in touching]}]]
+
+    explicit = recover_regions(atlas, [crossing], cell_regions=[
+        {'id': 'paint', 'kind': 'solid', 'geometry': mapping(box(0, 0, seam, size))},
+        {'id': 'finish', 'kind': 'patterned', 'geometry': mapping(box(seam, 0, size, size))},
+    ])
+    assert explicit['status'] == 'ok'
+    assert explicit['residual'] == []
+    assert {part['id'] for part in explicit['pieces'][0]} == {1, 2}
+    assert max(u for part in explicit['pieces'][0] for u, _ in part['uv']) == crossing[2][0]
+
+    result = recover_regions(atlas, [crossing, touching])
+    assert [cell['kind'] for cell in result['cells']] == ['solid', 'patterned']
+    assert result['status'] == 'manual_required'
+    assert result['residual'] == [0]
+    assert result['pieces'] == [[], touch['pieces'][0]]
+    assert [row['face_count'] for row in result['table']] == [1]
+
+
+@pytest.mark.parametrize('width,seam', [(8, 4), (12, 6), (14, 7), (30, 6)])
+def test_metric_seam_plan_cuts_oversize_but_preserves_surface(width, seam):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    source = [((0., 0., 0.), (float(width), 0., 0.), (0., 2., 0.))]
+    result = fit_metric_region(3, source, [((0., 0.), (float(width), 0.), (0., 2.))],
+                               preferred_seams=[(0, seam)])
+    assert result['status'] == 'ok'
+    assert result['cuts'][0]['at_m'] == seam
+    assert result['cuts'][0]['kind'] == 'panel_or_zone'
+    assert len(result['pieces']) >= 2
+    assert len({p['piece'] for p in result['pieces']}) == result['piece_count']
+    polys = []
+    for p in result['pieces']:
+        assert p['source_triangle'] == 0
+        assert all(0 < u < 1 and 0 < v < 1 for u, v in p['uv'])
+        poly = Polygon([(x, y) for x, y, _ in p['xyz']])
+        assert Polygon(p['uv']).area / poly.area == pytest.approx((512/4096)**2)
+        polys.append(poly)
+    assert sum(p.area for p in polys) == pytest.approx(width)
+    assert unary_union(polys).symmetric_difference(Polygon([(0, 0), (width, 0), (0, 2)])).area < 1e-10
+
+
+@pytest.mark.parametrize('value', [float('nan'), float('inf'), 0, 128, True])
+def test_colour_tolerance_rejects_bad_input(value):
+    from tools.library.npm_ids import recover_regions
+
+    with pytest.raises(ValueError, match='tolerance'):
+        recover_regions('not_read.png', [], colour_tolerance=value)
+
+
+def test_colour_exact_tolerance_strip_is_not_guessed(tmp_path):
+    from tools.library.npm_ids import recover_regions
+
+    image = Image.new('RGB', (64, 64), (20, 20, 20))
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((16, 16, 47, 47), fill=(220, 220, 220))
+    draw.rectangle((16, 20, 16, 25), fill=(214, 214, 214))
+    atlas = tmp_path / 'two.png'
+    image.save(atlas)
+    result = recover_regions(atlas, [[(0., 1.), (1., 1.), (0., 0.)]])
+    assert result['status'] == 'manual_required'
+    assert result['residual'] == [0]
+    assert result['pieces'] == [[]]
+
+
+@pytest.mark.parametrize('case', ['empty', 'partial', 'unmapped', 'unsupported', 'nan', 'inf', 'mirror', 'shear'])
+def test_seam_plan_refuses_unusable_charts(case):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    xyz = [[(0., 0., 0.), (10., 0., 0.), (0., 2., 0.)]]
+    uv = [[(0., 0.), (10., 0.), (0., 2.)]]
+    if case == 'empty': xyz, uv = [], []
+    if case == 'partial': uv = []
+    if case == 'unsupported': uv[0].append((1., 1.))
+    if case in ('nan', 'inf'): uv[0][0] = (float(case), 0.)
+    if case == 'mirror': uv[0][2] = (0., -2.)
+    if case == 'shear': uv[0][2] = (1., 2.)
+    with pytest.raises(ValueError):
+        fit_metric_region(0 if case == 'unmapped' else 7, xyz, uv)
+
+
+@pytest.mark.parametrize('offset,overlap', [(0, True), (.25, True), (1, False), (2, False)])
+@pytest.mark.parametrize('width', [1, 10])
+def test_metric_region_refuses_shared_texels_in_any_piece(offset, overlap, width):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    coords = [(0, 0, 0), (width, 0, 0), (0, 1, 0)]
+    xyz = [coords, [(x, y, z + 2) for x, y, z in coords]]
+    chart = [(x, y) for x, y, _ in coords]
+    charts = [chart, [(x + offset * width, y) for x, y in chart]]
+    result = fit_metric_region(7, xyz, charts, preferred_seams=[(0, width / 2)])
+    if overlap:
+        assert result['status'] == 'blocked'
+        assert result['reason'] == 'uv_overlap'
+        assert result['source_triangles'] == [0, 1]
+        assert result['pieces'] == result['cuts'] == []
+    else:
+        assert result['status'] == 'ok'
+        assert {piece['source_triangle'] for piece in result['pieces']} == {0, 1}
+
+
+def test_exact_padded_tile_extent_cannot_fit_uncut():
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    size = (4096 - 64) / 512
+    blocked = fit_metric_region(1, [[(0., 0., 0.), (size, 0., 0.), (0., 2., 0.)]],
+                                [[(0., 0.), (size, 0.), (0., 2.)]], piece_budget=1)
+    assert blocked['status'] == 'blocked'
+    assert blocked['reason'] == 'tile_budget'
+    assert blocked['source_triangles'] == [0]
+    assert blocked['pieces'] == blocked['cuts'] == []
+
+
+@pytest.mark.parametrize('width', [0.25, 1, 2, 4])
+@pytest.mark.parametrize('delta', [-.125, -2**-40, 0, .125])
+@pytest.mark.parametrize('reverse', [False, True])
+def test_metric_overlap_matches_area_oracle_on_shared_diagonal(width, delta, reverse):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    # Both AABBs intersect, regardless of whether the diagonal touches,
+    # overlaps by a very narrow strip, or has a gap.
+    chart_a = [(0, 0), (width, 0), (0, width)]
+    chart_b = [(width + delta, width + delta), (delta, width + delta), (width + delta, delta)]
+    charts = [chart_a, chart_b]
+    if reverse:
+        charts.reverse()
+    overlap = Polygon(chart_a).intersection(Polygon(chart_b)).area > 0
+    assert overlap == (delta < 0)
+    xyz = [[(u, v, i) for u, v in chart] for i, chart in enumerate(charts)]
+    result = fit_metric_region(1, xyz, charts)
+    assert (result['status'] == 'blocked') == overlap
+    if overlap:
+        assert result['source_triangles'] == [0, 1]
+        assert result['cuts'] == result['pieces'] == []
+
+
+@pytest.mark.parametrize('case', ['fit', 'hole', 'overlap', 'duplicate', 'unknown', 'outside', 'nan'])
+def test_explicit_cells_use_geometry_not_internal_pixel_pattern(tmp_path, case):
+    from shapely.geometry import box, mapping
+    from tools.library.npm_ids import recover_regions
+
+    path = tmp_path / 'striped.png'
+    image = Image.new('RGB', (64, 64), '#eeeeee')
+    for y in range(0, 64, 4):
+        ImageDraw.Draw(image).line((0, y, 31, y), fill='#111111', width=2)
+    image.save(path)
+    left, right = box(0, 0, 32, 64), box(32, 0, 64, 64)
+    if case == 'hole':
+        right = box(33, 0, 64, 64)
+    elif case == 'overlap':
+        right = box(31, 0, 64, 64)
+    elif case == 'outside':
+        right = box(32, 0, 65, 64)
+    elif case == 'nan':
+        right = Polygon([(32, 0), (64, 0), (64, float('nan'))])
+    cells = [{'id': 'brick', 'kind': 'patterned', 'geometry': mapping(left)},
+             {'id': 'brick' if case == 'duplicate' else 'plain',
+              'kind': 'mixed' if case == 'unknown' else 'solid', 'geometry': mapping(right)}]
+    uv = [(0., 1.), (1., 1.), (0., 0.)]
+    if case not in ('fit', 'hole'):
+        with pytest.raises(ValueError, match='cell'):
+            recover_regions(path, [uv], cell_regions=cells)
+        return
+    result = recover_regions(path, [uv], cell_regions=cells)
+    if case == 'hole':
+        assert result['status'] == 'manual_required'
+        assert result['residual'] == [0]
+        assert result['pieces'] == [[]]
+    else:
+        assert result['status'] == 'ok'
+        assert [(r['cell_key'], r['kind']) for r in result['table']] == [('brick', 'patterned'), ('plain', 'solid')]
+        assert {p['id'] for p in result['pieces'][0]} == {1, 2}
+        assert unary_union([Polygon(p['uv']) for p in result['pieces'][0]]).equals(Polygon(uv))
+
+
+@pytest.mark.parametrize('order', list(permutations(range(3))))
+def test_new_metric_chart_for_oblique_textured_triangle(order):
+    from math import dist
+    from tools.blender.vpm_uv_policy import metric_triangle
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    vertices = [(1., 1., 1.), (13., 10., 1.), (0., 6., 4.)]
+    xyz = [vertices[i] for i in order]
+    uv = metric_triangle(xyz)
+    assert Polygon(uv).exterior.is_ccw
+    for i in range(3):
+        assert dist(uv[i], uv[i-1]) == pytest.approx(dist(xyz[i], xyz[i-1]))
+    planned = fit_metric_region(1, [xyz], [uv], density=513)
+    assert planned['status'] == 'ok'
+    assert planned['piece_count'] > 1
+    for tri in planned['pieces']:
+        for i in range(3):
+            assert 4096 * dist(tri['uv'][i], tri['uv'][i-1]) == pytest.approx(
+                513 * dist(tri['xyz'][i], tri['xyz'][i-1]))
+
+
+@pytest.mark.parametrize('bad', [[], [(0, 0, 0)]*3, [(0, 0, 0), (1, 1, 1), (2, 2, 2)],
+                                  [(0, 0, 0), (1, 1, 1), (2, 2, float('inf'))],
+                                  [(0, 0, 0), (1, 1, 1), (2, 2, float('nan'))]])
+def test_new_metric_chart_refuses_unmeasurable_triangles(bad):
+    from tools.blender.vpm_uv_policy import metric_triangle
+    with pytest.raises(ValueError, match='metric triangle'):
+        metric_triangle(bad)
+
+
+@pytest.mark.parametrize('toward', [0., 16.])
+def test_near_vertex_seam_keeps_surface_without_collapsed_children(toward):
+    from math import dist, nextafter
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    uv = [(0., 0.), (16., 0.), (8., 4.)]
+    xyz = [(1000. + u, 1000. + v, 0.) for u, v in uv]
+    result = fit_metric_region(2, [xyz], [uv], preferred_seams=[(0, nextafter(8., toward))], density=520)
+    assert result['status'] == 'ok'
+    assert result['cuts'][0]['at_m'] == 8.
+    assert result['cuts'][0]['kind'] == 'panel_or_zone'
+    children = [Polygon([p[:2] for p in piece['xyz']]) for piece in result['pieces']]
+    original = Polygon([p[:2] for p in xyz])
+    assert all(child.is_valid and child.area > 0 for child in children)
+    assert unary_union(children).equals(original)
+    assert sum(child.area for child in children) == pytest.approx(original.area)
+    for piece in result['pieces']:
+        for j in range(3):
+            assert 4096 * dist(piece['uv'][j], piece['uv'][j-1]) == pytest.approx(
+                520 * dist(piece['xyz'][j], piece['xyz'][j-1]))
+
+
+def _shared_edge_pair(rng, overlap):
+    """Two CCW triangles on a shared non-horizontal edge P-Q (issue #1849).
+
+    With `overlap`, the second apex is moved a little across P-Q so the pair
+    has a narrow positive-area intersection.
+    """
+    length = rng.uniform(8.5, 15.)
+    p, q = (0., rng.uniform(-2., 2.)), (length, rng.uniform(-2., 2.))
+    if q[1] == p[1]:
+        q = (q[0], q[1] + .5)
+    up, down = (rng.uniform(.5, length - .5), rng.uniform(2.5, 4.)), (rng.uniform(.5, length - .5), rng.uniform(-4., -2.5))
+    second = [q, p, down]
+    if overlap:
+        step = rng.uniform(1e-6, .05)
+        second = [(u, v + step) for u, v in second]
+    return [[p, q, up], second]
+
+
+def _seam_points(result, src, axis, at):
+    return {tuple(xyz) for piece in result['pieces'] if piece['source_triangle'] == src
+            for xyz in piece['xyz'] if abs(xyz[axis] - at) <= 1e-9}
+
+
+@pytest.mark.parametrize('reverse', [False, True])
+def test_metric_seam_on_oblique_shared_edge_is_common_issue_1849(reverse):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    charts = [[(0., 0.), (11., .5), (0., 3.)],
+              [(11., .5), (0., 0.), (11., -3.)]]
+    if reverse:
+        charts.reverse()
+    xyz = [[(u, v, 0.) for u, v in tri] for tri in charts]
+    assert Polygon(charts[0]).intersection(Polygon(charts[1])).area == 0
+    result = fit_metric_region(1, xyz, charts, preferred_seams=[(0, 5.)])
+    assert result['status'] == 'ok', result.get('reason')
+    assert {piece['source_triangle'] for piece in result['pieces']} == {0, 1}
+    seam = [_seam_points(result, src, 0, 5.) for src in (0, 1)]
+    shared = seam[0] & seam[1]
+    assert len(shared) == 1 and next(iter(shared))[1] == pytest.approx(5 / 22)
+
+
+@pytest.mark.parametrize('seed', range(4))
+def test_metric_seam_shared_edge_sweep_issue_1849(seed):
+    import random
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    rng = random.Random(1849 + seed)
+    for case in range(250):
+        overlap = case % 5 == 4
+        charts = _shared_edge_pair(rng, overlap)
+        if case % 2:
+            charts.reverse()
+        oracle = Polygon(charts[0]).intersection(Polygon(charts[1])).area
+        assert (oracle > 0) == overlap
+        xyz = [[(u, v, 0.) for u, v in tri] for tri in charts]
+        seam = rng.uniform(1., max(u for tri in charts for u, _ in tri) - 1.)
+        result = fit_metric_region(1, xyz, charts, preferred_seams=[(0, seam)])
+        if overlap:
+            assert result['status'] == 'blocked' and result['reason'] == 'uv_overlap', (seed, case)
+            assert result['pieces'] == result['cuts'] == []
+        else:
+            assert result['status'] == 'ok', (seed, case, result.get('reason'))
+            # The top-level preferred seam crosses the shared edge: both
+            # triangles must carry the very same seam vertex there.
+            top = result['cuts'][0]
+            assert (top['axis'], top['at_m']) == (0, seam)
+            pts = [_seam_points(result, src, 0, seam) for src in (0, 1)]
+            assert len(pts[0] & pts[1]) == 1, (seed, case, pts)

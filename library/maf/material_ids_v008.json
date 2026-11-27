@@ -7,7 +7,7 @@
   "quote": "Да, все",
   "by": "Artem",
   "source": "chat 2026-11-21 intake answers (jobs/staropetrovskiy-maf-lib/TASK.md); ID 36 colour: Artem, chat 2026-11-21 (pilot T01 review)",
-  "decision": "D358",
+  "decision": "D423",
   "previous": {
    "date": "2026-11-10",
    "quote": null,
@@ -62,7 +62,7 @@
   },
   "change": {
    "path": "library/maf/material_ids_v008_change.json",
-   "sha256": "fcc0abdfee522017f3998fbf5d37f4814f173424770fbae220978a894e954a9a"
+   "sha256": "32439e0dee6c04f68a65a76b98f62e588a79632fdfb088a70f8bfa8fe7274cc6"
   },
   "job_sources": {
    "brief": {
@@ -2357,7 +2357,7 @@
    "review": [],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 35,
@@ -2374,7 +2374,7 @@
    "review": [],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 36,
@@ -2391,7 +2391,7 @@
    "review": [],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D358): Staropetrovskiy job ID; colour measured in the delivered maps"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID; colour measured in the delivered maps"
   },
   {
    "id": 37,
@@ -2408,7 +2408,7 @@
    "review": [],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 38,
@@ -2427,7 +2427,7 @@
    ],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 39,
@@ -2446,7 +2446,7 @@
    ],
    "prev_id": null,
    "picked_patch": null,
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   }
  ],
  "inventory": {
@@ -8036,7 +8036,7 @@
     "key": "paint_ral8004",
     "file": "tiles/ID_36_paint_ral8004.png",
     "sha256": "fd4df901f09932264368c512b53510e12d7ce51281fb01236cdbbdfdea3a7f42",
-    "source": "delivered NPM map site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid content_px [260, 388, 56, 56] per-channel median (flat #9E5A47); VPM tile 1046 the same; brief #8E402A superseded (D358)"
+    "source": "delivered NPM map site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid content_px [260, 388, 56, 56] per-channel median (flat #9E5A47); VPM tile 1046 the same; brief #8E402A superseded (D423)"
    },
    {
     "id": 37,
@@ -8065,7 +8065,7 @@
  "changelog": [
   "v006 (2026-11-05, D229, #993): HPL satin wood (*T3510#26, tennis table) gets its own ID 32 `wood_hpl_satin` #B4825A; ID 14 `wood_light` keeps larch / light oak; the v005 merge hpl_satin_wood -> wood_light is undone. Nothing else changes.",
   "v007 (2026-11-10, D240, plan step 2.3): pine gets its own ID 33 `wood_pine` (WOOD2 of the team MAF atlas, Telegram «Материалы» 53407/53408) #82543D; ID 14 `wood_light` keeps larch / light oak; the v005 merge wood_pine -> wood_light is undone. Nothing else changes.",
-  "v008 (2026-11-21, D358): six IDs of the Staropetrovskiy MAF job added as used there: 34 `paint_ral1015` #E6D2B5, 35 `paint_ral1002` #D2AA6D, 36 `paint_ral8004` #9E5A47 (measured in the delivered maps; brief #8E402A superseded), 37 `concrete_beige` #CDBFA3, 38 `glass_frosted_white` #EEF1F2, 39 `glass_frosted_amber` #E8A878 (other colours from the job BRIEF.md; 38/39 opaque solid colour cells). Nothing else in v007 changes."
+  "v008 (2026-11-21, D423): six IDs of the Staropetrovskiy MAF job added as used there: 34 `paint_ral1015` #E6D2B5, 35 `paint_ral1002` #D2AA6D, 36 `paint_ral8004` #9E5A47 (measured in the delivered maps; brief #8E402A superseded), 37 `concrete_beige` #CDBFA3, 38 `glass_frosted_white` #EEF1F2, 39 `glass_frosted_amber` #E8A878 (other colours from the job BRIEF.md; 38/39 opaque solid colour cells). Nothing else in v007 changes."
  ],
  "derived_from": {
   "path": "library/maf/material_ids_v007.json",

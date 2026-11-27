@@ -51,7 +51,7 @@ def lib():
 # ==== library (K3) ===============================================================================================
 def test_library_pointer_schema_and_ral(lib):
     ptr = json.loads(LIB.read_text(encoding='utf-8'))
-    assert ptr['current'] == 'materials_v003.json' and lib['version'] == 'v003' == ptr['version']  # v003 = v002 + MAF keys [D358]
+    assert ptr['current'] == 'materials_v003.json' and lib['version'] == 'v003' == ptr['version']  # v003 = v002 + MAF keys [D423]
     assert lib['sha256'] == ptr['sha256'] and lib['ral_checked']
     # 30..40 records come from the materials audit; later records carry a user decision instead ([D202])
     assert 30 <= len([r for r in lib['materials'] if r['source'].get('audit')]) <= 45

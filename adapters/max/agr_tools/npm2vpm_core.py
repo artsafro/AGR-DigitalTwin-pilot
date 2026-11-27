@@ -29,6 +29,8 @@ import os
 import struct
 import sys
 import zlib
+from bisect import bisect_right
+from fractions import Fraction
 
 TOOL = 'npm.to_vpm'
 MODES = ('auto', 'table', 'regions')
@@ -749,6 +751,190 @@ def udim_fit_gate(mesh, atlas_wh, target_px_m=512):
             '(d) другое. Как поступить с этой группой ID? Ничего не записано.')
     return {'status': 'blocked' if bad else 'ok', 'ids': rows, 'question': question,
             'findings': planned['findings'], 'tile_px': 4096}
+
+
+def _metric_clip(poly, axis, at, keep_lower):
+    """Clip (XYZ, chart UV) pairs with one affine interpolation per edge."""
+    out = []
+    for a, b in zip(poly[-1:] + poly[:-1], poly):
+        av, bv = a[1][axis], b[1][axis]
+        if min(av, bv) < at < max(av, bv):
+            # Interpolate from the canonical endpoint order so the same shared
+            # edge, walked in opposite directions by its two triangles, yields
+            # one bit-identical seam vertex (#1849).
+            lo, hi = (a, b) if (a[1], a[0]) <= (b[1], b[0]) else (b, a)
+            t = (at - lo[1][axis]) / (hi[1][axis] - lo[1][axis])
+            xyz = tuple(x + t * (y - x) for x, y in zip(lo[0], hi[0]))
+            uv = tuple(at if i == axis else x + t * (y - x)
+                       for i, (x, y) in enumerate(zip(lo[1], hi[1])))
+            out.append((xyz, uv))
+        if (bv <= at) if keep_lower else (bv >= at):
+            out.append(b)
+    return out
+
+
+def _left_of_edge(a, b, p):
+    if p == a or p == b:
+        return False
+    x, y = b[0] - a[0], b[1] - a[1]
+    if not x:
+        return (p[0] < a[0]) if y > 0 else (p[0] > a[0])
+    if not y:
+        return (p[1] > a[1]) if x > 0 else (p[1] < a[1])
+    left, right = x * (p[1] - a[1]), y * (p[0] - a[0])
+    det = left - right
+    if abs(det) > 2e-15 * (abs(left) + abs(right)):
+        return det > 0
+    # No area tolerance: distinguish true boundary contact from a narrow
+    # positive-area overlap in the actual, represented tile coordinates.
+    ax, ay, bx, by, px, py = map(Fraction, (*a, *b, *p))
+    return (bx - ax) * (py - ay) > (by - ay) * (px - ax)
+
+
+def _metric_tile_overlap(pieces):
+    """First strictly overlapping tile-local triangle pair, or None."""
+    boxes = [tuple((min(axis), max(axis)) for axis in zip(*p['uv'])) for p in pieces]
+    def candidates(axis):
+        ends = sorted(box[axis][1] for box in boxes)
+        return sum(len(ends) - bisect_right(ends, box[axis][0]) for box in boxes)
+
+    axis = min(range(2), key=candidates)
+    other = 1 - axis
+    active = []
+    for i in sorted(range(len(boxes)), key=lambda i: boxes[i][axis][0]):
+        lo, _ = boxes[i][axis]
+        lo2, hi2 = boxes[i][other]
+        active = [j for j in active if boxes[j][axis][1] > lo]
+        a = pieces[i]['uv']
+        for j in active:
+            lj, hj = boxes[j][other]
+            if hi2 <= lj or hj <= lo2:
+                continue
+            b = pieces[j]['uv']
+            # Separating axes for two convex CCW triangles. Edge/point
+            # touches are not interior overlap, even across different XYZ.
+            if all(any(_left_of_edge(p, q, r) for r in target)
+                   for ring, target in ((a, b), (b, a))
+                   for p, q in zip(ring, ring[1:] + ring[:1])):
+                return sorted({pieces[i]['source_triangle'], pieces[j]['source_triangle']})
+        active.append(i)
+    return None
+
+
+def fit_metric_region(region_id, xyz, charts, *, preferred_seams=(), density=512, piece_budget=100):
+    """Partition one material region in metric chart coordinates, without moving its surface.
+
+    `charts` are new, planar isometric UVs in metres, not inherited NPM UVs.
+    Output UVs are tile-local; the caller allocates one distinct dense tile/ID
+    per piece. A preferred seam is a source-identified constant chart U or V
+    line in metres. A budget, unmeasurable chart or positive-area UV overlap in
+    any piece fails without partial output.
+    """
+    def finite(x):
+        return type(x) in (int, float) and math.isfinite(x)
+
+    def near(a, b):
+        return abs(a - b) <= 4 * math.ulp(max(abs(a), abs(b)))
+
+    if type(region_id) is not int or region_id <= 0:
+        raise ValueError('unmapped region ID: {}'.format(region_id))
+    if not finite(density) or not 512 <= density <= 1706:
+        raise ValueError('invalid px/m density')
+    if type(piece_budget) is not int or not 1 <= piece_budget <= 100:
+        raise ValueError('invalid tile budget')
+    if not xyz or len(xyz) != len(charts):
+        raise ValueError('empty/partial chart arrays')
+    preferred_seams = tuple(preferred_seams)
+    for axis, at in preferred_seams:
+        if type(axis) is not int or axis not in (0, 1) or not finite(at):
+            raise ValueError('invalid panel/zone seam')
+    records = []
+    for i, (coords, chart) in enumerate(zip(xyz, charts)):
+        if any(len(arr) != 3 or any(len(p) != dim or not all(map(finite, p)) for p in arr)
+               for arr, dim in ((coords, 3), (chart, 2))):
+            raise ValueError('ID {} triangle {}: invalid chart arrays'.format(region_id, i))
+        xy = [[x - y for x, y in zip(chart[b], chart[a])] for a, b in ((0, 1), (0, 2), (1, 2))]
+        twice_uv = xy[0][0] * xy[1][1] - xy[0][1] * xy[1][0]
+        cross = _cross(_sub(coords[1], coords[0]), _sub(coords[2], coords[0]))
+        twice_world = math.hypot(*cross)
+        if not math.isfinite(twice_uv) or not math.isfinite(twice_world) or min(twice_uv, twice_world) <= 0:
+            raise ValueError('ID {} triangle {}: degenerate or mirrored chart'.format(region_id, i))
+        if not math.isclose(twice_uv, twice_world, rel_tol=1e-8):
+            raise ValueError('ID {} triangle {}: chart area metric differs from world'.format(region_id, i))
+        for (a, b), d in zip(((0, 1), (0, 2), (1, 2)), xy):
+            l3 = math.dist(coords[a], coords[b])
+            if not math.isfinite(l3) or not l3 or not math.isclose(math.hypot(*d), l3, rel_tol=1e-8):
+                raise ValueError('ID {} triangle {}: chart metric differs from world'.format(region_id, i))
+        records.append((i, list(zip(coords, chart))))
+    span = (4096 - 2 * 32) / density
+    cuts, pieces = [], []
+    stack = [records]
+    piece_count = 0
+    while stack:
+        group = stack.pop()
+        uv = [uv for _, ring in group for _, uv in ring]
+        lo = [min(p[k] for p in uv) for k in (0, 1)]
+        hi = [max(p[k] for p in uv) for k in (0, 1)]
+        lengths = [b - a for a, b in zip(lo, hi)]
+        axis = max(range(2), key=lengths.__getitem__)
+        if not all(math.isfinite(v) for v in lengths):
+            raise ValueError('chart extent overflow')
+        if lengths[axis] < span:
+            piece_count += 1
+            tile_pieces = []
+            for src, ring in group:
+                for j in range(1, len(ring) - 1):
+                    triangle = [ring[0], ring[j], ring[j + 1]]
+                    vertices = [p for p, _ in triangle]
+                    tile_uv = [tuple(((p[k] - lo[k]) * density + 32) / 4096 for k in (0, 1))
+                               for _, p in triangle]
+                    u, v = [tuple(a - b for a, b in zip(tile_uv[i], tile_uv[0])) for i in (1, 2)]
+                    if (u[0] * v[1] <= u[1] * v[0]
+                            or not math.hypot(*_cross(_sub(vertices[1], vertices[0]),
+                                                     _sub(vertices[2], vertices[0])))
+                            or any(not (math.dist(vertices[i], vertices[i-1]) > 0 and
+                                        math.isclose(4096 * math.dist(tile_uv[i], tile_uv[i-1]),
+                                                     density * math.dist(vertices[i], vertices[i-1]),
+                                                     rel_tol=1e-7)) for i in range(3))):
+                        raise ValueError('ID {} triangle {}: unrepresentable metric cut output'.format(region_id, src))
+                    tile_pieces.append({'piece': piece_count, 'source_triangle': src,
+                                        'xyz': [list(p) for p in vertices],
+                                        'uv': [list(p) for p in tile_uv]})
+            overlap = _metric_tile_overlap(tile_pieces)
+            if overlap is not None:
+                return {'status': 'blocked', 'id': region_id, 'reason': 'uv_overlap',
+                        'source_triangles': overlap, 'cuts': [], 'pieces': []}
+            pieces.extend(tile_pieces)
+            continue
+        if piece_count + len(stack) + 2 > piece_budget:
+            return {'status': 'blocked', 'id': region_id, 'reason': 'tile_budget',
+                    'source_triangles': list(range(len(xyz))), 'cuts': [], 'pieces': []}
+        mid = lo[axis] + lengths[axis] / 2
+        preferred = [at for ax, at in preferred_seams if ax == axis and lo[axis] < at < hi[axis]
+                     and not near(at, lo[axis]) and not near(at, hi[axis])]
+        at = min(preferred, key=lambda pos: (abs(pos - mid), pos)) if preferred else mid
+        # An arithmetic near-hit at a clip corner must not create a wedge with
+        # distinct chart corners but identical XYZ. Canonicalize the line, not
+        # the vertices. Keep it strictly interior; never snap to an extent.
+        close = [p[axis] for p in uv if lo[axis] < p[axis] < hi[axis]
+                 and near(p[axis], at)]
+        if close:
+            at = min(close, key=lambda pos: (abs(pos - at), pos))
+        if not lo[axis] < at < hi[axis]:
+            raise ValueError('unrepresentable seam in metric chart')
+        sides = [[], []]
+        for i, ring in group:
+            for side in range(2):
+                poly = _metric_clip(ring, axis, at, side == 0)
+                if len(poly) >= 3:
+                    sides[side].append((i, poly))
+        if not all(sides):
+            raise ValueError('seam did not partition metric chart')
+        cuts.append({'id': region_id, 'axis': axis, 'at_m': at,
+                     'kind': 'panel_or_zone' if preferred else 'straight_midpoint',
+                     'source_triangles': sorted({i for i, _ in sides[0]} & {i for i, _ in sides[1]})})
+        stack.extend(reversed(sides))
+    return {'status': 'ok', 'id': region_id, 'piece_count': piece_count, 'pieces': pieces, 'cuts': cuts}
 
 
 def blocking(findings):

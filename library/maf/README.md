@@ -199,5 +199,5 @@ and copy both outputs back (outputs may not alias an input). Current: «Веро
 
 All 51 masters are already present as drafts in the published catalogue (#1993, [D421]); no second
 `generated` entry or library acceptance. Keep the master pivot (Z=0 at ground level, embedment
-stays) [D357]. Historical VPM results and exceptions: [batch record](../../jobs/staropetrovskiy-maf-lib/TASK.md)
-[D359]. `material_ids_v008.json` adds IDs 34–39 for this job; the active MAF pointer stays v007 [D358].
+stays) [D422]. Historical VPM results and exceptions: [batch record](../../jobs/staropetrovskiy-maf-lib/TASK.md)
+[D424]. `material_ids_v008.json` adds IDs 34–39 for this job; the active MAF pointer stays v007 [D423].

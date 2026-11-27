@@ -2,7 +2,7 @@
  "schema": 1,
  "version": "v003",
  "date": "2026-11-21",
- "issue": "D358: v002 + six MAF keys of the Staropetrovskiy job (MAF material IDs v008, ids 34-39)",
+ "issue": "D423: v002 + six MAF keys of the Staropetrovskiy job (MAF material IDs v008, ids 34-39)",
  "colour_space": "sRGB 8 bit; ral_classic.json screen approximations, not measured RAL",
  "byte_fields": "roughness/metallic/emissive 0..255 (MaterialRegistry); opacity 0..1",
  "maps_drive": "G:\\Мой диск\\AGR-assets\\materials\\ (read only from a copy, K5)",
@@ -921,12 +921,12 @@
    "source": {
     "audit": null,
     "audit_id": null,
-    "decision": "D358",
+    "decision": "D423",
     "evidence": "library/maf/material_ids_v008.json id 34; colour G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md row 34 (sha256 6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13); roughness/metallic = delivered G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_r_1.png (sha256 fe1dc5cd3a7cb5551347925cfbf8b543b78d51d133eab5bdc404b7da25a2e8ab) = 255 and _m_1.png (sha256 a4f626d8b7cdc72f208e3b5e71620ac01e44bc63e841088324ea177b887639ea) = 0 over every ID 34 cell"
    },
    "maf_v005_id": null,
    "rgb_override": true,
-   "note": "MAF material ID 34 (material_ids_v008 [D358]); maf_v005_id null: the ID is new in v008; project colour of the job, not ral_classic #E6D690"
+   "note": "MAF material ID 34 (material_ids_v008 [D423]); maf_v005_id null: the ID is new in v008; project colour of the job, not ral_classic #E6D690"
   },
   {
    "library_id": 55,
@@ -951,11 +951,11 @@
    "source": {
     "audit": null,
     "audit_id": null,
-    "decision": "D358",
+    "decision": "D423",
     "evidence": "library/maf/material_ids_v008.json id 35; colour G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md row 35 (sha256 6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13); roughness/metallic = delivered G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_r_1.png (sha256 fe1dc5cd3a7cb5551347925cfbf8b543b78d51d133eab5bdc404b7da25a2e8ab) = 255 and _m_1.png (sha256 a4f626d8b7cdc72f208e3b5e71620ac01e44bc63e841088324ea177b887639ea) = 0 over every ID 35 cell"
    },
    "maf_v005_id": null,
-   "note": "MAF material ID 35 (material_ids_v008 [D358]); maf_v005_id null: the ID is new in v008; RAL 1002 per the job; ral = null because 1002 is not in ral_classic.json (as brick 17 in v001)"
+   "note": "MAF material ID 35 (material_ids_v008 [D423]); maf_v005_id null: the ID is new in v008; RAL 1002 per the job; ral = null because 1002 is not in ral_classic.json (as brick 17 in v001)"
   },
   {
    "library_id": 56,
@@ -980,11 +980,11 @@
    "source": {
     "audit": null,
     "audit_id": null,
-    "decision": "D358",
+    "decision": "D423",
     "evidence": "library/maf/material_ids_v008.json id 36; colour G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid median; roughness/metallic = delivered G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_r_1.png (sha256 fe1dc5cd3a7cb5551347925cfbf8b543b78d51d133eab5bdc404b7da25a2e8ab) = 255 and _m_1.png (sha256 a4f626d8b7cdc72f208e3b5e71620ac01e44bc63e841088324ea177b887639ea) = 0 over every ID 36 cell"
    },
    "maf_v005_id": null,
-   "note": "MAF material ID 36 (material_ids_v008 [D358]); maf_v005_id null: the ID is new in v008; RAL 8004 per the job; ral = null because 8004 is not in ral_classic.json (as brick 17 in v001); colour measured in the delivered maps [D358]"
+   "note": "MAF material ID 36 (material_ids_v008 [D423]); maf_v005_id null: the ID is new in v008; RAL 8004 per the job; ral = null because 8004 is not in ral_classic.json (as brick 17 in v001); colour measured in the delivered maps [D423]"
   },
   {
    "library_id": 57,
@@ -1009,11 +1009,11 @@
    "source": {
     "audit": null,
     "audit_id": null,
-    "decision": "D358",
+    "decision": "D423",
     "evidence": "library/maf/material_ids_v008.json id 37; colour G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md row 37 (sha256 6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13); roughness/metallic = delivered G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_r_1.png (sha256 fe1dc5cd3a7cb5551347925cfbf8b543b78d51d133eab5bdc404b7da25a2e8ab) = 255 and _m_1.png (sha256 a4f626d8b7cdc72f208e3b5e71620ac01e44bc63e841088324ea177b887639ea) = 0 over every ID 37 cell"
    },
    "maf_v005_id": null,
-   "note": "MAF material ID 37 (material_ids_v008 [D358]); maf_v005_id null: the ID is new in v008"
+   "note": "MAF material ID 37 (material_ids_v008 [D423]); maf_v005_id null: the ID is new in v008"
   },
   {
    "library_id": 58,
@@ -1038,11 +1038,11 @@
    "source": {
     "audit": null,
     "audit_id": null,
-    "decision": "D358",
+    "decision": "D423",
     "evidence": "library/maf/material_ids_v008.json id 38; colour G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md row 38 (sha256 6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13); roughness/metallic = delivered G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_r_1.png (sha256 fe1dc5cd3a7cb5551347925cfbf8b543b78d51d133eab5bdc404b7da25a2e8ab) = 255 and _m_1.png (sha256 a4f626d8b7cdc72f208e3b5e71620ac01e44bc63e841088324ea177b887639ea) = 0 over every ID 38 cell"
    },
    "maf_v005_id": null,
-   "note": "MAF material ID 38 (material_ids_v008 [D358]); maf_v005_id null: the ID is new in v008; opaque frosted-glass colour cell (job decisions_night #16); class mineral, not glass: class glass requires opacity < 1"
+   "note": "MAF material ID 38 (material_ids_v008 [D423]); maf_v005_id null: the ID is new in v008; opaque frosted-glass colour cell (job decisions_night #16); class mineral, not glass: class glass requires opacity < 1"
   },
   {
    "library_id": 59,
@@ -1067,11 +1067,11 @@
    "source": {
     "audit": null,
     "audit_id": null,
-    "decision": "D358",
+    "decision": "D423",
     "evidence": "library/maf/material_ids_v008.json id 39; colour G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md row 39 (sha256 6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13); roughness/metallic = delivered G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_r_1.png (sha256 fe1dc5cd3a7cb5551347925cfbf8b543b78d51d133eab5bdc404b7da25a2e8ab) = 255 and _m_1.png (sha256 a4f626d8b7cdc72f208e3b5e71620ac01e44bc63e841088324ea177b887639ea) = 0 over every ID 39 cell"
    },
    "maf_v005_id": null,
-   "note": "MAF material ID 39 (material_ids_v008 [D358]); maf_v005_id null: the ID is new in v008; as glass_frosted_white"
+   "note": "MAF material ID 39 (material_ids_v008 [D423]); maf_v005_id null: the ID is new in v008; as glass_frosted_white"
   }
  ],
  "ground_ref": {

@@ -2,15 +2,15 @@
  "schema": "library-maf-material-ids-change",
  "from": "library/maf/material_ids_v007.json",
  "version": "v008",
- "decision": "D358",
- "md_ref": "D358",
+ "decision": "D423",
+ "md_ref": "D423",
  "approval": {
   "date": "2026-11-21",
   "quote": "Да, все",
   "by": "Artem",
   "source": "chat 2026-11-21 intake answers (jobs/staropetrovskiy-maf-lib/TASK.md); ID 36 colour: Artem, chat 2026-11-21 (pilot T01 review)"
  },
- "changelog": "v008 (2026-11-21, D358): six IDs of the Staropetrovskiy MAF job added as used there: 34 `paint_ral1015` #E6D2B5, 35 `paint_ral1002` #D2AA6D, 36 `paint_ral8004` #9E5A47 (measured in the delivered maps; brief #8E402A superseded), 37 `concrete_beige` #CDBFA3, 38 `glass_frosted_white` #EEF1F2, 39 `glass_frosted_amber` #E8A878 (other colours from the job BRIEF.md; 38/39 opaque solid colour cells). Nothing else in v007 changes.",
+ "changelog": "v008 (2026-11-21, D423): six IDs of the Staropetrovskiy MAF job added as used there: 34 `paint_ral1015` #E6D2B5, 35 `paint_ral1002` #D2AA6D, 36 `paint_ral8004` #9E5A47 (measured in the delivered maps; brief #8E402A superseded), 37 `concrete_beige` #CDBFA3, 38 `glass_frosted_white` #EEF1F2, 39 `glass_frosted_amber` #E8A878 (other colours from the job BRIEF.md; 38/39 opaque solid colour cells). Nothing else in v007 changes.",
  "job_sources": {
   "brief": {
    "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md",
@@ -75,7 +75,7 @@
    "vpm_solid_tile": 1044,
    "spec_rows": [],
    "review": [],
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 35,
@@ -102,7 +102,7 @@
    "vpm_solid_tile": 1045,
    "spec_rows": [],
    "review": [],
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 36,
@@ -117,7 +117,7 @@
     "file": "tiles/ID_36_paint_ral8004.png",
     "px": 512,
     "flat": "#9E5A47",
-    "source": "delivered NPM map site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid content_px [260, 388, 56, 56] per-channel median (flat #9E5A47); VPM tile 1046 the same; brief #8E402A superseded (D358)"
+    "source": "delivered NPM map site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid content_px [260, 388, 56, 56] per-channel median (flat #9E5A47); VPM tile 1046 the same; brief #8E402A superseded (D423)"
    },
    "job_cells": [
     "ID36_lamellas_open",
@@ -127,7 +127,7 @@
    "vpm_solid_tile": 1046,
    "spec_rows": [],
    "review": [],
-   "status": "approved-v1 (D358): Staropetrovskiy job ID; colour measured in the delivered maps"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID; colour measured in the delivered maps"
   },
   {
    "id": 37,
@@ -152,7 +152,7 @@
    "vpm_solid_tile": null,
    "spec_rows": [],
    "review": [],
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 38,
@@ -177,7 +177,7 @@
    "review": [
     "kind null: no library kind fits an opaque frosted-glass colour cell (decisions_night #16); translucent = GroundElGlass without texture"
    ],
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   },
   {
    "id": 39,
@@ -202,7 +202,7 @@
    "review": [
     "kind null: as ID 38"
    ],
-   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+   "status": "approved-v1 (D423): Staropetrovskiy job ID"
   }
  ],
  "inherited_evidence": {
