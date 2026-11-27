@@ -369,6 +369,15 @@
 # HISTORICAL [D327] docs: unreached docs (#1614) and inactive plans (#1856); hidden from agent search
 /docs/agents/MERGE_POLICY.md
 /docs/agents/STEWARD_NOTE.md
+/docs/agents/decision-trees/ground-npm.md
+/docs/agents/decision-trees/ground-vpm.md
+/docs/agents/decision-trees/library-publish.md
+/docs/agents/decision-trees/maf-npm-to-vpm.md
+/docs/agents/decision-trees/npm-to-vpm.md
+/docs/agents/decision-trees/oks-npm-lite.md
+/docs/agents/decision-trees/oks-vpm.md
+/docs/agents/decision-trees/sintez-fix.md
+/docs/agents/decision-trees/vpm-to-npm.md
 /docs/architecture/contexts.excalidraw
 /docs/architecture/evidence-1593.txt
 /docs/architecture/npm-oks-route.excalidraw
