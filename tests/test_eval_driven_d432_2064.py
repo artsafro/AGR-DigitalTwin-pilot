@@ -1,4 +1,7 @@
-"""#2064: the eval-driven development principle is a real D-row and every place agents read it cites it."""
+"""#2064: the eval-driven development principle is a real D-row and every place agents read it cites it.
+
+new-case: tests/test_eval_driven_d432_2064.py - D432 citation guard (decisions.md, AGENTS.md, trainer, merge policy)
+"""
 
 import re
 from pathlib import Path
