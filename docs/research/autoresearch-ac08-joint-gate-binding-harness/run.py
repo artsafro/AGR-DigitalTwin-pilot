@@ -149,7 +149,11 @@ def package(ver, spec, sheet, rebind, data):
     scored = [r for r in rows.values() if "refused" not in r]
     out = {"facades": rows, "B131": sum(not r["binding_ok"] for r in rows.values()),
            "refused": [n for n, r in rows.items() if "refused" in r]}
-    if len(scored) == len(rows):
+    # count_joints returns no joints_found when a row has < 10 panel samples; compare_facades.main would raise
+    # KeyError there (gate crash), so such a package is reported unscored, never as 0 joints (repair 1).
+    out["no_panel_rows"] = [f"{n}/{t}" for n, r in rows.items() if "refused" not in r
+                            for t in ("vpm", "npm") if r[f"{t}_render"] is None]
+    if len(scored) == len(rows) and not out["no_panel_rows"]:
         out["E127"] = sum(abs(r[f"{t}_render"] - r["want"]) for r in scored for t in ("vpm", "npm"))
         out["A131"] = sum(abs(r[f"{t}_render"] - r["truth_T"]) for r in scored for t in ("vpm", "npm"))
     return out
