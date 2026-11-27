@@ -4,6 +4,7 @@ import math
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -404,6 +405,94 @@ def test_practice_tree_refuses_existing_dst_and_survivor(tmp_path, monkeypatch):
 def test_cmd_run_does_not_use_git_worktree():
     src = Path(T.__file__).read_text(encoding="utf-8")
     assert '"worktree", "add"' not in src and "practice_tree(ROOT" in src
+
+
+def test_practice_child_discovers_only_repository_skills(tmp_path, monkeypatch):
+    """Synthetic child observes the discovery roots, not the parent's env or argv alone."""
+    skill = ".agents/skills/repo-skill/SKILL.md"
+    src = _repo(tmp_path, {skill: "repository skill", "docs/agents/skeletons.json": '{"cells": {}}'})
+    _git(src, "-c", "user.name=test", "-c", "user.email=t@t", "commit", "-qm", "fixture")
+    monkeypatch.setattr(T, "ROOT", src)
+    monkeypatch.setattr(T, "_windows_profile", lambda: None, raising=False)
+    sentinels = []
+    for var, location in (("HOME", ".agents/skills"), ("USERPROFILE", ".agents/skills"),
+                          ("CODEX_HOME", "skills")):
+        root = tmp_path / var
+        file = root / location / "user-skill" / "SKILL.md"
+        file.parent.mkdir(parents=True)
+        file.write_text(var, encoding="utf-8")
+        sentinels.append((file, var))
+        monkeypatch.setenv(var, str(root))
+    auth = tmp_path / "CODEX_HOME/auth.json"
+    auth.write_bytes(b'{"synthetic":true}')
+    real_run = subprocess.run
+
+    def run(cmd, **kwargs):
+        if len(cmd) > 1 and cmd[1] == "exec":
+            practice = cmd[cmd.index("-C") + 1]
+            return real_run([sys.executable, "-c", """
+import json, os, sys
+from pathlib import Path
+roots = [Path(os.environ[k]) / '.agents/skills' for k in ('HOME', 'USERPROFILE')]
+home = Path(os.environ['CODEX_HOME'])
+roots.append(home / 'skills')
+auth = home / 'auth.json'
+report = dict(user=[p.read_text() for root in roots for p in root.glob('*/SKILL.md')],
+              repo=(Path(sys.argv[1]) / sys.argv[2]).read_text(),
+              auth=auth.read_text(), auth_path=str(auth))
+print(json.dumps(report))
+""", practice, skill], **kwargs)
+        return real_run(cmd, **kwargs)
+
+    monkeypatch.setattr(T.subprocess, "run", run)
+    out = tmp_path / "run"
+    etalon = {**_E, "id": "synthetic", "practice_ready": True, "scenario": "fixture", "sources": [],
+              "task": "Synthetic skill discovery probe."}
+    args = SimpleNamespace(etalon="synthetic", lane="codex", out=out, head="HEAD", dry_run=False, timeout_s=30)
+    assert T.cmd_run(args, {"etalons": [etalon]}) == 0
+    assert json.loads((out / "run.json").read_text(encoding="utf-8"))["exit"] == 0
+    report = json.loads((out / "events.jsonl").read_text(encoding="utf-8"))
+    assert report["repo"] == "repository skill"
+    assert report["user"] == []
+    assert report["auth"].encode() == auth.read_bytes()
+    assert not Path(report["auth_path"]).exists()
+    assert all(file.read_text(encoding="utf-8") == var for file, var in sentinels)
+
+
+def test_practice_disables_windows_known_folder_skills(tmp_path, monkeypatch):
+    """Codex can use the OS profile instead of USERPROFILE on Windows."""
+    import tomllib
+
+    src = _repo(tmp_path, {"docs/agents/skeletons.json": '{"cells": {}}'})
+    _git(src, "-c", "user.name=test", "-c", "user.email=t@t", "commit", "-qm", "fixture")
+    monkeypatch.setattr(T, "ROOT", src)
+    profile = tmp_path / "known folder ü"
+    skills = [profile / f".agents/skills/{name}/nested/SKILL.md" for name in ("alpha", "beta")]
+    for skill in skills:
+        skill.parent.mkdir(parents=True)
+        skill.write_text("synthetic user skill", encoding="utf-8")
+    monkeypatch.setenv("USERPROFILE", str(tmp_path / "not-the-known-folder"))
+    monkeypatch.setenv("CODEX_HOME", str(tmp_path / "no-auth"))
+    monkeypatch.setattr(T, "_windows_profile", lambda: profile, raising=False)
+    real_run = subprocess.run
+    disabled = set()
+
+    def run(cmd, **kwargs):
+        if len(cmd) > 1 and cmd[1] == "exec":
+            for arg in cmd:
+                if arg.startswith("skills.config="):
+                    disabled.update(Path(s["path"]) for s in tomllib.loads(arg)["skills"]["config"]
+                                    if s["enabled"] is False)
+            return subprocess.CompletedProcess(cmd, 0)
+        return real_run(cmd, **kwargs)
+
+    monkeypatch.setattr(T.subprocess, "run", run)
+    etalon = {**_E, "id": "synthetic", "practice_ready": True, "scenario": "fixture", "sources": [],
+              "task": "Synthetic Windows skill discovery probe."}
+    args = SimpleNamespace(etalon="synthetic", lane="codex", out=tmp_path / "run", head="HEAD",
+                           dry_run=False, timeout_s=30)
+    assert T.cmd_run(args, {"etalons": [etalon]}) == 0
+    assert disabled == {p.resolve() for p in skills}
 
 
 # ---------------------------------------------------------------- #1861: bank paths live on Drive, not C:/x
