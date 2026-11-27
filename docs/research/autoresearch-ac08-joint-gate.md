@@ -58,5 +58,16 @@ a priori above); unlabeled `pilot`, `pilot-v006`, `pilot-v009` are reported if r
 **Stop rule.** One variant only (the gate as on origin/main). No parameter change after seeing v007. Budget = this card
 run; if Blender readback fails three different ways, stop `inconclusive` with the exact next command.
 
+**Amendment A1 (committed before the re-render, after the first gate call).** Repair attempt 1: on the Drive v007
+renders the gate crashes (`KeyError: 'views'`, exit 1 = crash, not MISMATCH): v007 `renders.json` predates the camera
+block that `render_facades.py` gained in a1f41ee2 (v009). v010 on its Drive renders gave exit 0, 29/29/11/11, all match,
+3/3 identical (`compare.json` sha256 `558bd841966d7936...`), i.e. (c) holds on the stored renders. Both packages are
+therefore re-rendered from their Drive ZIPs with the current `render_facades.py` (the documented replay path,
+`AC08/PILOT_REPORT.md` «Как повторить»), new dirs only:
+`blender -b --factory-startup --python jobs/TEC26-OKS/scripts/render_facades.py -- jobs/TEC26-OKS/AC08/vpm_textures.json
+<P>/vpm/SM_Nku_1.fbx <P>/vpm <P>/npm/0000_Nku_1_01.fbx <P>/renders_r127`, then the gate as above on `renders_r127`.
+The metric, keep rule and gate are unchanged. Parity (c) is now required on the fresh v010 render as well; if the
+fresh v010 render does not reproduce 29/29/11/11 the round is `inconclusive`.
+
 **Forbidden.** Editing the gate, `joint_count.py`, the spec, the sheet, any delivered package or render on Drive; files
 of other cards; changing labels after scoring.
