@@ -315,12 +315,18 @@ _KEYS_PARENT = KEYS_DIR.split("/")[0]
 # a `keys` path component, or a `k...` component carrying a glob (`k*`, `k"*`, `ke?s`); bank dirs such as
 # `k2_v002r1` carry no glob and stay clean
 _KEYS_COMPONENT = re.compile(r"""(?:^|[\s/"'(,=])(?:keys|k[\w"'-]*[*?\[][^/\s"')]*)(?=[/\s"')]|$)""")
-# review #1970 r2 P1-1: fail-closed allowlist. Recursive tools (rg, Get-ChildItem -Recurse, find) aimed at a parent
-# of the keys dir read the key without naming it, so `1855-trainer-v0` must be directly followed by the `/bank`
-# component and `agr-evidence` by `/1855-trainer-v0/bank`; any other mention (bare parent, `bankX`) is a read.
-# `..` after either root is a read too (`bank/../keys`). Cost: cd-to-parent then a relative bank path also fails.
+# A literal ancestor of the held-out keys is unsafe unless it continues directly into the bank.
+# This also flags cd-to-parent followed by a relative bank path, and the visible ancestor in a
+# split path. This is a text audit: it does not resolve variables or evaluate concatenations.
 _END = r"""(?=[/\s"')|;&]|$)"""
-_PARENT_NOT_BANK = re.compile(r"1855-trainer-v0(?!/bank" + _END + ")|agr-evidence(?!/1855-trainer-v0/bank" + _END + ")")
+_BANK = f"{_KEYS_PARENT}/bank{_END}"
+_EVIDENCE_BANK = f"agr-evidence/{_BANK}"
+_PARENT_NOT_BANK = re.compile(
+    rf"""(?:^|[\s"'(,=;|&])(?:g:/|/g/)(?!мой диск/{_EVIDENCE_BANK})"""
+    rf"|(?<![\w-])мой диск(?![\w-])(?!/{_EVIDENCE_BANK})"
+    rf"|agr-evidence(?!/{_BANK})|{_KEYS_PARENT}(?!/bank{_END})"
+)
+# A bank-qualified path must not traverse back to a parent.
 _DOTDOT = re.compile(r"(?:agr-evidence|1855-trainer-v0)/[^\s\"']*(?:^|/)\.\.(?:/|[\s\"']|$)")
 
 

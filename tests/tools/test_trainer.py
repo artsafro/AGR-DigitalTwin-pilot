@@ -507,8 +507,28 @@ def _run_dir(tmp_path, commands, events=True):
     "rg -uu 843197 'G:/Мой диск/AGR-evidence'",
     'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls bank/g22-k2-stage1/k2_v002r1',
     "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/../",
-    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bankX"])
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bankX",
+])
 def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd):
+    _assert_holdout_read(tmp_path, cmd)
+
+
+@pytest.mark.parametrize("cmd", [
+    pytest.param('rg -uu roof "G:/Мой диск"', id="my-drive"),
+    pytest.param("rg -uu roof G:/", id="drive-root"),
+    pytest.param('cd "G:/Мой диск" && rg -uu roof .', id="cd-my-drive"),
+    pytest.param('$p="G:/Мой диск/AGR-ev"+"idence"; rg -uu roof $p', id="literal-prefix-in-concatenation"),
+    pytest.param("Get-ChildItem -Recurse g:\\", id="windows-root"),
+    pytest.param("rg -uu roof /g/", id="git-bash-root"),
+    pytest.param('rg -uu roof "МОЙ ДИСК"', id="relative-my-drive"),
+    pytest.param('rg -uu roof "G:/other"', id="outside-bank"),
+    pytest.param('cd "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/.." && rg roof .', id="bank-traversal"),
+])
+def test_holdout_audit_fails_recursive_reads_above_evidence(tmp_path, cmd):
+    _assert_holdout_read(tmp_path, cmd)
+
+
+def _assert_holdout_read(tmp_path, cmd):
     run = _run_dir(tmp_path, ["ls inputs", cmd])
     assert T.key_dir_reads(run) == [cmd]
     rep = T.score(next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1"), str(run / "built"), tmp_path / "w")
@@ -522,6 +542,9 @@ def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
                               'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank" && ls g22-k2-stage1/k2_v002r1',
                               "rg -n roof 'G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1'",
                               r'dir G:\Мой диск\AGR-evidence\1855-trainer-v0\bank',
+                              "rg roof '/g/МОЙ ДИСК/agr-evidence/1855-trainer-v0/BANK'",
+                              'rg roof "Мой диск/AGR-evidence/1855-trainer-v0/bank"',
+                              "rg roof C:/workspace", "rg roof docs/log:/notes.txt",
                               "python tools/trainer/kit.py --keep-going"])
     assert T.key_dir_reads(run) == []
     assert T.score(e, str(run / "built"), tmp_path / "w")["steps"]["holdout"]["status"] == "pass"
