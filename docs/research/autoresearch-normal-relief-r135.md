@@ -141,7 +141,9 @@ contract; if it refutes, the hypothesis is refuted and the next idea needs a new
 `run.py C:/x/ev_t_33b1b86c/a1 --a1 10`, 3 fresh runs, wall 70.3 / 70.0 / 71.1 s, max paired spread 0.0,
 verdict identical. Clip fraction 0.0 on every relief shot of every variant (guard exercised, nothing dropped).
 Receipt `autoresearch-normal-relief-r135/receipt_a1.json` (on disk SHA-256
-`acd9351e776e97d90421e1644be7512d504d306455728cd114e6932e1e9285a8`; Git stores it with LF).
+`acd9351e776e97d90421e1644be7512d504d306455728cd114e6932e1e9285a8`; Git LF bytes SHA-256
+`cdb840f6ae306dfbd17abb6a18cbdd8788a5666a1f4f42fb8c7361907edc1704`; R1 Git LF bytes
+`3c7300c5e156926d45171f5596f8a31abd3e2cf803b5fa1cef47c960c26bf2cf`).
 
 | relief mode, A1 | V135 | straight | corner | floor-join | niche | stripe |
 |---|---:|---:|---:|---:|---:|---:|
