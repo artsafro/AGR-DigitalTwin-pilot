@@ -1,5 +1,28 @@
 # Autoresearch #145 — view -> face transfer test on a fresh asymmetric pair (ELV TC Sreda, OBSERVE)
 
+## Кратко для Артёма
+
+Проверил лучший метод прошлых раундов (#140 B: линии чертежа против ортопроекции модели, порог отрыва 0,10)
+на новом, никогда не использованном объекте — ТЦ «Среда» (ЭЛВ): векторный буклет АГР + Revit FBX. Здесь есть то,
+чего не было на KPP1/AC08: косая стена (вид «6-1»), пристройка с внутренним углом и три НАСТОЯЩИХ фрагмента фасада
+на других листах (без названий и осей для метода).
+**Итог: гипотеза опровергнута.** На реальных видах метод безопасен: 7 полных фасадов — 5 верно, 0 ошибок,
+2 отказа (косой «6-1» и западный «А-И»); 3 реальных фрагмента — 1 верно (вход Д-Г), 2 отказа, 0 ошибок. Но на
+63 синтетических обрезках — 13 уверенных ошибок, и **все 13 указывают на один и тот же восточный фасад** (сплошной
+витраж: в модели Revit там больше всего рёбер — он «притягивает» любой полосатый фрагмент). Это новая, ясная причина:
+оценка не нормирована на «насыщенность» кандидата. Проверка после замера (не принимается как результат, только
+подсказка следующему раунду): вычесть из оценки кандидата его медиану по остальным видам того же альбома —
+ошибки на обрезках 13 → 2, верных 15 → 24, полные фасады 6/7 верно без ошибок. Три прогона — байт-в-байт одинаково.
+
+Рекомендация для шага OKS-трассы «view<->face map sheet» (не реализован, OBSERVE): (1) сначала оси/ключевой
+план/название вида; (2) для неподписанных — метод B только для ЦЕЛЫХ видов (0 ошибок на 7+4 реальных видах
+двух объектов) и только с отказом при отрыве < 0,10; (3) фрагменты и частичные виды — пока всегда вопрос с двумя
+лучшими кандидатами, пока нормировка «по альбому» не подтверждена на свежей паре; (4) фрагменты с обрезанным верхом
+(как лист 20) метод B принципиально не видит — их привязывать только по осям/тексту. Сокольники не открывались.
+
+**Hypothesis result:** H145 **REFUTED** (13 confident-wrong synthetic crops; full-view bound met 5/7 >= 4).
+Run status: finished, 3/3 pairs byte-identical. Review readiness is separate (below).
+
 Card t_6c816f20, branch `research/autoresearch-standing-145`. Focus 0 (Artem 2026-11-27 ~15:05): tie every elevation
 view on a sheet, including untitled partial views, to the model face it shows; abstain (ask) below a threshold.
 Sokolniki (#2001, OPEN) is HELD OUT and was not opened.
@@ -52,3 +75,68 @@ Fragments are reported separately (n = 3 is too small for a rate) and must not b
   `git fetch origin research/autoresearch-standing-139 research/autoresearch-standing-140`). All inputs and upstream
   bytes are SHA-256 checked at stage time and the inputs again after the run. Replay is limited to hosts with that
   folder; hash-identical copies go to the evidence folder.
+
+## Round log (one frozen variant, no change after scoring)
+
+Contract commit `7f175843` (before any scoring). Run `C:/x/ev_t_6c816f20/run1`: 3 fresh pairs (new Blender ray cast
++ new PDF read each), pair wall 157.5 / 157.3 / 166.4 s (median 157.5 s, range 9.0 s; total 482.6 s incl. staging;
+the 36 s preview estimate excluded the 80 PDF-scoring cases), all three pair outputs byte-identical (content
+SHA-256 in the receipt). Inputs re-hashed after the run: unchanged.
+
+| Group (clean unless noted) | correct / wrong / abstain | Bound | Outcome |
+|---|---:|---|---|
+| Real full views (7) | 5 / 0 / 2 | >= 4 correct, 0 wrong | met |
+| Synthetic crops of those (63) | 15 / 13 / 35 | 0 wrong | **missed** -> H145 refuted |
+| Real fragments 1:100 (p23 D-G, p24 8-9) | 1 / 0 / 1 | 0 wrong | met |
+| Real top-cut fragment 1:20 (p20 9-10) | 0 / 0 / 1 | expected abstain | met (scores 0.985 vs 0.951: attractor, see below) |
+| Injected mirror of full views (7 exercised) | 2 / 1 / 4 | reported only | 1 wrong: mirrored 10-1 -> 270 (handedness, as #139) |
+
+Per-view facts (receipt rows):
+- Full: I-A (p18, p21) -> 0 with margins 0.239 / 0.255; 1-10 / 1-12 -> 270 (0.280 / 0.294); 10-1 -> 90 (0.104).
+  Abstain: A-I (180 best, margin 0.088), slanted 6-1 (best 0 at 0.563 over the true 90 at 0.527).
+- **All 13 wrong crops pick az 0** (east glazed curtain-wall entrance; densest Revit edge field). The real
+  fragment p24 8-9 (true 270) also ranked az 0 first (0.737 vs 180 at 0.637, true 270 third at 0.583; margin
+  0.0998, abstained by 0.0002) and the
+  top-cut p20 scored 0.985 on az 0. Diagnosis: the harmonic mean of hit fractions rewards a candidate with many
+  edges; a dense candidate is a universal attractor for any striped drawing (cassette joints, panel lines).
+- KPP1/AC08 (#140) had no such dense face, so the bias was invisible there.
+
+**Post-hoc diagnostic (not a keep; rescoring the frozen receipt is not stability evidence):**
+`posthoc.py` subtracts from each candidate score that candidate's median over the OTHER views of the same booklet
+(sheet-level, no GT). Margin 0.10: full 6 / 0 / 1, crops 24 / 2 / 37, fragments 0 / 0 / 2. Margin 0.05: full 7/0/0,
+crops 38 / 6 / 19. Still not safe on crops; it is the next hypothesis, to be frozen and measured on fresh pairs
+(this booklet as regression + KPP1/AC08/OBR22 + Sokolniki after #2001).
+
+Clean vs injected vs not measured:
+- Measured clean: 7 real full views, 3 real fragments, 63 synthetic crops (labelled synthetic).
+- Injected: 7 mirrors, all exercised (changed pixels 19 624 - 49 614).
+- **Not measured:** within-face localisation (which bay a fragment shows), Revit view names / keyplans as
+  algorithms, raster PDFs, the faces of the west annex / re-entrant corner as separate candidates (side-level only),
+  finish-callout transfer and STOP 04, Sokolniki (held out).
+
+## Recommendation (OBSERVE, not implemented)
+
+Shared OKS-trail step "view<->face map sheet" (core + `agr` command): order = axes/keyplan/titles first; untitled
+WHOLE views by #140 B with margin 0.10 (0 confident-wrong on 11 real full views over KPP1 + ELV); partial views and
+fragments always a two-candidate question for now; the sheet must print, per view, the top-2 candidates, scores and the
+reason for abstaining. Before any partial-view auto-answer: freeze the sheet-level candidate-prior normalisation and
+measure it on fresh pairs with zero confident-wrong as the bound.
+
+## Replay and evidence
+
+```
+git fetch origin research/autoresearch-standing-139 research/autoresearch-standing-140
+uv run --offline --extra pdf-review python docs/research/autoresearch-view-face-elv/run.py <new_dir>
+python docs/research/autoresearch-view-face-elv/posthoc.py <new_dir>/receipt.json
+```
+
+Receipt: `autoresearch-view-face-elv/receipt.json`. Evidence (staged hash-identical PDF/FBX inputs, all pair JSONs,
+ray npz, logs, view/model edge previews, GT contact sheet `sheet_main.png`):
+`G:/Мой диск/AGR-evidence/145-view-face-elv/` + `SHA256SUMS.txt`. Replay is limited to the pilot host (owner's
+named folder or the evidence copies; Blender 4.4 pinned by SHA-256).
+
+## Checks
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --extra pdf-review pytest -q -p no:cacheprovider --basetemp C:/x/pt_t_6c816f20 docs/research/autoresearch-view-face-elv/test_run.py` — 4 passed.
+`bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN (568 passed).
+Full suite: deferred to merge batch (rule 68). No product code changed.
