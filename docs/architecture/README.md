@@ -515,6 +515,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/trainer-tower-id-r87/series-sh | [research/trainer-tower-id-r87/series.sh](../research/trainer-tower-id-r87/series.sh) |  |
 | research/ucx-etalon-analysis | [research/ucx-etalon-analysis.md](../research/ucx-etalon-analysis.md) |  |
 | research/ucx-etalon-audit-2026-10-15-json | [research/ucx-etalon-audit-2026-10-15.json](../research/ucx-etalon-audit-2026-10-15.json) |  |
+| research/ucx-variants-2053 | [research/ucx-variants-2053.md](../research/ucx-variants-2053.md) |  |
 | research/vatutino-ground-80deg-step-source | [research/vatutino-ground-80deg-step-source.md](../research/vatutino-ground-80deg-step-source.md) |  |
 | research/vatutino-ground-v015-outer-skirt-gap-20-edges | [research/vatutino-ground-v015-outer-skirt-gap-20-edges.md](../research/vatutino-ground-v015-outer-skirt-gap-20-edges.md) |  |
 | research/vpm-course-grid-1314 | [research/vpm-course-grid-1314.md](../research/vpm-course-grid-1314.md) |  |
