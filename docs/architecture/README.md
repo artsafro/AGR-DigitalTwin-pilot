@@ -198,6 +198,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | architecture/flora-route-events-yaml | [architecture/flora-route.events.yaml](flora-route.events.yaml) |  |
 | architecture/ground-contexts-yaml | [architecture/ground-contexts.yaml](ground-contexts.yaml) |  |
 | architecture/ground-route-events-yaml | [architecture/ground-route.events.yaml](ground-route.events.yaml) |  |
+| architecture/hygiene-profile-yaml | [architecture/hygiene-profile.yaml](hygiene-profile.yaml) |  |
 | architecture/maf-contexts-yaml | [architecture/maf-contexts.yaml](maf-contexts.yaml) |  |
 | architecture/maf-route-events-yaml | [architecture/maf-route.events.yaml](maf-route.events.yaml) |  |
 | architecture/npm-oks-route-events-yaml | [architecture/npm-oks-route.events.yaml](npm-oks-route.events.yaml) |  |
