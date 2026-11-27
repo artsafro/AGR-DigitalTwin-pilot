@@ -1,5 +1,31 @@
 # Autoresearch #142 — raster-to-mesh 2D edges (OBSERVE)
 
+**Итог: гипотеза опровергнута на Обр22 К02.** Двумерный метод на растре не привязал ни одного из 40 видов и обрезков. Базовый метод R2 дал 11 верных привязок, 4 ошибочных и 25 отказов (точность среди ответов 11/15, 73,3%). У 2D-метода точность не определена: отказ 40/40, а не «ноль ошибок при рабочей привязке». Три свежие пары дали одинаковые результаты.
+
+Нативный readback показал важное ограничение: НПМ v012 содержит типовой этаж высотой **3,0 м**, а на PDF показан фасад целиком, **38,4–38,5 м**. Сравнение 2D-линий на этих входах не заменяет проверку на модели той же высоты. Рекомендация для общего шага OKS «карта вид ↔ грань»: сначала оси, ключевой план или подтверждённая связь с именем вида. Без них допускать 2D-поиск только при сопоставимых масштабе и вертикальном охвате; для частичного вида выделять тот же диапазон этажей и физические отрезки граней, а не только направления камеры. Если доказательств недостаточно, сохранить кандидатов и причину отказа, не переносить отделку. Сокольники не открывались: #2001 открыт.
+
+## Round log
+
+**Hypothesis:** `refuted` (on this cohort and this front end). **Run:** `finished`, not budget-limited. **Handoff:** OBSERVE review only; no product, model or delivery changes.
+
+| Clean cases | A (#141 R2): correct / wrong / abstain | B (#140 score, raster/class edges): correct / wrong / abstain |
+| --- | ---: | ---: |
+| Long full | 2 / 0 / 0 | 0 / 0 / 2 |
+| Long crop | 9 / 0 / 9 | 0 / 0 / 18 |
+| Short full | 0 / 0 / 2 | 0 / 0 / 2 |
+| Short crop | 0 / 4 / 14 | 0 / 0 / 18 |
+
+- Positive controls: B loses both R2 long full-view answers. On `2.1-2.25/full`, B best = 0.089479, margin = 0.009578. On `2.25-2.1/full`, B actually ranks the wrong face first (0.071117 vs 0.057677), but abstains. For all clean cases, 10/40 reach the score floor; none reach the margin, whose maximum is 0.020310. B removes four confident baseline errors by abstention, not by recovering their true faces. Windowless ends did contribute silhouette evidence (192 edge pixels per end); ranking them did not restore separation.
+- Injected only: four reflected views changed 236418 / 42904 / 198142 / 47450 luma pixels and 30186 / 2540 / 24706 / 2094 edge pixels, in the receipt order. All four exercised; A 2 correct / 0 wrong / 2 abstain, B 0 / 0 / 4. This is not evidence that B distinguishes mirrored from original views: it refuses both.
+- Exact historical A parity: 44/44 complete cases each run, including scores and injected views. Complete paired case outputs were byte-identical in all three runs; long-crop gain −9/−9/−9 (spread 0). Wall times separately: 60.442 / 60.788 / 62.481 s (median 60.788 s, range 2.039 s; pair wall sum 183.711 s). After pair 1, the reserved 241.768 s for two more pairs fit within the stop budget. All pre/postflight hashes and staged model identities matched.
+- **Not measured:** a full-height model paired with these sheets, independently registered homologous storey bands, other projects in this round, genuine untitled partials, concave corners and parallel-face ambiguity, keyplan/name routes as algorithms, finish transfer, or STOP 04. The #140 DXF result is not refuted by this raster experiment.
+
+Replay on the pilot host only. [`receipt.json`](autoresearch-view-face-raster-2d/receipt.json), SHA-256 `318e1512b67f4e93c21191a6b9c2d64cab842d387f201fce44bc83812475139d`, binds all case results, run times, hashes and the measured revision. The input PDF/model/footprint paths are the #141 fixture locations, not distributed in this branch. The original #140/#141 branches are not edited.
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --extra pdf-review pytest -q -p no:cacheprovider --basetemp tmp/ar142/pytest-final docs/research/autoresearch-view-face-raster-2d/test_raster_edges.py tests/test_blender_exit_code_guard.py tests/test_scratch_input_guard.py`; the two pinned `test_score.py` files are replayed separately (same module names). Counts and `repo_guards.sh` status are in the exact-head board handoff.
+
+Full suite: deferred to merge batch (rule 68).
+
 ## Frozen contract
 
 H142: the #140 two-dimensional placement score, fed raster intensity edges and model silhouette/window-class edges, can rescue at least four more correctly assigned long-face crops than #141 R2, retain its two real long-elevation answers, and eliminate its confident wrong answers. This is an in-sample diagnostic on #141's published cohort, but the #140 matcher was not previously applied to these inputs. No product adoption on this cohort.
