@@ -51,6 +51,36 @@ Replay (needs the Drive folder):
 python docs/research/autoresearch-atlas-alpha-bleed-harness/replay.py C:/x/ev_t_729dea88/r1
 ```
 
-## Result
+## Result — H129 refuted as frozen (OBSERVE, nothing kept)
 
-Pending — filled in after the frozen run.
+**Итог (русский):** сигнал «грязного RGB под прозрачностью» правильно упорядочил отклонённый и принятый атлас
+флоры Ватутино в **18 из 18** ячеек видов (v003 хуже v004 везде), и принятый ВПМ-атлас v004 тоже лучше v003.
+Но замороженный порог «v003 ≥ 2 × v004» не выполнен: **61,29 против 43,83** единиц яркости, отношение **1,40**.
+Гипотеза в замороженном виде **опровергнута**; порог задним числом не меняю. Побочная находка: принятый v004
+всё ещё светлеет на mip-уровне 4 (+13,9 ед. в худшей ячейке 128) — подкраска прозрачных пикселей убрала
+только около трети сдвига. Ничего не внедрено; пакеты и файлы на Drive не менялись. Нужен второй
+размеченный Артёмом атлас с прозрачностью, прежде чем делать из этого проверку.
+
+| State | Atlas score (p95 \|Δluma\|, worst cell) | Worst cell | Signed mean there | Cells above reference |
+|---|---:|---|---:|---|
+| v003 NPM, rejected | **61.2935** | 128 | +18.51 | 18/18 above v004 NPM |
+| v004 NPM, accepted | **43.8285** | 128 | +13.93 | — |
+| v004 VPM 4096, accepted | 41.6079 | 128 | +11.74 | v003 above it |
+
+- Gates: (a) ratio 1.399 < 2.0 **fail** (difference 17.47 ≥ 5 passes); (b) 18/18 ≥ 16 pass; (c) pass.
+- Two cells with real separation: 236 (v003 29.26 vs v004 3.03) and 242 (33.54 vs 5.12); in the other 16 cells
+  v004 keeps ~70 % of v003's score. Per-cell, per-level numbers are in the receipt.
+- **Clean** stability: 3 rounds byte-identical (`rounds_identical: true`), status `series_complete`, wall 42.36 s,
+  pinned input SHA-256 matched before and after. Determinism of computation only.
+- **Injected, synthetic** (v004 NPM, in memory): N0 = clean, 0 changed texels. P1 white under opacity 0:
+  62.6372, 18/18 cells up, 2,727,930 changed texels, all signed means > 0 (reproduces the v003 level).
+  P2 black: 84.4019, 18/18 up, signed means < 0 in 18/18. P3 invariance (opacity-0 texels in empty 16×16
+  blocks): score unchanged in 18/18 cells with 2,140,928 changed texels on v004 and 2,139,225 on v003 —
+  exercised, not empty.
+- **Not measured:** held-out admission (0 eligible, not 0 failures), the render-time specular part of the v003
+  defect, padding geometry, texel density. Why v004 keeps a residual is not investigated (one-variant budget).
+
+Environment: Python 3.14.7, NumPy 2.5.3, Pillow 12.3.0 via `uv run --no-project --with numpy --with pillow`.
+Receipt [`receipt_r129.json`](autoresearch-atlas-alpha-bleed-harness/receipt_r129.json) SHA-256
+`43bcf0ae59c245282d0159f6abe4b5200a9925aecc7cab9b6ce71cf54151f7e9`. Replay is limited to machines with the
+Drive folder; inputs are pinned by hash in `replay.py`.
