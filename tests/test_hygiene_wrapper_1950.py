@@ -15,6 +15,9 @@ import time
 from pathlib import Path
 
 import pytest
+import yaml
+
+from tools.architecture import duplicate_guard
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("pilot_hygiene", ROOT / "tools/hygiene/hygiene.py")
@@ -162,5 +165,51 @@ def test_pin_is_a_full_commit_and_the_wiring_names_one_entry():
     ci = staged[0].read_text(encoding="utf-8")
     assert entry in ci and "check --base" in ci
     assert "scripts/hygiene" in (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-    profile = (ROOT / hygiene.PROFILE).read_text(encoding="utf-8")
+
+
+def assert_profile_contract(profile: str) -> None:
     assert not any(line.startswith("extends:") for line in profile.splitlines())
+    operations = yaml.safe_load(profile).get("operations", {})
+    expected = duplicate_guard.RULES.keys()
+    assert operations.keys() == expected, (
+        f"operation IDs differ: missing {sorted(expected - operations.keys())}; "
+        f"extra {sorted(operations.keys() - expected)}"
+    )
+    assert duplicate_guard.GUARDED.keys() == expected, "duplicate_guard RULES and GUARDED must cover the same rules"
+    for rule, owner in duplicate_guard.RULES.items():
+        operation = operations[rule]
+        assert operation["owner"] == owner, f"{rule}: owner must match duplicate_guard RULES"
+        # duplicate_guard scopes by top-level folder; the hook uses recursive globs.
+        globs = {f"{top}/**" for top in duplicate_guard.GUARDED[rule]}
+        assert set(operation["scope"]) == globs, f"{rule}: scope must match duplicate_guard GUARDED"
+
+
+def test_pilot_profile_contract():
+    assert_profile_contract((ROOT / hygiene.PROFILE).read_text(encoding="utf-8"))
+
+
+@pytest.mark.parametrize(("drift", "diagnostic"), [
+    ("missing-rule", r"operation IDs.*missing.*poly63-window-match"),
+    ("extra-rule", r"operation IDs.*extra.*synthetic-extra"),
+    ("moved-owner", r"poly63-window-match: owner"),
+    ("narrowed-scope", r"poly63-window-match: scope"),
+    ("widened-scope", r"poly63-window-match: scope"),
+])
+def test_pilot_profile_contract_rejects_operation_drift(drift, diagnostic):
+    """Mutate a synthetic copy of the actual profile, never the tracked file."""
+    profile = yaml.safe_load((ROOT / hygiene.PROFILE).read_text(encoding="utf-8"))
+    operations = profile["operations"]
+    rule = "poly63-window-match"
+    operation = operations[rule]
+    if drift == "missing-rule":
+        del operations[rule]
+    elif drift == "extra-rule":
+        operations["synthetic-extra"] = dict(operation)
+    elif drift == "moved-owner":
+        operation["owner"] = "tools/windows/stage2.py"
+    elif drift == "narrowed-scope":
+        operation["scope"] = [glob for glob in operation["scope"] if glob != "src/**"]
+    elif drift == "widened-scope":
+        operation["scope"] = [*operation["scope"], "adapters/**"]
+    with pytest.raises(AssertionError, match=diagnostic):
+        assert_profile_contract(yaml.safe_dump(profile))
