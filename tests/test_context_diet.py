@@ -166,6 +166,20 @@ def test_agents_reading_list_is_shorter_and_names_the_three_reads():
     assert "docs/agents/WORKFLOW.md#before-requesting-review-author" in after
 
 
+def test_agents_always_on_byte_budget():
+    assert 0 < len((ROOT / "AGENTS.md").read_bytes()) <= 4096
+
+
+def test_agents_links_directly_to_task_rules():
+    entry = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    pointer = "[Rules for every task](docs/agents/agents-reference.md#rules-for-every-task)"
+    assert entry.count(pointer) == 1
+    assert "## Rules for every task" not in entry
+    reference = (ROOT / "docs/agents/agents-reference.md").read_text(encoding="utf-8")
+    rules = reference.split("\n## Rules for every task\n", 1)[1].split("\n## ", 1)[0]
+    assert _bullets(rules)
+
+
 def test_rule_headings_and_bullets_survive_in_the_file_or_a_linked_doc():
     before_agents = (BEFORE / "AGENTS.md.before").read_text(encoding="utf-8")
     before_claude = (BEFORE / "CLAUDE.md.before").read_text(encoding="utf-8")
