@@ -1,5 +1,8 @@
 """#1930: context maps warn (review hint, not a failure) on context nodes without relations, and the Ground map
-names the real export -> package / export -> placement handoffs and the UDIM core it actually uses."""
+names the real export -> package / export -> placement handoffs and the UDIM core it actually uses.
+
+Pattern: n/a | new-case: tests/test_route_maps_1930.py - relation-incidence hints and Ground handoff labels (#1930).
+"""
 import copy
 import re
 import sys
