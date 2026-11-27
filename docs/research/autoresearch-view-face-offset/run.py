@@ -92,15 +92,15 @@ def pair(out):
             or sha(blender["path"]) != blender["sha256"]):
         raise RuntimeError("Input postflight mismatch")
 
-    decisions = iter(decisions)
+    recorded = iter(decisions)
     for row in native["cases"]:
-        b = next(decisions) if "C" in row else {"outcome": "not_exercised"}
+        b = next(recorded) if "C" in row else {"outcome": "not_exercised"}
         if row["kind"] == "mirror":
             row["changed_profile_coordinates"] = reflection_delta[row["view"]]
             if not row["changed_profile_coordinates"]:
                 b = {"outcome": "not_exercised"}
         row["B"] = b
-    if next(decisions, None) is not None:
+    if next(recorded, None) is not None:
         raise RuntimeError("Candidate verdict count mismatch")
 
     summary = {}
@@ -139,7 +139,7 @@ def series(out):
             break
     if status == "finished" and len(set(proof)) != 1:
         status = "nonidentical_repeats"
-    result = json.loads(payload)
+    result = json.loads((out / f"pair-{len(proof)}" / "pair.json").read_bytes())
     summary = result["summary"]
     safe = all(not row["B"].get("wrong", 0) for name, row in summary.items() if not name.endswith("/mirror"))
     pass_gate = safe and summary["long/full"]["B"].get("correct", 0) == 2 and summary["long/crop"]["B"].get("correct", 0) >= 7
