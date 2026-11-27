@@ -422,6 +422,12 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
 | research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
 | research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
+| research/autoresearch-view-face-material | [research/autoresearch-view-face-material.md](../research/autoresearch-view-face-material.md) |  |
+| research/autoresearch-view-face-material/rays-type-py | [research/autoresearch-view-face-material/rays_type.py](../research/autoresearch-view-face-material/rays_type.py) |  |
+| research/autoresearch-view-face-material/receipt-json | [research/autoresearch-view-face-material/receipt.json](../research/autoresearch-view-face-material/receipt.json) |  |
+| research/autoresearch-view-face-material/run-py | [research/autoresearch-view-face-material/run.py](../research/autoresearch-view-face-material/run.py) |  |
+| research/autoresearch-view-face-material/score-py | [research/autoresearch-view-face-material/score.py](../research/autoresearch-view-face-material/score.py) |  |
+| research/autoresearch-view-face-material/test-score-py | [research/autoresearch-view-face-material/test_score.py](../research/autoresearch-view-face-material/test_score.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
