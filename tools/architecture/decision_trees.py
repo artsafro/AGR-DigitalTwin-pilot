@@ -10,6 +10,8 @@ Usage:
   python tools/architecture/decision_trees.py --render     rewrite docs/agents/decision-trees/<cell>.md
   python tools/architecture/decision_trees.py --show CELL [--stage STAGE]   print what to decide at a stage
   python tools/architecture/decision_trees.py --sheets NEW_DIR   Russian PNG sheets for Artem (needs Pillow)
+
+Pattern: n/a | new-case: tools/architecture/decision_trees.py - decision trees per scenario skeleton
 """
 import argparse
 import json

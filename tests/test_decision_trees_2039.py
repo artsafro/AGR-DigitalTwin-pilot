@@ -1,4 +1,7 @@
-"""Decision trees per scenario (#2039): every skeleton stage has a node, every cited rule exists and is quoted."""
+"""Decision trees per scenario (#2039): every skeleton stage has a node, every cited rule exists and is quoted.
+
+Pattern: n/a | new-case: tests/test_decision_trees_2039.py - tests of the decision-tree check
+"""
 import copy
 import json
 import subprocess
