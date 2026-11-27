@@ -60,3 +60,15 @@ def test_majority_half_rule():
     fine[:, 4:] = 0
     fine[0, 4:] = 6
     assert S.majority(fine, 4).tolist() == [[3, 0]]
+
+
+def test_type_name_strips_revit_instance_suffixes():
+    src = (Path(__file__).resolve().parent / 'rays_type.py').read_text(encoding='utf-8')
+    block = src[src.index('SUFFIX = '):src.index('verts, tris, tri_lab')]
+    ns = {'re': __import__('re')}
+    exec(block, ns)
+    tn = ns['type_name']
+    assert tn('Прямоугольный импост Rectangular mul_62a1e5a') == 'Прямоугольный импост Rectangular mul'
+    assert tn('(SC)-Batten_windows.2 (SC)-Batten_RAL 7021_кровля_971b340') == '(SC)-Batten_windows.2 (SC)-Batten_RAL 7021_кровля'
+    assert tn('Ограждение Wall(h-900,PR-50) [12618195]_[8198748].001') == 'Ограждение Wall(h-900,PR-50)'
+    assert tn('Системная панель Стемалит [15168820]') == 'Системная панель Стемалит'

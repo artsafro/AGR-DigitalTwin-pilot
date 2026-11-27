@@ -119,7 +119,9 @@ def measure(out, run, fx, r145, permute=False):
         for az in fx['faces_az']:
             lab = rays[f'az{az:03d}_type']
             cols = np.flatnonzero((lab > 0).any(axis=0))
-            models[az] = lab[:, cols[0]:cols[-1] + 1]
+            lab = lab[:, cols[0]:cols[-1] + 1]
+            _, inv = np.unique(lab, return_inverse=True)  # R1b: compact labels (0 stays 0: smallest value)
+            models[az] = inv.reshape(lab.shape).astype(np.int32)
     slack = round(fx['decision']['width_slack_m'] / RES)
     doc = pymupdf.open(out / 'elv.pdf')
     rows, inv_changed = [], 0
@@ -187,7 +189,7 @@ def summarize(rows, key='outcome'):
 
 def combine(rows, r147):
     """E: #147 verdict C where C answers, D where C abstains. Requires row identity parity."""
-    elv = [r for r in r147['rows'] if r.get('fixture') is None]
+    elv = [r for r in r147['rows'] if r.get('fixture') is None and 'case' in r]
     ident = [(r['view'], r['case'], r['width_m']) for r in elv]
     mine = [(r['view'], r['case'], r['width_m']) for r in rows]
     if ident != mine:
@@ -224,7 +226,7 @@ def main():
     r147 = json.loads((out / 'r147_receipt.json').read_text(encoding='utf-8'))
     runs, walls, status, inv = [], [], 'finished', None
     for run in range(1, runs_n + 1):
-        if run > 1 and (monotonic() - t0) + 1.15 * walls[0] * (runs_n - run + 1) > 1500:
+        if run > 1 and (monotonic() - t0) + 1.15 * walls[0] * (runs_n - run + 1) > 3600:
             status = 'inconclusive_budget_stop'
             break
         t = monotonic()

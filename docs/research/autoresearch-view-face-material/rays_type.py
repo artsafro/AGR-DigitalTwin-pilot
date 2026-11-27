@@ -15,6 +15,17 @@ src, out, res, azs = argv[0], argv[1], float(argv[2]), [float(a) for a in argv[3
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.fbx(filepath=src)
 dg = bpy.context.evaluated_depsgraph_get()
+SUFFIX = re.compile(r"(\.\d{3}|_[0-9a-f]{7}|_?\[\d+\]|\s+)$")
+
+
+def type_name(name):
+    """R1b: Revit type = object name minus trailing _<7 hex>, [<id>], _[<id>], .NNN and spaces (repeated)."""
+    prev = None
+    while prev != name:
+        prev, name = name, SUFFIX.sub("", name)
+    return name
+
+
 verts, tris, tri_lab, types = [], [], [], {}
 for ob in sorted(bpy.context.scene.objects, key=lambda o: o.name):
     if ob.type != "MESH" or ob.name.upper().startswith(("UCX_", "UBX_", "USP_", "UCP_", "COLIZ")) or (len(ob.data.vertices) > 0 and max((ob.matrix_world @ v.co).z for v in ob.data.vertices) > 30.0):
@@ -25,7 +36,7 @@ for ob in sorted(bpy.context.scene.objects, key=lambda o: o.name):
     off = len(verts)
     mw = ob.matrix_world
     verts += [tuple(mw @ v.co) for v in me.vertices]
-    label = types.setdefault(re.sub(r"[\d_.\[\]#-]+$", "", ob.name), len(types) + 1)
+    label = types.setdefault(type_name(ob.name), len(types) + 1)
     for t in me.loop_triangles:
         tris.append(tuple(off + i for i in t.vertices))
         tri_lab.append(label)
