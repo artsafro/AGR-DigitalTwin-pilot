@@ -44,7 +44,7 @@ def test_merged_migrations_keep_the_new_owners_without_reviving_copies():
     uv_wrappers = {'jobs/KPP1/scripts/vpm_uv.py', 'jobs/TEC26-OKS/scripts/vpm_uv.py'}
     assert not any(r.rel in migrated - uv_wrappers for r in current)
     assert {r.rel for r in current if r.rel in uv_wrappers} == uv_wrappers
-    hist = {'jobs/KPP1/scripts/vpm_uv.py'}   # [D425]: KPP1 run_stage.sh entry retired, the wrapper is historical
+    hist = {'jobs/KPP1/scripts/vpm_uv.py'}   # [D426]: KPP1 run_stage.sh entry retired, the wrapper is historical
     assert all(r.status == ('historical' if r.rel in hist else 'wrapper') and not r.rule and r.owner == 'tools/blender/vpm_uv.py'
                for r in current if r.rel in uv_wrappers)
     assert guard.RULES['vpm-uv'] == 'tools/blender/vpm_uv.py'
@@ -59,12 +59,12 @@ def test_merged_migrations_keep_the_new_owners_without_reviving_copies():
 
 def test_current_entrypoints():
     _, chains = call_chains.load_live(ROOT)
-    assert 'jobs/KPP1/scripts/build_kpp1.py' not in chains   # [D425]: run_stage.sh entry retired (#2020)
+    assert 'jobs/KPP1/scripts/build_kpp1.py' not in chains   # [D426]: run_stage.sh entry retired (#2020)
     for rel in ('jobs/TEC26-OKS/scripts/package_vpm.py',
                 'jobs/TEC26-OKS/scripts/vpm_uv.py', 'jobs/elv-tc-vpm/scripts/package_vpm_v006.py'):
         assert rel in chains, rel
     roof = [r for r in rows() if r.rel == 'jobs/KPP1/scripts/build_kpp1.py' and r.context == 'roof']
-    assert roof and roof[0].status == 'historical' and roof[0].step is None   # #1381 wrapper, no live chain [D425]
+    assert roof and roof[0].status == 'historical' and roof[0].step is None   # #1381 wrapper, no live chain [D426]
 
 
 def test_elv_not_delivered():

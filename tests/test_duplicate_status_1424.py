@@ -191,7 +191,7 @@ def test_cli_exit_1_on_a_new_live_bypass(monkeypatch, capsys):
     assert guard.main([]) == 1
     out = capsys.readouterr().out
     live = sum(1 for r in guard.rows_of(guard.load_maps(ROOT)) if r.status == "live-bypass")
-    assert out.count("STATUS NEW LIVE BYPASS") == live == 5   # [D425] retired KPP1 body/openings (2); #1675 migrates the SYNTEZ rename; #1853 shows npm_atlas_udim in the Ground map too
+    assert out.count("STATUS NEW LIVE BYPASS") == live == 5   # [D426] retired KPP1 body/openings (2); #1675 migrates the SYNTEZ rename; #1853 shows npm_atlas_udim in the Ground map too
 
 
 def test_finished_jobs_evidence_must_exist_and_match(tmp_path):

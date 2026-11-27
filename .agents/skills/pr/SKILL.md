@@ -1,6 +1,6 @@
 ---
 name: pr
-description: "Use when writing a PR body."
+description: "Use when writing a PR body. Summarize the change, evidence, merge risk, and agent trace."
 metadata:
   credits:
     skill: show-me

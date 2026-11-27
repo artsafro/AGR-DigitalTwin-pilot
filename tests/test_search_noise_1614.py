@@ -361,9 +361,9 @@ def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
         "experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json",
         "experiments/flora-texture-diagnosis/source-integrity-v002.json",
         "experiments/flora-texture-diagnosis/test_calibration.py",
-        "tools/research/pdf_album/dimension-geometry-evidence.json",
     }
     retained = {
+        "tools/research/pdf_album/dimension-geometry-evidence.json",  # live checker fixture (#2016)
         "benchmark/bench-b03-decor/README.md",  # deferred benchmark, still indexed
         "docs/research/model-flora-dry-walk-2026-10-16.md",  # disputed; keep wins
         "experiments/bim-autocad-agr/experiment.py",  # referenced by tests

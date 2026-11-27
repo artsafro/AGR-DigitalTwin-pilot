@@ -485,7 +485,7 @@ def test_historical_scripts_are_exactly_the_unreached_delivered_job_scripts(hist
     assert len(scripts) >= 150 and len(set(scripts)) == len(scripts)
     assert all(s.startswith(tuple(f"{j}/" for j in finished)) for s in scripts)
     assert not [s for s in scripts if s in chains or s in evidence]
-    assert "jobs/KPP1/scripts/build_kpp1.py" in scripts and "jobs/KPP1/scripts/run_stage.sh" in scripts  # [D425]
+    assert "jobs/KPP1/scripts/build_kpp1.py" in scripts and "jobs/KPP1/scripts/run_stage.sh" in scripts  # [D426]
     assert "jobs/KPP1/scripts/vpm_ucx.py" not in scripts
     assert dg.ignore_problems(ROOT, scripts) == []
 

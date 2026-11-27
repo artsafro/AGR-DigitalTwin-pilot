@@ -221,7 +221,7 @@ def test_1593_owner_counts():
     text = route_map.owners_markdown(_routes()["vpm-route"], maps["vpm-contexts"], maps)
     for owner in ("src/dt_ai/ops/operations.py", "adapters/max/agr_tools/windowgen_core.py"):
         row = next(s for s in text.splitlines() if f"[`{owner}`]" in s)
-        assert "[0 — записи]" in row  # [D425]: the KPP1 build_kpp1 bypasses are historical (#2020)
+        assert "[0 — записи]" in row  # [D426]: the KPP1 build_kpp1 bypasses are historical (#2020)
     roof = next(s for s in text.splitlines() if "[`adapters/max/agr_tools/roof_core.py`]" in s)
     assert "[0 — записи]" in roof  # history and a real wrapper are not live bypasses
 

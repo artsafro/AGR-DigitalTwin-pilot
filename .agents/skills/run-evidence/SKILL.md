@@ -1,6 +1,6 @@
 ---
 name: run-evidence
-description: 'Inspect a saved RunRecord after an interruption or before accepting a saved stage — check input/output file evidence, separate produced from verified, list open gates and choose the next safe action without rerunning a DCC operation. Use when resuming a job stage or reviewing someone else''s run. Use when: «сессия упала, что успело сделаться?», «проверь прогон перед приёмкой», «можно ли принять этот этап?».'
+description: "Use when resuming an interrupted run or reviewing a saved stage («сессия упала, что успело сделаться?», «проверь прогон перед приёмкой», «можно ли принять этот этап?»). Check RunRecord inputs and outputs, separate produced from verified, and report open gates without rerunning DCC."
 ---
 
 # Inspect a saved run

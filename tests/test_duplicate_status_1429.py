@@ -89,7 +89,7 @@ def _real():
 def test_repo_own_duty_baseline_equals_the_live_own_duty_rows():
     rows, chains, _, _ = _real()
     live_own = {(r.map, r.at, r.hash) for r in rows if r.status == "own-duty" and chains.get(r.rel)}
-    assert live_own == set(guard.OWN_DUTY_BASELINE) and len(live_own) == 12  # [D425]: build_kpp1.load_spec historical
+    assert live_own == set(guard.OWN_DUTY_BASELINE) and len(live_own) == 12  # [D426]: build_kpp1.load_spec historical
 
 
 def test_repo_relabel_live_bypass_as_own_duty_fails():

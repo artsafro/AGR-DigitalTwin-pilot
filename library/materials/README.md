@@ -1,8 +1,9 @@
 # Библиотека материалов ОКС (#1024, ветка L)
 
-- `materials.json` — указатель: `current` → `materials_v002.json`, `version`, `sha256` файла.
+- `materials.json` — указатель: `current` → `materials_v003.json`, `version`, `sha256` файла.
 - `materials_v001.json` — 41 запись: 40 по аудиту материалов 06.11 (`library/materials/AUDIT-2026-11.md`, таблица `AUDIT-2026-11.csv`) + 41 `larch_light_oak_boards` [D202]; как выпущен, не меняется.
 - `materials_v002.json` — патч 1.0.1: решения владельца по Q2–Q11 (утро 06.11), одна правка = один коммит; запись 41 `larch_light_oak_boards` [D202] перенесена из v001 без изменений.
+- `materials_v003.json` — v002 без изменений + 6 ключей МАФ объекта Старопетровский (`library_id` 54–59 = MAF material IDs v008 34–39: `paint_ral1015`, `paint_ral1002`, `paint_ral8004`, `concrete_beige`, `glass_frosted_white`, `glass_frosted_amber`) [D423]; у 1002/8004 `ral = null` (нет в `ral_classic.json`, как кирпич 17 в v001), матовые стёкла — класс `mineral` (непрозрачная заливка, у `glass` обязательна opacity < 1).
 - `ground_v001.json` — таблица Ground (GRD + PAV: брусчатка, плиты, щебень, газон и т.д., 11 записей; газон рулонный — 42, Q6); отдельная таблица (Q7), на неё ссылается `materials_v002.json` полем `ground_ref` {file, sha256}. `library_id` общие и уникальные в обеих таблицах; `load_library` сливает их. Копировать в scratch обе таблицы вместе.
 
 ## Поля записи

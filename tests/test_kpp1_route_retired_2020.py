@@ -1,4 +1,4 @@
-"""#2020 [D425]: the old KPP1 stage builder build_kpp1.py is retired; the accepted v004 route is lattice-1609."""
+"""#2020 [D426]: the old KPP1 stage builder build_kpp1.py is retired; the accepted v004 route is lattice-1609."""
 import json
 import sys
 from pathlib import Path
