@@ -183,6 +183,41 @@ def test_declared_builder_topics_cover_protocol_stops(keyset):
             f"stop {stop_id}" for stop_id in entries.values()}
 
 
+@pytest.mark.parametrize(("stage", "name", "stop_id", "other_stops"), [
+    ("0", "STOP-01-layer-split-acceptance.md", "S0-split", []),
+    ("1", "STOP-02-source-authority.md", "S1-authority", []),
+    ("2", "STOP-03-parts-list.md", "S2-parts", []),
+    ("3", "STOP-04-lines-sheet.md", "S3-lines", ["S3-cuts", "S3-openings"]),
+    ("3", "STOP-05-local-cuts.md", "S3-cuts", ["S3-lines", "S3-openings"]),
+    ("3", "STOP-06-openings.md", "S3-openings", ["S3-lines", "S3-cuts"]),
+    ("3i", "STOP-11-modelling-plan.md", "S3i-plan", ["S3i-wells"]),
+    ("3i", "STOP-11-modelling-plan-geometry.md", "S3i-plan", ["S3i-wells"]),
+    ("3i", "STOP-11-modelling-plan-inset.md", "S3i-plan", ["S3i-wells"]),
+    ("3i", "STOP-11-modelling-plan-texture.md", "S3i-plan", ["S3i-wells"]),
+    ("3i", "STOP-11-modelling-plan-geometry-inset-texture.md", "S3i-plan", ["S3i-wells"]),
+    ("3i", "STOP-06-roof.md", "S3i-wells", ["S3i-plan"]),
+    ("5", "STOP-10-finish-zoning.md", "S5-zoning", ["S5-windows"]),
+    ("5", "STOP-07-atlas-layout.md", "S5-zoning", ["S5-windows"]),
+    ("5", "STOP-08-windows.md", "S5-windows", ["S5-zoning"]),
+    ("5", "STOP-08-windows-as-geometry-or-texture.md", "S5-windows", ["S5-zoning"]),
+    ("5", "STOP-08-curtain-walls.md", "S5-windows", ["S5-zoning"]),
+    ("6", "STOP-09-delivery-contacts.md", "S6-contacts", ["S6-scope"]),
+    ("6", "STOP-10-scope.md", "S6-scope", ["S6-contacts"]),
+])
+def test_prompt_stop_filename_passes_its_stage(keyset, stage, name, stop_id, other_stops):
+    key, ks, xv, tmp = keyset
+    ks["score_stops"] = True
+    (tmp / "evidence.md").write_text("synthetic stage evidence", encoding="utf-8")
+    cand = _cand(tmp, building(), xv, "prompt-stop")
+    cand["stages"].setdefault(stage, {}).update(stops_asked=[name, *other_stops], evidence=["evidence.md"])
+
+    row = next(r for r in cos.score(key, ks, cand, run_dir=tmp)["stages"] if r["id"] == stage)
+    checks = {c["check"]: c["status"] for c in row["checks"]}
+    assert checks[f"stop {stop_id}"] == "pass", row
+    assert "unknown STOP filename" not in checks
+    assert row["status"] == "pass", row
+
+
 def _wall_quads_y5():
     """Invented interior wall: plane y=5 m, 10 x 4 cells of 2 x 3 m (40 quads), not in the key."""
     out = []

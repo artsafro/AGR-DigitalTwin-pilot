@@ -79,19 +79,37 @@ STOPS = {
 # The builder numbers questions in run order; only the declared topic identifies the STOP.
 STOP_FILENAME_RE = re.compile(r"STOP-[0-9]{2}-([a-z]+(?:-[a-z]+)*)\.md")
 STOP_TOPIC_IDS = {
-    "layer-split": "S0-split",  # literal builder-prompt example
+    # Exact kebab slugs from the #2001 builder prompt's STOP section (lines 56–61).
+    "layer-split": "S0-split",  # literal filename example
+    "layer-split-acceptance": "S0-split",
+    "source-authority": "S1-authority",
+    "parts-list": "S2-parts",
+    "lines-sheet": "S3-lines",
+    "local-cuts": "S3-cuts",
+    "openings": "S3-openings",
+    "modelling-plan": "S3i-plan",
+    "modelling-plan-geometry": "S3i-plan",
+    "modelling-plan-inset": "S3i-plan",
+    "modelling-plan-texture": "S3i-plan",
+    "modelling-plan-geometry-inset-texture": "S3i-plan",
+    "roof": "S3i-wells",
+    "finish-zoning": "S5-zoning",
+    "atlas-layout": "S5-zoning",
+    "windows": "S5-windows",
+    "windows-as-geometry-or-texture": "S5-windows",
+    "curtain-walls": "S5-windows",
+    "delivery-contacts": "S6-contacts",
+    "scope": "S6-scope",
+    # Also accept the short aliases, including the stage 7 visual verdict.
     "split": "S0-split",
     "authority": "S1-authority",
     "parts": "S2-parts",
     "lines": "S3-lines",
     "cuts": "S3-cuts",
-    "openings": "S3-openings",
     "plan": "S3i-plan",
     "wells": "S3i-wells",
     "zoning": "S5-zoning",
-    "windows": "S5-windows",
     "contacts": "S6-contacts",
-    "scope": "S6-scope",
     "acceptance": "S7-acceptance",
 }
 STOP_IDS = frozenset(STOP_TOPIC_IDS.values())
