@@ -99,6 +99,13 @@ def author_profile(pr: dict) -> str | None:
     return m.group(1) if m else None
 
 
+def _same_sha(a: str, b: str) -> bool:
+    """Shas match on the full length of the shorter one, minimum 7 chars (#2038 r2 P3)."""
+    a, b = a.strip().lower(), b.strip().lower()
+    n = min(len(a), len(b))
+    return n >= 7 and a[:n] == b[:n]
+
+
 def last_review(comments) -> dict | None:
     """The last reviewer VERDICT comment (VERDICT_HEAD); other comments with "review" in a heading are skipped."""
     for c in reversed(comments or []):
@@ -186,7 +193,7 @@ def classify(pr: dict, *, policy: dict, stop_present: bool, hygiene_issues: set[
         if not rv["clean"] or rv["p1"] != 0:
             why = "has no P1/P2/P3 count" if rv["clean"] and rv["p1"] is None else "is not CLEAN"
             fails.append({"id": "review_clean_on_head", "reason": f"last review verdict {why}: {rv['first_line']}"})
-        elif not rv["head"] or not (head.startswith(rv["head"][:7]) or rv["head"].startswith(head[:7])):
+        elif not rv["head"] or not head or not _same_sha(head, rv["head"]):
             fails.append({"id": "review_clean_on_head",
                           "reason": f"review names head {rv['head']}, PR head is {head[:8]}"})
     author = author_profile(pr)

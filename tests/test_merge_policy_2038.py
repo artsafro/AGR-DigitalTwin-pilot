@@ -188,6 +188,14 @@ def test_r2_p1_b_small_publish_and_policy_code_goes_artem(path, rule):
     assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", rule, False)
 
 
+def test_r2_p3_review_head_compared_on_full_shorter_length():
+    # same 7-char prefix, different sha -> not the current head
+    r = run(pr(headRefOid="abcdef1" + "1" * 33, comments=[review(head="abcdef12222")]))
+    assert "review_clean_on_head" in failed(r)
+    ok = run(pr(headRefOid="abcdef1" + "1" * 33, comments=[review(head="abcdef1111")]))
+    assert "review_clean_on_head" not in failed(ok)
+
+
 def test_gh_wrapper_is_read_only():
     for bad in (("pr", "merge", "1"), ("api", "-X", "DELETE", "x"), ("pr", "edit", "1"), ("pr", "review", "1")):
         with pytest.raises(PermissionError):
