@@ -367,6 +367,8 @@
 /jobs/vyatskaya-tow02/pipeline/spec-v002.json
 /jobs/vyatskaya-tow02/pipeline/spec.report.json
 # HISTORICAL [D327] docs: unreached docs (#1614) and inactive plans (#1856); hidden from agent search
+/docs/agents/MERGE_POLICY.md
+/docs/agents/STEWARD_NOTE.md
 /docs/architecture/contexts.excalidraw
 /docs/architecture/evidence-1593.txt
 /docs/architecture/npm-oks-route.excalidraw
