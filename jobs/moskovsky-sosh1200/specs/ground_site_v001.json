@@ -1,0 +1,604 @@
+{
+ "note": "moskovsky-sosh1200 ground-npm v001, deliverable cut = GPZU (_GL_01_Границы_ГПЗУ LWPOLYLINE 2B6, 22 021.66 m2). params.surfaces=shared: one face per XY. Topmost cover = core rule of ground_cake.plan_layers: base ID05 Lawn at the bottom, the other covers stacked by descending clipped area, so the SMALLER cover wins an overlap (turf over rubber, hedges/beds/flowers over lawn, shrub bed over paving 1.9 m2); chosen because every measured overlap in the DWG is a planting bed or turf drawn on top of a larger cover, and the core has no explicit priority key. OKS footprint: no cover; unhatched 5 898.8 m2 around the school (hatch 968444 5 672.8 m2 + 226 m2 entrances) becomes a hole via footprint_min_area (D251 building cut-outs; Vatutino/SIL13 practice). Paving A00F6C self-touching ring read even-odd (D343 scope extension, open question). Relief FLAT: skipped, flat, confirmed by user 2026-11-26; relief points = GPZU polyline vertices at elevation 0 (synthetic flat datum, not survey). Not delivery acceptance.",
+ "site": "MoskovskySosh1200",
+ "dxf": {
+  "path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/intake/school.dxf",
+  "sha256": "808480008712f30cbda61195077180561df8ec0804118346ef70300be3bfaa5d"
+ },
+ "boundary": {
+  "handle": "2B6"
+ },
+ "zero": {
+  "project_zero_m": 0.0,
+  "source": "±0.000 of the school building (DWG layer 'Высотные отметки': 4 x '+0,000'; no absolute Baltic mark found in the DWG). Flat Ground at local Z 0 = ±0.000; skipped relief: flat, confirmed by user 2026-11-26"
+ },
+ "covers": [
+  {
+   "id": 1,
+   "name": "Asphalt",
+   "hatches": [
+    {
+     "handle": "A00F48",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4B",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4F",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F64",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4A",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F5D",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F67",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "Paving",
+   "self_touching": "even-odd",
+   "hatches": [
+    {
+     "handle": "A00F49",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4D",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4E",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F50",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F56",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F57",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F58",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F59",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F6C",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F6F",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F5B",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F61",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F62",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F69",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F6D",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": "RubberCrumb",
+   "hatches": [
+    {
+     "handle": "95E7A9",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AA",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AB",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AC",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AD",
+     "insert_chain": []
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": "SportTurf",
+   "hatches": [
+    {
+     "handle": "F8F70",
+     "insert_chain": [
+      "95A786",
+      "95AE65"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "Lawn",
+   "hatches": [
+    {
+     "handle": "A146BD",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146BE",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146BF",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C0",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C1",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C2",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146CA",
+     "insert_chain": [
+      "95EACF"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "name": "RolledLawn",
+   "hatches": [
+    {
+     "handle": "A146C3",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C4",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C5",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C6",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C7",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C8",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C9",
+     "insert_chain": [
+      "95EACF"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "name": "Hedge",
+   "hatches": [
+    {
+     "handle": "A00A0E",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A0F",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A10",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A11",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A12",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A13",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A14",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A15",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A16",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A17",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "name": "ShrubBedA",
+   "hatches": [
+    {
+     "handle": "A008CE",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008FD",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008FE",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00900",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00907",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0090F",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00913",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0091B",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "name": "ShrubBedB",
+   "hatches": [
+    {
+     "handle": "A00902",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00903",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00905",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00909",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0090B",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0090D",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00911",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00915",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00917",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00947",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "name": "ShrubBedC",
+   "hatches": [
+    {
+     "handle": "A00919",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "name": "FlowerBedWood",
+   "hatches": [
+    {
+     "handle": "A008CF",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008FB",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "name": "FlowerBedCross",
+   "hatches": [
+    {
+     "handle": "A008D0",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  }
+ ],
+ "base_id": 5,
+ "unhatched": {
+  "cover_id": 5,
+  "reason": "unhatched slivers between source hatches (< 2 m2 each, ~3.5 m2 in GPZU; uncut: + closing strips) put on base ID05 Lawn - agent choice, disclosed, open for user confirmation"
+ },
+ "relief": {
+  "contour_layers": [
+   "_GL_01_Границы_ГПЗУ"
+  ]
+ },
+ "params": {
+  "cell": 54.0,
+  "chord": 0.02,
+  "step": 0.006,
+  "snap": 0.003,
+  "relief_tol": 0.01,
+  "skirt_m": 1.0,
+  "tex_px": 2048,
+  "origin_xy": [
+   -9840,
+   -7150
+  ],
+  "surfaces": "shared",
+  "footprint_min_area": 1000.0
+ },
+ "materials": {
+  "library": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/materials/npm-tiled-v001",
+  "decision": "agent proposal 2026-11-26, NOT yet confirmed by Artem: NPM-tiled copies (jobs/moskovsky-sosh1200/scripts/npm_tiled_maps.py, manifest.json) of library v001 maps 19/22/25/27/42; cell 54 m -> 37.9 px/m (GND-08 10-40)",
+  "by_cover": {
+   "1": {
+    "diffuse": "22/22_asphalt_d_1024_tiled54m_2048.png",
+    "reason": "asphalt -> 22 asphalt (name match)"
+   },
+   "2": {
+    "diffuse": "19/19_paving_100x300_light_d_npm_2048_tiled54m_2048.png",
+    "reason": "concrete paving AR-BRSTD -> 19 paving 100x300 light (closest library paving; proposal)"
+   },
+   "3": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber crumb (Tip3) -> 27 rubber crumb (name match)"
+   },
+   "4": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "artificial football turf -> 42 rolled lawn (no turf map in the library; proposal)"
+   },
+   "5": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "seeded lawn -> 42 rolled lawn (as SIL13 decision 1; proposal)"
+   },
+   "6": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "rolled lawn -> 42 rolled lawn (name match)"
+   },
+   "7": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "hedge bed -> 25 mulch (ground under the Flora hedge; proposal)"
+   },
+   "8": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "shrub/perennial bed -> 25 mulch (proposal)"
+   },
+   "9": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "shrub/perennial bed -> 25 mulch (proposal)"
+   },
+   "10": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "shrub/perennial bed -> 25 mulch (proposal)"
+   },
+   "11": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "flower bed -> 25 mulch (as SIL13 decision 2; proposal)"
+   },
+   "12": {
+    "diffuse": "25/25_mulch_d_npm_1024_tiled54m_2048.png",
+    "reason": "flower bed -> 25 mulch (proposal)"
+   }
+  }
+ }
+}

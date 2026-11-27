@@ -1,0 +1,584 @@
+{
+ "main_dxf": {
+  "path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/intake/school.dxf",
+  "sha256": "808480008712f30cbda61195077180561df8ec0804118346ef70300be3bfaa5d"
+ },
+ "rubber_dxf": {
+  "path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/inspect/rubber-v1/rubber.dxf",
+  "sha256": "0ce53c8b772c4b7e507688d6388a8ccec0740bfe67c9ced99d913894fc367a9f"
+ },
+ "gpzu_handle": "2B6",
+ "region_xy": [
+  -9900,
+  -7250,
+  -9400,
+  -6850
+ ],
+ "covers": [
+  {
+   "id": 1,
+   "name": "Asphalt",
+   "colour": [
+    163,
+    163,
+    163
+   ],
+   "colour_reason": "hatch bgcolor (main DWG)",
+   "main": [
+    {
+     "handle": "A00F48",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4B",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4F",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F64",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F4A",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F5D",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    },
+    {
+     "handle": "A00F67",
+     "insert_chain": [
+      "95EA2B"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "Paving",
+   "colour": [
+    163,
+    163,
+    163
+   ],
+   "colour_reason": "hatch bgcolor (main DWG); also base: building cap + unhatched (user 2026-11-26)",
+   "main": [
+    {
+     "handle": "A00F49",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F4D",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F4E",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F50",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F56",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F57",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F58",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F59",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F6C",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F6F",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F5B",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F61",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F62",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F69",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    },
+    {
+     "handle": "A00F6D",
+     "insert_chain": [
+      "95EA2B"
+     ],
+     "self_touching": "even-odd"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": "RubberCrumb",
+   "colour": [
+    227,
+    217,
+    198
+   ],
+   "colour_reason": "hatch bgcolor 250_Покрытия_Тип3 (main DWG); underlay where the rubber DWG has no zone",
+   "main": [
+    {
+     "handle": "95E7A9",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AA",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AB",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AC",
+     "insert_chain": []
+    },
+    {
+     "handle": "95E7AD",
+     "insert_chain": []
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": "SportTurf",
+   "colour": [
+    211,
+    230,
+    167
+   ],
+   "colour_reason": "hatch bgcolor (main DWG)",
+   "main": [
+    {
+     "handle": "F8F70",
+     "insert_chain": [
+      "95A786",
+      "95AE65"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "Lawn",
+   "colour": [
+    201,
+    208,
+    159
+   ],
+   "colour_reason": "_ГП_Газон bgcolor; v001 IDs 5-12 merged (user 2026-11-26)",
+   "main": [
+    {
+     "handle": "A146BD",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146BE",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146BF",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C0",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C1",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C2",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146CA",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C3",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C4",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C5",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C6",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C7",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C8",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A146C9",
+     "insert_chain": [
+      "95EACF"
+     ]
+    },
+    {
+     "handle": "A00A0E",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A0F",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A10",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A11",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A12",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A13",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A14",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A15",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A16",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00A17",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008CE",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008FD",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008FE",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00900",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00907",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0090F",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00913",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0091B",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00902",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00903",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00905",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00909",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0090B",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A0090D",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00911",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00915",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00917",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00947",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A00919",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008CF",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008FB",
+     "insert_chain": [
+      "9FE524"
+     ]
+    },
+    {
+     "handle": "A008D0",
+     "insert_chain": [
+      "9FE524"
+     ]
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "name": "Rubber_RAL3018",
+   "colour": [
+    199,
+    63,
+    74
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL3018 (rubber DWG, RAL in the layer name)",
+   "rubber_layer": "_Резиновое покрытие_RAL3018"
+  },
+  {
+   "id": 14,
+   "name": "Rubber_RAL820_2",
+   "colour": [
+    169,
+    174,
+    178
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL820-2 (rubber DWG, RAL in the layer name)",
+   "rubber_layer": "_Резиновое покрытие_RAL820-2"
+  },
+  {
+   "id": 15,
+   "name": "Rubber_RAL820_3",
+   "colour": [
+    141,
+    147,
+    149
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL820-3 (rubber DWG, RAL in the layer name)",
+   "rubber_layer": "_Резиновое покрытие_RAL820-3"
+  },
+  {
+   "id": 16,
+   "name": "Rubber_RAL820_5",
+   "colour": [
+    80,
+    85,
+    92
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL820-5 (rubber DWG, RAL in the layer name)",
+   "rubber_layer": "_Резиновое покрытие_RAL820-5"
+  },
+  {
+   "id": 17,
+   "name": "Rubber_RAL860_1",
+   "colour": [
+    216,
+    218,
+    219
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL860-1 (rubber DWG, RAL in the layer name)",
+   "rubber_layer": "_Резиновое покрытие_RAL860-1"
+  }
+ ]
+}

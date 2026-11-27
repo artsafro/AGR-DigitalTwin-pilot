@@ -27,3 +27,16 @@ Harness and synthetic job folders (no real object, not deliveries): `ORCH-OBR22-
 | `obj03-decor` | OBJ03 — панельная башня, фасадный декор (harness run) | — | `jobs/OBJ03/` | `data/sources/OBJ03/source-geometry-v001.fbx` | `jobs/OBJ03/STATE.md`; pipeline status draft; unsuccessful [D079] |
 | `butovskaya-sosh1000` | Общеобразовательная школа на 1000 мест, ул. Большая Бутовская вл. 9 (СОШ1000) | Южное Бутово | `jobs/butovskaya-sosh1000/` | live Revit 2025 `БУТОВСКАЯ_СОШ1000_АР_В3_ВИЗАМ_2025.rvt` (user's, read only), TwinPack mesh snapshot `C:/x/butovskaya-snapshot-twin/` (local; the box snapshot `C:/x/butovskaya-snapshot/` is exploration only) | `jobs/butovskaya-sosh1000/STATE.md`, #118 |
 | `silikatny-maf-viz` | МАФ для визуализации, ЖК «Силикатный» (СИЛ13-УВК) | Силикатный | `jobs/silikatny-maf-viz/` | `СИЛ13-УВК-ПД-ПЗУ_.dwg` (pravki), `Силикатный маф.zip`, docx «МАФ_и_свет_модели_фото (4)» | `jobs/silikatny-maf-viz/README.md` [D189] |
+| `moskovsky-sosh1200` | Школа на 1200 мест, г. Московский, мкр 1, з/у 47А — НПМ благоустройство (Ground + МАФ + Флора) | г. Московский | `jobs/moskovsky-sosh1200/` | `jobs/moskovsky-sosh1200/sources.json` (SPOZU DWG, rubber DWG, PDF in `G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/`, hashed) | `jobs/moskovsky-sosh1200/STATE.md`, `passport.json`; site NPM diagnostic package v001, not passed |
+
+## Moskovsky documentation ownership
+
+| Topic | Authoritative file | Companion |
+|---|---|---|
+| Object status and evidence | [STATE.md](moskovsky-sosh1200/STATE.md) | |
+| Scope and user decisions | [TASK.md](moskovsky-sosh1200/TASK.md) | |
+| Flora planning | [flora_plan.md](moskovsky-sosh1200/flora/flora_plan.md) | |
+| MAF job conventions | [CONVENTIONS.md](moskovsky-sosh1200/maf/CONVENTIONS.md) | |
+| MAF plan and ledger discrepancies | [maf_plan.md](moskovsky-sosh1200/maf/maf_plan.md) | [maf_discrepancies.md](moskovsky-sosh1200/maf/maf_discrepancies.md) |
+| MAF library matching | [library_match.md](moskovsky-sosh1200/maf/library_match.md) | |
+| Fence takeoff and kit | [fence_kit.md](moskovsky-sosh1200/maf/fence_kit.md) | |

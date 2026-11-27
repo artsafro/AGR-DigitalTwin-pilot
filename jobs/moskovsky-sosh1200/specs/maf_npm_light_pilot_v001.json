@@ -1,0 +1,21 @@
+{
+ "schema": "dt-maf-npm-light/1",
+ "set": "MOSKOVSKY-SOSH1200-MAF-PILOT-v001",
+ "atlas_json": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/work/maf/atlas/maf_atlas_512_v007_adapter.json",
+ "atlas_png": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/work/maf/atlas/T_MAF_Atlas_v007_GroundEl_d_512_r2.png",
+ "smoothing_deg": 45.0,
+ "floor_tris": 400,
+ "iou_min": 0.95,
+ "positions": [
+  {"set_id": "28_Adanat_UrnaGorod_9004", "catalogue_id": "Adanat_UrnaGorod_9004",
+   "source_fbx": "G:/Мой диск/AGR-assets/maf/Adanat_UrnaGorod_9004/v001/28_Adanat_UrnaGorod_9004_GroundEl_high.fbx",
+   "decimate_ratio": 1.0, "height_rule": "overall",
+   "material_map": {"2_paint_ral7016": "2_paint_ral7016", "1_paint_ral9005": "1_paint_ral9005", "14_wood_light": "15_wood_medium"},
+   "note": "new model, built at NPM density (one model NPM/VPM, D164); 14 -> atlas cell 15 (no 14 cell in 512 v007)"},
+  {"set_id": "01_GKVysota_TenevoyNavesNordik_VST1519-1", "catalogue_id": "GKVysota_TenevoyNavesNordik_VST1519-1",
+   "source_fbx": "G:/Мой диск/AGR-assets/maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/01_GKVysota_TenevoyNavesNordik_VST1519-1_GroundEl_high.fbx",
+   "decimate_ratio": 1.0, "height_rule": "overall",
+   "material_map": {"14_wood_light": "15_wood_medium", "2_paint_ral7016": "2_paint_ral7016", "30_sheet_profiled": "30_sheet_profiled"},
+   "note": "rebuilt light from the Weltbau MAF_LIB structure at page size; 14 -> atlas cell 15"}
+ ]
+}

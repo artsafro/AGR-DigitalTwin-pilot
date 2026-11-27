@@ -1,0 +1,215 @@
+{
+ "note": "moskovsky-sosh1200 ground-npm v002 DELIVERABLE cut = GPZU 2B6. Sources: main SPOZU DXF + rubber spec DXF (_ резинаV1_1.dwg sha256 bbf22dce...), both MSK-77 metres, no shift (fit 0/0). Adapter built by scripts/site_adapter_v002.py from specs/covers_v002.json. User review 2026-11-26 (v001 not accepted): (1) NO footprint hole - the building area is capped and belongs to ID02 Paving (USER DEVIATION from D251/hole practice for this job): base_id 2, footprint_min_area 1e9, unhatched -> ID02; (2) lawn, rolled lawn, hedge, shrub beds A/B/C, flower beds merged into ID05 Lawn; (3) rubber = 5 RAL zones IDs 13-17 over the ID03 Tip3 underlay (ID03 visible only where the rubber DWG has no zone: 8 x ~30 m2 in play areas). Topmost cover: core rule (base bottom, then descending clipped area, smaller wins). Markings are a separate mesh (markings/), not covers. Relief: skipped, flat, confirmed by user 2026-11-26. Not delivery acceptance.",
+ "site": "MoskovskySosh1200",
+ "adapter": {
+  "path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/inspect/v002/adapter_gpzu.json",
+  "sha256": "54c77fd4f3e0b832310b286cef40150a915f238701789818daf84e28d971cbd6"
+ },
+ "zero": {
+  "project_zero_m": 0.0,
+  "source": "±0.000 of the school building (DWG layer 'Высотные отметки': 4 x '+0,000'; no absolute Baltic mark found in the DWG). Flat Ground at local Z 0 = ±0.000; skipped relief: flat, confirmed by user 2026-11-26"
+ },
+ "covers": [
+  {
+   "id": 1,
+   "name": "Asphalt",
+   "adapter_keys": [
+    "1"
+   ],
+   "colour": [
+    163,
+    163,
+    163
+   ],
+   "colour_reason": "hatch bgcolor (main DWG)"
+  },
+  {
+   "id": 2,
+   "name": "Paving",
+   "adapter_keys": [
+    "2"
+   ],
+   "colour": [
+    163,
+    163,
+    163
+   ],
+   "colour_reason": "hatch bgcolor (main DWG); also base: building cap + unhatched (user 2026-11-26)"
+  },
+  {
+   "id": 3,
+   "name": "RubberCrumb",
+   "adapter_keys": [
+    "3"
+   ],
+   "colour": [
+    227,
+    217,
+    198
+   ],
+   "colour_reason": "hatch bgcolor 250_Покрытия_Тип3 (main DWG); underlay where the rubber DWG has no zone"
+  },
+  {
+   "id": 4,
+   "name": "SportTurf",
+   "adapter_keys": [
+    "4"
+   ],
+   "colour": [
+    211,
+    230,
+    167
+   ],
+   "colour_reason": "hatch bgcolor (main DWG)"
+  },
+  {
+   "id": 5,
+   "name": "Lawn",
+   "adapter_keys": [
+    "5"
+   ],
+   "colour": [
+    201,
+    208,
+    159
+   ],
+   "colour_reason": "_ГП_Газон bgcolor; v001 IDs 5-12 merged (user 2026-11-26)"
+  },
+  {
+   "id": 13,
+   "name": "Rubber_RAL3018",
+   "adapter_keys": [
+    "13"
+   ],
+   "colour": [
+    199,
+    63,
+    74
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL3018 (rubber DWG, RAL in the layer name)"
+  },
+  {
+   "id": 14,
+   "name": "Rubber_RAL820_2",
+   "adapter_keys": [
+    "14"
+   ],
+   "colour": [
+    169,
+    174,
+    178
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL820-2 (rubber DWG, RAL in the layer name)"
+  },
+  {
+   "id": 15,
+   "name": "Rubber_RAL820_3",
+   "adapter_keys": [
+    "15"
+   ],
+   "colour": [
+    141,
+    147,
+    149
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL820-3 (rubber DWG, RAL in the layer name)"
+  },
+  {
+   "id": 16,
+   "name": "Rubber_RAL820_5",
+   "adapter_keys": [
+    "16"
+   ],
+   "colour": [
+    80,
+    85,
+    92
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL820-5 (rubber DWG, RAL in the layer name)"
+  },
+  {
+   "id": 17,
+   "name": "Rubber_RAL860_1",
+   "adapter_keys": [
+    "17"
+   ],
+   "colour": [
+    216,
+    218,
+    219
+   ],
+   "colour_reason": "layer true colour of _Резиновое покрытие_RAL860-1 (rubber DWG, RAL in the layer name)"
+  }
+ ],
+ "base_id": 2,
+ "unhatched": {
+  "cover_id": 2,
+  "reason": "building footprint cap + entrances (user 2026-11-26: no hole, cap = Paving ID) and sub-m2 slivers between hatches (user fixes slivers by hand)"
+ },
+ "params": {
+  "cell": 54.0,
+  "chord": 0.02,
+  "step": 0.006,
+  "snap": 0.003,
+  "relief_tol": 0.01,
+  "skirt_m": 1.0,
+  "tex_px": 2048,
+  "origin_xy": [
+   -9840,
+   -7150
+  ],
+  "surfaces": "shared",
+  "footprint_min_area": 1000000000.0
+ },
+ "materials": {
+  "library": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/materials/npm-tiled-v001",
+  "decision": "agent proposal 2026-11-26 (not confirmed): NPM-tiled library copies (manifest.json); rubber zones recoloured to RAL layer colours",
+  "by_cover": {
+   "1": {
+    "diffuse": "22/22_asphalt_d_1024_tiled54m_2048.png",
+    "reason": "asphalt -> 22 (name match)"
+   },
+   "2": {
+    "diffuse": "19/19_paving_100x300_light_d_npm_2048_tiled54m_2048.png",
+    "reason": "paving + building cap -> 19 paving light (proposal)"
+   },
+   "3": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber Tip3 underlay -> 27 rubber crumb (name match)"
+   },
+   "4": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "artificial turf -> 42 (no turf map; proposal)"
+   },
+   "5": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024_tiled54m_2048.png",
+    "reason": "one lawn cover (lawn+rolled+hedge+shrub/flower beds, user 2026-11-26) -> 42"
+   },
+   "13": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber zone -> 27 rubber crumb recoloured to the RAL colour of the rubber-DWG layer",
+    "recolour": "cover-colour"
+   },
+   "14": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber zone -> 27 rubber crumb recoloured to the RAL colour of the rubber-DWG layer",
+    "recolour": "cover-colour"
+   },
+   "15": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber zone -> 27 rubber crumb recoloured to the RAL colour of the rubber-DWG layer",
+    "recolour": "cover-colour"
+   },
+   "16": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber zone -> 27 rubber crumb recoloured to the RAL colour of the rubber-DWG layer",
+    "recolour": "cover-colour"
+   },
+   "17": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024_tiled54m_2048.png",
+    "reason": "rubber zone -> 27 rubber crumb recoloured to the RAL colour of the rubber-DWG layer",
+    "recolour": "cover-colour"
+   }
+  }
+ }
+}

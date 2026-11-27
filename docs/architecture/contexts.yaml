@@ -74,6 +74,9 @@ rules:
   - id: seam-seal
     owner: tools/blender/seam_seal.py
     ru: "свой шов в Blender (def seal / ring_split / t_junctions) вместо общего tools/blender/seam_seal.py; охрана jobs/, tools/, src/ (#1381)"
+  - id: site-placement
+    owner: src/dt_ai/placement/site.py
+    ru: "единый парный маршрут расстановки НПМ и ВПМ"
 shared_kernel:
   serves_stage: uv
   id: udim
@@ -623,6 +626,21 @@ contexts:
         ru: "архив разработки dt build (байты из памяти, фиксированная дата), не пакет сдачи по регламенту"
         status: own-duty
         why: "архив разработки dt build (байты из памяти, фиксированная дата), не пакет сдачи по регламенту"
+  - id: site-placement-replay
+    ru: "Расстановка на площадке: отдельное воспроизведение"
+    owner: src/dt_ai/placement/site.py
+    owner_ru: "рабочий маршрут agr place выполняет парную расстановку НПМ и ВПМ"
+    functions:
+      - name: run_file
+        contract: "спецификация площадки, каталог выхода и seed → парная расстановка НПМ и ВПМ"
+    duplicates:
+      - at: "jobs/moskovsky-sosh1200/scripts/flora_place.py::main"
+        rule: site-placement
+        issue: "#1979"
+        hash: "0238d12270"
+        ru: "однопрофильное воспроизведение расстановки Флоры v002"
+        status: own-duty
+        why: "фиксация исторического прогона НПМ по точкам и плотности клумб, без парной расстановки ВПМ и без подключения к рабочему маршруту"
   - id: validation
     ru: "Проверка и приёмка"
     area: docs/domain/areas/package.md

@@ -37,6 +37,9 @@ handoff, the help command identifies the build or evidence owner; it does not au
 | 11 | Export, readback and package | Assembled-site export is job/DCC work, not a generic command here. `uv run dt qa xview --help`; `uv run agr package-npm --help`; `uv run agr package-vpm --help`. See the [package sheet](../docs/domain/areas/package.md). | [D293] [D366] [D152]: triangulated delivery FBX, separate working FBX outside ZIP. | Versioned FBX and ZIP hashes; fresh exported-file topology, UV/maps, materials, names, units and transforms. |
 | 12 | Validate, review and checker | `uv run agr validate --help` (VPM `--ground-area-m2` from documented S_ter − S_pz); `uv run agr open-review --help` for an authorised copy; `uv run agr checker --help` for installed SINTEZ. | [D352] [D365] [D300]: preliminary SINTEZ → Artem's visual decision → final SINTEZ on the accepted export hashes. | Validator findings including V008 UDIM sequence, manual checks, visual verdict, raw final checker results/version and absolute hand-off path to Artem. |
 
+For site acceptance, accompany the Max 2026 QUAD review copy with a flat ID-colour copy [D420].
+Preserve material IDs and cover names in `MS_REVIEW_ID`; do not change delivery materials.
+
 Help success is not a site run. `passed=true` requires all mandatory machine and manual gates on the same inputs
 and exports. Keep technical QA, Artem's acceptance and publication separate; `review`, `not_run` and missing
 evidence are not passes.
