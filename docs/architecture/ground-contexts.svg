@@ -1,26 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2360 3162" width="2360" height="3162" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 -30 2380 3320" width="2380" height="3320" font-family="Segoe UI, Arial, sans-serif">
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1e1e1e"/></marker></defs>
-<rect x="10" y="-30" width="2360" height="3162" fill="#ffffff"/>
-<rect x="955.0" y="110" width="470" height="317.5" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
-<rect x="40.0" y="487.5" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="487.5" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="487.5" width="470" height="615.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="487.5" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="679.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1162.5" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="650.0" y="1162.5" width="470" height="405.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1627.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="1836.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="1627.5" width="470" height="422.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="2110.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1870.0" y="2319.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
-<rect x="1260.0" y="2110.0" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<rect x="1260.0" y="2487.5" width="470" height="615.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
-<polyline points="1120.0,620.0 1240.0,620.0 1240.0,467.5 1750.0,467.5 1750.0,795.0 1730.0,795.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,268.75 1445.0,268.75 1445.0,467.5 1750.0,467.5 1750.0,795.0 1730.0,795.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1425.0,268.75 1445.0,268.75 1445.0,467.5 1750.0,467.5 1750.0,1838.75 1730.0,1838.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,1838.75 1750.0,1838.75 1750.0,2268.75 1730.0,2268.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
-<polyline points="1730.0,2268.75 1750.0,2268.75 1750.0,2795.0 1730.0,2795.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="10" y="-30" width="2380" height="3320" fill="#ffffff"/>
+<rect x="955.0" y="110" width="470" height="370.0" rx="8" fill="#ffec99" stroke="#1e1e1e"/>
+<rect x="40.0" y="540.0" width="470" height="212.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="540.0" width="470" height="265.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="540.0" width="470" height="615.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="540.0" width="470" height="177.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="731.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1215.0" width="470" height="247.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="650.0" y="1215.0" width="470" height="475.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1750.0" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="1959.0" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="1750.0" width="470" height="457.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="2267.5" width="470" height="195.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1870.0" y="2476.5" width="470" height="35.0" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
+<rect x="1260.0" y="2267.5" width="470" height="317.5" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<rect x="1260.0" y="2645.0" width="470" height="615.0" rx="8" fill="#b2f2bb" stroke="#1e1e1e"/>
+<polyline points="1120.0,672.5 1240.0,672.5 1240.0,520.0 1750.0,520.0 1750.0,847.5 1730.0,847.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,295.0 1445.0,295.0 1445.0,520.0 1750.0,520.0 1750.0,847.5 1730.0,847.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1425.0,295.0 1445.0,295.0 1445.0,520.0 1750.0,520.0 1750.0,1978.75 1730.0,1978.75" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,1978.75 1750.0,1978.75 1750.0,2426.25 1730.0,2426.25" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,1978.75 1750.0,1978.75 1750.0,1710.0 1240.0,1710.0 1240.0,1452.5 1120.0,1452.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,2426.25 1750.0,2426.25 1750.0,2952.5 1730.0,2952.5" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<polyline points="1730.0,2426.25 1750.0,2426.25 1750.0,2531.5 2360.0,2531.5 2360.0,2365.0 2340.0,2365.0" fill="none" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <text x="40" y="0" font-size="28" text-anchor="start" fill="#1e1e1e">
 <tspan x="40" dy="28">Карта контекстов маршрута Ground (НПМ + ВПМ) — D293 (#1392)</tspan>
 </text>
@@ -35,10 +37,13 @@
 <tspan x="963.0" dy="17.5">пишет таблицу ground-udim.json / .md [D399]; опциональный</tspan>
 <tspan x="963.0" dy="17.5">VPM readback поверхности Ground в ground_json_to_fbx.py</tspan>
 <tspan x="963.0" dy="17.5">(#1876) сверяет тайлы по материалам с переданным</tspan>
-<tspan x="963.0" dy="17.5">JSON-эталоном и явным export_meta.json — отдельно от</tspan>
-<tspan x="963.0" dy="17.5">валидации итогового сводного FBX участка в agr validate</tspan>
-<tspan x="963.0" dy="17.5">--scene (V008 в twinqa.scene); дубли формулы охраняет</tspan>
-<tspan x="963.0" dy="17.5">карта НПМ (contexts.yaml)</tspan>
+<tspan x="963.0" dy="17.5">JSON-эталоном и явным export_meta.json и берёт из ядра</tspan>
+<tspan x="963.0" dy="17.5">только udim_of_cell и FACE_TOL — правило грань → ячейка</tspan>
+<tspan x="963.0" dy="17.5">(нижняя граница + FACE_TOL, отказ при пересечении тайла)</tspan>
+<tspan x="963.0" dy="17.5">локальное, не face_tile (#1930); отдельно от валидации</tspan>
+<tspan x="963.0" dy="17.5">итогового сводного FBX участка в agr validate --scene</tspan>
+<tspan x="963.0" dy="17.5">(V008 в twinqa.scene); дубли формулы охраняет карта НПМ</tspan>
+<tspan x="963.0" dy="17.5">(contexts.yaml)</tspan>
 <tspan x="963.0" dy="17.5"></tspan>
 <tspan x="963.0" dy="17.5">udim_tile: u, v -&gt; номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне</tspan>
 <tspan x="963.0" dy="17.5">области — UdimDomainError</tspan>
@@ -46,7 +51,7 @@
 <tspan x="963.0" dy="17.5">тайле — UdimCrossTileError</tspan>
 <tspan x="963.0" dy="17.5">udim_of_cell: целые (столбец, ряд) -&gt; номер тайла</tspan>
 </text>
-<text x="48.0" y="497.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="48.0" y="550.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="48.0" dy="14">Связь с DCC (Blender / 3ds Max / AGR Tools)</tspan>
 <tspan x="48.0" dy="17.5">Владелец: src/dt_ai/core/blender_runner.py</tspan>
 <tspan x="48.0" dy="17.5">агент выбирает DCC (D293); agr inspect читает манифест,</tspan>
@@ -59,7 +64,7 @@
 <tspan x="48.0" dy="17.5">run_blender: скрипт, аргументы, ожидаемые выходы, таймаут</tspan>
 <tspan x="48.0" dy="17.5">-&gt; свежий JSON; старый ответ — ошибка</tspan>
 </text>
-<text x="658.0" y="497.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658.0" y="550.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="14">Проверка нулевой отметки и высот (граница и ноль — из</tspan>
 <tspan x="658.0" dy="17.5">проекта)</tspan>
 <tspan x="658.0" dy="17.5">Владелец: src/dt_ai/core/heights.py</tspan>
@@ -75,7 +80,7 @@
 <tspan x="658.0" dy="17.5">Ground (XY, Z, уровень), рельеф в XY -&gt; pass / fail по</tspan>
 <tspan x="658.0" dy="17.5">каждой вершине (agr zero, #1406)</tspan>
 </text>
-<text x="1268.0" y="497.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="550.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Поверхность Ground: плоские UV → проекция → UDIM</tspan>
 <tspan x="1268.0" dy="17.5">поверхности и UV юбки</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: src/dt_ai/geometry/ground_site.py</tspan>
@@ -111,7 +116,7 @@
 <tspan x="1268.0" dy="17.5">-&gt; .mtl и diffuse PNG по занятым покрытиям (только при</tspan>
 <tspan x="1268.0" dy="17.5">materials в спецификации)</tspan>
 </text>
-<text x="1878.0" y="497.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="550.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Текстуры по ID: UV-острова, тайлы, UDIM / атлас</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/atlas_core.py</tspan>
 <tspan x="1878.0" dy="17.5">цель D293: та же поверхность, НПМ на атласе вместо UDIM;</tspan>
@@ -122,10 +127,10 @@
 <tspan x="1878.0" dy="17.5">отступ -&gt; новые UV, тайлы UDIM, ячейки</tspan>
 <tspan x="1878.0" dy="17.5">atlas_png: раскладка -&gt; PNG атласа</tspan>
 </text>
-<text x="1878.0" y="689.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="741.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1268.0" y="1172.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1225.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">НПМ МАФ и Флора на атласе</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/flora_atlas_max.py</tspan>
 <tspan x="1268.0" dy="17.5">атлас МАФ (GroundEl) и Флоры в 3ds Max (AGR Tools):</tspan>
@@ -140,13 +145,17 @@
 <tspan x="1268.0" dy="17.5">atlas_flora: контекст Max, режим, узлы сцены Max (Флора),</tspan>
 <tspan x="1268.0" dy="17.5">превью -&gt; копии в слое Max и атлас Флоры НПМ</tspan>
 </text>
-<text x="658.0" y="1172.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="658.0" y="1225.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="658.0" dy="14">Расстановка МАФ и Флоры</tspan>
 <tspan x="658.0" dy="17.5">Владелец: src/dt_ai/placement/engine.py</tspan>
 <tspan x="658.0" dy="17.5">agr place / dt place site (src/dt_ai/placement/site.py,</tspan>
 <tspan x="658.0" dy="17.5">D329): на профиль master JSON + (offset или readback) +</tspan>
-<tspan x="658.0" dy="17.5">(FBX или mesh); OBJ сборщика напрямую не подключён. Выход</tspan>
-<tspan x="658.0" dy="17.5">— сцены Blender (.blend через</tspan>
+<tspan x="658.0" dy="17.5">(FBX или mesh); OBJ сборщика напрямую не подключён. Вход</tspan>
+<tspan x="658.0" dy="17.5">readback (#1930): из JSON readback берётся только</tspan>
+<tspan x="658.0" dy="17.5">placement_offset — в отчёт пишутся хеши мастера и FBX и</tspan>
+<tspan x="658.0" dy="17.5">сам offset, но не путь и не хеш readback, связь readback</tspan>
+<tspan x="658.0" dy="17.5">с этим FBX и мастером не проверяется (дефекты readback —</tspan>
+<tspan x="658.0" dy="17.5">#1921). Выход — сцены Blender (.blend через</tspan>
 <tspan x="658.0" dy="17.5">tools/blender/placement_instance.py) и отчёты; Max</tspan>
 <tspan x="658.0" dy="17.5">atlas_groundel принимает узлы сцены Max, общий</tspan>
 <tspan x="658.0" dy="17.5">автоматический мост не установлен (ручной перенос не</tspan>
@@ -164,7 +173,7 @@
 <tspan x="658.0" dy="17.5">report_json: отчёт -&gt; строгий JSON: тот же seed и вход -&gt;</tspan>
 <tspan x="658.0" dy="17.5">те же байты</tspan>
 </text>
-<text x="1878.0" y="1637.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1760.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Коллизии UCX рельефа (только ВПМ)</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: adapters/max/agr_tools/ucx10_core.py</tspan>
 <tspan x="1878.0" dy="17.5">agr ucx: FBX / Blend → FBX (#1404); OBJ сборщика напрямую</tspan>
@@ -176,10 +185,10 @@
 <tspan x="1878.0" dy="17.5">plan: куски, опции -&gt; зазор каждой соседней пары каждого</tspan>
 <tspan x="1878.0" dy="17.5">семейства UCX</tspan>
 </text>
-<text x="1878.0" y="1846.5" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="1969.0" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1268.0" y="1637.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="1760.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Helper экспорта поверхности Ground (отдельно от сводного</tspan>
 <tspan x="1268.0" dy="17.5">экспорта участка и ZIP)</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: tools/blender/ground_json_to_fbx.py</tspan>
@@ -201,10 +210,12 @@
 <tspan x="1268.0" dy="17.5">экспорт участка и не рабочий FBX D366)</tspan>
 <tspan x="1268.0" dy="17.5">readback: FBX поверхности Ground, эталонный JSON-мастер</tspan>
 <tspan x="1268.0" dy="17.5">-&gt; опциональный readback (при явном VPM export_meta.json</tspan>
-<tspan x="1268.0" dy="17.5">— по-материальная сверка UDIM с эталоном, #1876; отдельно</tspan>
-<tspan x="1268.0" dy="17.5">от валидации итогового сводного FBX участка)</tspan>
+<tspan x="1268.0" dy="17.5">— по-материальная сверка UDIM с эталоном через</tspan>
+<tspan x="1268.0" dy="17.5">udim_of_cell и FACE_TOL ядра и локальное правило грань →</tspan>
+<tspan x="1268.0" dy="17.5">ячейка, #1876; placement_offset в отчёте; отдельно от</tspan>
+<tspan x="1268.0" dy="17.5">валидации итогового сводного FBX участка)</tspan>
 </text>
-<text x="1878.0" y="2120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="2277.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="14">Чекер СИНТЕЗ и загрузка архива</tspan>
 <tspan x="1878.0" dy="17.5">Владелец: tools/qa/sintez_checker.py</tspan>
 <tspan x="1878.0" dy="17.5">agr checker: ZIP папки -&gt; чекер AGR 1.6.1 в Blender</tspan>
@@ -216,10 +227,10 @@
 <tspan x="1878.0" dy="17.5">run: папка, выход -&gt; копия ZIP, запуск чекера, сводка</tspan>
 <tspan x="1878.0" dy="17.5">NEW.json; изменение ZIP во время прогона — отказ</tspan>
 </text>
-<text x="1878.0" y="2329.0" font-size="12" text-anchor="start" fill="#1e1e1e">
+<text x="1878.0" y="2486.5" font-size="12" text-anchor="start" fill="#1e1e1e">
 <tspan x="1878.0" dy="12">Дубли вне владельца: 1</tspan>
 </text>
-<text x="1268.0" y="2120.0" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="2277.5" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Упаковка готовых файлов НПМ / ВПМ в ZIP</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: adapters/max/agr_tools/package_core.py</tspan>
 <tspan x="1268.0" dy="17.5">общий писатель ZIP сдачи на общем маршруте (_write_zip):</tspan>
@@ -238,7 +249,7 @@
 <tspan x="1268.0" dy="17.5">zip_apply: предпросмотр -&gt; новая папка Сборка_&lt;время&gt;,</tspan>
 <tspan x="1268.0" dy="17.5">ZIP + проверка; ГОТОВО.txt только без провалов</tspan>
 </text>
-<text x="1268.0" y="2497.5" font-size="14" text-anchor="start" fill="#1e1e1e">
+<text x="1268.0" y="2655.0" font-size="14" text-anchor="start" fill="#1e1e1e">
 <tspan x="1268.0" dy="14">Валидатор пакета agr validate и сценовые проверки Ground</tspan>
 <tspan x="1268.0" dy="17.5">(отдельно от xView и СИНТЕЗ)</tspan>
 <tspan x="1268.0" dy="17.5">Владелец: tools/qa/validate_package.py</tspan>
@@ -274,39 +285,81 @@
 <tspan x="1268.0" dy="17.5">-&gt; сверка SHA-256 роли с манифестом в V001, без сравнения</tspan>
 <tspan x="1268.0" dy="17.5">поверхностей FBX</tspan>
 </text>
-<rect x="1465.0" y="423.75" width="60" height="87.5" fill="#ffffff" opacity="0.9"/>
-<text x="1495.0" y="423.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="476.25" width="60" height="87.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="476.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1495.0" dy="14">проверка нуля:</tspan>
 <tspan x="1495.0" dy="17.5">height_values /</tspan>
 <tspan x="1495.0" dy="17.5">export_z_check</tspan>
 <tspan x="1495.0" dy="17.5">(граница и ноль</tspan>
 <tspan x="1495.0" dy="17.5">— из проекта)</tspan>
 </text>
-<rect x="1720.0" y="596.25" width="60" height="70.0" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="596.25" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="648.75" width="60" height="70.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="648.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">номер тайла по</tspan>
 <tspan x="1750.0" dy="17.5">плотному</tspan>
 <tspan x="1750.0" dy="17.5">индексу</tspan>
 <tspan x="1750.0" dy="17.5">покрытия [D399]</tspan>
 </text>
-<rect x="1720.0" y="1412.0" width="60" height="87.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="1412.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
-<tspan x="1750.0" dy="14">опциональная</tspan>
-<tspan x="1750.0" dy="17.5">по-материальная</tspan>
-<tspan x="1750.0" dy="17.5">сверка VPM при</tspan>
-<tspan x="1750.0" dy="17.5">readback FBX</tspan>
-<tspan x="1750.0" dy="17.5">(#1876)</tspan>
+<rect x="1720.0" y="1464.5" width="60" height="157.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="1464.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1750.0" dy="14">readback VPM</tspan>
+<tspan x="1750.0" dy="17.5">(#1876): из</tspan>
+<tspan x="1750.0" dy="17.5">ядра только</tspan>
+<tspan x="1750.0" dy="17.5">udim_of_cell и</tspan>
+<tspan x="1750.0" dy="17.5">FACE_TOL;</tspan>
+<tspan x="1750.0" dy="17.5">правило грань →</tspan>
+<tspan x="1750.0" dy="17.5">ячейка</tspan>
+<tspan x="1750.0" dy="17.5">локальное, не</tspan>
+<tspan x="1750.0" dy="17.5">face_tile</tspan>
 </text>
-<rect x="1720.0" y="2010.0" width="60" height="87.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="2010.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1720.0" y="2045.0" width="60" height="315.0" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="2045.0" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">FBX поверхности</tspan>
-<tspan x="1750.0" dy="17.5">Ground</tspan>
-<tspan x="1750.0" dy="17.5">(отдельно от</tspan>
-<tspan x="1750.0" dy="17.5">сводного</tspan>
-<tspan x="1750.0" dy="17.5">участка)</tspan>
+<tspan x="1750.0" dy="17.5">— лишь часть</tspan>
+<tspan x="1750.0" dy="17.5">входа agr</tspan>
+<tspan x="1750.0" dy="17.5">package-vpm:</tspan>
+<tspan x="1750.0" dy="17.5">ещё export_meta</tspan>
+<tspan x="1750.0" dy="17.5">(адрес, Z,</tspan>
+<tspan x="1750.0" dy="17.5">SHA-256) и</tspan>
+<tspan x="1750.0" dy="17.5">T_&lt;A&gt;_*.png;</tspan>
+<tspan x="1750.0" dy="17.5">GeoJSON — с</tspan>
+<tspan x="1750.0" dy="17.5">--object и</tspan>
+<tspan x="1750.0" dy="17.5">источниковым</tspan>
+<tspan x="1750.0" dy="17.5">превью (helper</tspan>
+<tspan x="1750.0" dy="17.5">пишет thumbnail</tspan>
+<tspan x="1750.0" dy="17.5">unknown);</tspan>
+<tspan x="1750.0" dy="17.5">--no-geojson —</tspan>
+<tspan x="1750.0" dy="17.5">без GeoJSON; не</tspan>
+<tspan x="1750.0" dy="17.5">сводный FBX</tspan>
+<tspan x="1750.0" dy="17.5">участка</tspan>
 </text>
-<rect x="1720.0" y="2523.12" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
-<text x="1750.0" y="2523.12" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<rect x="1465.0" y="1578.75" width="60" height="262.5" fill="#ffffff" opacity="0.9"/>
+<text x="1495.0" y="1578.75" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1495.0" dy="14">опционально:</tspan>
+<tspan x="1495.0" dy="17.5">FBX поверхности</tspan>
+<tspan x="1495.0" dy="17.5">+ readback.json</tspan>
+<tspan x="1495.0" dy="17.5">(placement_offs</tspan>
+<tspan x="1495.0" dy="17.5">et) вместе с</tspan>
+<tspan x="1495.0" dy="17.5">JSON-мастером;</tspan>
+<tspan x="1495.0" dy="17.5">хеши мастера и</tspan>
+<tspan x="1495.0" dy="17.5">FBX пишутся,</tspan>
+<tspan x="1495.0" dy="17.5">файл readback</tspan>
+<tspan x="1495.0" dy="17.5">не хешируется и</tspan>
+<tspan x="1495.0" dy="17.5">не сверяется с</tspan>
+<tspan x="1495.0" dy="17.5">FBX; OBJ</tspan>
+<tspan x="1495.0" dy="17.5">сборщика</tspan>
+<tspan x="1495.0" dy="17.5">JSON-мастер не</tspan>
+<tspan x="1495.0" dy="17.5">пишет</tspan>
+</text>
+<rect x="1720.0" y="2680.62" width="60" height="17.5" fill="#ffffff" opacity="0.9"/>
+<text x="1750.0" y="2680.62" font-size="14" text-anchor="middle" fill="#1e1e1e">
 <tspan x="1750.0" dy="14">ZIP / FBX сдачи</tspan>
+</text>
+<rect x="1778.0" y="2496.5" width="60" height="70.0" fill="#ffffff" opacity="0.9"/>
+<text x="1808.0" y="2496.5" font-size="14" text-anchor="middle" fill="#1e1e1e">
+<tspan x="1808.0" dy="14">те же ZIP (agr</tspan>
+<tspan x="1808.0" dy="17.5">checker; хеши с</tspan>
+<tspan x="1808.0" dy="17.5">agr validate не</tspan>
+<tspan x="1808.0" dy="17.5">сверяются)</tspan>
 </text>
 </svg>

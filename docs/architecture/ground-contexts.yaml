@@ -4,6 +4,7 @@
 # duplicates: described rows only (`at` = path:line, `match` = text on that line); the duplicate_guard allowlist
 # stays in contexts.yaml. A context without a `duplicates` key draws no duplicates box.
 # grid: "col/row" cell of the drawing (all contexts or none; columns >= 1 apart in a row).
+# isolated_ru (#1930): why a context has no relation on purpose; without it an unlinked context is a --check WARNING.
 # Regenerate: uv run python tools/architecture/route_map.py ; check: ... route_map.py --check
 title_ru: "Карта контекстов маршрута Ground (НПМ + ВПМ) — D293"
 issue: "#1392"
@@ -16,7 +17,7 @@ shared_kernel:
   id: udim
   ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
-  owner_ru: "одна функция UDIM (#1337); Ground передаёт в udim_of_cell плотный индекс покрытия с 1001 независимо от рабочих ID и пишет таблицу ground-udim.json / .md [D399]; опциональный VPM readback поверхности Ground в ground_json_to_fbx.py (#1876) сверяет тайлы по материалам с переданным JSON-эталоном и явным export_meta.json — отдельно от валидации итогового сводного FBX участка в agr validate --scene (V008 в twinqa.scene); дубли формулы охраняет карта НПМ (contexts.yaml)"
+  owner_ru: "одна функция UDIM (#1337); Ground передаёт в udim_of_cell плотный индекс покрытия с 1001 независимо от рабочих ID и пишет таблицу ground-udim.json / .md [D399]; опциональный VPM readback поверхности Ground в ground_json_to_fbx.py (#1876) сверяет тайлы по материалам с переданным JSON-эталоном и явным export_meta.json и берёт из ядра только udim_of_cell и FACE_TOL — правило грань → ячейка (нижняя граница + FACE_TOL, отказ при пересечении тайла) локальное, не face_tile (#1930); отдельно от валидации итогового сводного FBX участка в agr validate --scene (V008 в twinqa.scene); дубли формулы охраняет карта НПМ (contexts.yaml)"
   functions:
     - name: udim_tile
       contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
@@ -33,6 +34,7 @@ contexts:
     ru: "Связь с DCC (Blender / 3ds Max / AGR Tools)"
     area: docs/agents/CAPABILITIES.md
     owner: src/dt_ai/core/blender_runner.py
+    isolated_ru: "выбор DCC агентом (D293), без инструментальной передачи данных в другие контексты; связь dcc → heights снята в #1915"
     owner_ru: "агент выбирает DCC (D293); agr inspect читает манифест, инвентарь inspect_ground_dxf.py помогает сверить легенду, но не подтверждает сверку"
     functions:
       - name: blender_executable
@@ -74,6 +76,7 @@ contexts:
     ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"
     area: docs/domain/areas/uv-atlas.md
     owner: adapters/max/agr_tools/atlas_core.py
+    isolated_ru: "цель D293 не подключена: передачи поверхности Ground в атлас НПМ нет (agr vpm-to-npm не конвертирует Ground, ground_site назначает UV сам)"
     owner_ru: "цель D293: та же поверхность, НПМ на атласе вместо UDIM; agr vpm-to-npm не конвертирует Ground, ground_site назначает UV отдельно"
     functions:
       - name: pack
@@ -125,6 +128,7 @@ contexts:
     ru: "НПМ МАФ и Флора на атласе"
     area: docs/domain/areas/flora.md
     owner: adapters/max/agr_tools/flora_atlas_max.py
+    isolated_ru: "atlas_groundel / atlas_flora берут узлы сцены Max; автоматического моста из расстановки нет (связь placement → npm снята в #1915)"
     owner_ru: "атлас МАФ (GroundEl) и Флоры в 3ds Max (AGR Tools): atlas_groundel и atlas_flora принимают узлы сцены Max, не .blend от dt place site; общий автоматический мост не установлен (ручной перенос не исключён; состав инструментов исторических сдач не утверждается); целевой выбор D293 — конвертация ВПМ → НПМ или параллельно"
     functions:
       - name: atlas_groundel
@@ -136,7 +140,7 @@ contexts:
     ru: "Расстановка МАФ и Флоры"
     area: docs/domain/areas/groundel-maf.md
     owner: src/dt_ai/placement/engine.py
-    owner_ru: "agr place / dt place site (src/dt_ai/placement/site.py, D329): на профиль master JSON + (offset или readback) + (FBX или mesh); OBJ сборщика напрямую не подключён. Выход — сцены Blender (.blend через tools/blender/placement_instance.py) и отчёты; Max atlas_groundel принимает узлы сцены Max, общий автоматический мост не установлен (ручной перенос не исключён). Одобренные исключения (exceptions -> apply_ground_exceptions в scene.py) привязаны к снимку точки и sha256 Ground и пишутся в results.json; новый промах вне Ground (engine_report.json) останавливает строгий прогон в make_plan (выход 1) до инстансирования."
+    owner_ru: "agr place / dt place site (src/dt_ai/placement/site.py, D329): на профиль master JSON + (offset или readback) + (FBX или mesh); OBJ сборщика напрямую не подключён. Вход readback (#1930): из JSON readback берётся только placement_offset — в отчёт пишутся хеши мастера и FBX и сам offset, но не путь и не хеш readback, связь readback с этим FBX и мастером не проверяется (дефекты readback — #1921). Выход — сцены Blender (.blend через tools/blender/placement_instance.py) и отчёты; Max atlas_groundel принимает узлы сцены Max, общий автоматический мост не установлен (ручной перенос не исключён). Одобренные исключения (exceptions -> apply_ground_exceptions в scene.py) привязаны к снимку точки и sha256 Ground и пишутся в results.json; новый промах вне Ground (engine_report.json) останавливает строгий прогон в make_plan (выход 1) до инстансирования."
     functions:
       - name: place
         contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом (point_outside_ground / point_over_ground_hole)"
@@ -149,6 +153,7 @@ contexts:
     ru: "Коллизии UCX рельефа (только ВПМ)"
     area: docs/domain/areas/ucx.md
     owner: adapters/max/agr_tools/ucx10_core.py
+    isolated_ru: "agr ucx принимает FBX / Blend, но передатчик на этом маршруте не зафиксирован: OBJ сборщика не подключён, вход из helper поверхности не проверен"
     owner_ru: "agr ucx: FBX / Blend → FBX (#1404); OBJ сборщика напрямую не подключён. Строит src/dt_ai/geometry/ucx_build.py, зазоры — здесь (D330)."
     functions:
       - name: piece
@@ -171,7 +176,7 @@ contexts:
       - name: build
         contract: "JSON-мастер поверхности Ground, адрес -> FBX поверхности Ground и метаданные экспорта (не сводный экспорт участка и не рабочий FBX D366)"
       - name: readback
-        contract: "FBX поверхности Ground, эталонный JSON-мастер -> опциональный readback (при явном VPM export_meta.json — по-материальная сверка UDIM с эталоном, #1876; отдельно от валидации итогового сводного FBX участка)"
+        contract: "FBX поверхности Ground, эталонный JSON-мастер -> опциональный readback (при явном VPM export_meta.json — по-материальная сверка UDIM с эталоном через udim_of_cell и FACE_TOL ядра и локальное правило грань → ячейка, #1876; placement_offset в отчёте; отдельно от валидации итогового сводного FBX участка)"
 relations:
   - from: heights
     to: ground
@@ -181,10 +186,16 @@ relations:
     ru: "номер тайла по плотному индексу покрытия [D399]"
   - from: udim
     to: ground-export
-    ru: "опциональная по-материальная сверка VPM при readback FBX (#1876)"
+    ru: "readback VPM (#1876): из ядра только udim_of_cell и FACE_TOL; правило грань → ячейка локальное, не face_tile"
   - from: ground-export
     to: package
-    ru: "FBX поверхности Ground (отдельно от сводного участка)"
+    ru: "FBX поверхности — лишь часть входа agr package-vpm: ещё export_meta (адрес, Z, SHA-256) и T_<A>_*.png; GeoJSON — с --object и источниковым превью (helper пишет thumbnail unknown); --no-geojson — без GeoJSON; не сводный FBX участка"
+  - from: ground-export
+    to: placement
+    ru: "опционально: FBX поверхности + readback.json (placement_offset) вместе с JSON-мастером; хеши мастера и FBX пишутся, файл readback не хешируется и не сверяется с FBX; OBJ сборщика JSON-мастер не пишет"
   - from: package
     to: validation
     ru: "ZIP / FBX сдачи"
+  - from: package
+    to: sintez
+    ru: "те же ZIP (agr checker; хеши с agr validate не сверяются)"
