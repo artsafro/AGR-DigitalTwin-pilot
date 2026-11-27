@@ -80,6 +80,25 @@ def weld(verts, tris, tol=1e-5):
     return out, new_tris
 
 
+def body_count(hull: dict) -> int:
+    """Count edge-connected face shells after welding FBX split vertices; ignore loose vertices."""
+    _, tris = weld(hull["verts"], hull["tris"])
+    parent = list(range(len(tris)))
+    edges = {}
+
+    def root(i):
+        while i != parent[i]:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    for i, (a, b, c) in enumerate(tris):
+        for u, v in ((a, b), (b, c), (c, a)):
+            j = edges.setdefault((min(u, v), max(u, v)), i)
+            parent[root(i)] = root(j)
+    return sum(i == p for i, p in enumerate(parent))
+
+
 def degenerate_triangles(verts, tris, area_tol=DEGENERATE_AREA_M2):
     """Indices of degenerate triangles: a repeated vertex index, area <= area_tol (m^2), or a
     non-finite area (NaN / +inf) that cannot be measured.

@@ -2,7 +2,6 @@
 
 Pattern: n/a | new-case: CLI chain tests with mocked Blender steps, synthetic convex boxes (synthetic data).
 """
-import importlib
 import json
 import math
 import subprocess
@@ -223,7 +222,7 @@ def _real_v010_command(model, tmp_path, monkeypatch, target, gap):
 
     code = uc.main([str(model), str(out), target])
     report = json.loads((tmp_path / "o.fbx.agr_ucx.json").read_text(encoding="utf-8"))
-    readback.assert_called_once_with(out, None)
+    readback.assert_called_once_with(out, None, **({"observe_passages": True} if target == "Main" else {}))
     assert json.dumps(rb) == snapshot
     assert model.read_bytes() == b"synthetic model"
     assert report["exit"] == code

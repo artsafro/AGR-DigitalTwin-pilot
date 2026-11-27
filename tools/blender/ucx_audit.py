@@ -107,7 +107,7 @@ report = {"source": str(source), "blender": bpy.app.version_string, "readback_ok
           "scope": "UCX measurement only; not a delivery verdict", "samples": SAMPLES}
 try:
     bpy.ops.wm.read_factory_settings(use_empty=True)
-    bpy.ops.import_scene.fbx(filepath=str(source))
+    bpy.ops.import_scene.fbx(filepath=str(source), use_image_search=False)
     meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
     ucx_objs = [o for o in meshes if o.name.upper().startswith("UCX")]
     other = [o for o in meshes if o not in ucx_objs]
