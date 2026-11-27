@@ -76,6 +76,10 @@ def _closure_text_and_headings():
                 continue
             seen.add(target)
             linked = target.read_text(encoding="utf-8")
+            if target == ROOT / "docs/agents/agents-reference.md":
+                # Compare the relocated permission link by destination, not by its old spelling.
+                linked = linked.replace("(WORKFLOW.md#permission-matrix)",
+                                        "(docs/agents/WORKFLOW.md#permission-matrix)")
             texts.append(linked)
             headings.extend(_headings(linked))
     return "\n".join(texts), headings
