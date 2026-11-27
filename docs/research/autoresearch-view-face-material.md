@@ -1,5 +1,29 @@
 # #149 — Finish-partition agreement for elevation view -> model face (OBSERVE)
 
+## Кратко для Артёма
+
+Новый признак для привязки вида фасада к грани модели: **цветовая заливка отделки на листе АГР** против
+**имён типов Revit** на гранях модели (кассета «WOOD», сэндвич-панель, Стемалит, ламели RAL 7021 и т.п.).
+Мера не зависит от того, каким цветом нарисован материал: сравнивается только разбиение на зоны
+(взаимная информация с поправкой на случайность). Проверено на ТЦ «Среда» (ELV), 80 видов с известным ответом,
+3 свежих прогона дали одинаковый результат.
+
+- Полные фасады: 6 верно / 0 ошибок / 1 воздержание (было у лучшего прошлого метода #147: 5/0/2).
+- Реальные фрагменты Д–Г и 8–9: **2/0/0** (раньше 1/0/1; фрагмент 8–9 впервые привязан). Фрагмент с обрезанным
+  верхом — воздержание.
+- Синтетические вырезки 25–60 % ширины: **40/0/23** (было 14/1/48). Ни одной уверенной ошибки на чистых видах.
+- Слабое место: зеркально отражённый вид северного фасада метод уверенно отдал южному (1 ошибка из 7 зеркал).
+  9 из 48 верных ответов прошли с запасом < 0,15 при пороге 0,10 — запас тонкий.
+- Гипотеза **подтверждена только на ELV**. KPP1, AC08, OBR22, G22, Vatutino не измерены (нет цветных
+  векторных видов или имён типов в закреплённых входах); Сокольники не открывались (#2001 открыт).
+- Первый прогон R1 был с ошибкой: имена объектов Revit не обрезались до типа (7132 «типа» вместо 204) — так он дал
+  2 уверенные ошибки на полных фасадах. Вывод: признак работает только на уровне ТИПА, не экземпляра.
+
+Рекомендация для общего шага OKS «view<->face map sheet»: если вид на листе залит цветами отделки и в модели есть
+имена типов Revit, первым ставить этот признак (D) с порогом 0,30/0,10 и отказом при меньшем запасе; линии (#140/#147)
+— только при отсутствии заливок; зеркальную неоднозначность (противоположные фасады) всегда выносить вопросом, если
+ось/подпись не разрешает её. Код в продукт не вносился (OBSERVE).
+
 ## Frozen contract (committed before any score was computed)
 
 Card t_141c9690 (standing #149), focus 0 (view<->face map sheet). #2001 is OPEN: Sokolniki is held out and was
@@ -73,3 +97,50 @@ R1b changes only the implementation, all derived from the name format and the cr
 4. Budget re-frozen from the one measured R1 run: stop `inconclusive` if elapsed + 1.15 × first-run s ×
    remaining runs > 3600 s. Everything else in the contract above is unchanged (labels for the view, score,
    decision 0.30/0.10, acceptance bounds, witnesses, 3 fresh runs).
+
+## R1b — result: H149 CONFIRMED on ELV only (OBSERVE, nothing applied to production)
+
+Measured at `200726691ee7317bc1710ecc3f8e1bbf1456937b`, CPython via `uv run --offline --locked` (uv.lock
+`ba1bb998...`), Blender 4.4 `fd21f4b9...`. Status `finished`; three fresh runs (ray cast + scoring each), row JSON
+byte-identical (`200fe696...e4cb` x3); wall 91.959 / 59.101 / 60.120 s (run 1 includes the invariance re-score),
+median 60.120 s, total 211.7 s; loaded workstation, not an idle-host benchmark. Model: 9773 mesh objects -> 204
+Revit types, 31-47 visible per face. Receipt: [`receipt.json`](autoresearch-view-face-material/receipt.json)
+(SHA-256 `603872c823c41ed768a1f8a47503c4f35b4d86af290f6ee45ebea7ed02b223a9`); evidence
+`G:/Мой диск/AGR-evidence/149-view-face-material/` + `SHA256SUMS.txt` (R1 and R1b runs, label npz, Blender logs).
+
+Correct / wrong / abstain (ELV, 80 rows):
+
+| Class | A #140 raw | C #147 | **D #149** | E = C else D |
+|---|---|---|---|---|
+| full (7) | 5/0/2 | 5/0/2 | **6/0/1** | 6/0/1 |
+| real fragments (2) | 1/0/1 | 1/0/1 | **2/0/0** | 2/0/0 |
+| fragment, top cut (1) | 0/0/1 | 0/0/1 | 0/0/1 | 0/0/1 |
+| synthetic crops (63) | 15/13/35 | 14/1/48 | **40/0/23** | 43/1/19 |
+| mirror, injected (7) | 2/1/4 | 2/1/4 | 2/1/4 | 2/1/4 |
+
+Checks (all frozen): full wrong 0 ✔; fragments wrong 0 ✔; crop wrong ≤ 1 ✔ (0); crop correct ≥ 15 ✔ (40);
+positive witness `p18 I-A` full (east curtain wall, the #145 attractor) correct ✔; C residual witness
+`p19 A-I partial25@1.0` -> D abstains ✔ (0.685 vs 0.634); invariance: reversed view-palette relabelling changed
+0 of 80 rows ✔ (exercised on every row in run 1). E bounds pass (clean wrong 1 ≤ 1, crop correct 43 ≥ 20), but
+E's only wrong is C's inherited crop: D alone dominates E on safety.
+
+Residuals (not hidden): the wrong mirror is `p19 10-1` mirrored -> az 270 (0.440 vs 0.160): a mirrored north
+elevation reads as the south one — opposite-face mirror ambiguity is not resolved by finish partition. `p19 6-1`
+full abstains (0.851 vs 0.787 az 270, the same finish set on the opposite wall). Margins are thin: 9 of 48 correct
+clean answers have margin < 0.15 (minimum 0.104), so a small threshold change would move coverage; no threshold
+was searched. Abstentions concentrate on the narrowest crops (25 %: 11, 40 %: 9, 60 %: 3).
+
+R1 (defective instance-level labels, 7132 labels, single run, diagnostic only; `G:/.../r1/run-1.json`
+`f634aef6...ba75`): full 0/2/5, crops 8/0/55, fragments 0/0/2, mirror 1/0/6. Instance labels produce confident
+wrong full assignments — the cue must be type-level (or material-level), never per-object.
+
+Not measured: KPP1, AC08, OBR22, G22, Vatutino (no colour-fill vector views / model type names in the pinned
+inputs), within-face localisation (which bay), footprint-edge candidates (inner corners; only 4 azimuths here),
+NPM/VPM deliveries whose material names replace Revit types, and Sokolniki (#2001 open, held out).
+
+Recommendation for the shared OKS-trail step 'view<->face map sheet' (measured part, OBSERVE): per view, if the
+sheet view has vector finish fills and the model carries Revit type (or finish-material) names, score D first
+(0.30/0.10, abstain below) and expose top-2 with scores; fall back to #147 C (A=B agreement) only when the view has
+no fills; route every abstain and every opposite-face pair (az and az+180 within the margin, or a mirrored-looking
+view) to a 2-candidate question. Before implementing: (1) transfer test on a second coloured AGR booklet + Revit
+model (and on Sokolniki after #2001 closes, without retuning); (2) footprint-edge candidates for inner corners.
