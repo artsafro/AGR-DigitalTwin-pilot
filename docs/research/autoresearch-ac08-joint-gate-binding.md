@@ -70,4 +70,55 @@ or delivered package; changing P, tolerances or labels after scoring; other card
 
 ## Results
 
-(filled after the run)
+**Итог (по-русски).** Гейт швов D171 (`compare_facades.py`) берёт поле панелей фасада по номеру UDIM из ТЕКУЩЕЙ
+спецификации и не проверяет, что это действительно поле панелей. На отклонённом AC08 v007 короткие фасады А-Б / Б-А
+измерялись по цоколю (UDIM 1002 в v007 = цоколь, строки на высотах -1,645 / -0,141 м, ниже земли), поэтому «0 швов».
+Догадка #127 про синюю маску **опровергнута**: если взять правильное поле (UDIM 1001), рендер VPM и НПМ показывает
+3 шва — ровно столько, сколько даёт независимый подсчёт по сетке и текстуре пакета. Вердикт по v007 не меняется
+(E 116 → 104, v010 остаётся 0), но на принятом v010 с ошибочной привязкой гейт либо падает (K1, цоколь — нет синих
+пикселей), либо ложно пишет «0 швов» и MISMATCH (K2, рама: E 116 на принятом пакете). Предлагаемое изменение
+(не применено, OBSERVE): проверка «ширина поля = лист ±10 мм и низ поля не ниже земли», при провале — перепривязка
+к единственному подходящему UDIM или отказ. На всех 6 вариантах она восстанавливает точный счёт.
+
+**Hypotheses.** H131a (binding defect) **confirmed** (AC08 only). H131b (#127 blue-mask guess) **refuted**.
+Review readiness is separate; nothing is applied to the gate, `qa_packages.py`, the spec or any package.
+
+Series: `series_complete`, 3 rounds 40.4 / 36.4 / 36.9 s (wall 116.3 s incl. input preflight),
+all three round JSON byte-identical (sha256 `d34c5dcc2fb75fb1...`, spread 0). Input preflight: 22 Drive render /
+readback files against the #127 sums + both `SM_Nku_1.zip` against their folder sums, all matched.
+Receipt: [`receipt_r131.json`](autoresearch-ac08-joint-gate-binding-harness/receipt_r131.json) (inputs, Git blobs,
+round hashes, full result). Evidence outputs (round JSON) stay in `C:/x/ev_t_2d2b153c/run2/`; nothing large.
+
+| Package / variant | B131 | 1-2 | 2-1 | А-Б | Б-А | E127 | A131 |
+|---|---:|---|---|---|---|---:|---:|
+| v007 rejected, gate as is | **2** | 11/11 T11 | 11/11 T11 | 0/0 T0 (z<0) | 0/0 T0 (z<0) | 116 | 0 |
+| v007 rejected, C1 | 2 (rebound 1002→1001) | 11/11 | 11/11 | **3/3 T3** | **3/3 T3** | **104** | 0 |
+| v010 accepted, gate as is | **0** | 29/29 | 29/29 | 11/11 | 11/11 | 0 | 0 |
+| v010 accepted, C1 (N0) | 0, changed 0 | 29/29 | 29/29 | 11/11 | 11/11 | 0 | 0 |
+| v010 K1 (VJ12→1003), as is | 2 | 29/29 | 29/29 | no panel samples | no panel samples | unscored (gate KeyError) | - |
+| v010 K1, C1 | 2 (1003→1002) | 29/29 | 29/29 | 11/11 | 11/11 | 0 | 0 |
+| v010 K2 (VJ30→1004), as is | 2 | **0/0** | **0/0** | 11/11 | 11/11 | **116 (false MISMATCH)** | 0 |
+| v010 K2, C1 | 2 (1004→1001) | 29/29 | 29/29 | 11/11 | 11/11 | 0 | 0 |
+
+Cells: vpm/npm render count at the 0.95 row; T = render-free mesh+tile count (same binding). The "gate KeyError" for
+K1 is by code reading (`count_joints` returns no `joints_found` with < 10 panel samples, `compare_facades.py:174`
+indexes it); the harness reports it unscored and does not call `main`.
+
+**Clean / injected / not measured.** Clean: v007, v010 (both labels exercised, C1 fires on v007, invariance on v010
+changed count 0). Injected (synthetic, in-memory spec copies, v010 only): K1, K2 - the accepted control on which the
+rule fires; both recovered exactly. Not measured: v006 / v009 (no camera-block renders; v009 texture-identical to
+v010), NPM-side binding (the NPM render row reuses the VPM field, as in the gate), other TEC26 buildings, the
+`qa_packages.facade_joint_checks` path (same UDIM binding by reading; its T shows the same 0 on mis-bound fields).
+
+**Harness repair log.** Attempt 1 (`run1`): `TypeError` - `count_joints` returns no `joints_found` on a row with
+no panel samples (K1 baseline). Fix: such rows are reported `no_panel_rows` and the package unscored, never 0
+(commit "repair 1"). Attempt 2 (`run2`): series complete. No contract term changed.
+
+**Would change (OBSERVE, not applied; separate issue + PR in the #559 / TEC26 gate lane):**
+1. `compare_facades.main` and `qa_packages.facade_joint_checks`: assert P (field width vs `field_width_mm` ±10 mm,
+   `zlo >= ground`) before counting; on failure refuse with "spec UDIM <n> is not the panel field of <facade>"
+   (exit 2) or rebind to the unique passing UDIM and record it.
+2. `compare_facades`: a row with no panel samples must be a refusal with a reason, not a `KeyError`.
+
+Replay (Windows, needs Drive `127-ac08-joint-gate` and `559-tec26-oks-ac08-pilot-v00{7,10}`; ~2 min):
+`uv run --frozen python docs/research/autoresearch-ac08-joint-gate-binding-harness/run.py <new out dir>`

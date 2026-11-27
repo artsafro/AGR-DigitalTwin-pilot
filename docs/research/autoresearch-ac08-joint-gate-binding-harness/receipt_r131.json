@@ -1,0 +1,1440 @@
+{
+ "status": "series_complete",
+ "head": "307e683a6a31eca8d691b7af05d90374c41b1742",
+ "inputs_sha256": {
+  "127/pilot-v007/vpm.readback.json": "61c6b260018ba1fe6ee48c2d87a06c8dd6aa73a6fcf9ed6585bd62139578fea7",
+  "127/pilot-v007/renders_r127/renders.json": "90925335e129f8770f6b342b886d4758c69d4467793baf53a869f93f8bb3cbe9",
+  "127/pilot-v007/renders_r127/vpm_north.png": "7179626ee53e31ab128fe75f958e4a9c8e9162cb401c07fc3a8ef36986625872",
+  "127/pilot-v007/renders_r127/vpm_south.png": "31f3fb0ceafd4aa14682203e259d149dbae7578e7cd6de12cf28bf0f6945716f",
+  "127/pilot-v007/renders_r127/vpm_east.png": "70d9d0530be3154e0eb4932ff9fcde96579ba0ba302516efba14cf811440924e",
+  "127/pilot-v007/renders_r127/vpm_west.png": "1fa94780b07959c240fb234b055e809e8165e128c75a4d5ab228737568166892",
+  "127/pilot-v007/renders_r127/npm_north.png": "e394cf8caddf3115d589469b3db2624fac349fb85883d21b56a87916eabae77c",
+  "127/pilot-v007/renders_r127/npm_south.png": "0cd0efe86a5bfc8fcd9af0f41a3918851ce629eb09729a305a026f75472b6e36",
+  "127/pilot-v007/renders_r127/npm_east.png": "6d831f3fa229cbb0f258bc8f8cad2ff646c3a8355d522a71529bf440d7f75c7b",
+  "127/pilot-v007/renders_r127/npm_west.png": "30c42f2d9d4f11f580cf7cb42221c36a42b333431582b2fc49ba3edb2e3c31bc",
+  "559/pilot-v007/SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+  "127/pilot-v010/vpm.readback.json": "98656fa8fd7431398832f50b0dc9282b2a51fefc100e055481782e640ae696cb",
+  "127/pilot-v010/renders_r127/renders.json": "ff7b756d6f1aa7e172ce4796ac322fa8d72432c00e66c1afc3f3429117df0224",
+  "127/pilot-v010/renders_r127/vpm_north.png": "bb6e203c3f9e7bfa5d3b8a39539f0eb30b36172a84db445c6737e0c4295ef3e8",
+  "127/pilot-v010/renders_r127/vpm_south.png": "c00cf63f760b70256e2b627dce193f7d314c80419aa8137f06e97a8b9274304f",
+  "127/pilot-v010/renders_r127/vpm_east.png": "66d590da7aae8dd921d57d7ef44af0085181db7a7855a2e13ed42d0ff482e2d5",
+  "127/pilot-v010/renders_r127/vpm_west.png": "4d44c0ff7655259b0eedbaa1d6b2afd5440a084e8d5720a275cf7f20d4572802",
+  "127/pilot-v010/renders_r127/npm_north.png": "93fd8ffdfd6259275e9bff60c7427c23fb249ed4c85df4fb4e9def482a44f12c",
+  "127/pilot-v010/renders_r127/npm_south.png": "ba61efb31b6713a2d9d31a8e5a8e0ae750e9969408f9dd8becde6f0940e87b13",
+  "127/pilot-v010/renders_r127/npm_east.png": "25975634c1b3873e4c12db9df66d8ffaef39e5483937ae99b7c794d76a9029e4",
+  "127/pilot-v010/renders_r127/npm_west.png": "37f83544203b9ac3ef9b0f8f2cd73aeb3e6f00c3c76045bb2583d3e1287e7e2c",
+  "559/pilot-v010/SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb"
+ },
+ "git_blobs": {
+  "jobs/TEC26-OKS/scripts/joint_count.py": "8a1c4d601d538f83f281be734f3a8b2340fb4594",
+  "jobs/TEC26-OKS/scripts/compare_facades.py": "66d0b00c9a5a76a343cb9066b17a4889a2ed17ed",
+  "jobs/TEC26-OKS/AC08/vpm_textures.json": "b2721f8d0c567ad8ad3be804d4c6e1ae23417c86",
+  "jobs/TEC26-OKS/AC08/sheet-facades.json": "d0a00cb357a5e6cabbd8ce5988369a1d94b39043",
+  "docs/research/autoresearch-ac08-joint-gate-binding-harness/run.py": "3444bd22ed7a95cb2978d6948ffb784cbf8bcd8d"
+ },
+ "versions": {
+  "python": "3.14.7",
+  "numpy": "2.5.3"
+ },
+ "rounds": [
+  {
+   "seconds": 40.395,
+   "sha256": "d34c5dcc2fb75fb108a6d7d751804841446fefbfbd08fd0037edba128a65fbbd"
+  },
+  {
+   "seconds": 36.366,
+   "sha256": "d34c5dcc2fb75fb108a6d7d751804841446fefbfbd08fd0037edba128a65fbbd"
+  },
+  {
+   "seconds": 36.937,
+   "sha256": "d34c5dcc2fb75fb108a6d7d751804841446fefbfbd08fd0037edba128a65fbbd"
+  }
+ ],
+ "identical": true,
+ "result": {
+  "pilot-v007": {
+   "baseline": {
+    "facades": {
+     "1-2": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0004
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0004
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0004
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0004
+       }
+      },
+      "truth_T": 11,
+      "want": 29
+     },
+     "2-1": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 9,
+        "nan_frac": 0.1374
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0004
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 9,
+        "nan_frac": 0.1365
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 11,
+      "want": 29
+     },
+     "А-Б": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.2189998626708984,
+       1.2190001010894775,
+       -2.0465455055236816,
+       -0.04079294204711914
+      ],
+      "binding_ok": false,
+      "used_udim": 1002,
+      "rebound": false,
+      "vpm_render": 0,
+      "vpm_rows": {
+       "0.2": {
+        "z": -1.645,
+        "found": 0,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": -0.141,
+        "found": 0,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 0,
+      "npm_rows": {
+       "0.2": {
+        "z": -1.645,
+        "found": 0,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": -0.141,
+        "found": 0,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 0,
+      "want": 11
+     },
+     "Б-А": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.2190001010894775,
+       1.2189998626708984,
+       -2.0465450286865234,
+       -0.04079258441925049
+      ],
+      "binding_ok": false,
+      "used_udim": 1002,
+      "rebound": false,
+      "vpm_render": 0,
+      "vpm_rows": {
+       "0.2": {
+        "z": -1.645,
+        "found": 0,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": -0.141,
+        "found": 0,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 0,
+      "npm_rows": {
+       "0.2": {
+        "z": -1.645,
+        "found": 0,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": -0.141,
+        "found": 0,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 0,
+      "want": 11
+     }
+    },
+    "B131": 2,
+    "refused": [],
+    "no_panel_rows": [],
+    "E127": 116,
+    "A131": 0
+   },
+   "C1": {
+    "facades": {
+     "1-2": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0004
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0004
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0004
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0004
+       }
+      },
+      "truth_T": 11,
+      "want": 29
+     },
+     "2-1": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 9,
+        "nan_frac": 0.1374
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0004
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 9,
+        "nan_frac": 0.1365
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 11,
+      "want": 29
+     },
+     "А-Б": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.2189998626708984,
+       1.2190001010894775,
+       -2.0465455055236816,
+       -0.04079294204711914
+      ],
+      "binding_ok": false,
+      "used_udim": 1001,
+      "rebound": true,
+      "rebind_candidates": [
+       1001
+      ],
+      "vpm_render": 3,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 3,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 3,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 3,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 3,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 3,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 3,
+      "want": 11
+     },
+     "Б-А": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.2190001010894775,
+       1.2189998626708984,
+       -2.0465450286865234,
+       -0.04079258441925049
+      ],
+      "binding_ok": false,
+      "used_udim": 1001,
+      "rebound": true,
+      "rebind_candidates": [
+       1001
+      ],
+      "vpm_render": 3,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 3,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 3,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 3,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 3,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 3,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 3,
+      "want": 11
+     }
+    },
+    "B131": 2,
+    "refused": [],
+    "no_panel_rows": [],
+    "E127": 104,
+    "A131": 0
+   }
+  },
+  "pilot-v010": {
+   "baseline": {
+    "facades": {
+     "1-2": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 29,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 29,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 29,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 29,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 29,
+      "want": 29
+     },
+     "2-1": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 29,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 25,
+        "nan_frac": 0.1369
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 29,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 25,
+        "nan_frac": 0.1365
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 29,
+      "want": 29
+     },
+     "А-Б": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.115691900253296,
+       1.1196403503417969,
+       0.11307668685913086,
+       2.3991336822509766
+      ],
+      "binding_ok": true,
+      "used_udim": 1002,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 11,
+      "want": 11
+     },
+     "Б-А": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.115692138671875,
+       1.1196403503417969,
+       0.11307692527770996,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1002,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 11,
+      "want": 11
+     }
+    },
+    "B131": 0,
+    "refused": [],
+    "no_panel_rows": [],
+    "E127": 0,
+    "A131": 0
+   },
+   "C1": {
+    "facades": {
+     "1-2": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 29,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 29,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 29,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 29,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 29,
+      "want": 29
+     },
+     "2-1": {
+      "spec_udim": 1001,
+      "spec_field": [
+       -2.929943084716797,
+       2.9295616149902344,
+       0.11307668685913086,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1001,
+      "rebound": false,
+      "vpm_render": 29,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 25,
+        "nan_frac": 0.1369
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 29,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 25,
+        "nan_frac": 0.1365
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 29,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 29,
+      "want": 29
+     },
+     "А-Б": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.115691900253296,
+       1.1196403503417969,
+       0.11307668685913086,
+       2.3991336822509766
+      ],
+      "binding_ok": true,
+      "used_udim": 1002,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 11,
+      "want": 11
+     },
+     "Б-А": {
+      "spec_udim": 1002,
+      "spec_field": [
+       -1.115692138671875,
+       1.1196403503417969,
+       0.11307692527770996,
+       2.3991341590881348
+      ],
+      "binding_ok": true,
+      "used_udim": 1002,
+      "rebound": false,
+      "vpm_render": 11,
+      "vpm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "npm_render": 11,
+      "npm_rows": {
+       "0.2": {
+        "z": 0.57,
+        "found": 11,
+        "nan_frac": 0.0
+       },
+       "0.95": {
+        "z": 2.285,
+        "found": 11,
+        "nan_frac": 0.0
+       }
+      },
+      "truth_T": 11,
+      "want": 11
+     }
+    },
+    "B131": 0,
+    "refused": [],
+    "no_panel_rows": [],
+    "E127": 0,
+    "A131": 0
+   }
+  },
+  "controls_v010": {
+   "K1": {
+    "baseline": {
+     "facades": {
+      "1-2": {
+       "spec_udim": 1001,
+       "spec_field": [
+        -2.929943084716797,
+        2.9295616149902344,
+        0.11307668685913086,
+        2.3991341590881348
+       ],
+       "binding_ok": true,
+       "used_udim": 1001,
+       "rebound": false,
+       "vpm_render": 29,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 29,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 29,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 29,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 29,
+       "want": 29
+      },
+      "2-1": {
+       "spec_udim": 1001,
+       "spec_field": [
+        -2.929943084716797,
+        2.9295616149902344,
+        0.11307668685913086,
+        2.3991341590881348
+       ],
+       "binding_ok": true,
+       "used_udim": 1001,
+       "rebound": false,
+       "vpm_render": 29,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 25,
+         "nan_frac": 0.1369
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 29,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 25,
+         "nan_frac": 0.1365
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 29,
+       "want": 29
+      },
+      "А-Б": {
+       "spec_udim": 1003,
+       "spec_field": [
+        -1.2189998626708984,
+        1.2190001010894775,
+        -2.0465455055236816,
+        -0.04079294204711914
+       ],
+       "binding_ok": false,
+       "used_udim": 1003,
+       "rebound": false,
+       "vpm_render": null,
+       "vpm_rows": {
+        "0.2": {
+         "z": -1.645,
+         "found": null,
+         "nan_frac": 1.0
+        },
+        "0.95": {
+         "z": -0.141,
+         "found": null,
+         "nan_frac": 1.0
+        }
+       },
+       "npm_render": null,
+       "npm_rows": {
+        "0.2": {
+         "z": -1.645,
+         "found": null,
+         "nan_frac": 1.0
+        },
+        "0.95": {
+         "z": -0.141,
+         "found": null,
+         "nan_frac": 1.0
+        }
+       },
+       "truth_T": 0,
+       "want": 11
+      },
+      "Б-А": {
+       "spec_udim": 1003,
+       "spec_field": [
+        -1.2190001010894775,
+        1.2189998626708984,
+        -2.0465450286865234,
+        -0.04079258441925049
+       ],
+       "binding_ok": false,
+       "used_udim": 1003,
+       "rebound": false,
+       "vpm_render": null,
+       "vpm_rows": {
+        "0.2": {
+         "z": -1.645,
+         "found": null,
+         "nan_frac": 1.0
+        },
+        "0.95": {
+         "z": -0.141,
+         "found": null,
+         "nan_frac": 1.0
+        }
+       },
+       "npm_render": null,
+       "npm_rows": {
+        "0.2": {
+         "z": -1.645,
+         "found": null,
+         "nan_frac": 1.0
+        },
+        "0.95": {
+         "z": -0.141,
+         "found": null,
+         "nan_frac": 1.0
+        }
+       },
+       "truth_T": 0,
+       "want": 11
+      }
+     },
+     "B131": 2,
+     "refused": [],
+     "no_panel_rows": [
+      "А-Б/vpm",
+      "А-Б/npm",
+      "Б-А/vpm",
+      "Б-А/npm"
+     ]
+    },
+    "C1": {
+     "facades": {
+      "1-2": {
+       "spec_udim": 1001,
+       "spec_field": [
+        -2.929943084716797,
+        2.9295616149902344,
+        0.11307668685913086,
+        2.3991341590881348
+       ],
+       "binding_ok": true,
+       "used_udim": 1001,
+       "rebound": false,
+       "vpm_render": 29,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 29,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 29,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 29,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 29,
+       "want": 29
+      },
+      "2-1": {
+       "spec_udim": 1001,
+       "spec_field": [
+        -2.929943084716797,
+        2.9295616149902344,
+        0.11307668685913086,
+        2.3991341590881348
+       ],
+       "binding_ok": true,
+       "used_udim": 1001,
+       "rebound": false,
+       "vpm_render": 29,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 25,
+         "nan_frac": 0.1369
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 29,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 25,
+         "nan_frac": 0.1365
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 29,
+       "want": 29
+      },
+      "А-Б": {
+       "spec_udim": 1003,
+       "spec_field": [
+        -1.2189998626708984,
+        1.2190001010894775,
+        -2.0465455055236816,
+        -0.04079294204711914
+       ],
+       "binding_ok": false,
+       "used_udim": 1002,
+       "rebound": true,
+       "rebind_candidates": [
+        1002
+       ],
+       "vpm_render": 11,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 11,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 11,
+       "want": 11
+      },
+      "Б-А": {
+       "spec_udim": 1003,
+       "spec_field": [
+        -1.2190001010894775,
+        1.2189998626708984,
+        -2.0465450286865234,
+        -0.04079258441925049
+       ],
+       "binding_ok": false,
+       "used_udim": 1002,
+       "rebound": true,
+       "rebind_candidates": [
+        1002
+       ],
+       "vpm_render": 11,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 11,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 11,
+       "want": 11
+      }
+     },
+     "B131": 2,
+     "refused": [],
+     "no_panel_rows": [],
+     "E127": 0,
+     "A131": 0
+    }
+   },
+   "K2": {
+    "baseline": {
+     "facades": {
+      "1-2": {
+       "spec_udim": 1004,
+       "spec_field": [
+        -3.029376983642578,
+        3.029376983642578,
+        -0.04079306125640869,
+        2.550208568572998
+       ],
+       "binding_ok": false,
+       "used_udim": 1004,
+       "rebound": false,
+       "vpm_render": 0,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.477,
+         "found": 31,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.421,
+         "found": 0,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 0,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.477,
+         "found": 31,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.421,
+         "found": 0,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 0,
+       "want": 29
+      },
+      "2-1": {
+       "spec_udim": 1004,
+       "spec_field": [
+        -3.029376983642578,
+        3.029376983642578,
+        -0.04079306125640869,
+        2.550208568572998
+       ],
+       "binding_ok": false,
+       "used_udim": 1004,
+       "rebound": false,
+       "vpm_render": 0,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.477,
+         "found": 27,
+         "nan_frac": 0.1324
+        },
+        "0.95": {
+         "z": 2.421,
+         "found": 0,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 0,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.477,
+         "found": 27,
+         "nan_frac": 0.132
+        },
+        "0.95": {
+         "z": 2.421,
+         "found": 0,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 0,
+       "want": 29
+      },
+      "А-Б": {
+       "spec_udim": 1002,
+       "spec_field": [
+        -1.115691900253296,
+        1.1196403503417969,
+        0.11307668685913086,
+        2.3991336822509766
+       ],
+       "binding_ok": true,
+       "used_udim": 1002,
+       "rebound": false,
+       "vpm_render": 11,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 11,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 11,
+       "want": 11
+      },
+      "Б-А": {
+       "spec_udim": 1002,
+       "spec_field": [
+        -1.115692138671875,
+        1.1196403503417969,
+        0.11307692527770996,
+        2.3991341590881348
+       ],
+       "binding_ok": true,
+       "used_udim": 1002,
+       "rebound": false,
+       "vpm_render": 11,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 11,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 11,
+       "want": 11
+      }
+     },
+     "B131": 2,
+     "refused": [],
+     "no_panel_rows": [],
+     "E127": 116,
+     "A131": 0
+    },
+    "C1": {
+     "facades": {
+      "1-2": {
+       "spec_udim": 1004,
+       "spec_field": [
+        -3.029376983642578,
+        3.029376983642578,
+        -0.04079306125640869,
+        2.550208568572998
+       ],
+       "binding_ok": false,
+       "used_udim": 1001,
+       "rebound": true,
+       "rebind_candidates": [
+        1001
+       ],
+       "vpm_render": 29,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 29,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 29,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 29,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 29,
+       "want": 29
+      },
+      "2-1": {
+       "spec_udim": 1004,
+       "spec_field": [
+        -3.029376983642578,
+        3.029376983642578,
+        -0.04079306125640869,
+        2.550208568572998
+       ],
+       "binding_ok": false,
+       "used_udim": 1001,
+       "rebound": true,
+       "rebind_candidates": [
+        1001
+       ],
+       "vpm_render": 29,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 25,
+         "nan_frac": 0.1369
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 29,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 25,
+         "nan_frac": 0.1365
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 29,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 29,
+       "want": 29
+      },
+      "А-Б": {
+       "spec_udim": 1002,
+       "spec_field": [
+        -1.115691900253296,
+        1.1196403503417969,
+        0.11307668685913086,
+        2.3991336822509766
+       ],
+       "binding_ok": true,
+       "used_udim": 1002,
+       "rebound": false,
+       "vpm_render": 11,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 11,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 11,
+       "want": 11
+      },
+      "Б-А": {
+       "spec_udim": 1002,
+       "spec_field": [
+        -1.115692138671875,
+        1.1196403503417969,
+        0.11307692527770996,
+        2.3991341590881348
+       ],
+       "binding_ok": true,
+       "used_udim": 1002,
+       "rebound": false,
+       "vpm_render": 11,
+       "vpm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "npm_render": 11,
+       "npm_rows": {
+        "0.2": {
+         "z": 0.57,
+         "found": 11,
+         "nan_frac": 0.0
+        },
+        "0.95": {
+         "z": 2.285,
+         "found": 11,
+         "nan_frac": 0.0
+        }
+       },
+       "truth_T": 11,
+       "want": 11
+      }
+     },
+     "B131": 2,
+     "refused": [],
+     "no_panel_rows": [],
+     "E127": 0,
+     "A131": 0
+    }
+   }
+  }
+ },
+ "seconds": 116.338
+}
