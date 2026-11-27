@@ -759,10 +759,14 @@ def _metric_clip(poly, axis, at, keep_lower):
     for a, b in zip(poly[-1:] + poly[:-1], poly):
         av, bv = a[1][axis], b[1][axis]
         if min(av, bv) < at < max(av, bv):
-            t = (at - av) / (bv - av)
-            xyz = tuple(x + t * (y - x) for x, y in zip(a[0], b[0]))
+            # Interpolate from the canonical endpoint order so the same shared
+            # edge, walked in opposite directions by its two triangles, yields
+            # one bit-identical seam vertex (#1849).
+            lo, hi = (a, b) if (a[1], a[0]) <= (b[1], b[0]) else (b, a)
+            t = (at - lo[1][axis]) / (hi[1][axis] - lo[1][axis])
+            xyz = tuple(x + t * (y - x) for x, y in zip(lo[0], hi[0]))
             uv = tuple(at if i == axis else x + t * (y - x)
-                       for i, (x, y) in enumerate(zip(a[1], b[1])))
+                       for i, (x, y) in enumerate(zip(lo[1], hi[1])))
             out.append((xyz, uv))
         if (bv <= at) if keep_lower else (bv >= at):
             out.append(b)

@@ -335,3 +335,73 @@ def test_near_vertex_seam_keeps_surface_without_collapsed_children(toward):
         for j in range(3):
             assert 4096 * dist(piece['uv'][j], piece['uv'][j-1]) == pytest.approx(
                 520 * dist(piece['xyz'][j], piece['xyz'][j-1]))
+
+
+def _shared_edge_pair(rng, overlap):
+    """Two CCW triangles on a shared non-horizontal edge P-Q (issue #1849).
+
+    With `overlap`, the second apex is moved a little across P-Q so the pair
+    has a narrow positive-area intersection.
+    """
+    length = rng.uniform(8.5, 15.)
+    p, q = (0., rng.uniform(-2., 2.)), (length, rng.uniform(-2., 2.))
+    if q[1] == p[1]:
+        q = (q[0], q[1] + .5)
+    up, down = (rng.uniform(.5, length - .5), rng.uniform(2.5, 4.)), (rng.uniform(.5, length - .5), rng.uniform(-4., -2.5))
+    second = [q, p, down]
+    if overlap:
+        step = rng.uniform(1e-6, .05)
+        second = [(u, v + step) for u, v in second]
+    return [[p, q, up], second]
+
+
+def _seam_points(result, src, axis, at):
+    return {tuple(xyz) for piece in result['pieces'] if piece['source_triangle'] == src
+            for xyz in piece['xyz'] if abs(xyz[axis] - at) <= 1e-9}
+
+
+@pytest.mark.parametrize('reverse', [False, True])
+def test_metric_seam_on_oblique_shared_edge_is_common_issue_1849(reverse):
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    charts = [[(0., 0.), (11., .5), (0., 3.)],
+              [(11., .5), (0., 0.), (11., -3.)]]
+    if reverse:
+        charts.reverse()
+    xyz = [[(u, v, 0.) for u, v in tri] for tri in charts]
+    assert Polygon(charts[0]).intersection(Polygon(charts[1])).area == 0
+    result = fit_metric_region(1, xyz, charts, preferred_seams=[(0, 5.)])
+    assert result['status'] == 'ok', result.get('reason')
+    assert {piece['source_triangle'] for piece in result['pieces']} == {0, 1}
+    seam = [_seam_points(result, src, 0, 5.) for src in (0, 1)]
+    shared = seam[0] & seam[1]
+    assert len(shared) == 1 and next(iter(shared))[1] == pytest.approx(5 / 22)
+
+
+@pytest.mark.parametrize('seed', range(4))
+def test_metric_seam_shared_edge_sweep_issue_1849(seed):
+    import random
+    from adapters.max.agr_tools.npm2vpm_core import fit_metric_region
+
+    rng = random.Random(1849 + seed)
+    for case in range(250):
+        overlap = case % 5 == 4
+        charts = _shared_edge_pair(rng, overlap)
+        if case % 2:
+            charts.reverse()
+        oracle = Polygon(charts[0]).intersection(Polygon(charts[1])).area
+        assert (oracle > 0) == overlap
+        xyz = [[(u, v, 0.) for u, v in tri] for tri in charts]
+        seam = rng.uniform(1., max(u for tri in charts for u, _ in tri) - 1.)
+        result = fit_metric_region(1, xyz, charts, preferred_seams=[(0, seam)])
+        if overlap:
+            assert result['status'] == 'blocked' and result['reason'] == 'uv_overlap', (seed, case)
+            assert result['pieces'] == result['cuts'] == []
+        else:
+            assert result['status'] == 'ok', (seed, case, result.get('reason'))
+            # The top-level preferred seam crosses the shared edge: both
+            # triangles must carry the very same seam vertex there.
+            top = result['cuts'][0]
+            assert (top['axis'], top['at_m']) == (0, seam)
+            pts = [_seam_points(result, src, 0, seam) for src in (0, 1)]
+            assert len(pts[0] & pts[1]) == 1, (seed, case, pts)
