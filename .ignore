@@ -638,6 +638,7 @@
 /docs/research/autoresearch-suite-wall-harness/probe_runner.py.txt
 /docs/research/autoresearch-suite-wall.md
 /docs/research/autoresearch-trainer-artifact-first.md
+/docs/research/autoresearch-trainer-g22-adapter.md
 /docs/research/autoresearch-trainer-tower-id.md
 /docs/research/bim-autocad-agr.md
 /docs/research/bim-revit-agr.md
@@ -705,6 +706,12 @@
 /docs/research/trainer-artifact-first-r95/make_bank.py
 /docs/research/trainer-artifact-first-r95/receipt.json
 /docs/research/trainer-artifact-first-r95/series.py
+/docs/research/trainer-g22-adapter-r97/analyze.py
+/docs/research/trainer-g22-adapter-r97/informational.json
+/docs/research/trainer-g22-adapter-r97/make_candidate.py
+/docs/research/trainer-g22-adapter-r97/receipt.json
+/docs/research/trainer-g22-adapter-r97/series.log
+/docs/research/trainer-g22-adapter-r97/series.py
 /docs/research/trainer-tower-id-r87/calib.json
 /docs/research/trainer-tower-id-r87/make_bank.py
 /docs/research/trainer-tower-id-r87/result.json
