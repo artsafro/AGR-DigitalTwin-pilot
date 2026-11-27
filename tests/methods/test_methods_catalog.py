@@ -4,6 +4,7 @@ Pattern: new-case: tests of the methods catalog (#706).
 """
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import math
@@ -12,6 +13,7 @@ import re
 import subprocess
 import sys
 import zipfile
+from itertools import permutations
 from pathlib import Path
 
 import numpy as np
@@ -39,6 +41,8 @@ uv_ = _load("ucx_variants", TOOLS / "ucx" / "ucx_variants.py")
 
 BOX_T = [(0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7), (0, 1, 5), (0, 5, 4), (1, 2, 6), (1, 6, 5), (2, 3, 7), (2, 7, 6),
          (3, 0, 4), (3, 4, 7)]
+SYNTHETIC_FBX = b"synthetic fbx bytes"
+SYNTHETIC_SHA = hashlib.sha256(SYNTHETIC_FBX).hexdigest()
 
 
 def box(lo, hi):
@@ -75,15 +79,18 @@ def scene(ucx_lo=(-0.01, -0.01, -0.01), ucx_hi=(1.01, 1.01, 1.01), with_ucx=True
     meshes = [model or mesh("SM_Test_Main", box((0, 0, 0), (1, 1, 1)), BOX_T)]
     if with_ucx:
         meshes.append(mesh("UCX_SM_Test_Main_001", box(ucx_lo, ucx_hi), BOX_T, uv=False, materials=()))
-    rb = {"source": "C:/synthetic/SM_Test.fbx", "readback_ok": True, "blender": "synthetic", "meshes": meshes,
+    rb = {"source": "C:/synthetic/SM_Test.fbx", "source_sha256": SYNTHETIC_SHA,
+          "readback_ok": True, "blender": "synthetic", "meshes": meshes,
           "other_objects": [], "images": [{"name": "T_Test_Main_d_1", "size": [1024, 1024], "packed": False,
                                            "packed_bytes": 0, "packed_sha256": None, "filepath": "T.png"}],
           "materials": [{"name": "M_Test_Main_1", "maps": [{"image": "T_Test_Main_d_1", "output": "Color",
                                                             "socket": "Base Color"}]}],
           "fbx_units": {"unit_scale_factor": 100.0, "original_unit_scale_factor": 100.0}}
-    extra = {"ok": True, "meshes": {m["name"]: {"slots": list(m["materials"]),
-                                                "polygons_by_material_index": {"0": m["polygons"]},
-                                                "tris": m["face_geometry"]["polygons"]} for m in meshes}}
+    extra = {"ok": True, "source_sha256": SYNTHETIC_SHA,
+             "meshes": {m["name"]: {"slots": list(m["materials"]),
+                                    "polygons_by_material_index": {"0": m["polygons"]},
+                                    "vertices": m["face_geometry"]["vertices"],
+                                    "tris": m["face_geometry"]["polygons"]} for m in meshes}}
     return rb, extra
 
 
@@ -98,7 +105,7 @@ def bench_file(tmp_path, refs=None, classes=("ucx-collisions",), name="benchmark
 
 def cli_args(tmp_path, rb, extra, **kw):
     out = tmp_path / "SM_Test.fbx"
-    out.write_bytes(b"synthetic fbx bytes")
+    out.write_bytes(SYNTHETIC_FBX)
     (tmp_path / "rb.json").write_text(json.dumps(rb), encoding="utf-8")
     (tmp_path / "extra.json").write_text(json.dumps(extra), encoding="utf-8")
     args = [str(out), "--bench", "synth", "--class", "ucx-collisions", "--variant", "v1",
@@ -269,6 +276,106 @@ def test_ucx_fit_reports_uncovered_model_part():
     rb, extra = scene(ucx_lo=(-1, -1, -1), ucx_hi=(2, 2, 2))  # loose piece: most of it outside the model
     fit = mm.ucx_fit(rb, extra)
     assert fit["model_to_ucx_max_m"] == 0.0 and fit["ucx_outside_share"] > 0.5
+
+
+@pytest.mark.parametrize("order", list(permutations(range(4))))
+def test_ucx_fit_extra_vertex_order(order):
+    # The fourth vertex is not sampled: using the wrong index space can put it on the model surface.
+    vertices = [[0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 2]]
+    rb, extra = scene(model=mesh("SM_Test_Main", vertices, [(0, 1, 2)]))
+    fit = mm.ucx_fit(rb, extra)
+    assert fit["model_to_ucx_max_m"] == 0.0
+    extra["meshes"]["SM_Test_Main"].update(vertices=[vertices[i] for i in order],
+                                           tris=[[order.index(i) for i in (0, 1, 2)]])
+    assert mm.ucx_fit(rb, extra) == fit
+
+
+@pytest.mark.parametrize("missing", ["extra sha", "main sha", "extra vertices", "failed extra"])
+def test_ucx_fit_incomplete_binding_is_not_measured(missing):
+    rb, extra = scene()
+    if missing == "extra sha":
+        del extra["source_sha256"]
+        reason = "extra readback: carries no source_sha256"
+    elif missing == "main sha":
+        del rb["source_sha256"]
+        reason = "intended FBX sha256 not given"
+    elif missing == "extra vertices":
+        del extra["meshes"]["SM_Test_Main"]["vertices"]
+        reason = "index space"
+    else:
+        extra.update(ok=False, error="import failed")
+        reason = "import failed"
+    fit = mm.ucx_fit(rb, extra)
+    assert fit["model_to_ucx_max_m"] is None
+    assert "not measured:" in fit["reason"] and reason in fit["reason"]
+
+
+@pytest.mark.parametrize("change, message", [
+    ({"tris": []}, "declares 12"), ({"tris": [[0, 1]]}, "expected 3"),
+    ({"tris": [[0, 1, True]]}, "not an integer"), ({"tris": [[0, 1, 8]]}, "outside the vertex list"),
+    ({"vertices": [[0, 0, float("nan")]]}, "non-finite vertex"),
+    ({"vertices": [[0, 0, float("inf")]]}, "non-finite vertex"),
+    ({"vertices": box((0, 0, 0), (1, 1, 2))}, "are not the readback mesh"),
+])
+def test_ucx_fit_rejects_bad_extra_geometry(change, message):
+    rb, extra = scene()
+    extra["meshes"]["SM_Test_Main"].update(change)
+    with pytest.raises(mm.MetricError, match=message):
+        mm.ucx_fit(rb, extra)
+
+
+def test_ucx_fit_rejects_duplicate_model_mesh():
+    rb, extra = scene()
+    rb["meshes"].append(rb["meshes"][0])
+    with pytest.raises(mm.MetricError, match="duplicate model mesh 'SM_Test_Main'"):
+        mm.ucx_fit(rb, extra)
+
+
+def test_ucx_fit_rejects_partial_multimesh_evidence():
+    rb, extra = scene()
+    rb["meshes"].append(mesh("SM_Test_Second", box((0, 0, 0), (1, 1, 1)), BOX_T))
+    with pytest.raises(mm.MetricError, match="'SM_Test_Second': missing from the extra readback"):
+        mm.ucx_fit(rb, extra)
+
+
+@pytest.mark.parametrize("stale", ["extra", "both"])
+def test_ucx_fit_cli_rejects_foreign_fbx_evidence(tmp_path, stale):
+    rb, extra = scene()
+    args = cli_args(tmp_path, rb, extra, synthetic="triangle-binding control")
+    command = [sys.executable, str(TOOLS / "run_variant.py"), *args]
+    clean = subprocess.run(command, capture_output=True, text=True, check=True)
+    assert "RUN_VARIANT R1" in clean.stdout
+    results = tmp_path / "results.jsonl"
+    before = results.read_bytes()
+    foreign_sha = hashlib.sha256(b"another synthetic FBX with the same name").hexdigest()
+    extra["source_sha256"] = foreign_sha
+    if stale == "both":  # agreeing documents cannot override the digest of the actual output bytes
+        rb["source_sha256"] = foreign_sha
+    cli_args(tmp_path, rb, extra)
+    rejected = subprocess.run(command, capture_output=True, text=True)
+    assert rejected.returncode == 2
+    assert f"{'extra readback' if stale == 'extra' else 'readback'}: source_sha256" in rejected.stderr
+    assert "is not the intended FBX" in rejected.stderr
+    assert results.read_bytes() == before
+    assert (tmp_path / "SM_Test.fbx").read_bytes() == SYNTHETIC_FBX
+
+
+def test_ucx_fit_cli_rejects_fbx_changed_during_readback(tmp_path, monkeypatch, capsys):
+    from twinqa import scene as scene_module
+
+    rb, extra = scene()
+    args = cli_args(tmp_path, rb, extra)
+    i = args.index("--readback")
+    del args[i:i + 2]
+
+    def readback(path):
+        path.write_bytes(b"synthetic FBX changed during readback")
+        return rb
+
+    monkeypatch.setattr(scene_module, "readback", readback)
+    assert rv.main(args) == 2
+    assert "FBX changed during readback" in capsys.readouterr().err
+    assert not (tmp_path / "results.jsonl").exists()
 
 
 def test_point_triangle_distance_matches_dense_brute_force():
