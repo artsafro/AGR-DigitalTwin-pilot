@@ -1,0 +1,721 @@
+{
+  "_comment": "Decision trees per scenario skeleton (#2039). One owner for the question an agent meets at each stage of a cell of docs/agents/skeletons.json: question -> branches -> decider (AGENT by a recorded rule, quoted verbatim; ARTEM on a picture sheet) -> next stage. rule = decision ids of docs/decisions.md or fact:<repo path>; quote must appear verbatim (whitespace-insensitive) in one cited source; job_local = the rule binds only that job, never generalise it. A branch without a rule goes to ARTEM. gap = the skeleton stage has no shared implementation (no shared step - manual). Order per cell: entry (all cells) -> cells.<cell>.pre (route steps before the first skeleton stage) -> skeleton stages (cells.<cell>.overrides.<stage> or stages.<stage>). next: default the following node; 'stop' = wait for the answer / fix the input; 'back:<stage>'. Check, render, show and sheets: python tools/architecture/decision_trees.py; tests/test_decision_trees_2039.py. This file records existing rules only; it does not create or change any rule.",
+  "version": 1,
+  "deciders": {
+    "AGENT": "the agent decides by the quoted recorded rule and names the id in its report",
+    "ARTEM": "Artem decides; the agent brings one picture sheet with options and a recommendation [D119] and stops the dependent step"
+  },
+  "entry": [
+    {
+      "id": "passport", "ru": "Паспорт задания",
+      "q": "Is there a job passport?",
+      "q_ru": "Есть ли паспорт задания?",
+      "branches": [
+        {"when": "no jobs/<ID>/passport.json", "when_ru": "нет jobs/<ID>/passport.json", "then": "write the passport before any stage", "then_ru": "сначала паспорт, потом этапы", "decider": "AGENT", "rule": ["D397"], "quote": "`jobs/<ID>/passport.json` (K1) is mandatory for every task"}
+      ]
+    },
+    {
+      "id": "intake", "ru": "Приём задачи",
+      "q": "Are sources, scope, budget and acceptance clear?",
+      "q_ru": "Ясны ли источники, объём, бюджет и приёмка?",
+      "branches": [
+        {"when": "open questions remain", "when_ru": "остались вопросы", "then": "ask ONE batch of <= 5 questions with recommendations", "then_ru": "один пакет до 5 вопросов с рекомендациями", "decider": "AGENT", "rule": ["D186"], "quote": "ONE batch of <= 5 questions with recommendations"},
+        {"when": "sources disagree (conflicts.md item open)", "when_ru": "источники противоречат друг другу", "then": "ask, never pick a side", "then_ru": "спросить, сторону не выбирать", "decider": "ARTEM", "rule": ["fact:AGENTS.md"], "quote": "Where sources disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.", "sheet": "both sources side by side with the place of the conflict", "sheet_ru": "оба источника рядом, место расхождения отмечено", "next": "stop"}
+      ]
+    },
+    {
+      "id": "check-level", "ru": "Уровень проверки",
+      "q": "Which check level: fast, standard or full?",
+      "q_ru": "Какой уровень проверки: fast, standard или full?",
+      "branches": [
+        {"when": "set at intake", "when_ru": "ставится при приёме", "then": "agent sets it; may raise it with a reason, never lower it alone", "then_ru": "агент ставит; повышать можно с причиной, понижать сам нельзя", "decider": "AGENT", "rule": ["D273"], "quote": "orchestrator/agent sets at intake, Artem overrides with one word"}
+      ]
+    },
+    {
+      "id": "dcc", "ru": "Выбор программы",
+      "q": "Blender or Max for this step?",
+      "q_ru": "Blender или Max на этом шаге?",
+      "branches": [
+        {"when": "any step", "when_ru": "любой шаг", "then": "choose per step and state a one-line reason", "then_ru": "выбрать на шаг и записать причину одной строкой", "decider": "AGENT", "rule": ["D270"], "quote": "The agent chooses DCC per step from the known toolset/context and states a one-line reason"},
+        {"when": "Max is held by Artem", "when_ru": "Max занят Артёмом", "then": "use an agent-owned Blender on a hashed copy", "then_ru": "свой Blender на копии с хэшем", "decider": "AGENT", "rule": ["D255"], "quote": "Whenever 3ds Max is held by Artem, any modelling or check step that would use Max may run in an agent-owned Blender"}
+      ]
+    },
+    {
+      "id": "auto-open", "ru": "Открытие сцен для приёмки",
+      "q": "Open each finished stage for acceptance automatically?",
+      "q_ru": "Открывать Артёму сцену после каждого этапа?",
+      "branches": [
+        {"when": "first time in the task", "when_ru": "впервые в задаче", "then": "ask once; yes = open the new version + path, no = path only", "then_ru": "спросить один раз: да - открыть новую версию и путь, нет - только путь", "decider": "ARTEM", "rule": ["D270"], "quote": "Ask once per task whether to auto-open each completed stage", "sheet": "one-line question in the intake batch", "sheet_ru": "одна строка в пакете вопросов при приёме"}
+      ]
+    }
+  ],
+  "stages": {
+    "sources-dwg": {
+      "q": "Is the DWG -> DXF derivative accepted?",
+      "q_ru": "Принят ли DXF, полученный из DWG?",
+      "branches": [
+        {"when": "hash-bound dwg-to-dxf/1 receipt, $INSUNITS = mm", "when_ru": "есть чек dwg-to-dxf/1 с хэшами, единицы мм", "then": "plan_from_dxf.py on the derivative", "then_ru": "plan_from_dxf.py по DXF", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "DXF принимается только с чеком `dwg-to-dxf/1`, привязанным SHA-256 к текущим DWG и DXF"},
+        {"when": "no receipt or converter failed", "when_ru": "чека нет или конвертер упал", "then": "stop at sources-dwg, keep the receipt and log", "then_ru": "стоп на sources-dwg, сохранить чек и лог", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "иначе стоп на `sources-dwg` (конвертеры не одобрены)", "next": "stop"}
+      ]
+    },
+    "inspect": {
+      "q": "Is the PartsList confirmed (Gate 1) and the budget allocated?",
+      "q_ru": "Утверждена ли ведомость частей (Gate 1) и распределён ли бюджет?",
+      "branches": [
+        {"when": "PartsList drafted", "when_ru": "ведомость частей составлена", "then": "Artem confirms the exact parts hash before construction", "then_ru": "Артём утверждает точный хэш ведомости до моделирования", "decider": "ARTEM", "rule": ["D125"], "quote": "Two human gates: the parts list before the build and one acceptance sheet after it", "sheet": "Gate 1 sheet: album, accepted source, proposed assembly, budget, parts hash", "sheet_ru": "лист Gate 1: альбом, принятый исходник, способ сборки, бюджет, хэш ведомости", "next": "stop"},
+        {"when": "triangle budget per part", "when_ru": "бюджет треугольников по частям", "then": "allocate inside the project target, not the regulatory ceiling", "then_ru": "распределить внутри проектной цели, а не по потолку регламента", "decider": "AGENT", "rule": ["D276"], "quote": "PartsList.triangle_budget is the allocated project budget for NPM/VPM, not the regulatory ceiling"},
+        {"when": "a fact is missing (dimension, finish, level)", "when_ru": "нет факта (размер, отделка, отметка)", "then": "stop the dependent step; never guess thickness, joint module or georeference", "then_ru": "стоп зависимого шага; толщину, модуль швов и привязку не угадывать", "decider": "ARTEM", "rule": ["fact:routes/npm-oks.md"], "quote": "Missing facts/conflicts stop the dependent step; no generic shell thickness, joint module or georeference is guessed.", "sheet": "the place on the source with the missing fact and a recommendation", "sheet_ru": "место на исходнике, где нет факта, и рекомендация", "next": "stop"}
+      ]
+    },
+    "body": {
+      "q": "How is each part built: lattice body, inset or texture?",
+      "q_ru": "Как строится каждая часть: тело решёткой, вставка или текстура?",
+      "branches": [
+        {"when": "body with openings", "when_ru": "тело с проёмами", "then": "agr body from the lattice only", "then_ru": "только решёткой agr body", "decider": "AGENT", "rule": ["D373", "D392"], "quote": "Stage-1 body is built ONLY from the lattice"},
+        {"when": "a mesh defect is found", "when_ru": "найден дефект сетки", "then": "fix the plan/input and rebuild, never repair the mesh", "then_ru": "исправить план и пересобрать, сетку не чинить", "decider": "AGENT", "rule": ["D373"], "quote": "repairing an existing mesh is forbidden, fix the input and rebuild", "next": "stop"},
+        {"when": "a facade line is shorter than 1.5 m of class change", "when_ru": "линия фасада короче 1,5 м смены класса", "then": "texture, not a mesh line", "then_ru": "текстурой, не линией сетки", "decider": "AGENT", "rule": ["D373"], "quote": "a line is kept only if the cell class changes along it over >= 1.5 m or the opening width, shorter = texture"},
+        {"when": "windows, stained glass, roof, flashings, posts", "when_ru": "окна, витражи, кровля, отливы, стойки", "then": "inset elements cut into the body, never welded", "then_ru": "вставки, врезанные в тело, без сварки", "decider": "AGENT", "rule": ["D336"], "quote": "windows, stained glass (витражи) and similar fills, the roof, the flashings (отливы) on roofs and windows and the posts (стойки) are INSET"},
+        {"when": "panels / cassettes", "when_ru": "панели / кассеты", "then": "texture with a seam in UV", "then_ru": "текстурой со швом в UV", "decider": "AGENT", "rule": ["D336"], "quote": "panels are shown by the TEXTURE with a seam (шов) in the texture/UV, not modelled"},
+        {"when": "plinth", "when_ru": "цоколь", "then": "one with the body or inset, per project; write the Modelling split line", "then_ru": "одним мешем с телом или вставкой - по проекту; записать строку Modelling split", "decider": "AGENT", "rule": ["D336"], "quote": "the agent decides per project and writes one line"},
+        {"when": "window opening", "when_ru": "оконный проём", "then": "library window with a small inset if one fits, else the window generator", "then_ru": "библиотечное окно с небольшим заглублением, если подходит, иначе генератор окон", "decider": "AGENT", "rule": ["D292"], "quote": "a library window that fits the opening goes in with a small outline inset into the opening; if none fits, the window generator"},
+        {"when": "roof inside a parapet", "when_ru": "кровля внутри парапета", "then": "cut the roof outline into the parapet walls, raised a few mm", "then_ru": "контур кровли врезан в стенки парапета, приподнят на несколько мм", "decider": "AGENT", "rule": ["D292"], "quote": "the walkable roof surface is cut in with its outline into the parapet walls"},
+        {"when": "decor and attachments", "when_ru": "декор и навесные элементы", "then": "embed 10-20 mm into the facade", "then_ru": "врезать на 10-20 мм в фасад", "decider": "AGENT", "rule": ["D199"], "quote": "decor and attachments (arches, light fixtures, frames and similar) embed 10-20 mm into their facade"},
+        {"when": "finish of a face is not in the sources", "when_ru": "отделки грани нет в источниках", "then": "leave the material unknown and ask", "then_ru": "материал оставить неизвестным и спросить", "decider": "ARTEM", "rule": ["fact:routes/npm-oks.md"], "quote": "Missing facts/conflicts stop the dependent step", "sheet": "the faces on the model next to the album sheet, a recommended finish", "sheet_ru": "грани на модели рядом с листом альбома и рекомендуемая отделка", "next": "stop"},
+        {"when": "job Sokolniki: windows, doors, curtain walls", "when_ru": "задание Сокольники: окна, двери, витражи", "then": "flat insets; frames, mullions and glazing drawn in the atlas", "then_ru": "плоские вставки; рамы, импосты и стекло - рисунком в атласе", "decider": "AGENT", "rule": ["D417", "D418"], "quote": "the NPM windows and doors are NOT geometry - frames, mullions / transoms, sashes, door leaves and their glazing pattern are drawn in the facade atlas texture", "job_local": "jobs/sokolniki-uvk1000"}
+      ]
+    },
+    "mesh-quality": {
+      "q": "Does a bad mesh-quality score return the work?",
+      "q_ru": "Возвращает ли плохая оценка сетки работу?",
+      "branches": [
+        {"when": "any score", "when_ru": "любая оценка", "then": "record only, continue; one sheet line", "then_ru": "только записать и идти дальше; одна строка на листе", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "`returns_work` is always `false`"},
+        {"when": "a threshold or return mode is wanted", "when_ru": "нужен порог или возврат", "then": "only after Artem's word on the week's numbers", "then_ru": "только после слова Артёма по цифрам недели", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "Both change only after Artem's word on the week's numbers.", "sheet": "weekly digest line of verifier_summary.py", "sheet_ru": "недельная сводка verifier_summary.py"}
+      ]
+    },
+    "brick-seams": {
+      "q": "Do the approved sources call for brick seams?",
+      "q_ru": "Требуют ли утверждённые источники кирпичных швов?",
+      "branches": [
+        {"when": "yes, with module/phase/width", "when_ru": "да, с модулем, фазой и шириной", "then": "agr brick-seams candidate plan", "then_ru": "план-кандидат agr brick-seams", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "only if approved source calls for brick seams"},
+        {"when": "no / cassettes", "when_ru": "нет / кассеты", "then": "skip; never infer cassette cuts", "then_ru": "пропустить; разрезку кассет не выдумывать", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "never infer cassette cuts"}
+      ]
+    },
+    "derive-npm": {
+      "q": "Which atlas path and how are alpha, glass and budget handled?",
+      "q_ru": "Какой путь атласа и как быть с альфой, стеклом и бюджетом?",
+      "branches": [
+        {"when": "atlas path", "when_ru": "путь атласа", "then": "path A (UDIM) or B (material IDs), one per task, stated in the report", "then_ru": "путь A (UDIM) или B (ID материалов), один на задачу, записать в отчёт", "decider": "AGENT", "rule": ["D292", "fact:routes/npm-oks.md"], "quote": "Pick one per task and state it in the job report."},
+        {"when": "transparency needed", "when_ru": "нужна прозрачность", "then": "no alpha; separate _o_ opacity map", "then_ru": "без альфы; отдельная карта прозрачности _o_", "decider": "AGENT", "rule": ["D020"], "quote": "no alpha in any NPM image; opacity as a separate `_o_` map"},
+        {"when": "over the triangle budget", "when_ru": "выше бюджета треугольников", "then": "follow the vpm-to-npm budget ladder", "then_ru": "идти по лестнице бюджета vpm-to-npm", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS.md"], "quote": "бюджет треугольников ОКС — по лестнице бюджета ячейки `vpm-to-npm`"}
+      ]
+    },
+    "master-qa": {
+      "q": "Does the master pass topology before export?",
+      "q_ru": "Проходит ли мастер проверку топологии до экспорта?",
+      "branches": [
+        {"when": "an n-gon (> 4 sides)", "when_ru": "n-угольник (> 4 сторон)", "then": "fail before export; fix the input and rebuild", "then_ru": "отказ до экспорта; исправить вход и пересобрать", "decider": "AGENT", "rule": ["D312"], "quote": "any n-gon (>4 sides) fails the master check", "next": "stop"},
+        {"when": "unavoidable triangles", "when_ru": "неизбежные треугольники", "then": "allowed, reported per object", "then_ru": "допустимы, отчёт по объекту", "decider": "AGENT", "rule": ["D312"], "quote": "Triangles are allowed where unavoidable and must be reported per object"},
+        {"when": "inset elements", "when_ru": "элементы-вставки", "then": "judged per element, never welded to pass", "then_ru": "проверяются поэлементно, не сваривать ради проверки", "decider": "AGENT", "rule": ["D336"], "quote": "quads are judged per element"}
+      ]
+    },
+    "readback": {
+      "q": "Does the exported file read back clean?",
+      "q_ru": "Чист ли экспортированный файл при обратном чтении?",
+      "branches": [
+        {"when": "export written (exit 0)", "when_ru": "экспорт записан (код 0)", "then": "read back topology, UV, materials, transforms", "then_ru": "прочитать топологию, UV, материалы, трансформы", "decider": "AGENT", "rule": ["fact:AGENTS.md"], "quote": "A successful import or exit code 0 is not a finished model"},
+        {"when": "xView overlaps", "when_ru": "наложения xView", "then": "must be 0 at 2 mm / 5 mm", "then_ru": "должно быть 0 при 2 мм / 5 мм", "decider": "AGENT", "rule": ["D152"], "quote": "Overlapping Vertices at 0.002 m = 0 and Overlapping Faces at 0.005 m = 0"},
+        {"when": "an inset touches the body plane", "when_ru": "вставка касается плоскости тела", "then": "offset/embed, never weld", "then_ru": "отступ или врезка, не сварка", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "never by welding"}
+      ]
+    },
+    "verifier": {
+      "q": "Does the VLM verifier change the model?",
+      "q_ru": "Правит ли модель VLM-проверка?",
+      "branches": [
+        {"when": "default", "when_ru": "по умолчанию", "then": "observe only, write verifier.json; positions from geometry", "then_ru": "только наблюдение, verifier.json; координаты из геометрии", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "The VLM confirms; positions and counts come from geometry and drawing vectors"},
+        {"when": "fix mode wanted", "when_ru": "нужен режим исправления", "then": "only after Artem's word, at most 3 rounds", "then_ru": "только после слова Артёма, не больше 3 кругов", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "only after Artem's word; at most 3 rounds", "sheet": "verifier findings with the main discrepancy", "sheet_ru": "замечания проверки с главным расхождением"}
+      ]
+    },
+    "build-manifest": {
+      "q": "Is the export bound to one master revision?",
+      "q_ru": "Привязан ли экспорт к одной ревизии мастера?",
+      "branches": [
+        {"when": "two master revisions or changed hashes", "when_ru": "две ревизии мастера или хэши изменились", "then": "V001 refuses; rebuild from one master", "then_ru": "V001 отказывает; пересобрать от одного мастера", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "refuses two master revisions", "next": "stop"},
+        {"when": "package with several parts", "when_ru": "пакет из нескольких частей", "then": "each part keeps its own master", "then_ru": "у каждой части свой мастер", "decider": "AGENT", "rule": ["D328"], "quote": "Each part of a delivery package keeps its own master"}
+      ]
+    },
+    "package-npm": {
+      "q": "What goes with the NPM ZIP and which delivery data are known?",
+      "q_ru": "Что идёт вместе с ZIP НПМ и какие реквизиты известны?",
+      "branches": [
+        {"when": "every package", "when_ru": "любой пакет", "then": "a quad work FBX next to the ZIP", "then_ru": "рабочий FBX с квадами рядом с ZIP", "decider": "AGENT", "rule": ["D366", "D198"], "quote": "Work FBX with quads is made for EVERY package type"},
+        {"when": "address / district code / coordinates unknown", "when_ru": "адрес, код района, координаты неизвестны", "then": "never invent them", "then_ru": "не выдумывать", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "No district code/address/coordinates are invented"},
+        {"when": "FNO code missing", "when_ru": "нет кода ФНО", "then": "issued by SINTEZ after placement by the customer's DWG", "then_ru": "выдаёт SINTEZ после размещения по DWG заказчика", "decider": "AGENT", "rule": ["D220"], "quote": "the FNO code is issued by SINTEZ once the object is placed by that DWG"}
+      ]
+    },
+    "package-vpm": {
+      "q": "Is the VPM ZIP allowed now?",
+      "q_ru": "Можно ли собирать ZIP ВПМ?",
+      "branches": [
+        {"when": "no export_meta of the new FBX and its readback", "when_ru": "нет export_meta нового FBX и его чтения", "then": "stop before the ZIP", "then_ru": "стоп до ZIP", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "STOP до ZIP без `export_meta` нового FBX и его readback", "next": "stop"},
+        {"when": "every package", "when_ru": "любой пакет", "then": "a quad work FBX next to the ZIP", "then_ru": "рабочий FBX с квадами рядом с ZIP", "decider": "AGENT", "rule": ["D366", "D198"], "quote": "Work FBX with quads is made for EVERY package type"}
+      ]
+    },
+    "validate": {
+      "q": "Is a validator result a pass?",
+      "q_ru": "Является ли результат валидатора проходом?",
+      "branches": [
+        {"when": "unsupported, missing, review, not_run or partial", "when_ru": "unsupported, missing, review, not_run или partial", "then": "not a pass; report it", "then_ru": "не проход; записать в отчёт", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "Unsupported, missing, review, not_run and partial results are not passes"},
+        {"when": "any mandatory check or manual gate open", "when_ru": "открыт обязательный шаг или ручной гейт", "then": "passed=true forbidden", "then_ru": "passed=true запрещён", "decider": "AGENT", "rule": ["fact:AGENTS.md"], "quote": "`passed=true` is forbidden while any mandatory check or manual gate is open."}
+      ]
+    },
+    "review-scene": {
+      "q": "Is the model visually accepted?",
+      "q_ru": "Принята ли модель визуально?",
+      "branches": [
+        {"when": "Max is held by Artem", "when_ru": "Max занят Артёмом", "then": "open the review copy in Blender", "then_ru": "открыть копию для приёмки в Blender", "decider": "AGENT", "rule": ["D255"], "quote": "Whenever 3ds Max is held by Artem, any modelling or check step that would use Max may run in an agent-owned Blender"},
+        {"when": "review copy ready", "when_ru": "копия для приёмки готова", "then": "Artem accepts geometry visually before the final SINTEZ", "then_ru": "Артём принимает геометрию до финального SINTEZ", "decider": "ARTEM", "rule": ["D104", "D125"], "quote": "geometry is accepted by a person (visual and mathematical) first, SINTEZ last", "sheet": "acceptance sheet: model over album facades, overlays, material ids vs legend", "sheet_ru": "лист приёмки: модель поверх фасадов альбома, наложения, ID материалов по легенде", "next": "stop"}
+      ]
+    },
+    "checker": {
+      "q": "What happens with SINTEZ findings?",
+      "q_ru": "Что делать с замечаниями SINTEZ?",
+      "branches": [
+        {"when": "order of checks", "when_ru": "порядок проверок", "then": "preliminary SINTEZ, Artem's acceptance, final SINTEZ on the same hashes", "then_ru": "предварительный SINTEZ, приёмка Артёма, финальный SINTEZ на тех же хэшах", "decider": "AGENT", "rule": ["D352"], "quote": "preliminary SINTEZ → Artem's acceptance → final SINTEZ"},
+        {"when": "findings", "when_ru": "есть замечания", "then": "report; fix only when Artem asks (sintez-fix cell)", "then_ru": "отчитаться; править только по просьбе Артёма (ячейка sintez-fix)", "decider": "ARTEM", "rule": ["D365"], "quote": "we fix SINTEZ findings ONLY when Artem asks, never automatically", "sheet": "checker summary: codes, counts, recommended fixes", "sheet_ru": "сводка чекера: коды, количество, рекомендуемые правки", "next": "stop"},
+        {"when": "final check closed", "when_ru": "финальная проверка закрыта", "then": "hand the package to Artem (archive or quad Max scene)", "then_ru": "отдать пакет Артёму (архив или сцена Max с квадами)", "decider": "AGENT", "rule": ["D300"], "quote": "The finished package goes to ARTEM"}
+      ]
+    },
+    "udim": {
+      "q": "How are UDIM tiles numbered?",
+      "q_ru": "Как нумеруются плитки UDIM?",
+      "branches": [
+        {"when": "body and window meshes", "when_ru": "меши тела и окон", "then": "per mesh from 1001", "then_ru": "на каждый меш с 1001", "decider": "AGENT", "rule": ["D209"], "quote": "UDIM numbering is kept per mesh: the OKS body starts at 1001"},
+        {"when": "glass", "when_ru": "стекло", "then": "all glass UVs in tile 1001", "then_ru": "все UV стекла в плитке 1001", "decider": "AGENT", "rule": ["D221"], "quote": "All glass UVs (MainGlass, any number of glass materials) stay in UDIM tile 1001"}
+      ]
+    },
+    "vpm-uv": {
+      "q": "Which quad size and texel density?",
+      "q_ru": "Какой размер квада и плотность текселей?",
+      "branches": [
+        {"when": "4096 tile", "when_ru": "плитка 4096", "then": "quad side 3.8-4.0 m", "then_ru": "сторона квада 3,8-4,0 м", "decider": "AGENT", "rule": ["D320"], "quote": "3.8-4.0 m is correct for 4096"},
+        {"when": "diffuse density", "when_ru": "плотность диффуза", "then": "at least 512 px/m", "then_ru": "не меньше 512 px/m", "decider": "AGENT", "rule": ["D160"], "quote": "VPM diffuse texel density lower bound is 512 px/m"}
+      ]
+    },
+    "ucx-oks": {
+      "q": "Do the OKS collisions fit budget, gaps and distance?",
+      "q_ru": "Укладываются ли коллизии ОКС в бюджет, зазоры и расстояние?",
+      "branches": [
+        {"when": "UCX triangle budget", "when_ru": "бюджет треугольников UCX", "then": "checker formula", "then_ru": "по формуле чекера", "decider": "AGENT", "rule": ["D012"], "quote": "UCX budget by the checker formula"},
+        {"when": "gap between pieces", "when_ru": "зазор между частями", "then": "2 mm - 1 cm and the SINTEZ < 0.2 mm check, as two findings", "then_ru": "2 мм - 1 см и проверка SINTEZ < 0,2 мм, отдельными замечаниями", "decider": "AGENT", "rule": ["D098", "D162"], "quote": "Check BOTH the SINTEZ too-close UCX gap < 0.2 mm"},
+        {"when": "surface-to-UCX distance", "when_ru": "расстояние от модели до UCX", "then": "pedestrian-reachable <= 30 cm, rest <= 1 m", "then_ru": "в зоне пешехода <= 30 см, остальное <= 1 м", "decider": "AGENT", "rule": ["D134"], "quote": "pedestrian-reachable OKS <= 30 cm, remaining OKS <= 1 m"}
+      ]
+    },
+    "geojson": {
+      "q": "Where is the object placed and which height is the zero?",
+      "q_ru": "Где размещён объект и какая отметка нулевая?",
+      "branches": [
+        {"when": "placement", "when_ru": "размещение", "then": "MSK-77 by the customer's DWG", "then_ru": "МСК-77 по DWG заказчика", "decider": "AGENT", "rule": ["D220"], "quote": "the object is placed in MSK-77 by the customer's DWG (our work)"},
+        {"when": "height", "when_ru": "высота", "then": "h_relief = project zero; ground mark separate", "then_ru": "h_relief = проектный ноль; отметка земли отдельно", "decider": "AGENT", "rule": ["D279"], "quote": "GeoJSON h_relief stays the project zero"},
+        {"when": "no DWG / no project zero", "when_ru": "нет DWG или проектного нуля", "then": "ask", "then_ru": "спросить", "decider": "ARTEM", "rule": [], "sheet": "what is missing and which source could give it", "sheet_ru": "чего нет и какой источник мог бы это дать", "next": "stop"}
+      ]
+    },
+    "light-fbx": {
+      "q": "Is the _Light.fbx correct?",
+      "q_ru": "Корректен ли _Light.fbx?",
+      "branches": [
+        {"when": "package written", "when_ru": "пакет записан", "then": "agr validate ZIP --profile vpm, V012 rows", "then_ru": "agr validate ZIP --profile vpm, строки V012", "decider": "AGENT", "rule": ["fact:docs/agents/skeletons.json"], "quote": "V012 Light FBX findings; no Blender needed"}
+      ]
+    },
+    "lite-route": {
+      "gap": true,
+      "q": "What is NPM-lite for this task?",
+      "q_ru": "Что такое НПМ-лайт для этой задачи?",
+      "branches": [
+        {"when": "always (cell frozen)", "when_ru": "всегда (ячейка заморожена)", "then": "do not invent it; Artem defines it on one page", "then_ru": "не выдумывать; Артём определяет на одной странице", "decider": "ARTEM", "rule": ["D405"], "quote": "is FROZEN until Artem defines it on one page", "sheet": "one page: profile/customer, what is baked, poly + map budget, VPM base needed?", "sheet_ru": "одна страница: профиль/заказчик, что запекаем, бюджет полигонов и карт, нужна ли ВПМ-основа", "next": "stop"}
+      ]
+    },
+    "tris-count": {
+      "q": "Is the VPM within the NPM triangle budget?",
+      "q_ru": "Укладывается ли ВПМ в бюджет треугольников НПМ?",
+      "branches": [
+        {"when": "count first", "when_ru": "сначала посчитать", "then": "budget = standards NPM_STANDARD oks_triangles_per_fbx_max", "then_ru": "бюджет = oks_triangles_per_fbx_max из NPM_STANDARD", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "Бюджет по умолчанию — `standards/NPM_STANDARD.yaml` `oks_triangles_per_fbx_max` (150000)"},
+        {"when": "body looks heavy", "when_ru": "тело тяжёлое", "then": "never rebuild or edit the body; no ProOptimizer", "then_ru": "тело не перестраивать и не править; без ProOptimizer", "decider": "AGENT", "rule": ["fact:docs/scenarios/vpm-to-npm.md"], "quote": "Бадик не перестраивается и не правится, ProOptimizer не используется"}
+      ]
+    },
+    "remove-interiors": {
+      "q": "Which objects are interior?",
+      "q_ru": "Какие объекты относятся к интерьеру?",
+      "branches": [
+        {"when": "always", "when_ru": "всегда", "then": "remove interiors", "then_ru": "удалить интерьеры", "decider": "AGENT", "rule": ["fact:docs/scenarios/vpm-to-npm.md"], "quote": "Всегда удалить интерьеры"},
+        {"when": "the list", "when_ru": "список", "then": "explicit in config.interiors, shown on the Gate 1 sheet", "then_ru": "явно в config.interiors, показать на листе Gate 1", "decider": "ARTEM", "rule": ["fact:docs/scenarios/vpm-to-npm.md"], "quote": "список задаётся явно в `config.interiors` и показывается на Gate 1 листом", "sheet": "Gate 1 sheet with the interior UDIMs/objects highlighted", "sheet_ru": "лист Gate 1 с выделенными интерьерными UDIM и объектами", "next": "stop"}
+      ]
+    },
+    "atlas": {
+      "q": "How is the NPM atlas built?",
+      "q_ru": "Как собирается атлас НПМ?",
+      "branches": [
+        {"when": "all geometry", "when_ru": "вся геометрия", "then": "on the atlas via agr vpm-to-npm", "then_ru": "на атлас через agr vpm-to-npm", "decider": "AGENT", "rule": ["fact:docs/scenarios/vpm-to-npm.md"], "quote": "Атлас НПМ, вся геометрия на атлас"},
+        {"when": "transparency", "when_ru": "прозрачность", "then": "separate opacity map, no alpha", "then_ru": "отдельная карта прозрачности, без альфы", "decider": "AGENT", "rule": ["D020"], "quote": "no alpha in any NPM image; opacity as a separate `_o_` map"}
+      ]
+    },
+    "glass-merge": {
+      "q": "How is glass mapped?",
+      "q_ru": "Как кладётся стекло?",
+      "branches": [
+        {"when": "glass objects", "when_ru": "объекты стекла", "then": "one object, UV on pure white atlas pixels", "then_ru": "один объект, UV на чисто белых пикселях атласа", "decider": "AGENT", "rule": ["fact:docs/scenarios/vpm-to-npm.md"], "quote": "Стекло — одним объектом, его UV на чисто белых пикселях атласа"}
+      ]
+    },
+    "budget-ladder": {
+      "q": "Still over budget: which simplification next?",
+      "q_ru": "Всё ещё выше бюджета: что упрощать дальше?",
+      "branches": [
+        {"when": "over budget", "when_ru": "выше бюджета", "then": "cylinders -> opacity planes -> window planes, in order", "then_ru": "цилиндры -> плоскости с opacity -> плоскости окон, по порядку", "decider": "AGENT", "rule": ["fact:docs/scenarios/vpm-to-npm.md"], "quote": "меньше сегментов у цилиндров → ограждения и кондиционеры одной плоскостью с opacity"},
+        {"when": "a needed step has no hook", "when_ru": "нужный шаг не подан хуком", "then": "report missing, not done (exit 1)", "then_ru": "отчёт missing, не «сделано» (код 1)", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "шаг лестницы, нужный при превышении, но не поданный хуком, — `missing`, а не «сделано»", "next": "stop"},
+        {"when": "over budget after the whole ladder", "when_ru": "выше бюджета после всей лестницы", "then": "ask for a decision", "then_ru": "вынести на решение", "decider": "ARTEM", "rule": [], "sheet": "triangle table by group and 2-3 options with savings", "sheet_ru": "таблица треугольников по группам и 2-3 варианта с экономией", "next": "stop"}
+      ]
+    },
+    "npm-ids": {
+      "q": "Where do the material IDs come from?",
+      "q_ru": "Откуда берутся ID материалов?",
+      "branches": [
+        {"when": "npm_table.json exists", "when_ru": "есть npm_table.json", "then": "validate it, table mode", "then_ru": "проверить, режим таблицы", "decider": "AGENT", "rule": ["fact:docs/scenarios/npm-to-vpm.md"], "quote": "With table: validate it, use `npm.to_vpm` table mode"},
+        {"when": "no table", "when_ru": "таблицы нет", "then": "recover provisional IDs from atlas cells (not library approval)", "then_ru": "восстановить временные ID из ячеек атласа (не утверждение библиотеки)", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "IDs from atlas cells are provisional layout labels, **not** library-material approval"},
+        {"when": "unresolved, mixed or straddling faces", "when_ru": "нераспознанные, смешанные или пересекающие грани", "then": "list with indices, ID0, conversion blocked", "then_ru": "список с индексами, ID0, конверсия заблокирована", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "Unresolved/mixed/straddling faces are listed with source indices and remain ID0; they block conversion.", "sheet": "numbered atlas/model sheet of the unresolved faces", "sheet_ru": "нумерованный лист атласа и модели с нераспознанными гранями", "next": "stop"},
+        {"when": "glass or window look", "when_ru": "похоже на стекло или окно", "then": "never infer from colour", "then_ru": "не определять по цвету", "decider": "AGENT", "rule": ["fact:docs/scenarios/npm-to-vpm.md"], "quote": "Never infer glass/window semantics from colour"}
+      ]
+    },
+    "npm-udim-fit": {
+      "q": "Does every ID fit one UDIM at 512-1706 px/m?",
+      "q_ru": "Помещается ли каждый ID в один UDIM при 512-1706 px/m?",
+      "branches": [
+        {"when": "fits", "when_ru": "помещается", "then": "continue to conversion", "then_ru": "дальше к конверсии", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "world metres, 4096 tile, 512-1706 px/m"},
+        {"when": "does not fit", "when_ru": "не помещается", "then": "stop before writes; one grouped question", "then_ru": "стоп до записи; один сгруппированный вопрос", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "ask one grouped question with seam cuts / extra tiles / allowed density / other", "sheet": "per-ID fit table + options: seam cuts / extra tiles / allowed density", "sheet_ru": "таблица по ID и варианты: разрезы швов / доп. плитки / допустимая плотность", "next": "stop"}
+      ]
+    },
+    "npm-to-vpm": {
+      "q": "Which conversion mode?",
+      "q_ru": "Какой режим конверсии?",
+      "branches": [
+        {"when": "table / no table", "when_ru": "есть таблица / нет", "then": "table mode / regions mode", "then_ru": "режим table / режим regions", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "`regions` without table, `table` with `npm_table.json`"},
+        {"when": "a seam policy was answered", "when_ru": "получен ответ про швы", "then": "still no deleting or cropping unassigned faces", "then_ru": "всё равно не удалять и не обрезать неназначенные грани", "decider": "AGENT", "rule": ["fact:docs/scenarios/npm-to-vpm.md"], "quote": "An answered seam policy is not authority to ignore unassigned faces, crop mixed materials or delete faces."},
+        {"when": "job G22: deep overlaps", "when_ru": "задание G22: глубокие перекрытия", "then": "keep the exterior finish, trim the neighbour up to 275 mm on a copy", "then_ru": "сохранить наружную отделку, подрезать соседа до 275 мм на копии", "decider": "AGENT", "rule": ["D374"], "quote": "preserve the confirmed exterior facade finish", "job_local": "jobs/G22"}
+      ]
+    },
+    "maf-segments": {
+      "gap": true,
+      "q": "Add segments to round MAF details?",
+      "q_ru": "Добавлять ли сегменты круглым деталям МАФ?",
+      "branches": [
+        {"when": "a round profile looks faceted", "when_ru": "круглый профиль гранёный", "then": "manual edit on a copy; measure silhouette and triangle delta", "then_ru": "ручная правка на копии; замер силуэта и прироста треугольников", "decider": "AGENT", "rule": ["fact:docs/agents/skeletons.json"], "quote": "Manual source-bound edit on a copy; preserve UV seams and interfaces"},
+        {"when": "keep or drop the extra segments", "when_ru": "оставить ли добавленные сегменты", "then": "decide on the before/after sheet", "then_ru": "решить по листу до/после", "decider": "ARTEM", "rule": [], "sheet": "maf-sheet: matched views and triangle delta", "sheet_ru": "лист maf-sheet: парные виды и прирост треугольников"}
+      ]
+    },
+    "maf-texture-class": {
+      "gap": true,
+      "q": "Which finish class per MAF?",
+      "q_ru": "Какой класс отделки у каждого МАФ?",
+      "branches": [
+        {"when": "true solid / non-uniform or cut-out", "when_ru": "сплошной цвет / неоднородная или с вырезами", "then": "256 stub / full-size candidate", "then_ru": "заглушка 256 / полноразмерный кандидат", "decider": "AGENT", "rule": ["fact:docs/agents/skeletons.json"], "quote": "true solid -> 256 stub; non-uniform or cut-out -> full-size candidate"},
+        {"when": "missing or ambiguous finish", "when_ru": "отделки нет или она неясна", "then": "blocks; ask", "then_ru": "блокирует; спросить", "decider": "ARTEM", "rule": ["fact:docs/agents/skeletons.json"], "quote": "missing or ambiguous finish blocks", "sheet": "the MAF with spec picture and the unknown finish marked", "sheet_ru": "МАФ с картинкой из спецификации и отмеченной неясной отделкой", "next": "stop"}
+      ]
+    },
+    "maf-atlas-strategy": {
+      "gap": true,
+      "q": "One shared 4K tile, grouped tiles or per-MAF tiles?",
+      "q_ru": "Одна общая 4K, группы плиток или плитка на МАФ?",
+      "branches": [
+        {"when": "measure", "when_ru": "замерить", "then": "compare shared 4K, grouped 4K, per-MAF: texel fit, seams, file count", "then_ru": "сравнить общую 4K, группы 4K, по МАФ: плотность, швы, число файлов", "decider": "AGENT", "rule": ["fact:docs/agents/skeletons.json"], "quote": "Compare one shared 4K tile, grouped 4K tiles, then per-MAF tiles"},
+        {"when": "choose", "when_ru": "выбрать", "then": "no production choice is implied by the measurement", "then_ru": "замер выбор не делает", "decider": "ARTEM", "rule": ["fact:docs/agents/skeletons.json"], "quote": "No production choice implied", "sheet": "comparison table A/B/C with numbers (as #1745)", "sheet_ru": "таблица сравнения A/B/C с цифрами (как #1745)", "next": "stop"}
+      ]
+    },
+    "maf-pack": {
+      "q": "Does the packed atlas meet density?",
+      "q_ru": "Проходит ли упакованный атлас по плотности?",
+      "branches": [
+        {"when": "pixel fit found", "when_ru": "подбор по пикселям есть", "then": "still measure physical density; pixel fit is no approval", "then_ru": "всё равно замерить физическую плотность; подбор по пикселям - не приёмка", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "pixel fit is not physical density or export approval"},
+        {"when": "VPM diffuse density", "when_ru": "плотность диффуза ВПМ", "then": ">= 512 px/m", "then_ru": ">= 512 px/m", "decider": "AGENT", "rule": ["D160"], "quote": "VPM diffuse texel density lower bound is 512 px/m"}
+      ]
+    },
+    "maf-stubs": {
+      "gap": true,
+      "q": "Solid Normal/ERM stubs: which triplets?",
+      "q_ru": "Сплошные заглушки Normal/ERM: какие тройки?",
+      "branches": [
+        {"when": "eligible solid tile", "when_ru": "подходящая сплошная плитка", "then": "flat DirectX normal, agreed ERM, keep Diffuse alpha", "then_ru": "плоская нормаль DirectX, согласованный ERM, альфа диффуза сохраняется", "decider": "AGENT", "rule": ["fact:docs/agents/skeletons.json"], "quote": "Manual RGB triplets by tile: flat DirectX normal, agreed ERM"},
+        {"when": "a new material ID is needed", "when_ru": "нужен новый ID материала", "then": "only with Artem's approval", "then_ru": "только с одобрения Артёма", "decider": "ARTEM", "rule": ["D168"], "quote": "new IDs only with Artem's approval", "sheet": "proposed ID with swatch and the MAFs using it", "sheet_ru": "предлагаемый ID с образцом и списком МАФ", "next": "stop"}
+      ]
+    },
+    "maf-sheet": {
+      "gap": true,
+      "q": "Accept the MAF VPM?",
+      "q_ru": "Принять ВПМ МАФ?",
+      "branches": [
+        {"when": "evidence assembled", "when_ru": "доказательства собраны", "then": "Artem decides on the sheet", "then_ru": "Артём решает по листу", "decider": "ARTEM", "rule": ["fact:docs/agents/skeletons.json"], "quote": "Before/after matched views, source hashes, triangle delta, pixel and physical texel numbers, checker verdict and missing scope", "sheet": "before/after matched views and numbers", "sheet_ru": "парные виды до/после и цифры", "next": "stop"}
+      ]
+    },
+    "intake": {
+      "q": "Is every batch file an object or a reported drop?",
+      "q_ru": "Каждый файл партии - объект или отброс с причиной?",
+      "branches": [
+        {"when": "batch arrives", "when_ru": "пришла партия", "then": "work on a copy with SHA256SUMS; original read-only", "then_ru": "работать на копии с SHA256SUMS; оригинал только читать", "decider": "AGENT", "rule": ["fact:docs/scenarios/library-publish.md"], "quote": "Work on a copy of the batch"},
+        {"when": "kind outside MAF / Flora / windows / roof equipment", "when_ru": "вид вне МАФ / Флора / окна / крышное оборудование", "then": "not published now", "then_ru": "сейчас не публикуется", "decider": "AGENT", "rule": ["D372"], "quote": "Library-publish kinds now are MAF, Flora, windows and roof equipment"}
+      ]
+    },
+    "identify": {
+      "q": "Duplicate, variant or new?",
+      "q_ru": "Дубль, вариант или новый?",
+      "branches": [
+        {"when": "<= 10 cm per axis of a record", "when_ru": "<= 10 см по каждой оси", "then": "the same object; a duplicate of A101 is not registered", "then_ru": "тот же объект; дубль A101 не регистрируется", "decider": "AGENT", "rule": ["D403", "fact:docs/scenarios/library-publish.md"], "quote": "A duplicate of an A101 record is not registered: use the existing record."},
+        {"when": "within +-10 %", "when_ru": "в пределах +-10 %", "then": "a variant shown to Artem", "then_ru": "вариант, показать Артёму", "decider": "ARTEM", "rule": ["D403"], "quote": "up to +-10 % = a VARIANT the agent shows Artem", "sheet": "record and candidate side by side with per-axis sizes", "sheet_ru": "запись и кандидат рядом с размерами по осям"},
+        {"when": "more than 10 %", "when_ru": "больше 10 %", "then": "a new object", "then_ru": "новый объект", "decider": "AGENT", "rule": ["D403"], "quote": "more = model a new one"}
+      ]
+    },
+    "name": {
+      "q": "What is the library name?",
+      "q_ru": "Какое библиотечное имя?",
+      "branches": [
+        {"when": "manufacturer known", "when_ru": "производитель известен", "then": "Manufacturer_NameLatin_Article", "then_ru": "Производитель_ИмяЛатиницей_Артикул", "decider": "AGENT", "rule": ["D369"], "quote": "Library names follow A101: `Manufacturer_NameLatin_Article`"},
+        {"when": "no manufacturer source", "when_ru": "нет источника производителя", "then": "AGR_<kind>_<Name>_<NNN>; never invent one", "then_ru": "AGR_<вид>_<Имя>_<NNN>; не выдумывать", "decider": "AGENT", "rule": ["fact:docs/scenarios/library-publish.md"], "quote": "never invent a manufacturer or article"}
+      ]
+    },
+    "qa": {
+      "q": "What if the object fails QA?",
+      "q_ru": "Что если объект не прошёл проверку?",
+      "branches": [
+        {"when": "QA failure", "when_ru": "проверка не пройдена", "then": "register as draft anyway; accept refuses it unless --despite-qa", "then_ru": "всё равно черновик; accept откажет без --despite-qa", "decider": "AGENT", "rule": ["fact:docs/library/PUBLISH.md"], "quote": "QA failure still registers the draft (Artem sees it); `accept` refuses it unless `--despite-qa`."}
+      ]
+    },
+    "register": {
+      "q": "How is the version stored?",
+      "q_ru": "Как хранится версия?",
+      "branches": [
+        {"when": "every publish", "when_ru": "каждая публикация", "then": "new immutable vNNN, draft visible to agents at once", "then_ru": "новая неизменяемая vNNN, черновик сразу виден агентам", "decider": "AGENT", "rule": ["D421"], "quote": "Agent-made library versions are published as `draft` the moment a job makes them"},
+        {"when": "a version exists", "when_ru": "версия уже есть", "then": "never overwrite it", "then_ru": "не перезаписывать", "decider": "AGENT", "rule": ["fact:docs/scenarios/library-publish.md"], "quote": "never overwrite a version"}
+      ]
+    },
+    "sheet": {
+      "q": "Accept or reject the batch records?",
+      "q_ru": "Принять или отклонить записи партии?",
+      "branches": [
+        {"when": "sheet written", "when_ru": "лист готов", "then": "accept/reject only with Artem's words", "then_ru": "accept/reject только со словами Артёма", "decider": "ARTEM", "rule": ["D371"], "quote": "An agent adds a record as `draft` and sends Artem a preview sheet", "sheet": "batch preview sheet: object / identify / name / version / QA", "sheet_ru": "лист превью партии: объект / сверка / имя / версия / проверка", "next": "stop"}
+      ]
+    },
+    "sources-ground": {
+      "q": "Which Ground sources and which wins on conflict?",
+      "q_ru": "Какие источники Ground и какой главнее при расхождении?",
+      "branches": [
+        {"when": "SPOZU, PZU, relief available", "when_ru": "есть СПОЗУ, ПЗУ, рельеф", "then": "inventory a DXF copy; boundary and zero from the project", "then_ru": "инвентаризация копии DXF; граница и нуль из проекта", "decider": "AGENT", "rule": ["D293"], "quote": "the site boundary and the zero mark come from the project or the agent clarifies them"},
+        {"when": "sources conflict or are missing", "when_ru": "источники расходятся или их нет", "then": "stop the dependent step", "then_ru": "стоп зависимого шага", "decider": "ARTEM", "rule": ["fact:routes/site.md"], "quote": "If sources conflict or are missing, stop the dependent step; do not infer site data or assets.", "sheet": "the place on both sources and a recommendation", "sheet_ru": "место на обоих источниках и рекомендация", "next": "stop"}
+      ]
+    },
+    "zero": {
+      "gap": true,
+      "q": "Where are the site boundary and the project zero?",
+      "q_ru": "Где граница участка и проектный ноль?",
+      "branches": [
+        {"when": "given in PZU / vertical planning", "when_ru": "даны в ПЗУ / вертикальной планировке", "then": "use them; agr zero only verifies", "then_ru": "взять их; agr zero только проверяет", "decider": "AGENT", "rule": ["D279", "fact:routes/site.md"], "quote": "boundary and ±0.000 from the project, or ask."},
+        {"when": "not given", "when_ru": "не даны", "then": "ask; never invent a flat site", "then_ru": "спросить; плоский участок не выдумывать", "decider": "ARTEM", "rule": ["fact:routes/site.md"], "quote": "boundary and ±0.000 from the project, or ask.", "sheet": "plan with candidate boundary and known marks", "sheet_ru": "план с границей-кандидатом и известными отметками", "next": "stop"}
+      ]
+    },
+    "surfaces": {
+      "q": "How are covers split?",
+      "q_ru": "Как делятся покрытия?",
+      "branches": [
+        {"when": "hatches in SPOZU", "when_ru": "штриховки в СПОЗУ", "then": "flat ground first: hatches -> IDs, shared seams", "then_ru": "сначала плоская земля: штриховки -> ID, общие швы", "decider": "AGENT", "rule": ["D293"], "quote": "flat ground first (cover split by hatches -> IDs"}
+      ]
+    },
+    "quads": {
+      "gap": true,
+      "q": "How are the Ground triangles paired into quads?",
+      "q_ru": "Как спарить треугольники Ground в квады?",
+      "branches": [
+        {"when": "a new site", "when_ru": "новый участок", "then": "no command; manual work, then acceptance", "then_ru": "команды нет; вручную, затем приёмка", "decider": "ARTEM", "rule": ["fact:docs/agents/skeletons.json"], "quote": "new-site cuts/pairing have no command", "sheet": "topology view with residual triangle share", "sheet_ru": "вид топологии с долей оставшихся треугольников", "next": "stop"},
+        {"when": "job Vatutino v015", "when_ru": "задание Ватутино v015", "then": "replay dt ground v015, <= 35 % residual triangles", "then_ru": "повтор dt ground v015, <= 35 % треугольников", "decider": "AGENT", "rule": ["D157"], "quote": "accept <= 35 % residual triangles", "job_local": "jobs/VATUTINO-SITE"}
+      ]
+    },
+    "ground-textures": {
+      "q": "How are Ground UDIMs numbered?",
+      "q_ru": "Как нумеруются UDIM Ground?",
+      "branches": [
+        {"when": "new site VPM package", "when_ru": "новый пакет ВПМ участка", "then": "consecutive from 1001 without gaps; table beside the package", "then_ru": "подряд с 1001 без пропусков; таблица рядом с пакетом", "decider": "AGENT", "rule": ["D399"], "quote": "New Site/Ground VPM packages use consecutive UDIM tiles from 1001, without gaps"}
+      ]
+    },
+    "relief": {
+      "q": "When is the relief applied?",
+      "q_ru": "Когда накладывается рельеф?",
+      "branches": [
+        {"when": "flat textured Ground done", "when_ru": "плоский Ground с текстурами готов", "then": "project in Z last, keep XY/IDs/UV", "then_ru": "проекция по Z последней, XY/ID/UV не трогать", "decider": "AGENT", "rule": ["D293"], "quote": "relief LAST"},
+        {"when": "projection misses or contradictory marks", "when_ru": "промахи проекции или противоречивые отметки", "then": "do not move contours; ask", "then_ru": "контуры не двигать; спросить", "decider": "ARTEM", "rule": ["fact:docs/scenarios/ground-vpm.md"], "quote": "do not invent a flat site or silently move contours", "sheet": "relief overlay with the misses marked", "sheet_ru": "наложение рельефа с отмеченными промахами", "next": "stop"}
+      ]
+    },
+    "skirt": {
+      "q": "Where does the skirt go?",
+      "q_ru": "Где делать юбку?",
+      "branches": [
+        {"when": "every Ground component", "when_ru": "каждый компонент Ground", "then": ">= 1 m along the outer boundary only, inner holes excluded", "then_ru": ">= 1 м только по внешней границе, без внутренних отверстий", "decider": "AGENT", "rule": ["D251"], "quote": "requires a skirt at least 1 m deep only along the outer boundary of every Ground component"}
+      ]
+    },
+    "ucx-ground": {
+      "q": "Which collisions for Ground?",
+      "q_ru": "Какие коллизии для Ground?",
+      "branches": [
+        {"when": "MAF fences and canopies", "when_ru": "ограждения и навесы МАФ", "then": "no UCX", "then_ru": "без UCX", "decider": "AGENT", "rule": ["D298"], "quote": "MAF fences and canopies get NO UCX at any thickness"},
+        {"when": "Ground surface", "when_ru": "поверхность Ground", "then": "surface-to-UCX <= 10 cm, gap 2 mm - 1 cm", "then_ru": "до UCX <= 10 см, зазор 2 мм - 1 см", "decider": "AGENT", "rule": ["D134", "D098"], "quote": "Ground <= 10 cm"},
+        {"when": "Ground is an OBJ", "when_ru": "Ground в OBJ", "then": "the OBJ -> FBX/Blend handoff is not wired: manual", "then_ru": "передача OBJ -> FBX/Blend не подключена: вручную", "decider": "AGENT", "rule": ["fact:routes/site.md"], "quote": "needs FBX/Blend, not Ground OBJ. That handoff is not wired."}
+      ]
+    },
+    "library": {
+      "q": "Which library MAF / Flora fits each position?",
+      "q_ru": "Какой библиотечный МАФ / Флора подходит к позиции?",
+      "branches": [
+        {"when": "search", "when_ru": "поиск", "then": "published catalogue, never the first entry by default", "then_ru": "опубликованный каталог; первую запись по умолчанию не брать", "decider": "AGENT", "rule": ["D402", "fact:docs/scenarios/ground-vpm.md"], "quote": "never use the first catalogue entry as a default"},
+        {"when": "MAF <= 10 cm per axis", "when_ru": "МАФ <= 10 см по осям", "then": "the same MAF, no substitution", "then_ru": "тот же МАФ, без подмены", "decider": "AGENT", "rule": ["D403", "D164"], "quote": "Library match: <=10 cm per axis = the same MAF"},
+        {"when": "MAF within +-10 %", "when_ru": "МАФ в пределах +-10 %", "then": "variant shown to Artem", "then_ru": "вариант показать Артёму", "decider": "ARTEM", "rule": ["D403"], "quote": "up to +-10 % = a VARIANT the agent shows Artem", "sheet": "spec picture vs library record with sizes", "sheet_ru": "картинка спецификации против записи библиотеки с размерами"},
+        {"when": "Flora", "when_ru": "Флора", "then": "height and crown +-20 %, colour per spec", "then_ru": "высота и крона +-20 %, цвет по спецификации", "decider": "AGENT", "rule": ["D099"], "quote": "height and crown diameter may vary +-20 %"},
+        {"when": "spec says just flower beds", "when_ru": "в спецификации просто цветники", "then": "Ground texture, not models", "then_ru": "текстурой Ground, не моделями", "decider": "AGENT", "rule": ["D101"], "quote": "Flower beds: Ground texture when specification just says flower beds"},
+        {"when": "no library match", "when_ru": "в библиотеке нет", "then": "model new or wait", "then_ru": "моделировать новое или ждать", "decider": "ARTEM", "rule": ["fact:docs/scenarios/ground-npm.md"], "quote": "MAF without a library model and species without a library match", "sheet": "list of positions without a match with spec pictures", "sheet_ru": "список позиций без совпадения с картинками спецификации", "next": "stop"}
+      ]
+    },
+    "maf-light": {
+      "q": "Lighten a MAF?",
+      "q_ru": "Облегчать ли МАФ?",
+      "branches": [
+        {"when": "lightening", "when_ru": "облегчение", "then": "only on job copies, never library originals", "then_ru": "только на копиях задания, не на оригиналах библиотеки", "decider": "AGENT", "rule": ["D301"], "quote": "Lightening (LOD / light NPM variants) is done only on library copies, never on library originals"},
+        {"when": "cannot be lightened", "when_ru": "облегчить нельзя", "then": "keep it; same model for NPM and VPM", "then_ru": "оставить; одна модель для НПМ и ВПМ", "decider": "AGENT", "rule": ["D164"], "quote": "a MAF that cannot be lightened is not lightened"}
+      ]
+    },
+    "flora-star": {
+      "q": "Accepted bush in the catalogue, or build a star?",
+      "q_ru": "Есть принятый куст в каталоге или строить звезду?",
+      "branches": [
+        {"when": "no accepted bush matches", "when_ru": "принятого куста нет", "then": "build_flora_star.py from approved maps", "then_ru": "build_flora_star.py по утверждённым картам", "decider": "AGENT", "rule": ["fact:docs/scenarios/ground-npm.md"], "quote": "If no accepted bush matches, use"},
+        {"when": "only stand-in maps", "when_ru": "карты только временные", "then": "delivery may carry them, labelled", "then_ru": "можно сдавать с ними, с пометкой", "decider": "AGENT", "rule": ["D299"], "quote": "A delivery to Artem MAY carry interim (stand-in, D245) Flora maps"},
+        {"when": "opacity", "when_ru": "прозрачность", "then": "Flora always has an opacity map", "then_ru": "у Флоры всегда есть карта прозрачности", "decider": "AGENT", "rule": ["D406"], "quote": "Flora ALWAYS has an opacity map"}
+      ]
+    },
+    "placement": {
+      "q": "How are MAF and Flora placed?",
+      "q_ru": "Как расставляются МАФ и Флора?",
+      "branches": [
+        {"when": "MAF", "when_ru": "МАФ", "then": "pivot at the lowest point + 10 cm, sink 10 cm", "then_ru": "опорная точка в нижней точке + 10 см, утопить на 10 см", "decider": "AGENT", "rule": ["D095"], "quote": "pivot at the lowest point raised by 10 cm"},
+        {"when": "Flora", "when_ru": "Флора", "then": "SPOZU point, random Z rotation and scale +-10 %", "then_ru": "точка СПОЗУ, случайный поворот по Z и масштаб +-10 %", "decider": "AGENT", "rule": ["D100"], "quote": "random Z rotation and scale +-10 %"},
+        {"when": "object off the Ground surface", "when_ru": "объект вне поверхности Ground", "then": "delete and list in the report", "then_ru": "удалить и записать в отчёт", "decider": "AGENT", "rule": ["D302"], "quote": "A placed object that does not land on the Ground surface is DELETED"}
+      ]
+    },
+    "optimise": {
+      "gap": true,
+      "q": "Over the Ground NPM budget: what to cut?",
+      "q_ru": "Выше бюджета НПМ участка: что сокращать?",
+      "branches": [
+        {"when": "ProOptimizer", "when_ru": "ProOptimizer", "then": "not a default step", "then_ru": "не шаг по умолчанию", "decider": "AGENT", "rule": ["D404"], "quote": "ProOptimizer is NOT a default step"},
+        {"when": "Flora / MAF budget split", "when_ru": "раздел бюджета Флора / МАФ", "then": "bring 2-3 options; never delete Flora or MAF", "then_ru": "принести 2-3 варианта; Флору и МАФ не удалять", "decider": "ARTEM", "rule": ["D167"], "quote": "the agent brings a table with 2-3 options and their savings, and never deletes Flora or MAF itself", "sheet": "budget table with 2-3 options and savings", "sheet_ru": "таблица бюджета с 2-3 вариантами и экономией", "next": "stop"}
+      ]
+    },
+    "sintez-classify": {
+      "q": "Which owner handles each finding?",
+      "q_ru": "Какой владелец разбирает каждое замечание?",
+      "branches": [
+        {"when": "known code and message", "when_ru": "известный код и сообщение", "then": "route by profile + requirement + message, not exit code", "then_ru": "по профилю, требованию и сообщению, не по коду выхода", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "route by profile + requirement + underlying message, not by exit code"},
+        {"when": "unknown, partial or ambiguous", "when_ru": "неизвестное, частичное или неясное", "then": "stop the targeted repair", "then_ru": "стоп точечной правки", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "Unknown/partial/ambiguous rows stop the targeted repair", "sheet": "the rows with code, message and counts", "sheet_ru": "строки с кодом, сообщением и количеством", "next": "stop"}
+      ]
+    },
+    "sintez-recipe": {
+      "gap": true,
+      "q": "How is the finding fixed on the copy?",
+      "q_ru": "Как исправить замечание на копии?",
+      "branches": [
+        {"when": "agreed fix list", "when_ru": "согласованный перечень правок", "then": "one job hook or the owner (vpm-uv, master-qa, package); no generic auto-fix", "then_ru": "один хук задания или владелец (vpm-uv, master-qa, пакет); без автоправки", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "No unattended generic fix."}
+      ]
+    },
+    "sintez-uv-drift": {
+      "q": "Did the fix move UV or world registration?",
+      "q_ru": "Сдвинула ли правка UV или привязку в мире?",
+      "branches": [
+        {"when": "any movement", "when_ru": "любой сдвиг", "then": "report it, never round it away", "then_ru": "записать, не округлять", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "Do not round away movement"},
+        {"when": "exceptions", "when_ru": "исключения", "then": "list them and stop for review", "then_ru": "перечислить и стоп до проверки", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "List exceptions and stop for explicit review", "sheet": "drift receipt with the exceptions", "sheet_ru": "квитанция сдвигов с исключениями", "next": "stop"}
+      ]
+    },
+    "sintez-recheck": {
+      "q": "Did the fix clear the targeted findings without new ones?",
+      "q_ru": "Сняла ли правка нужные замечания без новых?",
+      "branches": [
+        {"when": "recheck done", "when_ru": "повторная проверка", "then": "compare targeted findings, coverage, new regressions", "then_ru": "сравнить целевые замечания, покрытие, новые регрессии", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "compare targeted findings, coverage and new regressions"}
+      ]
+    },
+    "sintez-sheet": {
+      "gap": true,
+      "q": "Accept the repaired copy?",
+      "q_ru": "Принять исправленную копию?",
+      "branches": [
+        {"when": "sheet assembled", "when_ru": "лист собран", "then": "Artem decides; no delivery or publication by the agent", "then_ru": "решает Артём; агент не сдаёт и не публикует", "decider": "ARTEM", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "No delivery or publication.", "sheet": "before/after: hashes, codes, counts, UV/world movement, changed maps", "sheet_ru": "до/после: хэши, коды, количество, сдвиги UV и в мире, изменённые карты", "next": "stop"}
+      ]
+    }
+  },
+  "cells": {
+    "oks-npm": {
+      "title_ru": "ОКС, НПМ (тропа routes/npm-oks.md). Зелёное - агент решает сам по правилу, оранжевое - вопрос Артёму с листом.",
+      "pre": [
+        {
+          "id": "scene-prepare", "ru": "Шаг 0: раскладка слоёв",
+          "q": "How is the Revit FBX split into layers (step 0)?",
+          "q_ru": "Как разложить Revit FBX по слоям (шаг 0)?",
+          "branches": [
+            {"when": "object placed with confidence by the rules file", "when_ru": "объект уверенно ложится по файлу правил", "then": "propose its layer", "then_ru": "предложить его слой", "decider": "AGENT", "rule": ["D390"], "quote": "by Revit family/material/position rules kept in one data file"},
+            {"when": "object not placed with confidence", "when_ru": "объект не ложится уверенно", "then": "00_РЕШИТЬ_ЧЕЛОВЕКУ, never guessed", "then_ru": "в 00_РЕШИТЬ_ЧЕЛОВЕКУ, не угадывать", "decider": "ARTEM", "rule": ["D390"], "quote": "objects it cannot place with confidence go to 00_РЕШИТЬ_ЧЕЛОВЕКУ, never guessed", "sheet": "split sheet.png with the 00 group", "sheet_ru": "лист раскладки sheet.png с группой 00"},
+            {"when": "proposed split ready", "when_ru": "раскладка предложена", "then": "Artem corrects in Max and saves <job>_split_ACCEPTED", "then_ru": "Артём правит в Max и сохраняет <job>_split_ACCEPTED", "decider": "ARTEM", "rule": ["D390"], "quote": "Artem corrects the split in 3ds Max and saves", "sheet": "census.md + sheet.png + split_PROPOSED.fbx", "sheet_ru": "census.md + sheet.png + split_PROPOSED.fbx", "next": "stop"},
+            {"when": "split accepted", "when_ru": "раскладка принята", "then": "the accepted file is the geometry source; never re-split", "then_ru": "принятый файл - источник геометрии; не перераскладывать", "decider": "AGENT", "rule": ["D390"], "quote": "that accepted file is the source of truth, the agent never re-splits after acceptance"}
+          ]
+        },
+        {
+          "id": "master-branch", "ru": "Ветка мастера",
+          "q": "VPM+NPM or NPM-only: is there a mid-poly master?",
+          "q_ru": "ВПМ+НПМ или только НПМ: нужен ли мастер mid-poly?",
+          "branches": [
+            {"when": "deliverable VPM+NPM", "when_ru": "сдаём ВПМ+НПМ", "then": "build the VPM / mid-poly master and derive NPM", "then_ru": "строить ВПМ / мастер и выводить из него НПМ", "decider": "AGENT", "rule": ["D292", "D010"], "quote": "VPM+NPM -> build the VPM or a mid-poly master and derive NPM from it"},
+            {"when": "deliverable NPM only", "when_ru": "сдаём только НПМ", "then": "build NPM directly", "then_ru": "строить НПМ напрямую", "decider": "AGENT", "rule": ["D292"], "quote": "NPM-only -> build NPM directly, no mid-poly master"}
+          ]
+        },
+        {
+          "id": "modelling-plan", "ru": "План моделирования",
+          "q": "Is the step-3 modelling plan accepted?",
+          "q_ru": "Принят ли план моделирования (шаг 3)?",
+          "branches": [
+            {"when": "plan sheet prepared from the accepted split", "when_ru": "лист плана по принятой раскладке готов", "then": "picture acceptance before modelling", "then_ru": "приёмка по картинке до моделирования", "decider": "ARTEM", "rule": ["fact:routes/npm-oks.md"], "quote": "obtain picture acceptance before modelling", "sheet": "modelling_plan.png: geometry / insets / texture / not shown, budget", "sheet_ru": "modelling_plan.png: геометрия / вставки / текстура / не показываем, бюджет", "next": "stop"},
+            {"when": "job Sokolniki", "when_ru": "задание Сокольники", "then": "accepted plan: ~40k tris, curtain-wall mullions as texture", "then_ru": "принятый план: ~40k треугольников, импосты витражей текстурой", "decider": "AGENT", "rule": ["D407"], "quote": "curtain-wall mullions (1092 + 1519) as texture", "job_local": "jobs/sokolniki-uvk1000"},
+            {"when": "job Sokolniki: finish of a facade zone", "when_ru": "задание Сокольники: отделка зоны фасада", "then": "accepted material zoning, 14 finish IDs", "then_ru": "принятая раскладка материалов, 14 ID отделки", "decider": "AGENT", "rule": ["D413"], "quote": "the material zoning and the NPM atlas layout of sheet v002 (14 finish IDs", "job_local": "jobs/sokolniki-uvk1000"}
+          ]
+        }
+      ]
+    },
+    "oks-vpm": {
+      "title_ru": "ОКС, ВПМ (карточка docs/scenarios/oks-vpm.md). Зелёное - агент по правилу, оранжевое - Артём по листу.",
+      "pre": [
+        {
+          "id": "scene-prepare", "ru": "Шаг 0: раскладка слоёв",
+          "q": "How is the Revit FBX split into layers (step 0)?",
+          "q_ru": "Как разложить Revit FBX по слоям (шаг 0)?",
+          "branches": [
+            {"when": "object not placed with confidence", "when_ru": "объект не ложится уверенно", "then": "00_РЕШИТЬ_ЧЕЛОВЕКУ, never guessed", "then_ru": "в 00_РЕШИТЬ_ЧЕЛОВЕКУ, не угадывать", "decider": "ARTEM", "rule": ["D390"], "quote": "objects it cannot place with confidence go to 00_РЕШИТЬ_ЧЕЛОВЕКУ, never guessed", "sheet": "split sheet.png with the 00 group", "sheet_ru": "лист раскладки sheet.png с группой 00"},
+            {"when": "proposed split ready", "when_ru": "раскладка предложена", "then": "Artem corrects in Max and saves <job>_split_ACCEPTED", "then_ru": "Артём правит в Max и сохраняет <job>_split_ACCEPTED", "decider": "ARTEM", "rule": ["D390"], "quote": "Artem corrects the split in 3ds Max and saves", "sheet": "census.md + sheet.png + split_PROPOSED.fbx", "sheet_ru": "census.md + sheet.png + split_PROPOSED.fbx", "next": "stop"},
+            {"when": "split accepted", "when_ru": "раскладка принята", "then": "work on the accepted layers; never re-split", "then_ru": "работать по принятым слоям; не перераскладывать", "decider": "AGENT", "rule": ["D390"], "quote": "that accepted file is the source of truth, the agent never re-splits after acceptance"}
+          ]
+        },
+        {
+          "id": "vpm-budget", "ru": "Бюджет ВПМ",
+          "q": "What is the VPM triangle target?",
+          "q_ru": "Какая цель по треугольникам ВПМ?",
+          "branches": [
+            {"when": "every OKS FBX", "when_ru": "каждый FBX ОКС", "then": "project target <= 150 000; regulation ceiling 1 000 000", "then_ru": "цель проекта <= 150 000; потолок регламента 1 000 000", "decider": "AGENT", "rule": ["D010", "D161"], "quote": "project target <= 150 000 triangles per OKS FBX in VPM as in NPM"}
+          ]
+        }
+      ]
+    },
+    "oks-npm-lite": {
+      "title_ru": "ОКС, упрощённая НПМ - ЗАМОРОЖЕНА до определения Артёмом [D405].",
+      "pre": []
+    },
+    "npm-to-vpm": {
+      "title_ru": "Готовая НПМ -> ВПМ (карточка docs/scenarios/npm-to-vpm.md).",
+      "pre": [],
+      "overrides": {
+        "checker": {
+          "q": "Run the checker on this conversion?",
+          "q_ru": "Запускать ли чекер на этой конверсии?",
+          "branches": [
+            {"when": "conversion plan blocked", "when_ru": "план конверсии заблокирован", "then": "no checker and no package", "then_ru": "ни чекера, ни пакета", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "no checker/package on a blocked conversion plan", "next": "stop"},
+            {"when": "valid conversion", "when_ru": "конверсия корректна", "then": "agr checker; fix findings only when Artem asks", "then_ru": "agr checker; править только по просьбе Артёма", "decider": "ARTEM", "rule": ["D365"], "quote": "we fix SINTEZ findings ONLY when Artem asks, never automatically", "sheet": "checker summary: codes, counts, recommended fixes", "sheet_ru": "сводка чекера: коды, количество, рекомендуемые правки"}
+          ]
+        }
+      }
+    },
+    "vpm-to-npm": {
+      "title_ru": "Принятая ВПМ -> НПМ по практике Артёма (карточка docs/scenarios/vpm-to-npm.md).",
+      "pre": []
+    },
+    "maf-npm-to-vpm": {
+      "title_ru": "МАФ, НПМ -> ВПМ (исследование #1745). Пять этапов - пробелы, выполняются вручную.",
+      "pre": [
+        {
+          "id": "maf-rules", "ru": "Правила МАФ",
+          "q": "Can the MAF be substituted or given collisions?",
+          "q_ru": "Можно ли подменить МАФ или дать ему коллизии?",
+          "branches": [
+            {"when": "substitution", "when_ru": "подмена", "then": "never; spec + manufacturer picture define the look", "then_ru": "никогда; вид задают спецификация и картинка производителя", "decider": "AGENT", "rule": ["D164"], "quote": "MAF models are never substituted"},
+            {"when": "UCX for fences and canopies", "when_ru": "UCX для ограждений и навесов", "then": "none", "then_ru": "нет", "decider": "AGENT", "rule": ["D298"], "quote": "MAF fences and canopies get NO UCX at any thickness"}
+          ]
+        }
+      ]
+    },
+    "ground-npm": {
+      "title_ru": "Участок: Ground + МАФ + Флора, НПМ (тропа routes/site.md).",
+      "pre": [
+        {
+          "id": "site-gate1", "ru": "Gate 1 участка",
+          "q": "Is the site PartsList confirmed and the NPM budget split known?",
+          "q_ru": "Утверждена ли ведомость участка и раздел бюджета НПМ?",
+          "branches": [
+            {"when": "PartsList drafted", "when_ru": "ведомость составлена", "then": "confirm the exact PartsList before construction", "then_ru": "утвердить точную ведомость до построения", "decider": "ARTEM", "rule": ["fact:routes/site.md"], "quote": "Confirm the exact PartsList at Gate 1 before construction.", "sheet": "Gate 1 sheet: covers, MAF and Flora lists, budget", "sheet_ru": "лист Gate 1: покрытия, списки МАФ и Флоры, бюджет", "next": "stop"},
+            {"when": "NPM budget", "when_ru": "бюджет НПМ", "then": "total <= 180 000; start 50k / 60k / 70k", "then_ru": "всего <= 180 000; старт 50k / 60k / 70k", "decider": "AGENT", "rule": ["D097", "fact:docs/scenarios/ground-vpm.md"], "quote": "Total ≤180 000 triangles; start surface 50k / MAF 60k / Flora 70k"}
+          ]
+        }
+      ]
+    },
+    "ground-vpm": {
+      "title_ru": "Участок: Ground + МАФ + Флора + UCX, ВПМ (тропа routes/site.md, рельеф последним).",
+      "pre": [
+        {
+          "id": "site-gate1", "ru": "Gate 1 участка",
+          "q": "Is the site PartsList confirmed?",
+          "q_ru": "Утверждена ли ведомость участка?",
+          "branches": [
+            {"when": "PartsList drafted", "when_ru": "ведомость составлена", "then": "confirm the exact PartsList before construction", "then_ru": "утвердить точную ведомость до построения", "decider": "ARTEM", "rule": ["fact:routes/site.md"], "quote": "Confirm the exact PartsList at Gate 1 before construction.", "sheet": "Gate 1 sheet: covers, MAF and Flora lists, budget", "sheet_ru": "лист Gate 1: покрытия, списки МАФ и Флоры, бюджет", "next": "stop"}
+          ]
+        }
+      ],
+      "overrides": {
+        "derive-npm": {
+          "q": "How is the site NPM made from the VPM?",
+          "q_ru": "Как получить НПМ участка из ВПМ?",
+          "branches": [
+            {"when": "same coordinates", "when_ru": "те же координаты", "then": "conversion or parallel low/high placement", "then_ru": "конверсия или параллельная расстановка low/high", "decider": "AGENT", "rule": ["D293", "fact:docs/scenarios/ground-vpm.md"], "quote": "conversion or parallel low/high placement"},
+            {"when": "Ground members", "when_ru": "части Ground", "then": "agr vpm-to-npm does not convert Ground: choose the way", "then_ru": "agr vpm-to-npm не конвертирует Ground: выбрать способ", "decider": "ARTEM", "rule": ["fact:docs/scenarios/ground-vpm.md"], "quote": "`agr vpm-to-npm` does not convert Ground", "sheet": "two ways (manual conversion / parallel build) with effort and risk", "sheet_ru": "два способа (ручная конверсия / параллельная сборка) с трудоёмкостью и риском", "next": "stop"}
+          ]
+        },
+        "validate": {
+          "q": "Is the site package valid?",
+          "q_ru": "Корректен ли пакет участка?",
+          "branches": [
+            {"when": "VPM validate", "when_ru": "проверка ВПМ", "then": "--ground-area-m2 from documented S_ter - S_pz", "then_ru": "--ground-area-m2 по документированной S_тер - S_пз", "decider": "AGENT", "rule": ["fact:routes/site.md"], "quote": "VPM `--ground-area-m2` from documented S_ter − S_pz"},
+            {"when": "unsupported, missing, review, not_run or partial", "when_ru": "unsupported, missing, review, not_run или partial", "then": "not a pass", "then_ru": "не проход", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "Unsupported, missing, review, not_run and partial results are not passes"}
+          ]
+        }
+      }
+    },
+    "library-publish": {
+      "title_ru": "Своё в библиотеку AGR (МАФ, Флора, окна, крышное оборудование).",
+      "pre": []
+    },
+    "sintez-fix": {
+      "title_ru": "Правка замечаний SINTEZ на копии - только по просьбе Артёма.",
+      "pre": [
+        {
+          "id": "request", "ru": "Поручение Артёма",
+          "q": "Did Artem ask for this SINTEZ fix?",
+          "q_ru": "Просил ли Артём эту правку SINTEZ?",
+          "branches": [
+            {"when": "no request_ref or no agreed fix list", "when_ru": "нет request_ref или согласованного перечня правок", "then": "do not start the cell", "then_ru": "ячейку не запускать", "decider": "ARTEM", "rule": ["D365", "fact:docs/agents/SKELETONS-stages.md"], "quote": "Без ссылки `request_ref` на явное поручение и согласованного перечня правок не запускать ячейку", "sheet": "checker summary with the proposed fix list", "sheet_ru": "сводка чекера с предлагаемым перечнем правок", "next": "stop"}
+          ]
+        }
+      ],
+      "overrides": {
+        "checker": {
+          "q": "Is the baseline pinned?",
+          "q_ru": "Зафиксирована ли исходная проверка?",
+          "branches": [
+            {"when": "baseline run", "when_ru": "исходный прогон", "then": "pin source ZIP, copy hashes and checker version", "then_ru": "зафиксировать исходный ZIP, хэши копии и версию чекера", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "pin source ZIP, copy hashes and checker version"}
+          ]
+        }
+      }
+    }
+  }
+}

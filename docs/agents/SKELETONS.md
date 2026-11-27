@@ -13,6 +13,13 @@
 исключения, история) — [`SKELETONS-stages.md`](SKELETONS-stages.md): читать на этапе, не на входе.
 Проверка задания: `uv run python tools/architecture/skeleton_guard.py [--job jobs/<ID>]` (0 чисто, 1 нарушения, 2 плохой вход).
 
+**Дерево решений на каждом этапе (#2039).** Перед этапом прочитай его узел:
+`uv run python tools/architecture/decision_trees.py --show <cell> --stage <stage>` — вопрос, ветки, кто решает
+(AGENT по процитированному правилу или ARTEM по листу-картинке) и следующий шаг. Источник —
+[`decision-trees.json`](decision-trees.json), по ячейке — [`decision-trees/<cell>.md`](decision-trees/oks-npm.md)
+(Mermaid + таблица). Ветка без правила — вопрос Артёму, правило не выдумывается; правило с пометкой job-local
+действует только в своём задании.
+
 ## Ячейки: тропа и первая команда
 
 | Ячейка | Тропа | Первая команда |
