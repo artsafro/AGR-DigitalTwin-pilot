@@ -828,22 +828,95 @@ def bounds_step(built_rb, key_rb):
     return step("pass" if dev <= TOL["bounds_m"] else "fail", max_corner_dev_m=round(dev, 4), tol_m=TOL["bounds_m"])
 
 
+UCX_TOL = {"r13_m": 1.0, "covered_share_drop": 0.02, "key_iou_min": 0.80, "iou_grid_points": 120000}
+
+
+def _inside_any(points, hulls):
+    """bool per point: inside (or on) at least one closed convex hull."""
+    import numpy as np
+    p = np.asarray(points, float)
+    out = np.zeros(len(p), bool)
+    for verts, tris in hulls:
+        v, t = np.asarray(verts, float), np.asarray(tris, int)
+        a, b, c = v[t[:, 0]], v[t[:, 1]], v[t[:, 2]]
+        n = np.cross(b - a, c - a)
+        keep = (n ** 2).sum(axis=1) > 1e-24
+        n, a = n[keep] / np.linalg.norm(n[keep], axis=1)[:, None], a[keep]
+        off = (n * a).sum(axis=1)
+        flip = (n @ v.mean(axis=0) - off) > 0
+        n[flip], off[flip] = -n[flip], -off[flip]
+        out |= ((p @ n.T - off) <= 1e-6).all(axis=1)
+    return out
+
+
+def _key_iou(hs, khs, n):
+    """Volume IoU of the built UCX union vs the key UCX union on a regular grid over both."""
+    import numpy as np
+    allv = np.asarray([q for v, _ in [*hs, *khs] for q in v], float)
+    lo, hi = allv.min(axis=0), allv.max(axis=0)
+    ext = np.maximum(hi - lo, 1e-6)
+    h = (ext.prod() / n) ** (1 / 3)
+    axes = [lo[i] + (np.arange(max(1, int(ext[i] / h))) + 0.5) * ext[i] / max(1, int(ext[i] / h)) for i in range(3)]
+    g = np.stack(np.meshgrid(*axes, indexing="ij"), -1).reshape(-1, 3)
+    b, k = _inside_any(g, hs), _inside_any(g, khs)
+    union = (b | k).sum()
+    return float((b & k).sum() / union) if union else 0.0, len(g)
+
+
+def _model_points(meshes):
+    """Model surface samples: every vertex + every polygon centroid (face_geometry, world metres)."""
+    pts = []
+    for m in meshes:
+        fg = m.get("face_geometry") or {}
+        v = fg.get("vertices") or []
+        pts += v
+        pts += [[sum(v[i][k] for i in p) / len(p) for k in range(3)] for p in fg.get("polygons") or [] if p]
+    return pts
+
+
 def ucx_step(built_rb, key_rb):
-    """[#2066] UCX of one body: built has UCX_ meshes and their triangles fit the [D012] budget of its model
-    triangles (reg p.36-37). The key's UCX count is reported, not gated."""
-    from twinqa.geometry.ucx_audit import ucx_triangle_limit
+    """[#2066] UCX of one body (reg p.36-37), all gated: UCX_ meshes exist; their triangles fit the [D012]
+    budget; every UCX is closed and convex (twinqa ucx_audit); the set covers the body like the accepted key:
+    the share of model surface points within R13 (OKS 1 m, one-sided model -> UCX [D134]) is at most
+    covered_share_drop below the key's own share (the accepted key leaves some parts uncovered); and the
+    UCX volume overlaps the key UCX volume with IoU >= key_iou_min (a bounding box, a tiny or a far-away
+    box all fail)."""
+    import numpy as np
+    from dt_ai.geometry.ucx_build import UcxBuildError, hull_deviation
+    from twinqa.geometry.ucx_audit import is_closed, is_convex, ucx_triangle_limit, weld
 
     def split(rb):
         ucx = [m for m in rb["meshes"] if str(m.get("name", "")).upper().startswith("UCX_")]
-        model = sum(int(m.get("triangles", 0)) for m in rb["meshes"] if m not in ucx)
-        return ucx, model
-    ucx, model = split(built_rb)
-    kucx, _ = split(key_rb)
+        return ucx, [m for m in rb["meshes"] if m not in ucx]
+
+    def hulls(ucx):
+        return [weld(m["hull"]["verts"], m["hull"]["tris"]) if m.get("hull") else ([], []) for m in ucx]
+    ucx, body = split(built_rb)
+    kucx, kbody = split(key_rb)
+    model = sum(int(m.get("triangles", 0)) for m in body)
     tris = sum(int(m.get("triangles", 0)) for m in ucx)
     limit = ucx_triangle_limit(model)
-    ok = bool(ucx) and tris <= limit
-    return step("pass" if ok else "fail", ucx_meshes=len(ucx), ucx_triangles=tris, ucx_limit=limit,
-                model_triangles=model, key_ucx_meshes=len(kucx))
+    hs, khs = hulls(ucx), [h for h in hulls(kucx) if h[1]]
+    open_ = [m["name"] for m, (v, t) in zip(ucx, hs) if not (t and is_closed(t))]
+    concave = [m["name"] for m, (v, t) in zip(ucx, hs) if t and m["name"] not in open_ and not is_convex(v, t)]
+    nums: dict = dict(ucx_meshes=len(ucx), ucx_triangles=tris, ucx_limit=limit, model_triangles=model,
+                key_ucx_meshes=len(kucx), open_ucx=open_, non_convex_ucx=concave, **UCX_TOL)
+    if not ucx or tris > limit or open_ or concave:
+        return step("fail", **nums)
+    try:
+        d = hull_deviation(_model_points(body), hs)
+        kd = hull_deviation(_model_points(kbody), khs)
+    except UcxBuildError as exc:
+        return step("error", reason=f"D134 distance: {exc}", **nums)
+    if not len(d) or not len(kd):
+        return step("error", reason="no model surface points (face_geometry) in the readback", **nums)
+    share, kshare = float((d <= UCX_TOL["r13_m"]).mean()), float((kd <= UCX_TOL["r13_m"]).mean())
+    iou, grid = _key_iou(hs, khs, UCX_TOL["iou_grid_points"])
+    nums.update(model_points=len(d), covered_share=round(share, 4), key_covered_share=round(kshare, 4),
+                d134_p95_m=round(float(np.percentile(d, 95)), 4), d134_max_measured_m=round(float(d.max()), 4),
+                key_iou=round(iou, 4), iou_grid=grid)
+    ok = share >= kshare - UCX_TOL["covered_share_drop"] and iou >= UCX_TOL["key_iou_min"]
+    return step("pass" if ok else "fail", **nums)
 
 
 def quad_share(rb):

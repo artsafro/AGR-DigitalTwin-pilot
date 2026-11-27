@@ -49,6 +49,22 @@ def _norm(s):
     return re.sub(r"\s+", " ", str(s).lower().replace("ё", "е")).strip()
 
 
+def _words(s):
+    return re.findall(r"\w+", _norm(s))
+
+
+def _term_ok(term, words):
+    """Whole-word match: a term is one word or a phrase of consecutive words; a trailing `*` on the last
+    word is a prefix (`curb*` matches `curbs`, never `subcurb`)."""
+    tw = _words(term)
+    star = str(term).strip().endswith("*")
+    for i in range(len(words) - len(tw) + 1 if tw else 0):
+        if all(words[i + j] == w or (star and j == len(tw) - 1 and words[i + j].startswith(w))
+               for j, w in enumerate(tw)):
+            return True
+    return False
+
+
 def pack_problems(pack):
     """-> list of reasons to refuse the pack (empty when it is a clean approved-answer pack)."""
     if not isinstance(pack, dict) or pack.get("schema") != "user-proxy-pack/1":
@@ -82,6 +98,9 @@ def pack_problems(pack):
         if not (isinstance(m, list) and m and all(isinstance(g, list) and g and all(isinstance(t, str) and t.strip()
                                                                                   for t in g) for g in m)):
             out.append(f"{aid}: match must be a non-empty list of non-empty term lists")
+        else:  # review r1: one generic word ("gap", "distance") answers unrelated questions
+            out += [f"{aid}: match group {g} needs at least 2 distinct terms" for g in m
+                    if len({" ".join(_words(t)) for t in g}) < 2]
     return out
 
 
@@ -97,8 +116,8 @@ def load_pack(path):
 
 
 def matches(pack, question):
-    q = _norm(question)
-    return [a for a in pack["answers"] if any(all(_norm(t) in q for t in g) for g in a["match"])]
+    words = _words(question)
+    return [a for a in pack["answers"] if any(all(_term_ok(t, words) for t in g) for g in a["match"])]
 
 
 def answer(pack, question, declared=None):

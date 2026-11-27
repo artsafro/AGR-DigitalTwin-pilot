@@ -194,9 +194,9 @@
    "hidden_repo_paths": ["jobs/KPP1", "docs/methods/ucx-collisions"],
    "evidence": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/kpp1-ucx-v004/ (SHA256SUMS.txt in bank/)",
    "proxy_answers": [
-    {"id": "K1", "match": [["ucx", "budget"], ["ucx", "triangle", "limit"], ["how many", "ucx", "triang"]], "answer": "UCX budget by the checker formula (< 50 000 -> 15 000, else min(ceil 5 %, 100 000))", "source": "D012", "source_kind": "d_row", "stop_class": "answer_in_repo"},
-    {"id": "K2", "match": [["gap"]], "answer": "project rule: collision-piece gap 2 mm - 1 cm inclusive (reg p.36 §13.4 is a typo); a check reports gaps outside the band", "source": "D098", "source_kind": "d_row", "stop_class": "answer_in_repo"},
-    {"id": "K3", "match": [["distance"], ["how close"], ["offset", "surface"]], "answer": "UCX R11-R13 distance limits are one-sided, model surface -> UCX: Ground <= 10 cm, pedestrian-reachable OKS <= 30 cm, remaining OKS <= 1 m", "source": "D134", "source_kind": "d_row", "stop_class": "answer_in_repo"}
+    {"id": "K1", "match": [["ucx", "budget"], ["ucx", "triangle*", "limit*"], ["how many", "ucx", "triangle*"]], "answer": "UCX budget by the checker formula (< 50 000 -> 15 000, else min(ceil 5 %, 100 000))", "source": "D012", "source_kind": "d_row", "stop_class": "answer_in_repo"},
+    {"id": "K2", "match": [["ucx", "gap*"], ["collision", "gap*"]], "answer": "project rule: collision-piece gap 2 mm - 1 cm inclusive (reg p.36 §13.4 is a typo); a check reports gaps outside the band", "source": "D098", "source_kind": "d_row", "stop_class": "answer_in_repo"},
+    {"id": "K3", "match": [["ucx", "distance*"], ["ucx", "how close"], ["ucx", "offset*"], ["collision", "distance*"]], "answer": "UCX R11-R13 distance limits are one-sided, model surface -> UCX: Ground <= 10 cm, pedestrian-reachable OKS <= 30 cm, remaining OKS <= 1 m", "source": "D134", "source_kind": "d_row", "stop_class": "answer_in_repo"}
    ]
   },
   {
@@ -224,13 +224,13 @@
    "evidence": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/ (SHA256SUMS.txt, 507 files)",
    "note": "#2066 holdout: an unfamiliar project, never used for tuning; run only as the final check of a change.",
    "proxy_answers": [
-    {"id": "M1", "match": [["footprint"], ["building", "hole"], ["building", "cut"]], "answer": "No building-footprint hole: footprint area capped, part of ID02 Paving (user deviation from D251 / hole practice for this job)", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
-    {"id": "M2", "match": [["lawn"], ["hedge"], ["shrub"], ["flower"]], "answer": "One lawn cover ID05 (lawn, rolled lawn, hedge, shrub and flower beds; plants go on top later).", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
-    {"id": "M3", "match": [["marking"]], "answer": "Markings = separate closed mesh, top +8 mm, bottom −10 mm, own white material.", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
-    {"id": "M4", "match": [["curb"], ["kerb"], ["бордюр"]], "answer": "Curbs: not modelled (user decision 2026-11-26; GND-07 practice waived for this job).", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
-    {"id": "M5", "match": [["sliver"], ["thin", "triang"]], "answer": "Ultra-thin slivers: the user fixes them by hand", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
-    {"id": "M6", "match": [["rubber", "colour"], ["rubber", "color"], ["rubber", "material"]], "answer": "rubber zones = library 27 recoloured to the RAL layer colours", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
-    {"id": "M7", "match": [["canopy"], ["shade"]], "answer": "shade-canopy spots = compacted soil", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"}
+    {"id": "M1", "match": [["building", "footprint*"], ["building", "hole*"], ["building", "cut*"]], "answer": "No building-footprint hole: footprint area capped, part of ID02 Paving (user deviation from D251 / hole practice for this job)", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M2", "match": [["lawn*", "cover*"], ["hedge*", "cover*"], ["shrub*", "cover*"], ["flower*", "bed*"], ["lawn*", "hedge*"]], "answer": "One lawn cover ID05 (lawn, rolled lawn, hedge, shrub and flower beds; plants go on top later).", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M3", "match": [["marking*", "mesh*"], ["marking*", "height*"], ["marking*", "thick*"], ["marking*", "model*"], ["marking*", "material*"]], "answer": "Markings = separate closed mesh, top +8 mm, bottom −10 mm, own white material.", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M4", "match": [["curb*", "model*"], ["kerb*", "model*"], ["бордюр*", "модел*"]], "answer": "Curbs: not modelled (user decision 2026-11-26; GND-07 practice waived for this job).", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M5", "match": [["sliver*", "triangle*"], ["sliver*", "fix*"], ["thin", "triangle*"]], "answer": "Ultra-thin slivers: the user fixes them by hand", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M6", "match": [["rubber", "colour*"], ["rubber", "color*"], ["rubber", "material*"]], "answer": "rubber zones = library 27 recoloured to the RAL layer colours", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M7", "match": [["shade", "canopy*"], ["canopy*", "cover*"], ["canopy*", "material*"]], "answer": "shade-canopy spots = compacted soil", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"}
    ]
   }
  ],

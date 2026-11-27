@@ -34,7 +34,7 @@ def pack(answers):
     return {"schema": "user-proxy-pack/1", "task": "t", "answers": answers}
 
 
-ANS = {"id": "A1", "match": [["curb"], ["kerb"]], "answer": "Curbs: not modelled",
+ANS = {"id": "A1", "match": [["curb*", "model*"], ["kerb*", "model*"]], "answer": "Curbs: not modelled",
        "source": "jobs/x/STATE.md#user-decisions", "source_kind": "job_decision", "stop_class": "customer_decision"}
 
 
@@ -77,8 +77,8 @@ def test_no_approved_answer_records_unresolved_and_invents_nothing(tmp_path):
 
 
 def test_ambiguous_match_is_unresolved_never_a_guess(tmp_path):
-    other = dict(ANS, id="A2", match=[["paths"]], answer="Paths: paving ID02")
-    r, log = ask(tmp_path, pack([ANS, other]), "Curbs along the paths?")
+    other = dict(ANS, id="A2", match=[["paths", "model*"]], answer="Paths: paving ID02")
+    r, log = ask(tmp_path, pack([ANS, other]), "Curbs along the paths: model them?")
     assert r.stdout.startswith("UNRESOLVED")
     assert log[-1]["verdict"] == "unresolved" and sorted(log[-1]["candidates"]) == ["A1", "A2"]
 
@@ -88,6 +88,46 @@ def test_unknown_class_is_refused_and_unclassified_is_the_default(tmp_path):
     assert r.returncode == 2
     r, log = ask(tmp_path, pack([ANS]), "Anything else?")
     assert log[-1]["stop_class"] == "unclassified" and log[-1]["stop_group"] == "unclassified"
+
+
+# review r1 P1-3: whole-word tokens, no single generic term; unrelated questions stay UNRESOLVED
+def _bank_pack(eid):
+    return T.proxy_pack(entries()[eid])
+
+
+@pytest.mark.parametrize("eid, question", [
+    ("moskovsky-ground-v002", "Which shader should the paving material use?"),
+    ("moskovsky-ground-v002", "Where is the GPZU plot footprint boundary layer in the DWG?"),
+    ("moskovsky-ground-v002", "The cover marking layer names are unclear: which DWG layer is asphalt?"),
+    ("kpp1-ucx-v004", "Is there a gap in the input FBX between floors that I should close?"),
+    ("kpp1-ucx-v004", "What distance unit does the master use?"),
+])
+def test_unrelated_question_sharing_one_word_is_unresolved(eid, question):
+    rec = U.answer(_bank_pack(eid), question)
+    assert rec["verdict"] == "unresolved" and rec["answer"] is None, rec["candidates"]
+
+
+@pytest.mark.parametrize("eid, question, aid", [
+    ("moskovsky-ground-v002", "Should curbs be modelled?", "M4"),
+    ("kpp1-ucx-v004", "What is the UCX triangle budget?", "K1"),
+])
+def test_related_question_still_gets_its_approved_answer(eid, question, aid):
+    rec = U.answer(_bank_pack(eid), question)
+    assert rec["verdict"] == "answered" and rec["answer_id"] == aid
+
+
+def test_match_is_whole_word_not_substring():
+    p = pack([dict(ANS, match=[["shade", "canopy"]])])
+    assert U.answer(p, "shader for the canopy?")["verdict"] == "unresolved"
+    assert U.answer(p, "the shade canopy spots?")["verdict"] == "answered"
+    star = pack([dict(ANS, match=[["curb*", "model*"]])])
+    assert U.answer(star, "Should curbs be modelled?")["verdict"] == "answered"
+    assert U.answer(star, "Should the subcurb be modelled?")["verdict"] == "unresolved"
+
+
+@pytest.mark.parametrize("match", [[["curb"]], [["curb", "model"], ["gap"]], [["how many"]], [["x*", "x*"]]])
+def test_pack_with_a_single_term_group_is_refused(match):
+    assert any("at least 2 distinct terms" in p for p in U.pack_problems(pack([dict(ANS, match=match)])))
 
 
 @pytest.mark.parametrize("field", ["key", "sha256", "tolerances", "steps", "rejected", "score"])
@@ -214,18 +254,61 @@ def test_holdout_stage_on_a_tuning_etalon_is_refused():
 
 
 # ---------------------------------------------------------------- ucx metric
-def _rb(meshes):
-    return {"meshes": [{"name": n, "triangles": t, "polygons": t, "bounds_m": [[0, 0, 0], [1, 1, 1]]}
-                       for n, t in meshes]}
+_F = [(0, 2, 1), (1, 2, 3), (4, 5, 6), (5, 7, 6), (0, 1, 4), (1, 5, 4), (2, 6, 3), (3, 6, 7), (0, 4, 2), (2, 4, 6),
+      (1, 3, 5), (3, 7, 5)]
 
 
-def test_ucx_step_measures_presence_and_d012_budget():
-    key = _rb([("SM_A_Main", 1000), ("UCX_SM_A_Main_001", 12), ("UCX_SM_A_Main_002", 12)])
-    ok = T.ucx_step(_rb([("SM_A_Main", 1000), ("UCX_SM_A_Main_001", 12)]), key)
-    assert ok["status"] == "pass" and ok["ucx_meshes"] == 1 and ok["key_ucx_meshes"] == 2
-    assert ok["ucx_limit"] == 15000
-    assert T.ucx_step(_rb([("SM_A_Main", 1000)]), key)["status"] == "fail"
-    assert T.ucx_step(_rb([("SM_A_Main", 1000), ("UCX_SM_A_Main_001", 15001)]), key)["status"] == "fail"
+def _box(lo, hi):
+    return [[x, y, z] for z in (lo[2], hi[2]) for y in (lo[1], hi[1]) for x in (lo[0], hi[0])]
+
+
+def _ucx(name, verts, tris=_F):
+    return {"name": name, "triangles": len(tris), "polygons": len(tris), "bounds_m": [[0, 0, 0], [1, 1, 1]],
+            "hull": {"verts": verts, "tris": [list(t) for t in tris]}}
+
+
+# L-shaped body 10 x 10 x 5 m (arm A 10 x 3, arm B 3 x 7), 5000 triangles; key UCX = one box per arm
+_A, _B = ([0, 0, 0], [10, 3, 5]), ([0, 3.004, 0], [3, 10, 5])
+_BODY = {"name": "SM_A_Main", "triangles": 5000, "polygons": 5000, "bounds_m": [[0, 0, 0], [10, 10, 5]],
+         "face_geometry": {"vertices": _box(*_A) + _box(*_B),
+                           "polygons": [list(t) for t in _F] + [[i + 8 for i in t] for t in _F]}}
+_KEY = {"meshes": [_BODY, _ucx("UCX_SM_A_Main_001", _box(*_A)), _ucx("UCX_SM_A_Main_002", _box(*_B))]}
+
+
+def _built(*ucx):
+    return {"meshes": [_BODY, *ucx]}
+
+
+def test_ucx_step_key_set_passes():
+    r = T.ucx_step(_KEY, _KEY)
+    assert r["status"] == "pass" and r["key_iou"] == 1.0 and r["covered_share"] == r["key_covered_share"]
+    assert r["ucx_limit"] == 15000 and r["ucx_meshes"] == 2
+
+
+@pytest.mark.parametrize("ucx", [
+    pytest.param([_ucx("UCX_SM_A_Main_001", _box([0, 0, 0], [1, 1, 1]))], id="one-12-tri-box-in-a-corner"),
+    pytest.param([_ucx("UCX_SM_A_Main_001", _box([0, 0, 0], [10, 10, 5]))], id="one-12-tri-bounding-box"),
+    pytest.param([_ucx("UCX_SM_A_Main_001", _box([500, 500, 0], [510, 510, 5]))], id="far-away-box"),
+])
+def test_ucx_step_trivial_or_misplaced_set_fails(ucx):
+    assert T.ucx_step(_built(*ucx), _KEY)["status"] == "fail"
+
+
+def test_ucx_step_open_or_non_convex_ucx_fails():
+    open_ = T.ucx_step(_built(_ucx("UCX_SM_A_Main_001", _box(*_A), _F[:-2]),
+                              _ucx("UCX_SM_A_Main_002", _box(*_B))), _KEY)
+    assert open_["status"] == "fail" and open_["open_ucx"] == ["UCX_SM_A_Main_001"]
+    dent = _box(*_A)
+    dent[7] = [5, 1.5, 2.5]  # top corner pulled to the centroid: closed, not convex
+    concave = T.ucx_step(_built(_ucx("UCX_SM_A_Main_001", dent), _ucx("UCX_SM_A_Main_002", _box(*_B))), _KEY)
+    assert concave["status"] == "fail" and concave["non_convex_ucx"] == ["UCX_SM_A_Main_001"]
+
+
+def test_ucx_step_presence_and_d012_budget():
+    assert T.ucx_step(_built(), _KEY)["status"] == "fail"
+    big = _ucx("UCX_SM_A_Main_001", _box(*_A))
+    big["triangles"] = 15001
+    assert T.ucx_step(_built(big, _ucx("UCX_SM_A_Main_002", _box(*_B))), _KEY)["status"] == "fail"
 
 
 # ---------------------------------------------------------------- per-run metrics
