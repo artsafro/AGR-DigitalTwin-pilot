@@ -1,5 +1,7 @@
 """Merge-policy classifier (#2038): which bucket a PR takes under docs/agents/MERGE_POLICY.yaml.
 
+new-case: tools/merge_policy.py - read-only merge-policy classifier (no existing pattern).
+
 READ-ONLY. It has no merge capability: the only gh calls allowed are `gh pr view` and `gh pr list`
 (`gh_json` raises PermissionError on anything else). Buckets: auto (merges by itself after a CLEAN review
 on the current head, under one of Artem's standing consents), artem (only on Artem's explicit word),

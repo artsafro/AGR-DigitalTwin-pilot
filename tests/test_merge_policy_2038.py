@@ -1,4 +1,7 @@
-"""#2038: team merge policy file + read-only observe classifier (tools/merge_policy.py)."""
+"""#2038: team merge policy file + read-only observe classifier (tools/merge_policy.py).
+
+new-case: tests/test_merge_policy_2038.py - tests of the merge-policy classifier.
+"""
 import json
 from pathlib import Path
 
