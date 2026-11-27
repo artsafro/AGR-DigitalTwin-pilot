@@ -228,6 +228,9 @@ jobs/elv-tc-vpm/scripts/open_view_max2026_v001.ms
 jobs/elv-tc-vpm/scripts/open_view_max2026_v002.ms
 jobs/elv-tc-vpm/scripts/open_view_max2026_v003.ms
 jobs/elv-tc-vpm/scripts/open_view_max2026_v004.ms
+jobs/mafs-b3/identity.json
+jobs/mafs-b3/passport.json
+jobs/mafs-b3/skeleton.json
 jobs/sokolniki-uvk1000/body_config_body_v006.json
 jobs/sokolniki-uvk1000/body_config_v005.json
 jobs/sokolniki-uvk1000/body_config_v007.json
