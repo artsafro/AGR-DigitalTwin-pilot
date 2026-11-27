@@ -64,6 +64,10 @@ docs/research/mesh-quality-1616/observe-log-r3.jsonl
 docs/research/mesh-quality-1616/observe-log-r4.jsonl
 docs/research/reuse-1296/data/inventory.csv
 docs/research/team-scripts-inventory.json
+# Research #95 (PR #1917, branched before the #1958 ratchet): receipt + drivers read trainer runs under C:/x as provenance.
+docs/research/trainer-artifact-first-r95/analyze.py
+docs/research/trainer-artifact-first-r95/receipt.json
+docs/research/trainer-artifact-first-r95/series.py
 docs/research/trainer-tower-id-r87/series.sh
 docs/trainer/ledger.json
 evals/capability-b01/reference.json
