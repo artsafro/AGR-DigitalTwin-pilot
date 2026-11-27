@@ -1,0 +1,218 @@
+# Team merge policy (#2038). ONE file for every merger: which PR may merge by itself, which waits for
+# Artem's word, which no automation may ever merge. Read by tools/merge_policy.py (classify / observe /
+# backtest). Mode `observe`: the classifier only records what it WOULD do; it has no merge capability.
+# Russian summary for Artem: docs/agents/MERGE_POLICY.md.
+version: 1
+mode: observe            # observe = log only; enabling an enforcing mode needs Artem's word (out of scope #2038)
+repo: artsafro/AGR-DigitalTwin-pilot
+main_branch: main
+max_small_lines: 200     # additions + deletions; Artem 2026-11-14 (consent small_prs)
+stop_file: C:/Users/artsafro/hermes_kanban/STOP_AUTOMERGE        # present = main red or manual pause
+hygiene_queue_file: C:/Users/artsafro/hermes_kanban/kpi/hygiene_autoqueue.json
+observe_log: C:/x/merge-policy-observe/decisions.jsonl           # must stay OUTSIDE the repository
+
+# Artem's standing consents, verbatim, with dates. A rule in bucket `auto` must cite one of them.
+consents:
+  small_prs:
+    date: "2026-11-14"
+    quote: "автомердж тоже норм"
+    quote_kind: "Artem verbatim"
+    grants: "small clean PRs (<= 200 changed lines, no protected path, no user decision on the card) merge without waiting"
+    source: "hermes_kanban/scripts/agr_automerge.py THRESHOLD=1 / MAX_LINES=200 (dsh-superagent rule adopted 2026-11-14)"
+  hygiene_queue:
+    date: "2026-11-25"
+    quote: "Принимаю"
+    quote_kind: "Artem verbatim"
+    grants: "PRs of the hygiene queue (issues in kpi/hygiene_autoqueue.json: decision rows, measurements, cleanup batches) merge after a CLEAN review on their current head, one at a time with a full suite; never production code or anything that changes models"
+    source: "COORDINATION_RULES 75; kpi/hygiene_autoqueue.json note"
+  red_main_fix:
+    date: "2026-11-25"
+    quote: "Red main never waits for the orchestrator's turn"
+    quote_kind: "rule text (Artem's own words for rule 74 are not on file)"
+    grants: "the 'Red main <sha8>' fix PR (branch fix/red-main-*) merges ALONE with a full suite; green lifts STOP_AUTOMERGE"
+    source: "COORDINATION_RULES 74"
+  research_docs:
+    date: "2026-10-15"
+    quote: "research/experiment docs only (docs/research/, docs/experiments/, experiments/)"
+    quote_kind: "rule text (Artem's own words for the 2026-10-15 rule are not on file)"
+    grants: "docs-only research PRs merge after a clean review"
+    source: "hermes_kanban/scripts/agr_automerge.py docstring (user rule 2026-10-15), eligibility (a)"
+  artem_word:
+    date: "2026-11-09"
+    quote: "Мерджи #N"
+    quote_kind: "Artem verbatim"
+    grants: "production code, model/geometry/texture outputs, accepted files and agent working order merge only on an explicit chat command naming the PR (one-shot token, D234); rule 75: production code and anything that changes models stays manual"
+    source: "docs/decisions.md D234; COORDINATION_RULES 75"
+
+# Preconditions for ANY merge, in every bucket. A failed precondition never changes the bucket; it only
+# says why the PR cannot merge now.
+preconditions:
+  - id: main_green
+    text: "main is green: no STOP_AUTOMERGE file (red main or manual pause). Waived only for the red-main fix itself (rule 74)."
+  - id: base_is_main
+    text: "base branch = main. A stacked PR is refused with its base named; it is retargeted after the parent merges."
+  - id: not_draft
+    text: "not a draft"
+  - id: mergeable
+    text: "GitHub mergeable = MERGEABLE (not CONFLICTING / UNKNOWN)"
+  - id: review_clean_on_head
+    text: "the LAST reviewer verdict ('## Review rN ...: CLEAN at <sha>', uppercase CLEAN, with P1/P2/P3 = 0/..) names the PR's current head sha; other comments are not verdicts"
+  - id: reviewer_not_author
+    text: "the reviewing profile is not the authoring profile (author from the PR body 'Agent trace', reviewer from the verdict 'Reviewer: dt-*' or its heading); either unknown = fail"
+
+# Rules are evaluated top-down; the FIRST match decides the bucket. `unless` lists rule ids that, when they
+# also match, skip this rule. Path rules use fnmatch globs on repo-relative paths (`*` crosses `/`).
+# Text classifiers search the PR title, body and the Kanban card text; a match preceded by a negation
+# ("no", "not", "without", "never", "none") within a few words is ignored; the matched sentence is quoted.
+default_bucket: artem
+default_reason: "no standing consent covers this PR (large or unclassified change) -> Artem's word"
+rules:
+  - id: protected_path
+    bucket: never
+    why: "paths no automation may merge (permission matrix 'never' rows + agr_automerge PROTECTED minus agent-working-order paths)"
+    paths:
+      - ".github/*"
+      - "data/*"
+      - "standards/*"
+      - "benchmark/*"
+  - id: red_main_fix
+    bucket: auto
+    consent: red_main_fix
+    why: "red-main fix PR, merges alone (rule 74)"
+    head_branch: "fix/red-main-*"
+  - id: delivered_model
+    bucket: artem
+    consent: artem_word
+    why: "changes a delivered model: model/geometry/texture outputs, the code that builds them, accepted files or the library"
+    paths:
+      # outputs and accepted files
+      - "jobs/*/output/*"
+      - "jobs/*/outputs/*"
+      - "jobs/*/delivery/*"
+      - "jobs/*/accepted/*"
+      - "jobs/*/textures/*"
+      - "jobs/*/passport.json"
+      - "library/*"
+      - "assets/*"
+      - "*.fbx"
+      - "*.max"
+      - "*.blend"
+      - "*.ifc"
+      - "*.obj"
+      # texture images anywhere under jobs/ (`*` crosses `/`)
+      - "jobs/*.png"
+      - "jobs/*.jpg"
+      - "jobs/*.jpeg"
+      - "jobs/*.tga"
+      - "jobs/*.tif"
+      - "jobs/*.tiff"
+      - "jobs/*.exr"
+      # code that builds the models: every job script / hook / builder, geometry-material cores, DCC export tools
+      - "jobs/*.py"
+      - "jobs/*.ms"
+      - "jobs/*.mse"
+      - "src/dt_ai/geometry/*"
+      - "src/dt_ai/materials/*"
+      - "src/dt_ai/parts/*"
+      - "src/dt_ai/placement/*"
+      - "src/dt_ai/cad/*"
+      - "tools/export/*"
+      - "tools/blender/*"
+      - "tools/max/*"
+      - "tools/materials/*"
+      - "tools/ground/*"
+      - "tools/flora/*"
+      - "tools/windows/*"
+      - "tools/library/*"
+      # review scenes and publication of delivered models (r2 P1-B)
+      - "tools/review/*"
+      - "src/dt_ai/publish/*"
+      - "tools/body_shell_blender.py"
+      - "tools/exterior_adapter_blender.py"
+      - "tools/run_body_shell.py"
+      - "tools/run_exterior.py"
+      - "tools/facades_texture_pattern.py"
+      - "tools/placement_site.py"
+    text:
+      - "changes? (the |a )?(delivered|accepted|delivery) (model|fbx|npm|vpm|scene|file)"
+      - "(new|rebuilt|re-exported) (npm|vpm|delivery) (model|fbx|version)"
+      - "library acceptance"
+      - "accepted (version|file)s? (changed|replaced|updated)"
+  - id: agent_hooks
+    bucket: artem
+    consent: artem_word
+    why: "changes how agents work: hooks, the skeleton guard or the merge policy itself (beats the hygiene queue, r2 P1-A/B)"
+    paths:
+      - ".claude/hooks/*"
+      - ".claude/settings*"
+      - "tools/hooks/*"
+      - "tools/git-hooks/*"
+      - "tools/architecture/skeleton_guard.py"
+      # the classifier may never auto-merge a change to itself
+      - "tools/merge_policy.py"
+      - "docs/agents/MERGE_POLICY.yaml"
+      - "tests/test_merge_policy_*"
+  - id: hygiene_queue
+    bucket: auto
+    consent: hygiene_queue
+    why: "linked issue is in the hygiene queue (kpi/hygiene_autoqueue.json)"
+    hygiene_issue: true
+    # consent: "never production code" (rule 75)
+    unless: [production_code]
+  - id: agent_working_order
+    bucket: artem
+    consent: artem_word
+    why: "changes how agents work: hooks, skeleton contract, review rules, agent instructions, trails"
+    paths:
+      - "AGENTS.md"
+      - "*/AGENTS.md"
+      - "CLAUDE.md"
+      - "*/CLAUDE.md"
+      - "GEMINI.md"
+      - ".claude/*"
+      - ".agents/*"
+      - ".pi/*"
+      - ".codex/*"
+      - ".cursor/*"
+      - "docs/agents/*"
+      - "tools/hooks/*"
+      - "tools/git-hooks/*"
+      - "tools/architecture/skeleton_guard.py"
+      - "routes/*"
+    text:
+      - "coordination_rules"
+      - "worker (prompt|card footer|footer)"
+      - "review (rules|checklist|protocol)"
+      - "skeleton contract"
+      - "changes how agents work"
+  - id: user_decision_on_card
+    bucket: artem
+    consent: artem_word
+    why: "the Kanban card carried a user decision (needs_input block)"
+    card_needs_input: true
+  - id: research_decision_docs
+    bucket: auto
+    consent: research_docs
+    why: "only research / experiment / decision / measurement docs"
+    all_paths:
+      - "docs/research/*"
+      - "docs/experiments/*"
+      - "experiments/*"
+      - "docs/decisions.md"
+      - "docs/measurements/*"
+  - id: small_pr
+    bucket: auto
+    consent: small_prs
+    why: "small PR (<= max_small_lines changed lines) with no protected or artem path"
+    max_lines: true
+  - id: production_code
+    bucket: artem
+    consent: artem_word
+    why: "production code over the small-PR limit"
+    over_max_lines: true   # matches only when a path below is touched AND lines > max_small_lines
+    paths:
+      - "src/*"
+      - "tools/*"
+      - "adapters/*"
+      - "scripts/*"
+      - "jobs/*"

@@ -320,6 +320,11 @@ and "ask" support are not validated (backlog H1).
   `--check-handoff`, `src/twinqa/evals/handoff.py`): `docs/agents/WORKFLOW.md#before-requesting-review-author`.
   Tests: `tests/test_evals.py`, `tests/test_evals_handoff.py`.
 
+### Merge policy classifier — `tools/merge_policy.py` (#2038)
+- Status: EXPERIMENTAL, observe only (2026-11-27): `classify --pr N [--json]`, `observe` (JSONL to
+  `C:/x/merge-policy-observe/decisions.jsonl`), `backtest --limit N` against `docs/agents/MERGE_POLICY.yaml`.
+  Read-only: `gh pr view/list` only, no merge capability. Tests: `tests/test_merge_policy_2038.py`.
+
 ### Skills sync — `tools/sync_skills.py`
 - Status: WORKING (2026-10-06): `.agents/skills/` is canonical; the script regenerates
   `.claude/skills/` (vendored skills from `skills-lock.json` are skipped — Claude has user-level
