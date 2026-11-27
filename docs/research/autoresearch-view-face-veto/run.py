@@ -62,7 +62,7 @@ def measure(out, job):
     for row in rows:
         scope = row['group'].split('/', 1)[1]
         row['veto_pick'] = veto(row[PICK_A[job]], row['adjusted']['pick'])
-        row['verdict_C'] = verdict(row['veto_pick'], row[truth_key], scope, row[delta_key])
+        row['verdict_C'] = verdict(row['veto_pick'], row[truth_key], scope, row.get(delta_key))
     dump(out / 'veto.json', {'job': job, 'rows': rows})
 
 
