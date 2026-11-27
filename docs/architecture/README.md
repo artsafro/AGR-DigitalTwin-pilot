@@ -408,6 +408,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/agent-step-waste-1273 | [research/agent-step-waste-1273.md](../research/agent-step-waste-1273.md) |  |
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
+| research/autoresearch-atlas-alpha-bleed | [research/autoresearch-atlas-alpha-bleed.md](../research/autoresearch-atlas-alpha-bleed.md) |  |
+| research/autoresearch-atlas-alpha-bleed-harness/receipt-r129-json | [research/autoresearch-atlas-alpha-bleed-harness/receipt_r129.json](../research/autoresearch-atlas-alpha-bleed-harness/receipt_r129.json) |  |
+| research/autoresearch-atlas-alpha-bleed-harness/replay-py | [research/autoresearch-atlas-alpha-bleed-harness/replay.py](../research/autoresearch-atlas-alpha-bleed-harness/replay.py) |  |
+| research/autoresearch-atlas-alpha-bleed-harness/score-py | [research/autoresearch-atlas-alpha-bleed-harness/score.py](../research/autoresearch-atlas-alpha-bleed-harness/score.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
 | research/autoresearch-trainer-artifact-first | [research/autoresearch-trainer-artifact-first.md](../research/autoresearch-trainer-artifact-first.md) |  |
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
