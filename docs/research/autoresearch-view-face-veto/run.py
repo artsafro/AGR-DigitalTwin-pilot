@@ -1,4 +1,7 @@
-"""Replay the frozen #147 OBSERVE contract (raw-vs-chance disagreement veto) from the repository root."""
+"""Replay the frozen #147 OBSERVE contract (raw-vs-chance disagreement veto) from the repository root.
+
+new-case: docs/research/autoresearch-view-face-veto/run.py - #147 OBSERVE replay runner
+"""
 from collections import Counter
 from hashlib import sha256
 import json

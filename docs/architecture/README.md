@@ -415,6 +415,11 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
+| research/autoresearch-view-face-veto | [research/autoresearch-view-face-veto.md](../research/autoresearch-view-face-veto.md) |  |
+| research/autoresearch-view-face-veto/receipt-json | [research/autoresearch-view-face-veto/receipt.json](../research/autoresearch-view-face-veto/receipt.json) |  |
+| research/autoresearch-view-face-veto/result | [research/autoresearch-view-face-veto/result.md](../research/autoresearch-view-face-veto/result.md) |  |
+| research/autoresearch-view-face-veto/run-py | [research/autoresearch-view-face-veto/run.py](../research/autoresearch-view-face-veto/run.py) |  |
+| research/autoresearch-view-face-veto/test-veto-py | [research/autoresearch-view-face-veto/test_veto.py](../research/autoresearch-view-face-veto/test_veto.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |

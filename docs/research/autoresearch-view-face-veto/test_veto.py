@@ -1,4 +1,7 @@
-"""Scorer-shape controls for the #147 disagreement veto (no native inputs needed)."""
+"""Scorer-shape controls for the #147 disagreement veto (no native inputs needed).
+
+new-case: docs/research/autoresearch-view-face-veto/test_veto.py - #147 veto unit controls
+"""
 from pathlib import Path
 import runpy
 
