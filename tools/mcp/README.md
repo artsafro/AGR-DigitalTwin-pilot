@@ -26,8 +26,8 @@ after two repeats of the same cause and preserve evidence. MCP image capture in
 Blender is pending stability after a driver crash; native Computer Use is the
 current screenshot route.
 
-This branch configures the local DCC routes in `.codex/config.toml` and
-`.agents/mcp_config.json`. Paths under `C:\Users\artsafro` and `C:\Program
+This branch configures the local DCC routes in `.codex/config.toml` (owner) and
+`.agents/mcp_config.json` (generated: `uv run python tools/mcp/sync_config.py`, #1962). Paths under `C:\Users\artsafro` and `C:\Program
 Files` are specific to this workstation. This script was exercised from the
 task worktree; the SketchUp, AutoCAD and RizomUV adapter commands target this
 worktree. Retain it until those routes are deliberately relocated and verified.

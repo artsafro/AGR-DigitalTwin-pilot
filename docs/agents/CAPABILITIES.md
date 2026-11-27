@@ -190,7 +190,8 @@ substitute ad-hoc scripting.
   handshake lists 25 tools). Talks to the RevitBridge ("Cursor Bridge") add-in in
   `%AppData%\Autodesk\Revit\Addins\2025` over a named pipe — no TCP port.
 - Registered for Codex and Antigravity (`.codex/config.toml`, `.agents/mcp_config.json`) from the
-  `tools` path. Codex exported FBX from a QA fixture over the pipe (2026-10-06).
+  `tools` path. One server list (#1962): `.codex/config.toml` owns it, `tools/mcp/sync_config.py` generates the
+  Antigravity JSON (`--check` in `tests/test_mcp_config_sync_1962.py`). Codex exported FBX from a QA fixture over the pipe (2026-10-06).
 - Mutating tools (`open_document`, `export_fbx*`, `agr_export_fbx`, `load/unload/reload/repath`
   links) need explicit task authorization and versioned outputs.
 - Sources are Revit 2022 files — open upgraded **copies**, never save over `data/sources/revit/*.rvt`.
