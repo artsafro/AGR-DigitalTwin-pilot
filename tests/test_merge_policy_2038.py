@@ -85,6 +85,8 @@ def test_model_text_classifier_quotes_evidence_and_ignores_negation():
     assert any("changes the delivered model" in e.lower() for x in r["reasons"] for e in x["evidence"])
     neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model."))
     assert neg["rule"] == "small_pr"
+    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".'))
+    assert quoted["rule"] == "small_pr"
 
 
 def test_hygiene_batch_goes_auto():

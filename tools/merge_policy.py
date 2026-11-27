@@ -39,6 +39,7 @@ READ_ONLY_GH = {("pr", "view"), ("pr", "list")}
 NEGATION = re.compile(r"\b(no|not|never|without|none|nor|n't)\b[^.;\n]{0,40}$", re.I)
 REVIEW_HEAD = re.compile(r"^#+ .*\b(review|ревью)\b", re.I)
 PROFILE = re.compile(r"\b(dt-[a-z]+(?:-[a-z]+)*)\b")
+QUOTES = "\"'`«“"
 
 
 def load_policy(path: Path | str | None = None) -> dict:
@@ -71,6 +72,8 @@ def _text_hits(patterns, text: str) -> list[str]:
     for pat in patterns or ():
         for m in re.finditer(pat, text, re.I):
             prefix = text[max(0, m.start() - 60):m.start()]
+            if prefix[-1:] in QUOTES:  # a quoted mention ("changes a delivered model") names the rule, not the PR
+                continue
             prefix = re.split(r"[.;\n]", prefix)[-1]
             if NEGATION.search(prefix):
                 continue
