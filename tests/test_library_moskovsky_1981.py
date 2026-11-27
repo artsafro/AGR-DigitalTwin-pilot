@@ -1,4 +1,4 @@
-"""#1981: Moskovsky school 1200 MAFs are library drafts, searchable by vendor article [D421]."""
+"""new-case: tests for #1981: Moskovsky school 1200 MAFs are library drafts, searchable by vendor article [D421]."""
 import importlib.util
 import json
 from pathlib import Path
