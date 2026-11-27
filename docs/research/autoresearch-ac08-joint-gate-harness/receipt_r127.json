@@ -1,0 +1,292 @@
+{
+ "card": "t_698e8a8c",
+ "round": 127,
+ "base": "origin/main 7e504b8f",
+ "gate": "jobs/TEC26-OKS/scripts/compare_facades.py",
+ "gate_sha256": "464134aef6ba66b54494d63bb9e33e64c704877ac0af49695dd7350024438c3a",
+ "joint_count_sha256": "231bd9e2e156b4b3be7d3280c1db10f5ee681e5f8e55ffdd6ce1300a4113822e",
+ "render_facades_sha256": "361e2c8e30b76c7d0d22adf12c1a5cf520519e19a1dd88ed3c5710d60adc088e",
+ "spec_sha256": "3329bff4bf8e431f1cad2a31a5f2c637f7083d61e8b093c50bd1fd6e8e425722",
+ "sheet_sha256": "ad90d64a8c58fe2ec0787e7654b0d779498776a3b31ed4369fcf82e2e4452d94",
+ "slide_sha256": "256f32da2a04141fc6b62b46ed9710c1830c5ffd3f48f2bac578719c0208a8fd",
+ "blender": "5.1",
+ "packages": {
+  "pilot-v007": {
+   "label": "rejected",
+   "drive_zip_sha256": {
+    "SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+    "0000_Nku_1.zip": "0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f"
+   },
+   "vpm_readback_sha256": "61c6b260018ba1fe6ee48c2d87a06c8dd6aa73a6fcf9ed6585bd62139578fea7",
+   "fresh_renders_sha256": {
+    "npm_east.png": "6d831f3fa229cbb0f258bc8f8cad2ff646c3a8355d522a71529bf440d7f75c7b",
+    "npm_iso.png": "e9e2f54edcd17d85e5b53abb77fbb44e371be9f533c88814d71c27a7946698c2",
+    "npm_north.png": "e394cf8caddf3115d589469b3db2624fac349fb85883d21b56a87916eabae77c",
+    "npm_south.png": "0cd0efe86a5bfc8fcd9af0f41a3918851ce629eb09729a305a026f75472b6e36",
+    "npm_west.png": "30c42f2d9d4f11f580cf7cb42221c36a42b333431582b2fc49ba3edb2e3c31bc",
+    "renders.json": "90925335e129f8770f6b342b886d4758c69d4467793baf53a869f93f8bb3cbe9",
+    "vpm_east.png": "70d9d0530be3154e0eb4932ff9fcde96579ba0ba302516efba14cf811440924e",
+    "vpm_iso.png": "cfc8c5ebc75b98328d1bc15f8859b83908828ddec17783d6e7242c753298fe6c",
+    "vpm_north.png": "7179626ee53e31ab128fe75f958e4a9c8e9162cb401c07fc3a8ef36986625872",
+    "vpm_south.png": "31f3fb0ceafd4aa14682203e259d149dbae7578e7cd6de12cf28bf0f6945716f",
+    "vpm_west.png": "1fa94780b07959c240fb234b055e809e8165e128c75a4d5ab228737568166892"
+   },
+   "compare_json_sha256_r1_r2_r3": [
+    "cfa154ed1eba56d256440a9c3e65301ffe64e5f6a5424c3e6a0e761c6dd72010",
+    "cfa154ed1eba56d256440a9c3e65301ffe64e5f6a5424c3e6a0e761c6dd72010",
+    "cfa154ed1eba56d256440a9c3e65301ffe64e5f6a5424c3e6a0e761c6dd72010"
+   ],
+   "E": 116,
+   "facades": {
+    "1-2": {
+     "want": 29,
+     "slide": 29,
+     "vpm": 11,
+     "npm": 11,
+     "match": false,
+     "npm_found_m_top": [
+      -2.3313,
+      -1.7288,
+      -1.1288,
+      -0.53,
+      0.0688,
+      0.6713,
+      1.2713,
+      1.8713,
+      1.935,
+      2.5288,
+      2.7363
+     ]
+    },
+    "2-1": {
+     "want": 29,
+     "slide": 29,
+     "vpm": 11,
+     "npm": 11,
+     "match": false,
+     "npm_found_m_top": [
+      -2.3313,
+      -1.7313,
+      -1.1288,
+      -0.53,
+      0.0688,
+      0.67,
+      1.2713,
+      1.8713,
+      1.9338,
+      2.5288,
+      2.735
+     ]
+    },
+    "А-Б": {
+     "want": 11,
+     "slide": 11,
+     "vpm": 0,
+     "npm": 0,
+     "match": false,
+     "npm_found_m_top": []
+    },
+    "Б-А": {
+     "want": 11,
+     "slide": 11,
+     "vpm": 0,
+     "npm": 0,
+     "match": false,
+     "npm_found_m_top": []
+    }
+   },
+   "drive_renders_gate": "crash KeyError views (renders.json without camera block), exit 1 x3"
+  },
+  "pilot-v010": {
+   "label": "accepted",
+   "drive_zip_sha256": {
+    "SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+    "0000_Nku_1.zip": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3"
+   },
+   "vpm_readback_sha256": "98656fa8fd7431398832f50b0dc9282b2a51fefc100e055481782e640ae696cb",
+   "fresh_renders_sha256": {
+    "npm_east.png": "25975634c1b3873e4c12db9df66d8ffaef39e5483937ae99b7c794d76a9029e4",
+    "npm_iso.png": "cb6d283861c1600f007e77e13be374ea0f3c024ec8801e881c02aa71b8cfab98",
+    "npm_north.png": "93fd8ffdfd6259275e9bff60c7427c23fb249ed4c85df4fb4e9def482a44f12c",
+    "npm_south.png": "ba61efb31b6713a2d9d31a8e5a8e0ae750e9969408f9dd8becde6f0940e87b13",
+    "npm_west.png": "37f83544203b9ac3ef9b0f8f2cd73aeb3e6f00c3c76045bb2583d3e1287e7e2c",
+    "renders.json": "ff7b756d6f1aa7e172ce4796ac322fa8d72432c00e66c1afc3f3429117df0224",
+    "vpm_east.png": "66d590da7aae8dd921d57d7ef44af0085181db7a7855a2e13ed42d0ff482e2d5",
+    "vpm_iso.png": "f44c2b25ad8106019605cbf1fa04c234db810d3d16c9a59188849ef2ba0a7370",
+    "vpm_north.png": "bb6e203c3f9e7bfa5d3b8a39539f0eb30b36172a84db445c6737e0c4295ef3e8",
+    "vpm_south.png": "c00cf63f760b70256e2b627dce193f7d314c80419aa8137f06e97a8b9274304f",
+    "vpm_west.png": "4d44c0ff7655259b0eedbaa1d6b2afd5440a084e8d5720a275cf7f20d4572802"
+   },
+   "compare_json_sha256_r1_r2_r3": [
+    "558bd841966d79365daa026eb7203ee9ad15e5049b0eba6d9dfe34b7cff6e0b4",
+    "558bd841966d79365daa026eb7203ee9ad15e5049b0eba6d9dfe34b7cff6e0b4",
+    "558bd841966d79365daa026eb7203ee9ad15e5049b0eba6d9dfe34b7cff6e0b4"
+   ],
+   "E": 0,
+   "facades": {
+    "1-2": {
+     "want": 29,
+     "slide": 29,
+     "vpm": 29,
+     "npm": 29,
+     "match": true,
+     "npm_found_m_top": [
+      -2.7338,
+      -2.5388,
+      -2.3438,
+      -2.1488,
+      -1.9538,
+      -1.7588,
+      -1.5638,
+      -1.3688,
+      -1.1738,
+      -0.9788,
+      -0.7813,
+      -0.5863
+     ]
+    },
+    "2-1": {
+     "want": 29,
+     "slide": 29,
+     "vpm": 29,
+     "npm": 29,
+     "match": true,
+     "npm_found_m_top": [
+      -2.7338,
+      -2.5388,
+      -2.3438,
+      -2.1463,
+      -1.9513,
+      -1.7588,
+      -1.5625,
+      -1.3688,
+      -1.1738,
+      -0.9788,
+      -0.7813,
+      -0.5863
+     ]
+    },
+    "А-Б": {
+     "want": 11,
+     "slide": 11,
+     "vpm": 11,
+     "npm": 11,
+     "match": true,
+     "npm_found_m_top": [
+      -0.93,
+      -0.7437,
+      -0.5575,
+      -0.37,
+      -0.1837,
+      0.0037,
+      0.1887,
+      0.3762,
+      0.5612,
+      0.7487,
+      0.9337
+     ]
+    },
+    "Б-А": {
+     "want": 11,
+     "slide": 11,
+     "vpm": 11,
+     "npm": 11,
+     "match": true,
+     "npm_found_m_top": [
+      -0.9287,
+      -0.7437,
+      -0.5587,
+      -0.3712,
+      -0.1862,
+      0.0012,
+      0.1862,
+      0.3737,
+      0.5612,
+      0.7487,
+      0.9337
+     ]
+    }
+   },
+   "drive_renders_compare_json_sha256_r1_r2_r3": [
+    "558bd841966d79365daa026eb7203ee9ad15e5049b0eba6d9dfe34b7cff6e0b4",
+    "558bd841966d79365daa026eb7203ee9ad15e5049b0eba6d9dfe34b7cff6e0b4",
+    "558bd841966d79365daa026eb7203ee9ad15e5049b0eba6d9dfe34b7cff6e0b4"
+   ]
+  }
+ },
+ "witnesses": {
+  "W1_missing_joint": {
+   "synthetic": true,
+   "npm_south_png_sha256": "97f26846d648316ab3d40491a310f8010c229e8f01904bcbf899096413b0b1ca",
+   "compare_json_sha256_r1_r2_r3": [
+    "5bb36d5e7f7f120809ea617cd8b10db17101c2c2a9a85e2d1345b516e2e1a810",
+    "5bb36d5e7f7f120809ea617cd8b10db17101c2c2a9a85e2d1345b516e2e1a810",
+    "5bb36d5e7f7f120809ea617cd8b10db17101c2c2a9a85e2d1345b516e2e1a810"
+   ],
+   "E": 1,
+   "facades": {
+    "1-2": {
+     "want": 29,
+     "vpm": 29,
+     "npm": 29,
+     "match": true
+    },
+    "2-1": {
+     "want": 29,
+     "vpm": 29,
+     "npm": 28,
+     "match": false
+    },
+    "А-Б": {
+     "want": 11,
+     "vpm": 11,
+     "npm": 11,
+     "match": true
+    },
+    "Б-А": {
+     "want": 11,
+     "vpm": 11,
+     "npm": 11,
+     "match": true
+    }
+   }
+  },
+  "W2_extra_joint": {
+   "synthetic": true,
+   "npm_south_png_sha256": "05e228e6a888e9ae70d5e51972df90f6e3593aaf455cf5f4dbc271073b42bbb5",
+   "compare_json_sha256_r1_r2_r3": [
+    "f22f0f4a6c111fcce2d3cedf7445521beea13a9d03518b433ccaf1bfa811a585",
+    "f22f0f4a6c111fcce2d3cedf7445521beea13a9d03518b433ccaf1bfa811a585",
+    "f22f0f4a6c111fcce2d3cedf7445521beea13a9d03518b433ccaf1bfa811a585"
+   ],
+   "E": 1,
+   "facades": {
+    "1-2": {
+     "want": 29,
+     "vpm": 29,
+     "npm": 29,
+     "match": true
+    },
+    "2-1": {
+     "want": 29,
+     "vpm": 29,
+     "npm": 30,
+     "match": false
+    },
+    "А-Б": {
+     "want": 11,
+     "vpm": 11,
+     "npm": 11,
+     "match": true
+    },
+    "Б-А": {
+     "want": 11,
+     "vpm": 11,
+     "npm": 11,
+     "match": true
+    }
+   }
+  }
+ },
+ "witness_script_sha256": "43ee560b9cb01e87421d373718ad42e535d03c8d69cb7433b27e87dfe22c0ce5"
+}
