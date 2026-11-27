@@ -102,7 +102,7 @@ macroScript AGRToolsAtlasGroundel category:"AGR Tools" buttonText:"Атлас Gr
 (on execute do python.Execute "agr_tools_runtime.ui('atlas.groundel')")
 macroScript AGRToolsFloraRepair category:"AGR Tools" buttonText:"Flora: ремонт → копии" tooltip:"Пробно, затем на копиях чинит трансформы и треугольники Flora и проверяет набор. Треб.: NPM-2.5-13.a, NPM-2.3-14" iconName:"AgrIcons/agr_florafix"
 (on execute do python.Execute "agr_tools_runtime.ui('place.flora_repair')")
-macroScript AGRToolsMafChecks category:"AGR Tools" buttonText:"Проверки МАФ" tooltip:"Летающие и утопленные МАФ: AABB-предфильтр, лучи вниз к Ground, цель зазора 0 м (gap_m через опции); пересечения; посадка — правило D095 (утопление 0,10 м, удаление нижних граней), не часть проверки (только чтение). Треб.: -" iconName:"AgrIcons/agr_mafcheck"
+macroScript AGRToolsMafChecks category:"AGR Tools" buttonText:"Проверки МАФ" tooltip:"Летающие и утопленные МАФ: AABB-предфильтр, лучи вниз к Ground, пересечения. Цель — 0 м по умолчанию (gap_m через опции); классический макрос без запроса зазора. Посадка D095 / MAF-23 (утопление 0,10 м, удаление нижних граней) — не часть проверки (только чтение). Треб.: -" iconName:"AgrIcons/agr_mafcheck"
 (on execute do python.Execute "agr_tools_runtime.ui('place.maf_checks')")
 macroScript AGRToolsReplace category:"AGR Tools" buttonText:"Замена объектов (Undo)" tooltip:"Пробно, затем заменяет объекты по маске или выделению на эталон одной записью Undo; отчёт со списками. Треб.: NPM-2.3-5, VPM-2.3-8" iconName:"AgrIcons/agr_replace"
 (on execute do python.Execute "agr_tools_runtime.ui('place.replace')")
