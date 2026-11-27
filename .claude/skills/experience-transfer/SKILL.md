@@ -1,6 +1,6 @@
 ---
 name: experience-transfer
-description: "Use when a result is accepted, a similar job starts, or job code may become shared. Capture a scoped case or reuse one with matching evidence."
+description: "Use when a result is accepted, a similar job starts, or job code may become shared («принято», «круто получилось, запомни», «делаем как в прошлый раз на KPP1»). Capture a scoped case or reuse one with matching evidence."
 ---
 
 # Reuse and capture experience

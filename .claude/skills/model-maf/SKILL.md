@@ -1,6 +1,6 @@
 ---
 name: model-maf
-description: "Use when selecting, modelling, or placing MAF from a specification and SPOZU points. Check dimensions, make a light version and one 512 atlas, place with sinking, and verify."
+description: "Use when selecting, modelling, or placing MAF from a specification and SPOZU points («сделай МАФ по спецификации», «подбери МАФ из библиотеки», «расставь МАФ по СПОЗУ»). Check dimensions, make a light version and one 512 atlas, place with sinking, and verify."
 ---
 
 # Model MAF from the specification

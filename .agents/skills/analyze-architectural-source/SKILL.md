@@ -1,6 +1,6 @@
 ---
 name: analyze-architectural-source
-description: "Use when a new or updated architectural source arrives or before building from it. Inspect and record the contents of drawings, models, or scenes before processing."
+description: "Use when a new or updated architectural source arrives or before building from it («пришёл новый FBX», «разбери исходник из Revit», «что внутри этого файла перед сборкой?»). Inspect and record the contents of drawings, models, or scenes before processing."
 ---
 
 # Analyze architectural source

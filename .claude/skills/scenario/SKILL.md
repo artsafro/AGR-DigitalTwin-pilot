@@ -1,6 +1,6 @@
 ---
 name: scenario
-description: "Use when starting NPM, simplified NPM, or VPM production, or when a hook names a scenario cell. Route OKS, Ground with MAF and Flora, or UCX to its cell and follow its card, rules, tools, etalons, and contract."
+description: "Use when starting NPM, simplified NPM, or VPM production, or when a hook names a scenario cell («работаем с НПМ», «делаем ВПМ ОКС», «НПМ флора и МАФ»). Route OKS, Ground with MAF and Flora, or UCX to its cell and follow its card, rules, tools, etalons, and contract."
 ---
 
 # Scenario: work inside a production cell

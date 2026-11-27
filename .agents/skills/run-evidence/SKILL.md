@@ -1,6 +1,6 @@
 ---
 name: run-evidence
-description: "Use when resuming an interrupted run or reviewing a saved stage. Check RunRecord inputs and outputs, separate produced from verified, and report open gates without rerunning DCC."
+description: "Use when resuming an interrupted run or reviewing a saved stage («сессия упала, что успело сделаться?», «проверь прогон перед приёмкой», «можно ли принять этот этап?»). Check RunRecord inputs and outputs, separate produced from verified, and report open gates without rerunning DCC."
 ---
 
 # Inspect a saved run

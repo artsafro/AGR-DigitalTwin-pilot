@@ -1,6 +1,6 @@
 ---
 name: validate-delivery
-description: "Use when a delivery is about to be accepted or handed over. Check NPM/VPM packages, exported models, Unreal levels, or packaged builds against project priorities and delivery rules."
+description: "Use when a delivery is about to be accepted or handed over («готово, можно отдавать?», «проверь пакет NPM перед отправкой», «финальная проверка модели»). Check NPM/VPM packages, exported models, Unreal levels, or packaged builds against project priorities and delivery rules."
 ---
 
 # Validate delivery

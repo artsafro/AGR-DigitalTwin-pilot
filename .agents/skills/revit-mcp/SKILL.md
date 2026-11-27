@@ -1,6 +1,6 @@
 ---
 name: revit-mcp
-description: "Use when inspecting, editing, or exporting views from Revit BIM documents. Use project MCP routes and verify authorized changes and versioned exports."
+description: "Use when inspecting, editing, or exporting views from Revit BIM documents («что в модели Revit?», «найди стены и окна на 3 этаже», «выгрузи вид из Revit новой версией»). Use project MCP routes and verify authorized changes and versioned exports."
 ---
 
 # Revit MCP for project agents

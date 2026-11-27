@@ -1,6 +1,6 @@
 ---
 name: speedtree-mcp
-description: "Use when inspecting SpeedTree SPM files or presets, or exporting trees to FBX. Use the project MCP adapter to inspect and batch-export versioned files."
+description: "Use when inspecting SpeedTree SPM files or presets, or exporting trees to FBX («выгрузи деревья из SpeedTree в FBX», «что в этом SPM?», «пресеты SpeedTree для флоры»). Use the project MCP adapter to inspect and batch-export versioned files."
 ---
 
 # SpeedTree MCP for project agents

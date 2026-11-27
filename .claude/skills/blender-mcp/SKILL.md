@@ -1,6 +1,6 @@
 ---
 name: blender-mcp
-description: "Use when inspecting an open Blender scene or troubleshooting Blender MCP. Use the official Blender Lab route for Blender 5.1.2 or later."
+description: "Use when inspecting an open Blender scene or troubleshooting Blender MCP («что открыто в Блендере?», «посмотри объект в сцене Blender», «Blender MCP не отвечает»). Use the official Blender Lab route for Blender 5.1.2 or later."
 ---
 
 # Blender MCP for project agents

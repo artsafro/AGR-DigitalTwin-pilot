@@ -1,6 +1,6 @@
 ---
 name: model-flora
-description: "Use when modelling or placing Flora from planting schedules and SPOZU, filling NPM MAF planters, or adding a library species. Select or build species, derive NPM stars or VPM shells, place them, make one 2048 atlas, and check outputs."
+description: "Use when modelling or placing Flora from planting schedules and SPOZU, filling NPM MAF planters, or adding a library species («сделай Флору по ведомости озеленения», «посади кусты в кашпо МАФ», «новый вид растения для библиотеки»). Select or build species, derive NPM stars or VPM shells, place them, make one 2048 atlas, and check outputs."
 ---
 
 # Model Flora from the planting schedule

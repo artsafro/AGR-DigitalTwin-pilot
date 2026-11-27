@@ -1,6 +1,6 @@
 ---
 name: model-ground
-description: "Use when building Ground from a SPOZU DWG or projecting it onto relief. Build one layered-cake master for NPM and VPM."
+description: "Use when building Ground from a SPOZU DWG or projecting it onto relief («сделай Ground по СПОЗУ», «слоёный пирог для Ground», «спроецируй Ground на рельеф»). Build one layered-cake master for NPM and VPM."
 ---
 
 # Model Ground from SPOZU

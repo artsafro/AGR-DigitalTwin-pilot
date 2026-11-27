@@ -1,6 +1,6 @@
 ---
 name: rizomuv-mcp
-description: "Use when unwrapping or packing UVs on OBJ/FBX meshes. Use RizomUVLink MCP to load, unwrap, pack, and save versioned outputs."
+description: "Use when unwrapping or packing UVs on OBJ/FBX meshes («разверни UV в RizomUV», «упакуй UV этого меша», «сделай развёртку и сохрани OBJ»). Use RizomUVLink MCP to load, unwrap, pack, and save versioned outputs."
 ---
 
 # RizomUV MCP for project agents
