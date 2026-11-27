@@ -133,6 +133,56 @@ def test_guessed_product_choice_fails_stage(keyset):
     assert row["status"] == "fail" and row["first_failing"] == "stop S3-cuts"
 
 
+@pytest.mark.parametrize(("asked", "expected_failure"), [
+    (["STOP-01-layer-split.md"], None),
+    (["STOP-98-layer-split.md"], None),
+    (["S0-split"], None),
+    (["STOP-01-authority.md"], "stop S0-split"),
+    (["STOP-01-layer-split-extra.md"], "stop S0-split"),
+    (["STOP-1-layer-split.md"], "stop S0-split"),
+    (["notes/STOP-01-layer-split.md"], "stop S0-split"),
+    (["S0-split", "STOP-01-unlisted.md"], "unknown STOP filename"),
+])
+def test_stage_zero_scores_builder_stop_filenames(keyset, asked, expected_failure):
+    key, ks, _, tmp = keyset
+    ks["score_stops"] = True
+    (tmp / "stage0.md").write_text("synthetic layer inventory", encoding="utf-8")
+    cand = {"stages": {"0": {"stops_asked": asked, "evidence": ["stage0.md"]}}}
+
+    row = next(r for r in cos.score(key, ks, cand, run_dir=tmp)["stages"] if r["id"] == "0")
+
+    assert row["first_failing"] == expected_failure
+    assert row["status"] == ("pass" if expected_failure is None else "fail")
+
+
+def test_declared_builder_topics_cover_protocol_stops(keyset):
+    key, ks, xv, tmp = keyset
+    ks["score_stops"] = True
+    (tmp / "evidence.md").write_text("synthetic stage evidence", encoding="utf-8")
+    # The same ordinal can identify different questions; this inventory is independent of the scorer table.
+    topics = {
+        "0": {"split": "S0-split"},
+        "1": {"authority": "S1-authority"},
+        "2": {"parts": "S2-parts"},
+        "3": {"lines": "S3-lines", "cuts": "S3-cuts", "openings": "S3-openings"},
+        "3i": {"plan": "S3i-plan", "wells": "S3i-wells"},
+        "5": {"zoning": "S5-zoning", "windows": "S5-windows"},
+        "6": {"contacts": "S6-contacts", "scope": "S6-scope"},
+        "7": {"acceptance": "S7-acceptance"},
+    }
+    cand = _cand(tmp, building(), xv, "all-stops")
+    for stage, entries in topics.items():
+        cand["stages"].setdefault(stage, {}).update(
+            stops_asked=[f"STOP-42-{topic}.md" for topic in entries], evidence=["evidence.md"])
+
+    rows = {r["id"]: r for r in cos.score(key, ks, cand, run_dir=tmp)["stages"]}
+
+    for stage, entries in topics.items():
+        assert rows[stage]["status"] == "pass", rows[stage]
+        assert {c["check"] for c in rows[stage]["checks"] if c["check"].startswith("stop ")} == {
+            f"stop {stop_id}" for stop_id in entries.values()}
+
+
 def _wall_quads_y5():
     """Invented interior wall: plane y=5 m, 10 x 4 cells of 2 x 3 m (40 quads), not in the key."""
     out = []

@@ -76,6 +76,42 @@ STOPS = {
     "7": ["S7-acceptance: Artem's visual verdict per stage"],
 }
 
+# The builder numbers questions in run order; only the declared topic identifies the STOP.
+STOP_FILENAME_RE = re.compile(r"STOP-[0-9]{2}-([a-z]+(?:-[a-z]+)*)\.md")
+STOP_TOPIC_IDS = {
+    "layer-split": "S0-split",  # literal builder-prompt example
+    "split": "S0-split",
+    "authority": "S1-authority",
+    "parts": "S2-parts",
+    "lines": "S3-lines",
+    "cuts": "S3-cuts",
+    "openings": "S3-openings",
+    "plan": "S3i-plan",
+    "wells": "S3i-wells",
+    "zoning": "S5-zoning",
+    "windows": "S5-windows",
+    "contacts": "S6-contacts",
+    "scope": "S6-scope",
+    "acceptance": "S7-acceptance",
+}
+STOP_IDS = frozenset(STOP_TOPIC_IDS.values())
+
+
+def _stop_entries(entries: list[Any]) -> tuple[set[str], list[Any]]:
+    """Resolve exact protocol IDs or builder basenames; report unrecognized entries."""
+    asked, unknown = set(), []
+    for entry in entries:
+        if isinstance(entry, str):
+            if entry in STOP_IDS:
+                asked.add(entry)
+                continue
+            match = STOP_FILENAME_RE.fullmatch(entry)
+            if match and (stop_id := STOP_TOPIC_IDS.get(match[1])) is not None:
+                asked.add(stop_id)
+                continue
+        unknown.append(entry)
+    return asked, unknown
+
 
 # ----------------------------------------------------------------------------- hashing / key
 
@@ -483,11 +519,15 @@ def score(key_dir: Path, key_set: dict, cand: dict, run_dir: Path | None = None)
         if cs is None:
             row.update(status="not_reached", first_failing="no candidate output")
         else:
-            asked = set(cs.get("stops_asked", []))
-            for stop in STOPS.get(sid, []) if score_stops else []:
-                sid_stop = stop.split(":")[0]
-                row["checks"].append({"check": f"stop {sid_stop}", "status": "pass" if sid_stop in asked else "fail",
-                                      "value": sid_stop in asked, "limit": stop})
+            if score_stops:
+                asked, unknown = _stop_entries(cs.get("stops_asked", []))
+                for stop in STOPS.get(sid, []):
+                    sid_stop = stop.split(":")[0]
+                    row["checks"].append({"check": f"stop {sid_stop}", "status": "pass" if sid_stop in asked else "fail",
+                                          "value": sid_stop in asked, "limit": stop})
+                if unknown:
+                    row["checks"].append({"check": "unknown STOP filename", "status": "fail", "value": unknown,
+                                          "limit": "exact protocol ID or STOP-NN-<declared-topic>.md"})
             evidence = cs.get("evidence", [])
             if kind == "process" and not evidence:
                 row["checks"].append({"check": "evidence", "status": "fail", "value": [],
