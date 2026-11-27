@@ -14,6 +14,16 @@ from twinqa import scene
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _main_readback(source, pieces, **extra):
+    meshes = [{"name": "SM_T_Main"}, *pieces]
+    for item in meshes:
+        tris = len(item["hull"]["tris"]) if "hull" in item else 12
+        item.update(triangles=tris, polygon_degrees={"3": tris}, materials=[],
+                    rotation_euler_deg=[0, 0, 0], scale=[1, 1, 1], location=[0, 0, 0],
+                    uv_channels=1, mirrored_uv_triangles=0, udim_tiles=[1001])
+    return {"source": str(source), "readback_ok": True, "meshes": meshes, "other_objects": [], "images": [], **extra}
+
+
 @pytest.mark.parametrize("driver", ["ucx_audit", "ucx_build", "ucx_resolve", "fbx_readback"])
 def test_fbx_import_requests_no_image_search(driver):
     tree = ast.parse((ROOT / "tools/blender" / f"{driver}.py").read_text(encoding="utf-8"))
@@ -34,8 +44,8 @@ def test_v010_warns_only_for_disconnected_bodies():
         body = box(2*n, 2*n + 1)
         tris.extend([[len(verts) + i for i in tri] for tri in body["tris"]])
         verts.extend(body["verts"])
-    rb = {"readback_ok": True, "meshes": [mesh("UCX_SM_T_Main_001", split),
-          mesh("UCX_SM_T_Main_002", {"verts": verts, "tris": tris})]}
+    rb = _main_readback("SM_T_Main.fbx", [mesh("UCX_SM_T_Main_001", split),
+                        mesh("UCX_SM_T_Main_002", {"verts": verts, "tris": tris})])
     warnings = [f for f in ucx_command._v010(rb, "Main") if f["name"] == "UCX disconnected bodies (advisory)"]
     assert len(warnings) == 1
     assert warnings[0]["status"] == "review"
@@ -56,7 +66,7 @@ def test_agr_ucx_serializes_passage_observation_without_gating(tmp_path, monkeyp
     pieces = two(0.004)
     for piece in pieces:
         piece["name"] = piece["name"].replace("Ground", "Main")
-    native = Mock(return_value={"readback_ok": True, "meshes": pieces, "passages": observation})
+    native = Mock(return_value=_main_readback(out, pieces, passages=observation))
     monkeypatch.setattr(scene, "readback", native)
     monkeypatch.setattr(blender_runner, "run_blender", Mock(return_value=BUILD))
     assert ucx_command.main([str(model), str(out), "Main"]) == 0
