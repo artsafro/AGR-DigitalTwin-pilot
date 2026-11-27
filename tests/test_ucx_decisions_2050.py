@@ -1,5 +1,7 @@
 """#2050: UCX decisions of 2026-11-27 (Artem) - budget vs form [D427], convexity tolerance [D430], decision rows,
-Codex etalons in the trainer bank. SYNTHETIC meshes only."""
+Codex etalons in the trainer bank. SYNTHETIC meshes only.
+
+Pattern: n/a | new-case: tests/test_ucx_decisions_2050.py - regressions of the #2050 UCX decisions."""
 from __future__ import annotations
 
 import json
