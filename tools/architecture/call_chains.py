@@ -96,8 +96,156 @@ def edges(root, rel, tree=None):
             for cand in (text, (here / text).as_posix()):
                 if (root / cand).is_file():
                     out.add(Path(cand).as_posix())
+    out.update(_path_join_edges(root, rel, tree))
     out.discard(Path(rel).as_posix())
     return sorted(out)
+
+
+class _Outside:
+    """A path that left the repo root (`parents[n]` too high, `..` past the root): never a repo edge."""
+
+
+OUTSIDE = _Outside()
+
+
+def _single_bindings(tree):
+    """{name: value node} of module-level `NAME = <expr>` bound exactly once in the whole file.
+    A name stored twice (anywhere: function locals, loops, `with ... as`, augmented assignment), a function
+    parameter, a `global` / `nonlocal` name or an import alias is not static: it stays unresolved."""
+    stores, banned = {}, set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
+            stores[node.id] = stores.get(node.id, 0) + 1
+        elif isinstance(node, ast.arg):
+            banned.add(node.arg)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            banned.update(node.names)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            banned.update((a.asname or a.name).split(".")[0] for a in node.names)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            banned.add(node.name)
+    out = {}
+    for node in tree.body:
+        if (isinstance(node, (ast.Assign, ast.AnnAssign)) and node.value is not None
+                and len(getattr(node, "targets", [None])) == 1):
+            target = node.targets[0] if isinstance(node, ast.Assign) else node.target
+            if isinstance(target, ast.Name) and stores.get(target.id) == 1 and target.id not in banned:
+                out[target.id] = node.value
+    return out
+
+
+def _join(base, text):
+    """base parts joined with a relative string; None when the string is absolute or not a plain path."""
+    if base is OUTSIDE:
+        return OUTSIDE
+    text = text.replace("\\", "/")
+    if not text or text.startswith("/") or re.match(r"^[A-Za-z]:", text) or not re.match(r"^[\w./ -]+$", text):
+        return None
+    parts = list(base)
+    for part in text.split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            if not parts:
+                return OUTSIDE
+            parts.pop()
+        else:
+            parts.append(part)
+    return tuple(parts)
+
+
+def _path_join_edges(root, rel, tree):
+    """Repo files named by a static repo-anchored `Path` expression (#2024), e.g.
+    `ROOT = Path(__file__).resolve().parents[3]` then `ROOT / "jobs" / "X" / "build.py"` passed to subprocess or
+    `importlib.util.spec_from_file_location`. Only `Path(__file__)` (with `.resolve()` / `.absolute()`,
+    `.parent`, `.parents[<int>]`), `/` and `.joinpath` with string literals, `Path(<resolved>)`, `str(<resolved>)`
+    and module-level names bound once to such an expression resolve; anything else (a CWD-relative literal,
+    an argument, an environment value, a reassigned name, a path that leaves the root) is unresolved and gives no
+    edge. Nothing is executed or evaluated beyond this AST fold."""
+    env = _single_bindings(tree)
+    me = tuple(Path(rel).as_posix().split("/"))
+    memo, active = {}, set()
+
+    def name(n):
+        if n in memo:
+            return memo[n]
+        if n not in env or n in active:
+            return None
+        active.add(n)
+        memo[n] = val(env[n])
+        active.discard(n)
+        return memo[n]
+
+    def text(node):
+        """A string literal or a name bound once to one."""
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return node.value
+        if isinstance(node, ast.Name) and isinstance(env.get(node.id), ast.Constant) \
+                and isinstance(env[node.id].value, str):
+            return env[node.id].value
+        return None
+
+    def val(node):
+        """Repo-relative parts tuple, OUTSIDE, or None (unresolved)."""
+        if isinstance(node, ast.Name):
+            if node.id == "__file__":
+                return me
+            return name(node.id)
+        if isinstance(node, ast.Call):
+            f = node.func
+            if isinstance(f, ast.Name) and f.id in ("Path", "PurePath", "PosixPath", "WindowsPath", "str") \
+                    and node.args and not node.keywords:
+                if f.id not in ("Path", "PurePath", "PosixPath", "WindowsPath") and len(node.args) > 1:
+                    return None
+                base = val(node.args[0])
+                for arg in node.args[1:]:
+                    piece = text(arg)
+                    base = _join(base, piece) if base is not None and piece is not None else None
+                return base
+            if isinstance(f, ast.Attribute) and not node.keywords:
+                base = val(f.value)
+                if base is None:
+                    return None
+                if f.attr in ("resolve", "absolute") and not node.args:
+                    return base
+                if f.attr == "joinpath" and node.args:
+                    for arg in node.args:
+                        piece = text(arg)
+                        base = _join(base, piece) if base is not None and piece is not None else None
+                    return base
+            return None
+        if isinstance(node, ast.Attribute) and node.attr == "parent":
+            base = val(node.value)
+            if base is None or base is OUTSIDE:
+                return base
+            return base[:-1] if base else OUTSIDE
+        if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute) \
+                and node.value.attr == "parents":
+            idx = node.slice
+            if not (isinstance(idx, ast.Constant) and type(idx.value) is int and idx.value >= 0):
+                return None
+            base = val(node.value.value)
+            if base is None or base is OUTSIDE:
+                return base
+            return base[:-(idx.value + 1)] if idx.value + 1 <= len(base) else OUTSIDE
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+            base, piece = val(node.left), text(node.right)
+            return _join(base, piece) if base is not None and piece is not None else None
+        return None
+
+    out = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.BinOp, ast.Call)):
+            parts = val(node)
+            if parts is None or parts is OUTSIDE or not parts or not parts[-1].endswith(".py"):
+                continue
+            cand = "/".join(parts)
+            path = root / cand
+            # the literal repo path only: an alias (symlink, case-folded name) that resolves elsewhere is no edge
+            if path.is_file() and path.resolve().as_posix() == (root.resolve() / cand).as_posix() \
+                    and (root.resolve() / cand).resolve().as_posix().startswith(root.resolve().as_posix() + "/"):
+                out.add(cand)
+    return out
 
 
 def _pyproject_roots(root):
