@@ -3,6 +3,7 @@
 The owner must import inside Blender 5.1 (numpy only) and slice into the Max bundle, so it is
 ucx_audit, not twinqa.scene (shapely/yaml). scene, ucx_build, densify and the Blender audit script
 use it; the frozen Max copy adapters/max/agr_tools/ucx_core.py [D393] stays and is pinned by parity.
+new-case: single [D012] owner regression (#1962).
 """
 from __future__ import annotations
 

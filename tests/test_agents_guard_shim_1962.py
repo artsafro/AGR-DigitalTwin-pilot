@@ -1,5 +1,6 @@
 """#1962: one Antigravity guard shim. `.agents/hooks.json` runs `guard.cmd` next to it; the copy one level deeper
-(`.agents/hooks/guard.cmd`, path depth was its only difference) is gone."""
+(`.agents/hooks/guard.cmd`, path depth was its only difference) is gone.
+new-case: single guard.cmd regression (#1962)."""
 from __future__ import annotations
 
 import json

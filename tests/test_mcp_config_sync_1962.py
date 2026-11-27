@@ -1,4 +1,5 @@
-"""#1962: one MCP server list. `.codex/config.toml` owns it; `.agents/mcp_config.json` is generated from it."""
+"""#1962: one MCP server list. `.codex/config.toml` owns it; `.agents/mcp_config.json` is generated from it.
+new-case: MCP config sync regression (#1962)."""
 from __future__ import annotations
 
 import importlib.util

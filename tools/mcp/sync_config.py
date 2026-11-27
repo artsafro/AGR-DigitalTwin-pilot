@@ -1,4 +1,5 @@
 """Generate `.agents/mcp_config.json` (Antigravity) from the one MCP server list in `.codex/config.toml` (#1962).
+Pattern: new-case: tools/mcp/sync_config.py - one MCP server list, generated Antigravity JSON.
 
 Why: the same six DCC routes were kept by hand in two files (backlog H8). `.codex/config.toml` is the owner; edit
 it, then run this script. Antigravity also gets the two routes Codex does not read from the project: `3dsmax-mcp`
