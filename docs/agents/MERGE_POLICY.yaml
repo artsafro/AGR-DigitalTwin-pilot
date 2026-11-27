@@ -124,6 +124,9 @@ rules:
       - "tools/flora/*"
       - "tools/windows/*"
       - "tools/library/*"
+      # review scenes and publication of delivered models (r2 P1-B)
+      - "tools/review/*"
+      - "src/dt_ai/publish/*"
       - "tools/body_shell_blender.py"
       - "tools/exterior_adapter_blender.py"
       - "tools/run_body_shell.py"
@@ -135,12 +138,27 @@ rules:
       - "(new|rebuilt|re-exported) (npm|vpm|delivery) (model|fbx|version)"
       - "library acceptance"
       - "accepted (version|file)s? (changed|replaced|updated)"
+  - id: agent_hooks
+    bucket: artem
+    consent: artem_word
+    why: "changes how agents work: hooks, the skeleton guard or the merge policy itself (beats the hygiene queue, r2 P1-A/B)"
+    paths:
+      - ".claude/hooks/*"
+      - ".claude/settings*"
+      - "tools/hooks/*"
+      - "tools/git-hooks/*"
+      - "tools/architecture/skeleton_guard.py"
+      # the classifier may never auto-merge a change to itself
+      - "tools/merge_policy.py"
+      - "docs/agents/MERGE_POLICY.yaml"
+      - "tests/test_merge_policy_*"
   - id: hygiene_queue
     bucket: auto
     consent: hygiene_queue
     why: "linked issue is in the hygiene queue (kpi/hygiene_autoqueue.json)"
     hygiene_issue: true
-    unless: [production_code]   # consent: "never production code" (rule 75)
+    # consent: "never production code" (rule 75)
+    unless: [production_code]
   - id: agent_working_order
     bucket: artem
     consent: artem_word

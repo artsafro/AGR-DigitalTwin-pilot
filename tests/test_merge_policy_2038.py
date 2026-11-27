@@ -110,8 +110,10 @@ def test_protected_path_goes_never():
 
 
 def test_agent_working_order_goes_artem():
-    r = run(pr(files=[{"path": ".claude/hooks/guard.py"}]))
+    r = run(pr(files=[{"path": "docs/agents/WORKFLOW.md"}]))
     assert r["bucket"] == "artem" and r["rule"] == "agent_working_order"
+    r = run(pr(files=[{"path": ".claude/hooks/guard.py"}]))
+    assert r["bucket"] == "artem" and r["rule"] == "agent_hooks"
 
 
 def test_user_decision_on_card_goes_artem():
@@ -166,6 +168,24 @@ def test_r1_p1_5_hygiene_queue_with_large_production_code_goes_artem():
     p = pr(files=[{"path": "src/dt_ai/cli/agr.py"}], additions=900, body="Closes #2017")
     r = run(p, hygiene_issues={2017})
     assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "production_code", False)
+
+
+# ---- review r2 (PR #2041) P1-A / P1-B: each was fail-open (auto / would_merge True) ----
+
+@pytest.mark.parametrize("path", [".claude/hooks/pretool.py", "tools/hooks/pre_tool.py", "tools/git-hooks/pre-commit"])
+def test_r2_p1_a_hygiene_queue_touching_agent_hooks_goes_artem(path):
+    r = run(pr(files=[{"path": path}], additions=50, body="Closes #2017"), hygiene_issues={2017})
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "agent_hooks", False)
+
+
+@pytest.mark.parametrize("path,rule", [
+    ("tools/review/maf_colour_apply_max.py", "delivered_model"), ("tools/review/max_job.py", "delivered_model"),
+    ("tools/review/publish.py", "delivered_model"), ("src/dt_ai/publish/bundle.py", "delivered_model"),
+    ("tools/merge_policy.py", "agent_hooks"), ("docs/agents/MERGE_POLICY.yaml", "agent_hooks"),
+    ("tests/test_merge_policy_2038.py", "agent_hooks")])
+def test_r2_p1_b_small_publish_and_policy_code_goes_artem(path, rule):
+    r = run(pr(files=[{"path": path}], additions=8, deletions=2))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", rule, False)
 
 
 def test_gh_wrapper_is_read_only():
