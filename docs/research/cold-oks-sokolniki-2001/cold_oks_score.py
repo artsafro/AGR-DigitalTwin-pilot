@@ -40,8 +40,8 @@ MATERIAL_AGREE_MIN = 0.90  # area share of key samples whose nearest candidate f
 DENSITY_RATIO = (0.5, 2.0)  # px/m per finish, candidate / key
 TRIS_RATIO = (0.5, 2.0)
 TRIS_LIMIT = 150_000  # NPM limit used on #1784
-OPENING_RE = re.compile(r"^(WINDOW|DOOR|0[5-8]_|18_door)", re.I)
-GLASS_RE = re.compile(r"glass", re.I)  # NPM glass is a separate material outside the atlas
+OPENING_RE = re.compile(r"^(WINDOW|DOOR|0[5-8]_|18_door)", re.IGNORECASE)
+GLASS_RE = re.compile(r"glass", re.IGNORECASE)  # NPM glass is a separate material outside the atlas
 
 # Stages of routes/npm-oks.md; "geometry" stages compare against the key, the rest are process stages.
 STAGES = [
