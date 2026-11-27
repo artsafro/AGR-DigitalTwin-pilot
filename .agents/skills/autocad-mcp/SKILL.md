@@ -1,6 +1,6 @@
 ---
 name: autocad-mcp
-description: 'Inspect and edit AutoCAD drawings through the project''s multiCAD MCP route, then save and reopen versioned DWG/DXF outputs. Use when: «открой DWG и посмотри слои», «поправь чертёж в AutoCAD», «сохрани DXF новой версией».'
+description: "Use when inspecting or editing AutoCAD drawings («открой DWG и посмотри слои», «поправь чертёж в AutoCAD», «сохрани DXF новой версией»). Use multiCAD MCP and reopen versioned DWG/DXF outputs."
 ---
 
 # AutoCAD MCP for project agents

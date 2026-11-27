@@ -1,6 +1,6 @@
 ---
 name: model-maf
-description: 'Produce MAF (small architectural forms) from the specification and the SPOZU points: library pick or a new model, dimension check, light version, one 512 atlas, placement with sinking, checks. Use when: «сделай МАФ по спецификации», «подбери МАФ из библиотеки», «расставь МАФ по СПОЗУ».'
+description: "Use when selecting, modelling, or placing MAF from a specification and SPOZU points («сделай МАФ по спецификации», «подбери МАФ из библиотеки», «расставь МАФ по СПОЗУ»). Check dimensions, make a light version and one 512 atlas, place with sinking, and verify."
 ---
 
 # Model MAF from the specification
@@ -22,7 +22,7 @@ Every step carries three lines:
   table). DWG through the AutoCAD 2025 core console (`dcc_batch.py acad`, `DXFOUT`) plus `ezdxf`
   (`uv run --extra cad`); scenes through 3ds Max batch (`dcc_batch.py max`, on a copy; the startup
   `polyunwrapper_autoload.mse` error is known, read the log) or Blender headless
-  (`blender --background --factory-startup`). Live programs only through `max_exec.py` / `blender_exec.py`
+  (the [shared Blender runner](../../../src/dt_ai/core/blender_runner.py)). Live programs only through `max_exec.py` / `blender_exec.py`
   after a `--ping` (COORDINATION_RULES 22); before any DCC write apply the
   [DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization).
   `dcc_batch.py`, `max_exec.py` and `blender_exec.py` are not in this repo: they live in
@@ -60,7 +60,7 @@ the catalogue does not reach (a new library scene, a missing entry): visual sele
 library scene `МАФы_Union_ALLin.max`, the way the user does it. The catalogue is a technical audit, not
 identification and not acceptance. When the catalogue does not reach, ask Artem first: he names the library object. Only when he cannot find it either does the agent search by specification / manufacturer on the web and send links for his approval — the photos must match the specification AND the DWG contour. No substitution [D164] («Нет замены модели.»).
 
-- Route: catalogue JSON lookup via the published index `library/assets/maf_unified.json` (from `library/published/catalogue.json`); `library/maf/catalogue.json` is the legacy record only; plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
+- Route: catalogue JSON lookup via the published index `library/assets/maf_unified.json` (from `library/published/catalogue.json`); `library/maf/catalogue.json` is the legacy record only; plus preview images; `python "$USERPROFILE/hermes_kanban/scripts/dcc_batch.py" max --scene <copy>.max` for a scene read.
 - Drafts [D421]: index records with `source: published` carry `status` (`draft` / `accepted`); take an accepted one first, name a reused draft (`<Name>@vNNN`) in the report; acceptance goes only through Artem ([library-publish](../../../docs/scenarios/library-publish.md)).
 - Needs: headless for candidates; human for the visual choice when several candidates remain.
 - Done when: every spec row has a catalogue id (with the reason) or is listed for Step 3.
@@ -119,7 +119,7 @@ slots; then map the UVs of each MAF into its slot. Embedding in the Ground FBX c
 - ID number rule (Artem 2026-10-21): the ID number is drawn small in the BOTTOM-RIGHT corner of every atlas
   cell (`id_corner_px`); UV islands stay inside the cell content and never cover that corner. Swatch tiles
   carry no number inside the texture; a layout example is never a colour/texture source.
-  Read back with `maf_atlas_ids.py --require-keepout`: exit 1 names every cell whose `id_corner_px` square a
+  Read back with `uv run python tools/library/maf_atlas_ids.py --require-keepout`: exit 1 names every cell whose `id_corner_px` square a
   UV face polygon overlaps (an edge or the interior counts, not only a vertex); a UV dump with an `error` row,
   a missing MAF row or a material without a UV layer exits 2 and publishes nothing.
 - Needs: headless for packing; no tool yet for the UV remap; human for the visual check.

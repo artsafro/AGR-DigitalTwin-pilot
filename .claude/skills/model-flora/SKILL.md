@@ -1,6 +1,6 @@
 ---
 name: model-flora
-description: 'Produce Flora (trees, bushes, modelled flower beds) from the planting schedule and the SPOZU points: library species or a new one, NPM star / VPM shell, placement, one 2048 Flora atlas, checks. Also covers planting in NPM MAF planters. Use when: «сделай Флору по ведомости озеленения», «посади кусты в кашпо МАФ», «новый вид растения для библиотеки».'
+description: "Use when modelling or placing Flora from planting schedules and SPOZU, filling NPM MAF planters, or adding a library species («сделай Флору по ведомости озеленения», «посади кусты в кашпо МАФ», «новый вид растения для библиотеки»). Select or build species, derive NPM stars or VPM shells, place them, make one 2048 atlas, and check outputs."
 ---
 
 # Model Flora from the planting schedule
@@ -29,7 +29,7 @@ Every step carries three lines:
   table). PDF schedules through PyMuPDF (`uv run --extra pdf-review`); DWG through the AutoCAD 2025 core console
   (`dcc_batch.py acad`, `DXFOUT`) plus `ezdxf` (`uv run --extra cad`); scenes through 3ds Max batch
   (`dcc_batch.py max`, on a copy; the startup `polyunwrapper_autoload.mse` error is known, read the log) or Blender
-  headless (`blender --background --factory-startup`). Live programs only through `max_exec.py` / `blender_exec.py`
+  headless (the [shared Blender runner](../../../src/dt_ai/core/blender_runner.py)). Live programs only through `max_exec.py` / `blender_exec.py`
   after a `--ping` (COORDINATION_RULES 22; the 3ds Max bridge runs in safe mode, so library reads go headless);
   before any DCC write apply the [DCC gate](../../../docs/agents/WORKFLOW.md#gate-dcc-authorization).
   `dcc_batch.py`, `max_exec.py` and `blender_exec.py` are not in this repo: they live in
@@ -85,7 +85,7 @@ Text objects (Russian name, `<N> Tris`, version, `LP` / `HP` / `LP -> HP`); the 
 an audit result of [#189](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/189), not an assumption.
 Triangle counts per plant come from the library, never invented.
 
-- Route: catalogue lookup (after #216); today `dcc_batch.py max --scene <copy>.max --file <read-labels>.ms`
+- Route: catalogue lookup (after #216); today `python "$USERPROFILE/hermes_kanban/scripts/dcc_batch.py" max --scene <copy>.max --file <read-labels>.ms`
   writing Text objects and mesh bounding boxes to a TSV.
 - Needs: headless; human when one species has several variants (`v1`, `v2`, cultivars) and the schedule does not
   say which.

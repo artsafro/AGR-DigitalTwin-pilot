@@ -1,6 +1,6 @@
 ---
 name: analyze-architectural-source
-description: 'Inspect an incoming architectural source (DWG/DXF drawings, FBX, Revit, SketchUp, Blender, 3ds Max, Unreal input) and record what it contains before any processing. Use when a new or updated source file arrives, or before building production assets from one. Use when: «пришёл новый FBX», «разбери исходник из Revit», «что внутри этого файла перед сборкой?».'
+description: "Use when a new or updated architectural source arrives or before building from it («пришёл новый FBX», «разбери исходник из Revit», «что внутри этого файла перед сборкой?»). Inspect and record the contents of drawings, models, or scenes before processing."
 ---
 
 # Analyze architectural source

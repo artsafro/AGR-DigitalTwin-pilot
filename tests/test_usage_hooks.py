@@ -314,8 +314,14 @@ def test_logs_are_ignored():
     if Path(p).parent.name not in json.loads((ROOT / "skills-lock.json").read_text(encoding="utf-8"))["skills"]]))
 def test_descriptions_have_use_when_examples(path):
     meta = yaml.safe_load(Path(path).read_text(encoding="utf-8").split("---\n")[1])
-    tail = meta["description"].split("Use when:")[-1]
-    assert "Use when:" in meta["description"] and 2 <= tail.count("«") <= 3, meta["description"]
+    description = meta["description"]
+    if Path(path).name == "SKILL.md":
+        trigger = description.partition(". ")[0]
+        assert trigger.startswith("Use when "), description
+    else:
+        _, marker, trigger = description.partition("Use when:")
+        assert marker, description
+    assert 2 <= trigger.count("«") <= 3, description
 
 
 def _duplicate_with_live(tmp_path, across_files):                   # #109 review 2
