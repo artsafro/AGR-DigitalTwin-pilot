@@ -429,6 +429,8 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/body-wall-layout-1446-json | [research/body-wall-layout-1446.json](../research/body-wall-layout-1446.json) | [research/body-wall-layout-1446.md](../research/body-wall-layout-1446.md) |
 | research/bpy-wheel-viability | [research/bpy-wheel-viability.md](../research/bpy-wheel-viability.md) |  |
 | research/checker-mutation-freeze-json | [research/checker-mutation-freeze.json](../research/checker-mutation-freeze.json) |  |
+| research/cold-oks-sokolniki-2001 | [research/cold-oks-sokolniki-2001.md](../research/cold-oks-sokolniki-2001.md) |  |
+| research/cold-oks-sokolniki-2001/cold-oks-score-py | [research/cold-oks-sokolniki-2001/cold_oks_score.py](../research/cold-oks-sokolniki-2001/cold_oks_score.py) | [research/cold-oks-sokolniki-2001.md](../research/cold-oks-sokolniki-2001.md) |
 | research/elv-agent-vs-delivered | [research/elv-agent-vs-delivered.md](../research/elv-agent-vs-delivered.md) |  |
 | research/fab-megascans-licence-2026-11 | [research/fab-megascans-licence-2026-11.md](../research/fab-megascans-licence-2026-11.md) |  |
 | research/flora-texture-diagnosis | [research/flora-texture-diagnosis.md](../research/flora-texture-diagnosis.md) |  |
