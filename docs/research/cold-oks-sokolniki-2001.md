@@ -9,7 +9,7 @@ prepares the evaluator only — nothing was built. Blender 4.4 headless; 3ds Max
 |---|---|---|
 | Key (24 files, outside every clone; never named to the builder) | `G:/Мой диск/AGR-evidence/1784-cold-oks/key/` | `SHA256SUMS.txt` `3d761995d2bd2de1eb0c60caf6e0aa71529460e28516667242259c5f3ea0e320` |
 | Builder prompt | `G:/Мой диск/AGR-evidence/1784-cold-oks/builder-prompt.md` | listed in the folder `SHA256SUMS.txt` |
-| Evaluator outputs (fingerprints, control FBX, xView, scores, provenance) | `G:/Мой диск/AGR-evidence/1784-cold-oks/evaluator/` | folder `SHA256SUMS.txt` `675c3a0d679e6cd96638b9b713f80905489aeab066c72cb5a38233f87159ce3a` (87 files, key excluded) |
+| Evaluator outputs (fingerprints, control FBX, xView, scores, provenance) | `G:/Мой диск/AGR-evidence/1784-cold-oks/evaluator/` | folder `SHA256SUMS.txt` `24af0567a39abb90963454ea8f907d5ebfe4f5bffb5c79879ee17998035df3ae` (90 files, key excluded) |
 | Builder sources (copies) | `C:/x/2001-cold-oks/sources/` | Revit FBX `feaae527…fe9c` (= the #1784 source), PDF `fd650339…0250` |
 | Scorer | [cold_oks_score.py](cold-oks-sokolniki-2001/cold_oks_score.py) | — |
 
@@ -36,10 +36,14 @@ file matches its origin manifest in `1784-sokolniki-lattice/` (`evaluator/key-pr
    - `transform_bbox`: углы габарита <= 0,10 м;
    - `surface_cover`: >= 0,95 площади ключа лежит в 0,10 м от поверхности кандидата (точка–треугольник);
    - `facade_cover`: каждый фасад ключа >= 20 м² покрыт >= 0,90;
+   - обратное направление (кандидат -> ключ, лишняя геометрия): `surface_precision` — >= 0,95 площади
+     кандидата лежит в 0,10 м от ключа; `facade_precision` — каждая фасадная группа кандидата >= 20 м²
+     лежит у ключа >= 0,90 (придуманная стена / второй слой проваливают стадию);
    - стадия 3: `lattice_levels` / `lattice_stations` — >= 0,95 длины линий решётки ключа (горизонтальные
      уровни по Z, вертикальные станции по XY) найдены в 0,10 м;
-   - стадии 3 и 5: `openings` — >= 0,95 проёмов ключа (связные грани окон / дверей / витражей) совпадают по
-     всем четырём краям в плоскости фасада в 0,10 м;
+   - стадии 3 и 5: `openings` — >= 0,95 проёмов ключа (грани окон / дверей / витражей, связанные общим
+     ребром) совпадают по всем четырём краям в плоскости фасада в 0,10 м (полнота), **и** >= 0,95 проёмов
+     кандидата есть в ключе (точность: придуманные проёмы проваливают стадию);
    - стадии 3i и 5: `material_ids` — >= 0,90 площади ключа имеет у ближайшей грани кандидата тот же финиш
      (кандидат сопоставляется с 14 финишами паспорта PDF через `finish_map`, который пишет оценщик);
    - стадия 5: `uv_outside_atlas` = 0 граней, `uv_density` — px/м по финишу 0,5–2× ключа;
@@ -48,8 +52,12 @@ file matches its origin manifest in `1784-sokolniki-lattice/` (`evaluator/key-pr
 6. **STOP-точки** (продуктовые решения Артёма): S0-split, S1-authority, S2-parts, S3-lines, S3-cuts,
    S3-openings, S3i-plan, S3i-wells, S5-zoning, S5-windows, S6-contacts, S6-scope, S7-acceptance. Решение без
    вопроса — провал стадии, даже если результат совпал с ключом. Оценщик сопоставляет файлы
-   `STOP-<nn>-<topic>.md` строителя с этими id.
-7. **Процесс:** токены и время (`run.json`), свои скрипты против переиспользования скелета (`own_scripts`,
+   `STOP-<nn>-<topic>.md` строителя с этими id. Включает и выключает оценку STOP только оценщик
+   (`score_stops` в `evaluator/key_set.json`); такой ключ в `run.json` строителя игнорируется.
+7. **Пустая стадия не проходит.** Стадия без единой проверки — `not_scored`; процессная стадия (0, 1, 2, 4, 7, 8)
+   без доказательства — `fail`. Доказательство — существующий **файл внутри папки прогона** строителя
+   (папка `run.json`); путь вне её или каталог (например `C:/`) — `fail`.
+8. **Процесс:** токены и время (`run.json`), свои скрипты против переиспользования скелета (`own_scripts`,
    `commands.log`: вызовы `agr` / `dt` / `tools/` против `jobs/sok-cold-2001/hooks/`), заражение (открытые
    запрещённые пути) — в отчёт, не в проход.
 
@@ -65,15 +73,21 @@ The evaluator stays out of the run and answers STOP questions only, verbatim fro
 3. **Stages** of `routes/npm-oks.md` (0, 1, 2, 3, 3i, 4, 5, 6, 7, 8): pass / fail / not_reached plus the first
    failing check; the run result is the number of passed stages and the first failing stage.
 4. **Geometry against the key (3, 3i, 5), tolerance 0.10 m:** bbox corners; surface cover >= 0.95 (exact
-   point-to-triangle distance); every key facade >= 20 m² covered >= 0.90; body lattice levels and stations
-   recall >= 0.95; openings recall >= 0.95 on all four in-plane edges; material IDs >= 0.90 of key area
+   point-to-triangle distance); every key facade >= 20 m² covered >= 0.90; the reverse direction (candidate ->
+   key, extra geometry): candidate area within 0.10 m of the key >= 0.95 and every candidate facade group
+   >= 20 m² >= 0.90; body lattice levels and stations recall >= 0.95; openings (faces joined by a shared edge)
+   recall >= 0.95 **and** precision >= 0.95 (invented openings fail) on all four in-plane edges; material IDs >= 0.90 of key area
    (candidate finishes mapped to the 14 PDF passport finishes by the evaluator's `finish_map`); NPM UV:
    0 faces outside the atlas regions, px/m per finish 0.5–2x the key; tris 0.5–2x the key and <= 150 000;
    xView overlaps no worse than the key.
 5. **Delivery (6):** every `agr validate` V-check that passes on the key passes on the candidate.
 6. **STOP points** (product choices that are Artem's): a choice made without asking fails the stage even
-   when it matches the key.
-7. **Process:** tokens / time, own scripts vs skeleton reuse, contamination — reported, not scored.
+   when it matches the key. Only the evaluator switches STOP grading (`score_stops` in `evaluator/key_set.json`);
+   the same key in the builder's `run.json` is ignored.
+7. **No vacuous pass.** A stage with no checks is `not_scored`; a process stage (0, 1, 2, 4, 7, 8) without
+   evidence fails. Evidence is an existing **file inside the builder's run folder** (the folder of `run.json`);
+   a path outside it or a directory (e.g. `C:/`) fails.
+8. **Process:** tokens / time, own scripts vs skeleton reuse, contamination — reported, not scored.
 
 Commands (evaluator):
 
@@ -92,15 +106,20 @@ evaluator. Control drivers: `evaluator/controls.sh` (perturb + fingerprint + xVi
 
 | Control | Expected | Result (passes / first failing) | Key measurements |
 |---|---|---|---|
-| C1 key itself (stages 3, 3i, 5, 6) | pass | **4 / none** | all checks pass |
-| C2 key re-exported by Blender, no change | pass | **3 / none** | proves the FBX roundtrip adds no fail |
-| C3 key shifted +0.20 m X | fail | **0 / 3: transform_bbox** | bbox 0.20 m; surface cover 0.657 / 0.637 / 0.619; stations recall 0.161; NPM openings 0.355; asm material IDs 0.566 |
+| C1 key itself (stages 3, 3i, 5, 6) | pass | **4 / none** | all checks pass; surface / facade precision 1.0; openings recall = precision = 1.0 (292 / 307) |
+| C2 key re-exported by Blender, no change | pass | **3 / none** | proves the FBX roundtrip adds no fail (precision 1.0 both ways) |
+| C3 key shifted +0.20 m X | fail | **0 / 3: transform_bbox** | bbox 0.20 m; surface cover 0.657 / 0.637 / 0.619, precision 0.658 / 0.634 / 0.615; stations recall 0.161; NPM openings 0.355; asm material IDs 0.566 |
 | C4 one facade missing (az 270, 865–1 011 m²) | fail | **0 / 3: surface_cover** | facade az270 cover 0.003 (body) / 0.23 / 0.225; openings 0.801 (58 of 292 missed) / 0.811 (58 of 307) |
-| C5 body v005 (superseded: blind where Revit has glass, [D408]) | fail | **0 / 3: surface_cover** | openings recall 0.839: **47 of 292 missed = exactly the 47 openings [D408] cut**; no roof wells ([D410]) -> surface cover 0.491; levels 0.923, stations 0.826 |
+| C5 body v005 (superseded: blind where Revit has glass, [D408]) | fail | **0 / 3: surface_cover** | openings recall 0.839: **47 of 292 missed = exactly the 47 openings [D408] cut**; no roof wells ([D410]) -> surface cover 0.491, precision 0.529; levels 0.923, stations 0.826 |
 | C6 stale key (body file replaced, `SHA256SUMS.txt` unchanged) | 0 pass | **0 / key_stale** | all 10 stages `not_scored` |
+| C7 key body + invented interior wall (40 quads, 241 m², review r1 R1) | fail | **0 / 3: facade_precision** | group az000@+26 within 0.10 m of the key 0.005; whole-model precision stays above 0.95 — the per-facade gate catches it |
+| C8 key body, every blind face labelled WINDOW (r1 R2) | fail | **0 / 3: openings** | recall 1.0, precision 0.315 (636 of 928 candidate openings invented) |
+| C9 stages 4 `{}`, 8 evidence `C:/`, 0 with builder `"score_stops": false` (r1 R3 / R4) | fail | **0 / 0: stop S0-split** | stage 0 fails the STOP despite the builder switch; 4 and 8 fail `evidence` |
 
 Synthetic regressions of the same rules: `tests/test_cold_oks_score_2001.py` (key passes, +0.20 m shift,
-missing facade, blind openings, stale key = 0 passes, unasked STOP fails the stage).
+missing facade, blind openings, stale key = 0 passes, unasked STOP fails the stage; review r1: invented wall
+fails `surface_precision` + `facade_precision`, invented openings fail `openings`, empty / outside-run-folder
+evidence never passes, a builder `score_stops: false` is ignored).
 
 ## Open for Artem (not decided here)
 

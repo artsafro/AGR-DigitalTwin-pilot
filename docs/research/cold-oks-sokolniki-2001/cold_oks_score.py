@@ -36,6 +36,9 @@ FACADE_COVER_MIN = 0.90  # every gated facade: share of key samples within TOL_M
 SURFACE_COVER_MIN = 0.95  # whole model
 LINES_RECALL_MIN = 0.95  # body lattice lines of the key found in the candidate
 OPENINGS_RECALL_MIN = 0.95
+OPENINGS_PRECISION_MIN = 0.95  # candidate openings that match a key opening (invented openings fail)
+SURFACE_PRECISION_MIN = 0.95  # whole model: share of candidate area within TOL_M of the key
+FACADE_PRECISION_MIN = 0.90  # every candidate facade group >= MIN_FACADE_M2: share within TOL_M of the key
 MATERIAL_AGREE_MIN = 0.90  # area share of key samples whose nearest candidate face has the same finish
 DENSITY_RATIO = (0.5, 2.0)  # px/m per finish, candidate / key
 TRIS_RATIO = (0.5, 2.0)
@@ -290,7 +293,9 @@ def analyse(fp: dict, labels: list[str]) -> dict:
 
 
 def openings(faces) -> list[dict]:
-    """Connected opening faces (shared vertex, same azimuth) -> in-plane rect (t along facade, z) + plane offset."""
+    """Connected opening faces (shared EDGE, same azimuth) -> in-plane rect (t along facade, z) + plane offset.
+
+    A shared edge, not a shared vertex: openings that only touch at a corner (checkerboard) stay separate."""
     parent = list(range(len(faces)))
 
     def find(i):
@@ -301,8 +306,9 @@ def openings(faces) -> list[dict]:
 
     seen = {}
     for i, (poly, _n, az, _d) in enumerate(faces):
-        for v in poly:
-            key = (az, round(v[0], 3), round(v[1], 3), round(v[2], 3))
+        rv = [(round(v[0], 3), round(v[1], 3), round(v[2], 3)) for v in poly]
+        for a, b in zip(rv, rv[1:] + rv[:1]):
+            key = (az, min(a, b), max(a, b))
             if key in seen:
                 parent[find(i)] = find(seen[key])
             else:
@@ -330,14 +336,35 @@ def _match_lines(key: dict, cand: dict, dist) -> float:
     return found / sum(key.values())
 
 
+def _same_opening(a: dict, b: dict) -> bool:
+    return (abs((a["az"] - b["az"] + 180) % 360 - 180) <= 10 and abs(a["d"] - b["d"]) <= 0.5
+            and all(abs(x - y) <= TOL_M for x, y in zip(a["rect"], b["rect"])))
+
+
 def _match_openings(key: list, cand: list) -> tuple[float, list]:
-    missed = []
-    for o in key:
-        ok = any(abs((c["az"] - o["az"] + 180) % 360 - 180) <= 10 and abs(c["d"] - o["d"]) <= 0.5
-                 and all(abs(a - b) <= TOL_M for a, b in zip(c["rect"], o["rect"])) for c in cand)
-        if not ok:
-            missed.append(o)
+    """Share of `key` openings found in `cand`; called both ways (recall: key->cand, precision: cand->key)."""
+    missed = [o for o in key if not any(_same_opening(c, o) for c in cand)]
     return (1.0 - len(missed) / len(key)) if key else 1.0, missed
+
+
+def _cover(samples_: list, index: TriIndex) -> tuple[float, float, dict]:
+    """Area within TOL_M of the indexed mesh: (covered, total, {group: [total, covered]})."""
+    groups, covered, total = {}, 0.0, 0.0
+    for c, a, _label, group in samples_:
+        d, _ = index.nearest(c)
+        g = groups.setdefault(group, [0.0, 0.0])
+        g[0] += a
+        total += a
+        if d is not None:
+            g[1] += a
+            covered += a
+    return covered, total, groups
+
+
+def _worst_facades(groups: dict, limit: float) -> tuple[list, list]:
+    worst = sorted((g[1] / g[0], name, round(g[0], 1)) for name, g in groups.items()
+                   if g[0] >= MIN_FACADE_M2 and name.startswith("az"))
+    return worst, [w for w in worst if w[0] < limit]
 
 
 def compare(key: dict, cand: dict, kind: str) -> list[dict]:
@@ -347,26 +374,29 @@ def compare(key: dict, cand: dict, kind: str) -> list[dict]:
     def add(name, ok, value, limit):
         checks.append({"check": name, "status": "pass" if ok else "fail", "value": value, "limit": limit})
 
-    shift = max(abs(a - b) for i in range(2) for a, b in zip(key["bbox"][i], cand["bbox"][i]))
+    shift = max(abs(a - b) for i in range(2) for a, b in zip(key["bbox"][i], cand["bbox"][i])) if key["tris"] else 0.0
+    if not key["samples"] or not cand["samples"]:  # named refusal instead of ZeroDivisionError
+        add("non_empty", False, {"key_samples": len(key["samples"]), "cand_samples": len(cand["samples"])}, "> 0 each")
+        return checks
     add("transform_bbox", shift <= TOL_M, round(shift, 4), f"<= {TOL_M} m")
     index = TriIndex(cand["tri_list"], cand["tri_labels"])
-    groups, agree, covered, total = {}, 0.0, 0.0, 0.0
-    for c, a, label, group in key["samples"]:
+    covered, total, groups = _cover(key["samples"], index)
+    agree = 0.0
+    for c, a, label, _group in key["samples"]:
         d, clabel = index.nearest(c)
-        g = groups.setdefault(group, [0.0, 0.0])
-        g[0] += a
-        total += a
-        if d is not None:
-            g[1] += a
-            covered += a
-            if clabel == label:
-                agree += a
+        if d is not None and clabel == label:
+            agree += a
     add("surface_cover", covered / total >= SURFACE_COVER_MIN, round(covered / total, 4), f">= {SURFACE_COVER_MIN}")
-    worst = sorted((g[1] / g[0], name, round(g[0], 1)) for name, g in groups.items()
-                   if g[0] >= MIN_FACADE_M2 and name.startswith("az"))
-    bad = [w for w in worst if w[0] < FACADE_COVER_MIN]
+    worst, bad = _worst_facades(groups, FACADE_COVER_MIN)
     add("facade_cover", not bad, [[round(w[0], 3), w[1], w[2]] for w in (bad or worst)[:3]],
         f"every facade >= {MIN_FACADE_M2} m2 covered >= {FACADE_COVER_MIN}")
+    # candidate -> key: surface the key does not have (invented walls, duplicated shells) is measured too
+    pc, pt, pgroups = _cover(cand["samples"], TriIndex(key["tri_list"], key["tri_labels"]))
+    prec = pc / pt if pt else 0.0
+    add("surface_precision", prec >= SURFACE_PRECISION_MIN, round(prec, 4), f">= {SURFACE_PRECISION_MIN}")
+    pworst, pbad = _worst_facades(pgroups, FACADE_PRECISION_MIN)
+    add("facade_precision", not pbad, [[round(w[0], 3), w[1], w[2]] for w in (pbad or pworst)[:3]],
+        f"every candidate facade >= {MIN_FACADE_M2} m2 within {TOL_M} m of the key >= {FACADE_PRECISION_MIN}")
     if kind == "body":
         hz = _match_lines(key["hlines"], cand["hlines"], lambda a, b: abs(a - b))
         vxy = _match_lines(key["vlines"], cand["vlines"], lambda a, b: math.hypot(a[0] - b[0], a[1] - b[1]))
@@ -374,8 +404,11 @@ def compare(key: dict, cand: dict, kind: str) -> list[dict]:
         add("lattice_stations", vxy >= LINES_RECALL_MIN, round(vxy, 4), f">= {LINES_RECALL_MIN}")
     if kind in ("body", "npm"):
         rec, missed = _match_openings(key["openings"], cand["openings"])
-        add("openings", rec >= OPENINGS_RECALL_MIN,
-            {"recall": round(rec, 4), "key": len(key["openings"]), "missed": len(missed)}, f">= {OPENINGS_RECALL_MIN} at {TOL_M} m")
+        pre, invented = _match_openings(cand["openings"], key["openings"])
+        add("openings", rec >= OPENINGS_RECALL_MIN and pre >= OPENINGS_PRECISION_MIN,
+            {"recall": round(rec, 4), "precision": round(pre, 4), "key": len(key["openings"]),
+             "cand": len(cand["openings"]), "missed": len(missed), "invented": len(invented)},
+            f"recall >= {OPENINGS_RECALL_MIN}, precision >= {OPENINGS_PRECISION_MIN} at {TOL_M} m")
     if kind in ("insets", "npm"):
         add("material_ids", agree / total >= MATERIAL_AGREE_MIN, round(agree / total, 4), f">= {MATERIAL_AGREE_MIN}")
     if kind == "npm":
@@ -417,10 +450,28 @@ def _load(p) -> Any:
     return json.loads(Path(p).read_text(encoding="utf-8")) if p else None
 
 
-def score(key_dir: Path, key_set: dict, cand: dict) -> dict:
+def _evidence_check(p: str, run_dir: Path | None) -> dict:
+    """Evidence = an existing FILE inside the builder's run folder (a bare existing path like C:/ is not evidence)."""
+    ok, why = False, "no run folder"
+    if run_dir is not None:
+        root = Path(run_dir).resolve()
+        f = (root / p).resolve()
+        if not f.is_relative_to(root):
+            why = "outside the run folder"
+        elif not f.is_file():
+            why = "not a file"
+        else:
+            ok, why = True, "file in run folder"
+    return {"check": "evidence", "status": "pass" if ok else "fail", "value": p, "limit": why}
+
+
+def score(key_dir: Path, key_set: dict, cand: dict, run_dir: Path | None = None) -> dict:
+    """Score CAND against the key. STOP grading is switched by KEY_SET["score_stops"] only (evaluator-owned);
+    any switch inside CAND is ignored. RUN_DIR = the builder's run folder (evidence must be files inside it)."""
     kc = keycheck(key_dir)
+    score_stops = key_set.get("score_stops", True) is not False
     result = {"key": {k: kc[k] for k in ("ok", "problems", "files")}, "stages": [], "passes": 0,
-              "first_failing_stage": None, "run": cand.get("run", {})}
+              "first_failing_stage": None, "run": cand.get("run", {}), "score_stops": score_stops}
     if not kc["ok"]:
         for sid, name, _kind in STAGES:
             result["stages"].append({"id": sid, "name": name, "status": "not_scored", "first_failing": "key_stale"})
@@ -433,13 +484,16 @@ def score(key_dir: Path, key_set: dict, cand: dict) -> dict:
             row.update(status="not_reached", first_failing="no candidate output")
         else:
             asked = set(cs.get("stops_asked", []))
-            for stop in STOPS.get(sid, []) if cs.get("score_stops", True) else []:
+            for stop in STOPS.get(sid, []) if score_stops else []:
                 sid_stop = stop.split(":")[0]
                 row["checks"].append({"check": f"stop {sid_stop}", "status": "pass" if sid_stop in asked else "fail",
                                       "value": sid_stop in asked, "limit": stop})
-            for p in cs.get("evidence", []):
-                row["checks"].append({"check": "evidence", "status": "pass" if Path(p).exists() else "fail",
-                                      "value": p, "limit": "exists"})
+            evidence = cs.get("evidence", [])
+            if kind == "process" and not evidence:
+                row["checks"].append({"check": "evidence", "status": "fail", "value": [],
+                                      "limit": ">= 1 file in the run folder"})
+            for p in evidence:
+                row["checks"].append(_evidence_check(p, run_dir))
             if kind in ("body", "insets", "npm") and ks is not None:
                 kfp = _load(ks["fingerprint"])
                 want = kc["listed"].get(ks["key_file"])
@@ -458,8 +512,11 @@ def score(key_dir: Path, key_set: dict, cand: dict) -> dict:
                 row["checks"].append({"check": "validate_no_worse", "status": "fail" if lost or not cv else "pass",
                                       "value": lost or cv, "limit": "every V-check passing on the key passes"})
             fails = [c for c in row["checks"] if c["status"] != "pass"]
-            row["status"] = "fail" if fails else "pass"
-            row["first_failing"] = fails[0]["check"] if fails else None
+            if not row["checks"]:  # nothing was measured: never a pass
+                row.update(status="not_scored", first_failing="no checks")
+            else:
+                row["status"] = "fail" if fails else "pass"
+                row["first_failing"] = fails[0]["check"] if fails else None
         result["stages"].append(row)
         if row["status"] == "pass":
             result["passes"] += 1
@@ -567,7 +624,7 @@ def main(argv: list[str]) -> int:
         return 0 if kc["ok"] else 1
     elif cmd == "score":
         key_set, cand = _load(argv[2]), _load(argv[3])
-        res = score(Path(argv[1]), key_set, cand)
+        res = score(Path(argv[1]), key_set, cand, run_dir=Path(argv[3]).resolve().parent)
         Path(argv[4]).write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
         print(f"passes={res['passes']} first_failing={res['first_failing_stage']}")
         for row in res["stages"]:

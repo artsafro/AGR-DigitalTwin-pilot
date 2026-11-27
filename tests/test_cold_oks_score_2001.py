@@ -70,14 +70,15 @@ def keyset(tmp_path):
     kfp.write_text(json.dumps(fp), encoding="utf-8")
     xv = tmp_path / "xv.json"
     xv.write_text(json.dumps({"totals": {"overlapping_faces": 0, "overlapping_vertices": 0}}), encoding="utf-8")
-    ks = {"stages": {"3": {"fingerprint": str(kfp), "key_file": "body.fbx", "xview": str(xv)}}}
+    # STOP grading is an evaluator switch (key_set), never a candidate one
+    ks = {"score_stops": False, "stages": {"3": {"fingerprint": str(kfp), "key_file": "body.fbx", "xview": str(xv)}}}
     return key, ks, xv, tmp_path
 
 
 def _cand(tmp_path, fp, xv, name, stops=None):
     p = tmp_path / f"{name}.json"
     p.write_text(json.dumps(fp), encoding="utf-8")
-    stage = {"fingerprint": str(p), "xview": str(xv), "score_stops": stops is not None, "stops_asked": stops or []}
+    stage = {"fingerprint": str(p), "xview": str(xv), "stops_asked": stops or []}
     return {"stages": {"3": stage}}
 
 
@@ -127,5 +128,67 @@ def test_stale_key_scores_zero(keyset):
 
 def test_guessed_product_choice_fails_stage(keyset):
     key, ks, xv, tmp = keyset
+    ks["score_stops"] = True
     row = _body(cos.score(key, ks, _cand(tmp, building(), xv, "guess", stops=["S3-lines"])))
     assert row["status"] == "fail" and row["first_failing"] == "stop S3-cuts"
+
+
+def _wall_quads_y5():
+    """Invented interior wall: plane y=5 m, 10 x 4 cells of 2 x 3 m (40 quads), not in the key."""
+    out = []
+    for i in range(10):
+        for j in range(4):
+            t0, t1, z0, z1 = i * CELL_T, (i + 1) * CELL_T, j * CELL_Z, (j + 1) * CELL_Z
+            out.append({"o": 0, "label": "WALL", "v": [[t0, 5.0, z0], [t1, 5.0, z0], [t1, 5.0, z1], [t0, 5.0, z1]]})
+    return out
+
+
+def test_extra_geometry_fails(keyset):
+    """Review r1 R1: candidate surface far from the key is measured (candidate -> key)."""
+    key, ks, xv, tmp = keyset
+    fp = building()
+    fp["faces"] += _wall_quads_y5()
+    row = _body(cos.score(key, ks, _cand(tmp, fp, xv, "extra")))
+    failed = {c["check"] for c in row["checks"] if c["status"] == "fail"}
+    assert row["status"] == "fail"
+    assert {"surface_precision", "facade_precision"} <= failed, failed
+
+
+def test_invented_openings_fail(keyset):
+    """Review r1 R2: openings precision - every blind cell labelled WINDOW is not a pass."""
+    key, ks, xv, tmp = keyset
+    fp = building()
+    for f in fp["faces"]:
+        if f["label"] == "WALL":
+            f["label"] = "WINDOW"
+    row = _body(cos.score(key, ks, _cand(tmp, fp, xv, "invented")))
+    assert row["status"] == "fail" and row["first_failing"] == "openings", row["checks"]
+
+
+def test_vacuous_stage_is_not_pass(keyset):
+    """Review r1 R3: a stage with no checks / no evidence file inside the run folder never passes."""
+    key, ks, xv, tmp = keyset
+    run = tmp / "run"
+    run.mkdir()
+    (run / "stage2.md").write_text("parts list log", encoding="utf-8")
+    cand = _cand(tmp, building(), xv, "self")
+    cand["stages"] |= {"4": {}, "8": {}, "7": {"evidence": ["C:/"]}, "1": {"evidence": [str(run.parent / "self.json")]},
+                       "2": {"evidence": ["stage2.md"]}}
+    res = cos.score(key, ks, cand, run_dir=run)
+    st = {r["id"]: r for r in res["stages"]}
+    assert st["4"]["status"] != "pass" and st["8"]["status"] != "pass"
+    assert st["7"]["status"] == "fail" and st["7"]["first_failing"] == "evidence"
+    assert st["1"]["status"] == "fail" and st["1"]["first_failing"] == "evidence"  # file outside the run folder
+    assert st["2"]["status"] == "pass", st["2"]
+    assert res["passes"] == 2  # stage 2 (real evidence) + stage 3 (key itself)
+
+
+def test_candidate_cannot_disable_stops(keyset):
+    """Review r1 R4: "score_stops": false written by the builder is ignored."""
+    key, ks, xv, tmp = keyset
+    ks["score_stops"] = True
+    cand = _cand(tmp, building(), xv, "self")
+    cand["score_stops"] = False
+    cand["stages"]["0"] = {"score_stops": False}
+    st = {r["id"]: r for r in cos.score(key, ks, cand)["stages"]}
+    assert st["0"]["status"] == "fail" and st["0"]["first_failing"] == "stop S0-split"
