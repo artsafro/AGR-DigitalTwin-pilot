@@ -115,9 +115,10 @@ def signals_from_masks(occ, vedge, res, tall_m=2.0):
 TRIM = True       # R1 (False = R0)
 DEPTH_JUMP = 0.03  # R1 (R0 = 0.15)
 FULL_BONUS = 0.15  # R2 (V4 only)
+LUMA_EDGE = 0.08  # R3 (V5 only)
 
 
-def model_signals(npz, az, res):
+def model_signals(npz, az, res, tex=False):
     key = f"az{int(round(az)) % 360:03d}"
     d = npz[key + "_depth"]
     nrm = npz[key + "_normal"]
@@ -128,6 +129,10 @@ def model_signals(npz, az, res):
     crease = (dot < math.cos(math.radians(30))) & occ[:, 1:] & occ[:, :-1]
     ve = np.zeros_like(occ)
     ve[:, 1:] |= jump | crease
+    if tex and key + "_luma" in npz.files:  # R3: texture luminance edges along the facade
+        lu = npz[key + "_luma"]
+        te = np.abs(np.diff(lu, axis=1)) > LUMA_EDGE
+        ve[:, 1:] |= np.nan_to_num(te, nan=0).astype(bool)
     cols = np.where(occ.any(0))[0]
     occ, ve = occ[:, cols[0]:cols[-1] + 1], ve[:, cols[0]:cols[-1] + 1]
     return signals_from_masks(occ, ve, res)
@@ -213,6 +218,7 @@ def main():
         report["timing_s"][f"{name}.rays"] = round(time.time() - t1, 2)
         npz = np.load(npz_path)
         faces = {az: model_signals(npz, az, res) for az in f["faces_az"]}
+        faces5 = {az: model_signals(npz, az, res, tex=True) for az in f["faces_az"]}
         widths = {az: len(s[0]) * res for az, s in faces.items()}
         t1 = time.time()
         doc = load_dxf(f["dxf"])
@@ -266,9 +272,15 @@ def main():
                 if name == "ac08" and row["V4"]["outcome"] == "wrong" and row["V4"]["answer"] == pair[gt]:
                     row["V4"]["outcome"] = "wrong_within_pair"
                 row["V0"] = decide_width(L * res, widths, gt)
+                # R3 / V5: V3 with texture luminance edges added to the model rhythm
+                p5 = {az: slide(ct, cp, ft, fp, slack)["V3"] for az, (ft, fp) in faces5.items()}
+                row["scores"]["V5"] = {str(az): round(s, 4) for az, s in p5.items()}
+                row["V5"] = decide(p5, gt, dec["tau_margin"], dec["min_score"])
+                if name == "ac08" and row["V5"]["outcome"] == "wrong" and row["V5"]["answer"] == pair[gt]:
+                    row["V5"]["outcome"] = "wrong_within_pair"
                 report["views"].append(row)
     summ = {}
-    for v in ("V0", "V1", "V2", "V3", "V4"):
+    for v in ("V0", "V1", "V2", "V3", "V4", "V5"):
         for cls in ("full", "partial", "mirror"):
             rows = [r for r in report["views"] if r.get("case", "").startswith(cls) and v in r]
             for fxn in sorted({r["fixture"] for r in rows}):
