@@ -1,4 +1,7 @@
-"""#2020 [D426]: the old KPP1 stage builder build_kpp1.py is retired; the accepted v004 route is lattice-1609."""
+"""#2020 [D426]: the old KPP1 stage builder build_kpp1.py is retired; the accepted v004 route is lattice-1609.
+
+Pattern: new-case | KPP1 retired-route regression guard (no root jobs/KPP1/skeleton.json, D426).
+"""
 import json
 import sys
 from pathlib import Path
@@ -39,3 +42,8 @@ def test_accepted_lattice_route_is_the_configured_kpp1_body():
     cfg = json.loads((ROOT / "jobs/KPP1/lattice-1609/skeleton.json").read_text(encoding="utf-8"))
     assert cfg["scenario"] == "oks-npm"
     assert {"script": "hooks/kpp1_lattice.py", "stage": "body", "point": "before"} in cfg["hooks"]
+
+
+def test_no_root_kpp1_skeleton_lattice_stays_the_route():
+    # D426: a root skeleton.json would turn the frozen legacy KPP1 scripts into skeleton_guard findings.
+    assert not (ROOT / "jobs/KPP1/skeleton.json").exists()
