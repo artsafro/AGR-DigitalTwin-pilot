@@ -46,9 +46,8 @@ contexts:
       - at: "jobs/KPP1/scripts/build_kpp1.py:198"
         match: "def body("
         issue: "#1593"
-        ru: "свой корпус КПП1; run_stage.sh:13 вызывает build_kpp1.main, без run_operation; путь не заморожен .ignore [D327]"
-        status: live-bypass
-        step: "-"
+        ru: "исторический корпус КПП1 (стадии 1–6); принятый v004 строит lattice-1609 [D373, D379], вход run_stage.sh снят [D425]"
+        status: historical
       - at: "jobs/PSU275/scripts/assemble_body_roof.py:62"
         match: "def main("
         issue: "#1593"
@@ -84,8 +83,8 @@ contexts:
       - at: "jobs/KPP1/scripts/vpm_uv.py:6"
         match: "runpy.run_path(str(_owner))"
         issue: "#1593"
-        ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py"
-        status: wrapper
+        ru: "обёртка runpy; _owner на строке 5 указывает tools/blender/vpm_uv.py, исторический: вход run_stage.sh снят [D425]"
+        status: historical
       - at: "jobs/TEC26-OKS/scripts/vpm_uv.py:6"
         match: "runpy.run_path(str(_owner))"
         issue: "#1593"
@@ -120,9 +119,8 @@ contexts:
       - at: "jobs/KPP1/scripts/build_kpp1.py:327"
         match: "def openings("
         issue: "#1593"
-        ru: "свои рамы и стекло КПП1 через relief, без windowgen_core; run_stage.sh:13; путь не заморожен .ignore [D327]"
-        status: live-bypass
-        step: "-"
+        ru: "исторические рамы и стекло КПП1; принятый v004 строит lattice-1609 [D373, D379], вход run_stage.sh снят [D425]"
+        status: historical
       - at: "jobs/PSU275/scripts/opening_fills.py:183"
         match: "frame = box(*outline).difference("
         issue: "#1593"
@@ -136,8 +134,8 @@ contexts:
       - at: "jobs/KPP1/scripts/kpp1_windowgen.py:75"
         match: "return wg.build_type("
         issue: "#1593"
-        ru: "обёртка build_type; import windowgen_core as wg на строке 26"
-        status: wrapper
+        ru: "обёртка build_type; import windowgen_core as wg на строке 26, исторический: вход run_stage.sh снят [D425]"
+        status: historical
   - id: roof
     serves_stage: roof
     ru: "Кровля, парапет, плита, ограждение"
@@ -162,8 +160,8 @@ contexts:
       - at: "jobs/KPP1/scripts/build_kpp1.py:432"
         match: "def roof("
         issue: "#1593"
-        ru: "обёртка плиты: строка 441 вызывает roof_core.hole_plate (#1381); стены отверстия и шахта локальны"
-        status: wrapper
+        ru: "обёртка плиты: строка 441 вызывает roof_core.hole_plate (#1381); стены отверстия и шахта локальны, исторический: вход run_stage.sh снят [D425]"
+        status: historical
   - id: package
     ru: "Экспорт и пакеты ВПМ / НПМ"
     area: docs/domain/areas/package.md

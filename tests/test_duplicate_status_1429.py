@@ -89,7 +89,7 @@ def _real():
 def test_repo_own_duty_baseline_equals_the_live_own_duty_rows():
     rows, chains, _, _ = _real()
     live_own = {(r.map, r.at, r.hash) for r in rows if r.status == "own-duty" and chains.get(r.rel)}
-    assert live_own == set(guard.OWN_DUTY_BASELINE) and len(live_own) == 13
+    assert live_own == set(guard.OWN_DUTY_BASELINE) and len(live_own) == 12  # [D425]: build_kpp1.load_spec historical
 
 
 def test_repo_relabel_live_bypass_as_own_duty_fails():
@@ -108,7 +108,7 @@ def test_repo_relabel_live_bypass_as_own_duty_fails():
 def test_cli_exit_1_on_new_own_duty(monkeypatch, capsys):
     monkeypatch.setattr(guard.status_problems, "__kwdefaults__", {"own_duty_baseline": frozenset()})
     assert guard.main([]) == 1
-    assert capsys.readouterr().out.count("STATUS NEW OWN-DUTY") == len(guard.OWN_DUTY_BASELINE) == 13
+    assert capsys.readouterr().out.count("STATUS NEW OWN-DUTY") == len(guard.OWN_DUTY_BASELINE) == 12
 
 
 # ---------------------------------------------------------------- brute-force probe
