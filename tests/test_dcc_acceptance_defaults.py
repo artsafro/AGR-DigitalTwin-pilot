@@ -6,7 +6,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
-@pytest.mark.parametrize('name', ['AGENTS.md', 'CLAUDE.md', 'GEMINI.md', 'docs/agents/CAPABILITIES.md', 'docs/domain/geometry.md'])
+@pytest.mark.parametrize('name', ['docs/agents/agents-reference.md', 'CLAUDE.md', 'GEMINI.md',
+                                 'docs/agents/CAPABILITIES.md', 'docs/domain/geometry.md'])
 def test_entry_defaults(name):
     text = (ROOT / name).read_text(encoding='utf-8')
     assert '[D270]' in text
