@@ -68,7 +68,8 @@ retro of elv-tc-vpm v008 (`docs/cases.md`).
 Budget and convexity [D427] [D430] (#2050): the [D012] budget is a reported number, never a refusal. The builder,
 the resolve driver and the command write `budget_D012` / `budget_line` ("over D012 budget by N tris, allowed by
 [D427] when form needs it" or "within D012 budget (u / limit tris)") and `agr ucx` prints it as `AGR_UCX budget:`;
-an over-budget file does not fail any step. Builder option `budget=fit|form` (Main): `fit` (default) grows the cell
+an over-budget file does not fail any step (in `agr ucx` the V010 "UCX triangle budget" finding is that line; the
+delivery validator keeps it until the render mesh is raised). Builder option `budget=fit|form` (Main): `fit` (default) grows the cell
 toward the budget and keeps the coarsest attempt when none fits; `form` keeps the given cell. Only the 999-piece cap
 refuses. The gap check and V010 count a body within 1 mm of its face planes as convex; the frozen AGR Tools core
 [D393] keeps 0.1 mm, so `agr ucx` measures such a body's gaps on the hull of its vertices and lists it in

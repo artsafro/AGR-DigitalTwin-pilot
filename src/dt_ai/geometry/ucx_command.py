@@ -27,7 +27,8 @@ the model -> UCX distance [D134] (`OUT.ucx_resolve.json`); steps 2-4 then run on
 
 Writes OUT (FBX), `OUT.ucx_build.json` (driver) and `OUT.agr_ucx.json` (this command). Never overwrites: OUT and
 both reports must not exist, must not alias MODEL and must differ from each other; the model is never written.
-Exit 0 every step passed; 1 built and read back but a check failed (gap, V010 fail, Ground tolerance); 2 build or
+Exit 0 every step passed; 1 built and read back but a check failed (gap, V010 fail, Ground tolerance; the V010 budget
+finding and the [D012] budget are reported as `budget_D012`, never a failure [D427]); 2 build or
 readback failed; 4 refused before any write.
 """
 from __future__ import annotations
@@ -45,6 +46,9 @@ TARGETS = ("Main", "Ground")
 ROLE = {"Main": "oks", "Ground": "ground"}
 RESOLVE_DRIVER = ROOT / "tools" / "blender" / "ucx_resolve.py"
 RESOLVE_GAP_M = 0.003  # the retro's working gap (elv-tc-vpm v008), inside [D098]
+# [D427]: in `agr ucx` the V010 budget finding is the reported `budget_D012` line, not a failed check; the delivery
+# validator keeps it (the final file fits by raising render-mesh triangles, e.g. `dt_ai.ops.densify`).
+V010_BUDGET = "UCX triangle budget"
 USAGE = ("usage: agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]\n"
          "       agr ucx MODEL OUT Main --resolve [--blender EXE] [--gap-m M]")
 
@@ -297,7 +301,7 @@ def _check(a: dict, report: dict, build: dict, readback, first: dict) -> tuple[i
     report["steps"]["gap_check"] = gap
     v010 = _v010(rb, a["target"])
     report["steps"]["V010"] = v010
-    v010_ok = bool(v010) and not any(f["status"] == "fail" for f in v010)
+    v010_ok = bool(v010) and not any(f["status"] == "fail" and f["name"] != V010_BUDGET for f in v010)
     report["passed_checks"] = {**first, "gap": gap["ok"], "V010_no_fail": v010_ok}
     return (0 if all(report["passed_checks"].values()) else 1), report
 

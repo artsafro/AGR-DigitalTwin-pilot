@@ -122,6 +122,25 @@ def test_build_report_carries_budget_line(model, tmp_path, monkeypatch):
     assert LINE.fullmatch(report["budget_D012"]["line"]).group(1) == "12"
 
 
+def test_v010_budget_fail_does_not_fail_agr_ucx(model, tmp_path, monkeypatch):
+    """Real Polyani run (cell 0.85, budget=form): every V010 finding passed except 'UCX triangle budget'; in
+    `agr ucx` that one is the reported budget line [D427], any other V010 fail still fails the command."""
+    from dt_ai.core import blender_runner as br
+    from twinqa import scene as sc
+
+    build = {"ok": True, "pieces": 1, "triangles": 12, "gap_m": GAP, "within_tol": True,
+             "model_triangles_excl_ucx": 100, "file_ucx_triangles": 15012}
+    monkeypatch.setattr(br, "run_blender", Mock(return_value=build))
+    monkeypatch.setattr(sc, "readback", Mock(return_value=_rb(("UCX_SM_T_Main_001", box(0, 1, 0, 1, 0, 1)))))
+    v010 = [{"name": "UCX present", "status": "pass"}, {"name": "UCX triangle budget", "status": "fail"}]
+    monkeypatch.setattr(uc, "_v010", Mock(return_value=v010))
+    code, report = uc.run(uc.parse([str(model), str(tmp_path / "o.fbx"), "Main"]))
+    assert code == 0 and report["passed_checks"]["V010_no_fail"] is True, report
+    v010.append({"name": "UCX material slots", "status": "fail"})
+    code, report = uc.run(uc.parse([str(model), str(tmp_path / "o2.fbx"), "Main"]))
+    assert code == 1
+
+
 # ---- [D430] convexity tolerance 1 mm -------------------------------------------------------------------------
 def test_twinqa_convex_tolerance_is_1mm():
     assert ua.CONVEX_TOL_M == pytest.approx(1e-3)
