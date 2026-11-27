@@ -66,6 +66,10 @@ keep the receipt and console log, and do not escalate sandbox permissions or use
 | 6 | `package-vpm` | `agr package-vpm` -> `package_core._write_zip` after required approvals |
 | 7 | `validate` | `agr validate` on the actual package |
 
+For G22 only, apply the exterior-finish repair bound and clean xView gate in
+[D374]. The [D381] v019 exception is limited to the named G22 pairs;
+see the [source-bound checkpoint](../../jobs/G22/npm2vpm-1649/CHECKPOINT.md).
+
 Each stage retains the standard `before` / `after` hook points (one named stage,
 no parallel conversion chain); no `gap` hook replaces a shared owner. One config:
 `jobs/G22/npm2vpm-1630/skeleton.json`. IDs from atlas cells are provisional layout
@@ -77,6 +81,12 @@ input or execution failure; neither is a pass. Prior delivered packages stay int
 An explicit cleanup approval records exact source polygon drops on a new copy,
 never a general geometry repair. A selected seam policy does not waive mixed
 material boundaries, singular UV metrics, texel bounds or native readback.
+
+G22 #1649 alone has a source-bound solid placeholder exception for 460 faces
+[D362]; see [the checkpoint](../../jobs/G22/npm2vpm-1649/CHECKPOINT.md). It is not
+an exemption for other faces or a production acceptance. G22's flat Normal maps
+and manual V007 review are separately scoped in [D363]. The G22-only E/22
+projection trim, on the copy without shifting the facade, is scoped in [D383].
 
 ### `vpm-to-npm` — принятая ВПМ → НПМ по практике Артёма (#1737)
 

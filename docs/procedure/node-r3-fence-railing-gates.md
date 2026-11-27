@@ -42,7 +42,7 @@ in this legacy spline mode.
 
 ### Source-measured flights and handrails
 
-For inclined or individually measured members [D384], use the same command
+For inclined or individually measured members [D422], use the same command
 with `--type posts_handrail` and geometry representation. Replace the whole
 spline document with `{"measured_members": [...]}`. Each entry has `role`
 (`post` or `top_rail`) and ordered `sections`, each with `center` (XYZ metres)

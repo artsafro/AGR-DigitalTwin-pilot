@@ -1,7 +1,7 @@
 # Sokolniki #1784 — measured railings pilot
 
 Cell `oks-npm`; [R3](../../docs/procedure/node-r3-fence-railing-gates.md#shared-headless-builder),
-standard geometry pilot, not delivery. [D384] authorizes
+standard geometry pilot, not delivery. [D422] authorizes
 source-section measurements from the pinned Revit FBX; [D378] pins the receiving
 body v005. Neither the accepted native file nor the separate inset work changes.
 No connection to the active step-3 config is made while the railing set is incomplete.
