@@ -54,3 +54,22 @@ assigns views to faces with fewer confident errors than #147 C at equal or bette
   Timing stop and hypothesis verdict are reported separately.
 - **Forbidden.** Threshold/label search after seeing scores, fixture substitution, reading Sokolniki outputs,
   editing source drawings, models, deliveries, production `src/` or other cards' files, weakening guards.
+
+## R1 — aborted as implemented (defect), amendment R1b frozen before any R1 score was read
+
+R1 at `ec6eb642` ran one fresh run (1149.6 s incl. the invariance re-score), then hit the budget stop
+(1149.6 + 1.15 × 1149.6 × 2 > 1500 s) and crashed in `combine` (the #147 receipt mixes ELV rows, keyed `case`,
+with OBR22 rows keyed `kind`). The ray log showed the frozen *quantity* was not computed: 9773 objects gave
+**7132 "types"** — Revit FBX names end in `_<7 hex>`, ` [<element id>]`, `_[<id>]` and `.001`, which the frozen
+regex does not strip, so labels were near-instance ids, not Revit type names. R1 is recorded as a defective
+implementation (`status: aborted_defect`); its single-run scores are diagnostic only and are reported below
+next to R1b, never as the hypothesis test.
+
+R1b changes only the implementation, all derived from the name format and the crash, none from scores:
+1. Type name = object name with trailing `(\.\d{3}|_[0-9a-f]{7}|_?\[\d+\]|\s+)` removed repeatedly until stable.
+2. Model labels compacted per face (`np.unique` inverse) before scoring — U is label-permutation invariant, so
+   scores are unchanged; this only shrinks the joint histogram (speed).
+3. `combine` uses the 80 #147 rows that carry `case` (ELV); row identity parity unchanged.
+4. Budget re-frozen from the one measured R1 run: stop `inconclusive` if elapsed + 1.15 × first-run s ×
+   remaining runs > 3600 s. Everything else in the contract above is unchanged (labels for the view, score,
+   decision 0.30/0.10, acceptance bounds, witnesses, 3 fresh runs).
