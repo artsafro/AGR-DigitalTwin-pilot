@@ -1,0 +1,16 @@
+# Standing #128 — same-camera NPM/VPM cell-diff calibration (OBSERVE)
+
+## Frozen contract (before scoring)
+
+Recheck #125 variant 2, unchanged, on **fresh** native FLAT renders from the two AC08 archive pairs. #125 mixed historical camera generations (v007 predates fixed 400 px/m); #127 showed the unchanged renderer can re-render both, but measured the D171 joint-count gate, not this cell-diff. No proposed production change. The other named jobs enter only if both labels, byte-bound NPM/VPM archives, and the texture reason are established for the same scope; report eligibility separately, never add a synthetic rejection to that denominator.
+
+- H128: on the same renderer/camera policy, rejected v007 must score worse than the v010 visual/panel reference by ≥10%, in each of three independently rendered pairs. Metric: unchanged #125 V2 max across four facades of p95 1 m cell mean CIE76 ΔE, common opacity mask (red datum excluded), 100 px/m evaluation. Report per-view scores, worst cells, median of paired rejected-minus-reference deltas and range. A complete, parity-valid reverse ordering refutes the hypothesis for AC08 and the proposed all-rejections calibration; a missing held-out pair is not measured.
+- Fixture: `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v{007,010}/` exact `0000_Nku_1.zip` and `SM_Nku_1.zip` hashes from #127 receipt at `34b5174834a21e1ed516a02439bcd1eec832404b`. Labels: #559 comments 6341991856 and 6345392389; v010 means visual/panel reference, not unconditional delivery approval. Renderer, VPM preview UV owner and spec from `9269c354ad4b2bcb8af03d2308297edfff25f079`. Scorer source from `9e582966c1f454f0924a70a8a386d060ef6a7ce5`, `--variant 2` semantics. Blender 5.1 executable SHA-256 `1e6624af112b3c936f4b038b025ebd2bf00ae72c4b62881a6787166d71c58fa5`. Require exact paired camera fields per view within each version, fresh PNG parity across rounds per version, and pre/postflight archive hashes. Does not require v007 geometry to be byte-identical to v010. Compare clean v010 to #125 V2 separately; report any drift, not a repair.
+- Controls: use existing #125 P1 (wrong-colour patch in NPM south), P2 (dark stripes in NPM south), P3 (NPM south UV image shift) on fresh renders in both labels, controlled at the render only. Per label/state count changed RGB pixels; require all three >0, unchanged alpha and VPM pixels; N0 identity ≡0 on each label. Require v010 P1 ≥ clean +5 ΔE; P2/P3 must increase v010 score. Rejected-side delta reported, not an independent rejection. No invariance claim for no-op states. Padding, texel density and shared-profile seam correctness are not measured by these image perturbations.
+- Budget: three fresh confirmation pairs; zero new metric candidates. Cap 300 s and first complete pair ≤90 s with ≥2 × first-pair time +15 s remaining; otherwise stop, record completed pairs and wall, no median/KEEP. No edit to delivered packages, other cards, checks or tolerances; no cached substitution or shortened series. No Max. If parity or control fails, inconclusive rather than relaxing it. No production adoption even on pass without independent held-out calibration.
+
+Replay from the branch using Windows Blender and Drive (limited to those with the same inputs):
+
+```bash
+python docs/research/autoresearch-npm-vpm-render-diff-r128/replay.py tmp/r128-NEW
+```
