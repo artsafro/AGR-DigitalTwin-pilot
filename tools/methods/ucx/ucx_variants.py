@@ -20,9 +20,9 @@ Variants
   `gap` apart vertically, so pieces never intersect; plan vertices within 1 cm of their neighbours' chord
   are dropped (no sliver caps).
 - single-hull: one convex hull of the whole mesh (baseline: always valid, loosest fit).
-- section-boxes (#2053): level bands; per band the plan shadow of the band's geometry on a 0.25 m grid,
-  rooms filled (enclosed and roofed), courtyards and through-passages left open, cells grouped by their
-  height range, greedy rectangles per group, exposed rectangle sides pulled to the facade samples, rectangles
+- section-boxes (#2053): level bands; per band the plan shadow on a 0.25 m grid. Elevated undersides with clearance
+  do not block the flood below them. Enclosed roofed cells fill; cells grouped by their height range form
+  greedy rectangles, exposed rectangle sides pulled to the facade samples, rectangles
   that repeat over consecutive bands stacked into one box; boxes shrink by gap/2. No triangle budget.
 - ground-coarse-faces (#2053, Ground target): up-facing triangles of the highest surface grow into planar
   clusters (minimax plane within `tol`) whose plan union stays convex: large prisms on flat parts, the
@@ -474,7 +474,7 @@ def _layer_rects(m, lo, hi, used, layer_pts, shape, cell, origin):
     return out
 
 
-def _band_rects(pf, ix, iy, shape, z0, z1, first, colmax, q, cell, origin):
+def _band_rects(pf, ix, iy, shape, z0, z1, first, colmax, q, cell, origin, undersides):
     """Rectangles of one level band: (grid key, lo xyz, hi xyz, sample z range or None, full_bottom, full_top).
 
     The band is split in height bins of about `q`. Per plan cell: rooms (enclosed by the band's plan shadow
@@ -495,15 +495,39 @@ def _band_rects(pf, ix, iy, shape, z0, z1, first, colmax, q, cell, origin):
     # walls block the plan flood: samples above the band's floor bin and below its ceiling bin (a pavement
     # under a canopy is no wall, a sill or lintel under / over a window is)
     barrier = occ3[:, :, 1:-1].any(axis=2) if nb >= 3 else occ
-    ext = flood2d(~_dilate(barrier))  # one-cell closing: a gap of up to 2 cells in a wall does not let the flood in
-    ext = ext | (_dilate(ext) & ~barrier)
+
+    def exterior(walls):
+        outside = flood2d(~_dilate(walls))  # closing bridges gaps of up to two plan cells
+        return outside | (_dilate(outside) & ~walls)
+
+    ux, uy, uz = undersides
+    over = (uz >= z0 + 2 * hq) & (uz <= z1 + eps)
+    head_bin = None
+    cleared = np.zeros(shape, bool)
+    if over.any():
+        # An elevated underside can be too small to split a level. In columns with a clear run below it,
+        # the underside and the wall above it (including the face at the mouth) are not plan barriers.
+        # Keep the other walls and the enclosure test: this does not turn an enclosed room into a passage.
+        ubin = np.clip(np.floor((uz[over] - z0) / hq), 0, nb - 1)
+        head_bin = _cell_stat(shape, ux[over], uy[over], ubin, np.minimum, np.inf)
+        first_above_floor = np.argmax(occ3[:, :, 1:], axis=2) + 1
+        cleared = barrier & (first_above_floor >= head_bin)
+    ext = exterior(barrier & ~cleared)
     enclosed = ~ext
     zmax = _cell_stat(shape, bx, by, bp[:, 2], np.maximum, -np.inf)
-    full = enclosed & ((colmax > z1 + eps) | (occ & (zmax >= z1 - hq)))  # rooms: enclosed and roofed
+    roofed = (colmax > z1 + eps) | (occ & (zmax >= z1 - hq))
+    full = enclosed & roofed
+    raised = np.zeros(shape, bool)
+    if (cleared & ext & roofed).any():
+        # Keep the previously enclosed upper solid, but start it at the underside, not the floor.
+        raised = cleared & ext & roofed & ~exterior(barrier)
     first_bin = np.argmax(occ3, axis=2)
     after = (np.arange(nb)[None, None, :] > first_bin[:, :, None]) & ~occ3
     run_end = np.where(after.any(axis=2), np.argmax(after, axis=2), nb)
     in_a = bz < run_end[bx, by]
+    raised_with_floor = raised & (first_bin == 0)
+    if head_bin is not None and raised.any():
+        in_a = np.where(raised[bx, by], ~raised_with_floor[bx, by] | (bz < head_bin[bx, by]), in_a)
     rects = []
     for layer in ("A", "B"):
         pm = in_a | full[bx, by] if layer == "A" else ~in_a & ~full[bx, by]
@@ -519,6 +543,7 @@ def _band_rects(pf, ix, iy, shape, z0, z1, first, colmax, q, cell, origin):
         if layer == "A":
             lo = np.where(full | (enclosed & cells), z0, lo)  # enclosed things stand on the band floor
             hi = np.where(full, z1, hi)
+        hi = np.where(cells & (raised_with_floor if layer == "B" else raised & ~raised_with_floor), z1, hi)
         klo = np.where(cells, np.floor((lo - z0) / hq + 1e-9), -1).astype(np.int64)
         khi = np.where(cells, np.ceil((hi - z0) / hq - 1e-9), -1).astype(np.int64)
         for key in sorted({(int(a), int(b)) for a, b in zip(klo[cells], khi[cells])}):
@@ -538,13 +563,21 @@ def _section_stacks(vf, t, zs, cell, q):
         raise VariantError(f"section-boxes: plan grid {shape} too large for cell {cell} m")
     ix = np.clip(np.floor((pf[:, 0] - origin[0]) / cell).astype(np.int64), 0, shape[0] - 1)
     iy = np.clip(np.floor((pf[:, 1] - origin[1]) / cell).astype(np.int64), 0, shape[1] - 1)
+    normals = np.cross(vf[t[:, 1]] - vf[t[:, 0]], vf[t[:, 2]] - vf[t[:, 0]])
+    down = normals[:, 2] < -0.3 * np.linalg.norm(normals, axis=1)
+    if down.any():
+        underside = ub.sample_surface(vf, t[down], cell / 2)
+        uv = np.floor((underside[:, :2] - origin) / cell).astype(np.int64)
+        undersides = (uv[:, 0], uv[:, 1], underside[:, 2])
+    else:
+        undersides = (np.empty(0, dtype=np.int64), np.empty(0, dtype=np.int64), np.empty(0))
     colmax = _cell_stat(shape, ix, iy, pf[:, 2], np.maximum, -np.inf)
     stacks: list[dict] = []
     open_by_key: dict = {}
     for b, (z0, z1) in enumerate(zip(zs[:-1], zs[1:])):
         nxt = {}
         for key, lo, hi, pz, full_bottom, full_top in _band_rects(pf, ix, iy, shape, z0, z1, b == 0, colmax, q,
-                                                                 cell, origin):
+                                                                 cell, origin, undersides):
             s = open_by_key.get(key) if full_bottom else None
             if s is not None:  # the same rectangle continues from the band below: one taller box
                 s["lo"][:2] = np.minimum(s["lo"][:2], lo[:2])
@@ -646,14 +679,13 @@ def ground_coarse_faces(verts, tris, tol: float = GROUND_TOL_M, depth: float = 0
         flat_info = {"flat_pieces": len(flat_pieces), "flat_max_vertical_dev_m": res.max_vertical_dev_m,
                      "flat_uncovered_strip_m": res.uncovered_strip_m}
     kid = np.flatnonzero(slope)
-    if not len(kid):
-        return flat_pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, "slope_faces": 0, **flat_info}
     tp = v[t[kid]]
     area = _tri_plan_area(tp)
     ok = area > 1e-6
     kid, tp, area = kid[ok], tp[ok], area[ok]
     if not len(kid):
-        return flat_pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, "slope_faces": 0, **flat_info}
+        return flat_pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, "slope_faces": 0,
+                             "dropped_slivers": 0, "dropped_plan_area_m2": 0.0, **flat_info}
     wkey = np.round(v / WELD_M).astype(np.int64)
     _, wid = np.unique(wkey, axis=0, return_inverse=True)
     wid = wid.reshape(-1)
@@ -770,9 +802,10 @@ def ground_coarse_faces(verts, tris, tol: float = GROUND_TOL_M, depth: float = 0
             specs[j][3] += d
             built[j] = prism_of(specs[j]) if rnd < GROUND_FIX_ROUNDS else None
     pieces = [(pc.verts, pc.tris) for pc in built if pc is not None]
-    dropped = sum(1 for pc in built if pc is None)
+    dropped_areas = [cluster[2] for cluster, pc in zip(clusters, built) if pc is None]
     return flat_pieces + pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, **flat_info,
-                                  "slope_faces": int(len(kid)), "clusters": len(clusters), "dropped_slivers": dropped,
+                                  "slope_faces": int(len(kid)), "clusters": len(clusters),
+                                  "dropped_slivers": len(dropped_areas), "dropped_plan_area_m2": sum(dropped_areas),
                                   "slope_extra_inset_max_m": round(max((sp[3] for sp in specs), default=0.0), 4),
                                   "max_vertical_dev_m": round(max(c[4] for c in clusters), 4),
                                   "single_face_clusters": int(sum(1 for c in clusters if len(c[0]) == 1))}

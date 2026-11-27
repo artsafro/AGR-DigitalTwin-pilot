@@ -738,6 +738,24 @@ def test_section_boxes_canopy_over_pavement_is_not_a_pillar():
     assert _inside(pieces, np.array([5, 1.5, 3.1])) and _inside(pieces, np.array([5, 5, 0.05]))
 
 
+@pytest.mark.parametrize("width, depth, paved", [(4, 15, False), (10, 10, False), (4, 40, False), (4, 15, True)])
+def test_section_boxes_keep_low_share_covered_arch_open(width, depth, paved):
+    end = 30 + width
+    boxes = [((0, 0, 0), (30, depth, 20)), ((end, 0, 0), (end + 30, depth, 20)),
+             ((30, 0, 5), (end, depth, 20))]
+    if paved:
+        boxes.append(((30, 0, 0), (end, depth, 0.1)))
+    v, t = _scene_arrays(*boxes)
+    pieces, _ = uv_.build("section-boxes", v, t, model_triangles=len(t))
+    x, y_mid = 30 + width / 2, depth / 2
+    passage = [(x, y, z) for y in np.linspace(0.5, depth - 0.5, 9) for z in (1, 2.5, 4)]
+    assert sum(_inside(pieces, p) for p in passage) == 0
+    assert all(_inside(pieces, p) for p in ((15, y_mid, 2.5), (end + 15, y_mid, 2.5), (x, y_mid, 8)))
+    if paved:
+        assert _inside(pieces, (x, y_mid, 0.05))
+    assert _min_gap(pieces) >= uv_._load_builder().GAP_M - 1e-9
+
+
 def test_section_boxes_stack_repeated_storeys_and_fit_the_facade():
     """#2053: the same plan over two levels is one box, its sides on the facade (gap/2 inside), not on the grid."""
     v, t = _scene_arrays(((0.07, 0.11, 0), (10.07, 10.11, 3)), ((0.07, 0.11, 3), (10.07, 10.11, 6)))
@@ -788,6 +806,7 @@ def test_ground_coarse_faces_never_overlaps_the_bsp_part():
     t = np.vstack([t, [(k, k + 1, k + 2)]])
     pieces, info = uv_.build("ground-coarse-faces", v, t, model_triangles=len(t))
     assert info["dropped_slivers"] >= 1
+    assert info["dropped_plan_area_m2"] == pytest.approx(2.0)
     assert _min_gap(pieces) >= uv_.MERGE_GAP_M - 1e-9
 
 
