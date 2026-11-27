@@ -123,7 +123,7 @@ for the quotes, locators and context the short row leaves out. The short row lin
 
 | ID | Date | Decision | Applies to | Source |
 |---|---|---|---|---|
-| D160 | 2026-10-20 | VPM diffuse texel density lower bound is 512 px/m (SINTEZ 1.6.1), superseding only the 520 lower bound of D097; upper 1706 and NPM Ground 10-40 px/m are unchanged | `docs/domain/requirements-2026.md` | Artem “принимаю”, pilot #431, [PR #429 report §6 and proposed tasks](research/sintez-agr-checker-dissection.md#6-conflicts-with-docsdecisionsmd--docsdomain-listed-not-resolved--for-artem) |
+| D160 | 2026-10-20 | VPM diffuse texel density lower bound is 512 px/m (SINTEZ 1.6.1), superseding only the 520 lower bound of D097; upper 1706 and NPM Ground 10-40 px/m are unchanged; supersedes [D097] (VPM lower bound only) | `docs/domain/requirements-2026.md` | Artem “принимаю”, pilot #431, [PR #429 report §6 and proposed tasks](research/sintez-agr-checker-dissection.md#6-conflicts-with-docsdecisionsmd--docsdomain-listed-not-resolved--for-artem) |
 
 ## D161
 
