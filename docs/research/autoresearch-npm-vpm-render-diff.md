@@ -65,4 +65,42 @@ so a held-out check is **not measured** in this round (next target).
 
 ## Results
 
-(appended after measurement)
+**Hypothesis H125: refuted.** Review readiness is a separate status (OBSERVE, nothing kept, no PR).
+
+Harness `render_diff.py` sha256 `4ad3ba410b592ce28d9d597ebc55e370a30ed27472bdf8af8c3bb3158042be04` (same file for both
+variants; `--variant` selects). Inputs: every PNG and `renders.json` matched its folder's `SHA256SUMS.txt` (hashes in
+each receipt under `inputs_sha256`). Three runs per variant, byte-identical: V1 `bac9e2dc...35481`, V2 `d9850531...28ff`
+(full SHA-256 of the receipts `receipt_v1.json` / `receipt_v2.json` in the harness folder). Paired spread = 0.
+
+| Package | Label | V1 score | V2 score | V2 native px/m (S/E) |
+|---|---|---|---|---|
+| pilot | unlabeled | 0.000 | 0.000 | 264 / 656 (no recorded value) |
+| pilot-v006 | unlabeled | 1.705 | 1.705 | 264 / 656 |
+| **pilot-v007** | **rejected** | **0.808** | **0.808** | 264 / 656 |
+| pilot-v009 | unlabeled | 1.883 | 1.838 | 400.08 / 400.33 |
+| **pilot-v010** | **accepted** | **1.883** | **1.838** | 400.08 / 400.33 |
+
+Witnesses on v010 (synthetic, V2): N0 = 0.000; P1 = 8.962 (>= clean + 5: yes); P2 = 2.045 (> clean: yes);
+P3 = 15.983 (> clean: yes). V1: N0 0, P1 10.53, P2 2.22, P3 15.60.
+
+Keep-rule check:
+- (a) H125: **fails** in both variants. Rejected v007 scores 0.81, less than half of accepted v010 (1.84-1.88). Direction is wrong, not just under the margin.
+- (b) 3/3 identical: passes.
+- (c) witnesses: pass. The metric sees a wrong-colour cell, a seam line and a UV shift injected into the NPM render.
+- (d) scale reproduction: V1 **fails**, 432 px/m vs the recorded 400 (+8 %), because the red zero-line marker widened
+  the mask. V2 (marker excluded, recorded as variant 2) **passes**: 400.08 / 400.33 (+0.02 % / +0.08 %).
+  v007 has no recorded px/m, so (d) is **not measured** there.
+
+Variant 3 was not run. The failure is in direction, so another variant would mean tuning after seeing the labels (stop rule).
+
+**Why (observation, not a tuned result).** v007 was rejected for 0.60 m seams. Those seams are in the geometry and
+texture layout of the VPM as well as the NPM, so an NPM-vs-VPM drift metric cannot see them. All drifts here are below
+ΔE 2 (about the just-noticeable difference), so the NPM atlas follows its VPM closely in every version. The diff measures
+atlas fidelity, which the witnesses show is detectable. It does not measure the defect class Artem rejected.
+Side facts: v009 and v010 renders differ in file hashes but score identically; `pilot` NPM and VPM differ in hash but
+have ΔE 0 everywhere.
+
+**Held-out** (KPP1 v004, Vatutino / Staropetrovskiy MAF): **not measured**, because no paired FLAT renders exist.
+
+**Replay:** `uv run python docs/research/autoresearch-npm-vpm-render-diff-harness/render_diff.py --root "G:/Мой диск/AGR-evidence" --out <new.json> --variant 2`.
+Replay is limited to machines with the Drive mount. The fixture is hash-bound and the run aborts on a mismatch.
