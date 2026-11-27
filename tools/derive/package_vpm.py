@@ -13,6 +13,8 @@ unknown OKS values stay "" / null and are listed as blockers in <zip>.delivery.j
 (conflicts #2). --no-geojson (user decision 2026-10-07 [D224]): ZIP holds FBX + PNG only; --object is then optional.
 object.json: {"name": str, "placement": Placement, "glasses": {material: {...}} (optional, default: the KPP1
 clear-glass proposal)}. The ZIP and <zip>.delivery.json must not exist yet (new version, no overwrite).
+Ground VPM also reserves ground-udim.json and ground-udim.md next to the ZIP; use a separate output
+directory per Ground package. The tables come from the packed FBX and map names, not input tables.
 """
 import argparse
 import base64
@@ -103,7 +105,8 @@ def main(argv=None):
     zpath = os.path.join(pkg, "..", f"{stem}.zip")
     rpath = zpath + ".delivery.json"  # per archive, never a parent-wide report (#1682)
     gpath = os.path.join(pkg, f"{stem}.geojson")
-    for p in (zpath, rpath, rpath + '.partial', zpath + '.partial'):
+    udim = package_core.ground_udim_paths(zpath)
+    for p in (zpath, rpath, rpath + '.partial', zpath + '.partial', *udim, *(p + '.partial' for p in udim)):
         if os.path.lexists(p):
             raise FileExistsError(f"output {p} already exists; choose a new version")
     if a.no_geojson and os.path.lexists(gpath):
@@ -120,11 +123,16 @@ def main(argv=None):
         if os.path.lexists(target):
             raise FileExistsError(f"output {target} already exists; choose a new version")
 
-    existing = [f for f in os.listdir(pkg) if f != 'export_meta.json' and not f.endswith('.fbx.export_meta.json')]
+    pkg_names = sorted(os.listdir(pkg))
+    table_names = {*package_core.GROUND_UDIM_FILES, *(n + '.partial' for n in package_core.GROUND_UDIM_FILES)}
+    skipped_tables = [{'item': f, 'reason': 'Ground UDIM tables are package sidecars, not ZIP members'}
+                      for f in pkg_names if f.casefold() in table_names]
+    existing = [f for f in pkg_names if f != 'export_meta.json' and not f.endswith('.fbx.export_meta.json')
+                and f.casefold() not in table_names]
     generated = pngs if a.no_geojson else [*pngs, os.path.basename(gpath)]
     members = sorted(existing + generated)
     archive = {'name': os.path.basename(zpath), 'members': [{'name': f} for f in members],
-               'limit': package_core.LIMITS['vpm_ground' if A.endswith('_Ground') else 'vpm_oks']}
+               'limit': package_core.LIMITS['vpm_ground' if udim else 'vpm_oks']}
     binding, problems = export_binding(pkg, archive['members'], export_records(pkg, meta_path, include_lights=True))
     if problems:
         raise ValueError('; '.join(problems))
@@ -163,6 +171,8 @@ def main(argv=None):
         written, _ = package_core._write_zip(pkg, archive, zpath, expected_sha256=expected)
         if written is None:
             raise ValueError(f'archive exceeds {archive["limit"]} bytes')
+        for path in udim:
+            rollback.callback(_remove_owned_file, path)
         rollback.callback(_remove_owned_file, written)
 
         blockers = ([k for k, v in props.items() if v == "" and k != "other"] + ["geometry.coordinates (MSK-77)"]
@@ -172,6 +182,8 @@ def main(argv=None):
                   "export_binding": binding, "passed": False, "status": "packaged_not_validated",
                   "geojson_proposals": ["Glasses values (colour/transparency/refraction/roughness/metallicity)"],
                   "address_placeholder": A}
+        if skipped_tables:
+            report['skipped'] = skipped_tables
         if props is not None:
             report['placement'] = obj['placement'].model_dump(mode='json')
             if obj['placement'].height_system == 'unknown':

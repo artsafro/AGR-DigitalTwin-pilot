@@ -2,6 +2,9 @@
 
 Status: superseded by docs/research/roadmap-149-audit.md (2026-11-24)
 
+> **Historical snapshot (#1868).** Proposals, open questions and next tasks below (§9-§11) are not live
+> instructions. Owner of the closure: `docs/research/roadmap-149-audit.md`; actionable queue: `docs/backlog.md`.
+
 Research snapshot: upstream `artsafro/AGR-DigitalTwin` main `ea7ecce` (2026-10-15), pilot main `5ff8015`,
 `hermes_kanban` as of 2026-10-15 15:30.
 Scope: a grilling session between the user and Claude Code (30 questions, 2026-10-15), written up so that the pilot

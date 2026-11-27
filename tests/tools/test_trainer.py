@@ -475,3 +475,76 @@ def test_cli_check_refuses_practice_ready_path_outside_drive(tmp_path):
     p = _cli("--bank", str(bad), "check")
     assert p.returncode == 2
     assert "G:/Мой диск/AGR-" in p.stderr and "C:/x/scratch/a.dwg" in p.stderr
+
+
+# ---------------------------------------------------------------- #1955: held-out keys dir isolation by context
+def _run_dir(tmp_path, commands, events=True):
+    run = tmp_path / "run"
+    (run / "built").mkdir(parents=True)
+    (run / "run.json").write_text('{"schema": "trainer-run/1"}', encoding="utf-8")
+    if events:
+        lines = [json.dumps({"type": "item.completed", "item": {"type": "command_execution", "command": c}})
+                 for c in commands]
+        (run / "events.jsonl").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return run
+
+
+@pytest.mark.parametrize("cmd", [
+    r'type "G:\Мой диск\AGR-evidence\1855-trainer-v0\keys\heldout-key-v001.json"',
+    "cat '/g/Мой диск/AGR-evidence/1855-trainer-v0/KEYS/heldout-sections-v002.json'",
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/keys",
+    # review #1970 P1-2: key reads without the literal keys-dir string
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && cat keys/heldout-key-v001.json',
+    'Get-Content (Join-Path "G:/Мой диск/AGR-evidence/1855-trainer-v0" "keys/heldout-key-v001.json")',
+    'cat "G:/Мой диск/AGR-evidence/1855-trainer-v0/k"*/heldout-key-v001.json',
+    'find "G:/Мой диск/AGR-evidence" -name "heldout-*.json" -exec cat {} +',
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls k*',
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0"; Get-ChildItem keys',
+    "certutil -hashfile x.json | findstr 843197137db10cdc",
+    # review #1970 r2 P1-1: recursive reads of a parent of the keys dir (fail-closed allowlist: only .../bank)
+    'rg -n roof "G:/Мой диск/AGR-evidence/1855-trainer-v0"',
+    "Get-ChildItem -Recurse 'G:/Мой диск/AGR-evidence/1855-trainer-v0' | Get-Content",
+    "rg -uu 843197 'G:/Мой диск/AGR-evidence'",
+    'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0" && ls bank/g22-k2-stage1/k2_v002r1',
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/../",
+    "ls G:/Мой диск/AGR-evidence/1855-trainer-v0/bankX"])
+def test_holdout_audit_fails_a_run_whose_builder_read_the_keys_dir(tmp_path, cmd):
+    run = _run_dir(tmp_path, ["ls inputs", cmd])
+    assert T.key_dir_reads(run) == [cmd]
+    rep = T.score(next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1"), str(run / "built"), tmp_path / "w")
+    assert rep["steps"]["holdout"]["status"] == "fail" and rep["first_failing_step"] == "holdout"
+    assert rep["passed"] is False
+
+
+def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
+    e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
+    run = _run_dir(tmp_path, ["ls inputs", "type G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/README.md",
+                              'cd "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank" && ls g22-k2-stage1/k2_v002r1',
+                              "rg -n roof 'G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/g22-k2-stage1'",
+                              r'dir G:\Мой диск\AGR-evidence\1855-trainer-v0\bank',
+                              "python tools/trainer/kit.py --keep-going"])
+    assert T.key_dir_reads(run) == []
+    assert T.score(e, str(run / "built"), tmp_path / "w")["steps"]["holdout"]["status"] == "pass"
+    (tmp_path / "loose").mkdir()
+    assert T.score(e, str(tmp_path / "loose"), tmp_path / "w2")["steps"]["holdout"]["status"] == "not_applicable"
+
+
+def test_holdout_audit_errors_when_a_run_has_no_transcript(tmp_path):
+    run = _run_dir(tmp_path, [], events=False)
+    e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
+    rep = T.score(e, str(run / "built"), tmp_path / "w")
+    assert rep["steps"]["holdout"]["status"] == "error" and rep["passed"] is False
+
+
+def test_task_text_never_names_the_keys_dir():
+    e = next(x for x in bank()["etalons"] if x["id"] == "g22-k2-stage1")
+    with pytest.raises(T.TrainerError, match="keys"):
+        T.task_text(dict(e, task=e["task"] + "\nsee " + r"G:\AGR-evidence\1855-trainer-v0\keys" + "\\"), Path("i"), Path("o"))
+
+
+def test_scrub_hides_the_scorer_that_names_the_keys_dir(tmp_path):
+    wt = _repo(tmp_path, {"tools/trainer/trainer.py": f"KEYS_DIR = {T.KEYS_DIR!r}", "docs/clean.md": "x",
+                          "tests/t.py": r"p = 'G:\AGR-evidence\1855-trainer-v0\KEYS\k.json'"})
+    removed = T.scrub_worktree(wt, _E)
+    assert "tools/trainer/" in removed and any(r.startswith("tests/t.py") for r in removed)
+    assert sorted(p.name for p in wt.rglob("*") if p.is_file() and ".git" not in p.parts) == ["clean.md"]

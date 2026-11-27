@@ -27,7 +27,7 @@ SCRIPTS = {"openings": "tools/source/openings.py", "validate": "tools/qa/validat
            "npm-ids": "tools/derive/npm_ids.py", "window-generate": "tools/windows/generate.py",
            "railing": "tools/blender/railing.py",
            "trainer": "tools/trainer/trainer.py",  # #1855 [D387]: etalon bank, practice run, score, ledger
-           "library": "tools/library/publish.py",  # #1743: publish|accept|reject [D372, D368-D371]
+           "library": "tools/library/publish.py",  # #1743, #1980: publish|accept|reject|reindex|check-job [D372, D368-D371, D421]
            # open-review (#1740): skeleton stage review-scene; copy to C:/x/review-<job>/, new Max 2026 or Blender
            "open-review": "tools/open_review_scene.py"}
 
@@ -61,6 +61,7 @@ def _dispatch(args: list[str]) -> int:
         print("  vpm-to-npm         dt derive atlas + dt derive npm (stop on failure)")
         print("  maf-npm-to-vpm     --plan: inspect the MAF skeleton (no conversion)")
         print("  body               stage-1 body core tools/methods/body/body_lattice.py in Blender (#1736)")
+        print("  scene prepare      step 0: split a Revit FBX into layers for Artem's Max correction [D390] (#1867)")
         print("  ucx                UCX Main/Ground: ucx_build -> readback -> ucx10_core gap + V010 [D330]")
         for name, pointer in STUBS.items():
             print(f"  {name:18} unavailable: {pointer}")
@@ -101,6 +102,10 @@ def _dispatch(args: list[str]) -> int:
         from dt_ai.core.blender_runner import blender_command
         script = Path(__file__).resolve().parents[3] / "tools/methods/body/body_lattice_blender.py"
         return subprocess.run(blender_command(script, tail, executable=exe), check=False).returncode
+    if args and args[0] == "scene":
+        # #1867 step 0 [D390]: propose the source split into layers; core dt_ai.intake.scene_prepare
+        from dt_ai.intake import scene_prepare
+        return scene_prepare.main(args[1:])
     if args and args[0] == "ucx":
         # #1404 [D330]: one UCX command; build core ucx_build, gap core ucx10_core (also AGR Tools in Max)
         from dt_ai.geometry import ucx_command

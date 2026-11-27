@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "kind": "cold_entry_probe_runs",
+  "probes": "tests/fixtures/cold_entry/probes_1886.json",
+  "runner": "claude -p (Claude Code 2.1.326), read-only tools, fresh detached worktree, --no-session-persistence",
+  "evidence": "G:/Мой диск/AGR-evidence/1895-one-door/ (raw JSON + SHA256SUMS.txt)",
+  "context_tokens": "input + cache_read + cache_creation summed over all turns until the answer (usage of the run)",
+  "runs": {
+    "before": {
+      "sha": "cf4efcbba169541d7163a83f7b28d054f0649db1",
+      "npm-oks-body": {"cell": "oks-npm", "rule": ["D373", "D336", "D312"], "first_command": "uv run agr body PLAN.json NEW_OUT_DIR", "check": "tools/qa/mesh_quality_observe.py stage + dt qa xview", "right": {"cell": true, "rule": true, "first_command": true, "check": true}, "turns": 13, "context_tokens": 722684, "files_read": 9, "sha256": "cc0e25b4fbb35a6e"},
+      "ground-npm": {"cell": "ground-npm", "rule": ["D293"], "first_command": "uv run agr ground site SPEC NEW_OUT", "check": "OBJ readback via ground-report.json; dt qa xview at readback", "right": {"cell": true, "rule": true, "first_command": true, "check": true}, "turns": 13, "context_tokens": 883912, "files_read": 9, "sha256": "f6dec1487b7253e5"}
+    },
+    "after": {
+      "sha": "2007503dc020b1b1a0ccf96e3a1fb0546902840a",
+      "npm-oks-body": {"cell": "oks-npm", "rule": ["D373", "D392"], "first_command": "uv run agr body PLAN.json NEW_OUT_DIR", "check": "uv run dt qa xview body.fbx", "right": {"cell": true, "rule": true, "first_command": true, "check": true}, "turns": 10, "context_tokens": 573054, "files_read": 7, "sha256": "3cbd1385ebd784c4"},
+      "ground-npm": {"cell": "ground-npm", "rule": ["D293"], "first_command": "agr ground site SPEC.json NEW_OUT", "check": "ground-report.json: readback of the written OBJ + project zero check", "right": {"cell": true, "rule": true, "first_command": true, "check": true}, "turns": 12, "context_tokens": 532093, "files_read": 8, "sha256": "ea30eb190bc29637"}
+    }
+  }
+}

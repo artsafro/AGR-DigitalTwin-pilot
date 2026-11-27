@@ -72,6 +72,18 @@ Update search visibility with `uv run python tools/architecture/search_noise.py 
 Check ownership and status with `uv run python tools/architecture/search_noise.py --check-docs`.
 Finished plans stay readable by direct link but are hidden from ordinary agent search.
 
+## Planning owners
+
+One owner per planning responsibility (#1868, #1869, #1870); the others are historical and point to it.
+
+| Responsibility | Owner | Historical |
+|---|---|---|
+| Idea intake | `hermes_kanban/moltbook/ideas.md` (outside this repo) | - |
+| Actionable queue | [backlog.md](../backlog.md) | - |
+| Roadmap record | [research/roadmap-149-audit.md](../research/roadmap-149-audit.md) | [research/capability-roadmap.md](../research/capability-roadmap.md) |
+| AGR Tools scope [D393] | [agr-tools/OVERVIEW.md](../agr-tools/OVERVIEW.md) | [plans/agr-tools-1.x.md](../plans/agr-tools-1.x.md), [plans/agr-tools-suite.md](../plans/agr-tools-suite.md), [plans/manual-mode-no-ai.md](../plans/manual-mode-no-ai.md) |
+| MCP design, shipped [D394] | `src/agr_mcp/README.md`, `agr-mcp` in [agents/CAPABILITIES.md](../agents/CAPABILITIES.md) | [plans/agr-mcp-target.md](../plans/agr-mcp-target.md) (closed target), [plans/agr-mcp.md](../plans/agr-mcp.md) |
+
 ## Documentation ownership
 
 | Topic | Owner | Related |
@@ -95,7 +107,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | agents/roles | [agents/ROLES.md](../agents/ROLES.md) |  |
 | agents/skeleton-harvest/2026-11-23 | [agents/skeleton-harvest/2026-11-23.md](../agents/skeleton-harvest/2026-11-23.md) |  |
 | agents/skeleton-template-json | [agents/skeleton.template.json](../agents/skeleton.template.json) |  |
-| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) |  |
+| agents/skeletons | [agents/SKELETONS.md](../agents/SKELETONS.md) | [agents/SKELETONS-stages.md](../agents/SKELETONS-stages.md) |
 | agents/skeletons-json | [agents/skeletons.json](../agents/skeletons.json) |  |
 | agents/task-intake | [agents/task-intake.md](../agents/task-intake.md) |  |
 | agents/triage-labels | [agents/triage-labels.md](../agents/triage-labels.md) |  |
@@ -104,7 +116,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | agr-tools/assets | [agr-tools/assets.md](../agr-tools/assets.md) |  |
 | agr-tools/flow-svg | [agr-tools/flow.svg](../agr-tools/flow.svg) |  |
 | agr-tools/guide | [agr-tools/GUIDE.md](../agr-tools/GUIDE.md) |  |
-| agr-tools/overview | [agr-tools/OVERVIEW.md](../agr-tools/OVERVIEW.md) |  |
+| agr-tools/overview | [agr-tools/OVERVIEW.md](../agr-tools/OVERVIEW.md) | [plans/agr-tools-1.x.md](../plans/agr-tools-1.x.md), [plans/agr-tools-suite.md](../plans/agr-tools-suite.md), [plans/manual-mode-no-ai.md](../plans/manual-mode-no-ai.md) |
 | agr-tools/release-0-9-0-acceptance | [agr-tools/release-0.9.0-acceptance.md](../agr-tools/release-0.9.0-acceptance.md) |  |
 | agr/adapter-extraction | [agr/ADAPTER_EXTRACTION.md](../agr/ADAPTER_EXTRACTION.md) |  |
 | agr/adapter-report | [agr/ADAPTER_REPORT.md](../agr/ADAPTER_REPORT.md) |  |
@@ -186,6 +198,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | architecture/flora-route-events-yaml | [architecture/flora-route.events.yaml](flora-route.events.yaml) |  |
 | architecture/ground-contexts-yaml | [architecture/ground-contexts.yaml](ground-contexts.yaml) |  |
 | architecture/ground-route-events-yaml | [architecture/ground-route.events.yaml](ground-route.events.yaml) |  |
+| architecture/hygiene-profile-yaml | [architecture/hygiene-profile.yaml](hygiene-profile.yaml) |  |
 | architecture/maf-contexts-yaml | [architecture/maf-contexts.yaml](maf-contexts.yaml) |  |
 | architecture/maf-route-events-yaml | [architecture/maf-route.events.yaml](maf-route.events.yaml) |  |
 | architecture/npm-oks-route-events-yaml | [architecture/npm-oks-route.events.yaml](npm-oks-route.events.yaml) |  |
@@ -361,9 +374,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | pipeline-tools | [pipeline-tools.md](../pipeline-tools.md) |  |
 | planning/agr-mcp-target-design | [plans/agr-mcp-target.md](../plans/agr-mcp-target.md) | [plans/agr-mcp.md](../plans/agr-mcp.md) |
 | planning/agr-tools-command-catalogue | [plans/agr-tools-suite.json](../plans/agr-tools-suite.json) |  |
-| planning/agr-tools-product-roadmap | [plans/agr-tools-1.x.md](../plans/agr-tools-1.x.md) | [plans/agr-tools-suite.md](../plans/agr-tools-suite.md) |
 | planning/capability-roadmap-149-closure | [research/roadmap-149-audit.md](../research/roadmap-149-audit.md) | [research/capability-roadmap.md](../research/capability-roadmap.md) |
-| planning/manual-mode-inventory | [plans/manual-mode-no-ai.md](../plans/manual-mode-no-ai.md) |  |
 | planning/unsolved-work-backlog | [backlog.md](../backlog.md) |  |
 | plans/425-maf-route-2026-11 | [plans/425-maf-route-2026-11.md](../plans/425-maf-route-2026-11.md) |  |
 | plans/flora-426-route-2026-11 | [plans/flora-426-route-2026-11.md](../plans/flora-426-route-2026-11.md) |  |
@@ -398,6 +409,7 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-trainer-artifact-first | [research/autoresearch-trainer-artifact-first.md](../research/autoresearch-trainer-artifact-first.md) |  |
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
@@ -423,6 +435,8 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/flora-texture-diagnosis | [research/flora-texture-diagnosis.md](../research/flora-texture-diagnosis.md) |  |
 | research/geojson-d220-customer-files | [research/geojson-d220-customer-files.md](../research/geojson-d220-customer-files.md) |  |
 | research/geojson-overflow-caller-exposure | [research/geojson-overflow-caller-exposure.md](../research/geojson-overflow-caller-exposure.md) |  |
+| research/ground-npm-atlas-fbx-roundtrip | [research/ground-npm-atlas-fbx-roundtrip.md](../research/ground-npm-atlas-fbx-roundtrip.md) |  |
+| research/ground-site-moskovsky-gap-evidence | [research/ground-site-moskovsky-gap-evidence.md](../research/ground-site-moskovsky-gap-evidence.md) |  |
 | research/guard-vs-dcg-2026-11 | [research/guard-vs-dcg-2026-11.md](../research/guard-vs-dcg-2026-11.md) |  |
 | research/ifc-intake-src-contract | [research/ifc-intake-src-contract.md](../research/ifc-intake-src-contract.md) |  |
 | research/job-artifact-name-contract | [research/job-artifact-name-contract.md](../research/job-artifact-name-contract.md) |  |
@@ -480,6 +494,10 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | research/telegram-3dsmax-chat-2026-11 | [research/telegram-3dsmax-chat-2026-11.md](../research/telegram-3dsmax-chat-2026-11.md) |  |
 | research/toolchain-smoke-2026-10-15 | [research/toolchain-smoke-2026-10-15.md](../research/toolchain-smoke-2026-10-15.md) |  |
 | research/tow02-hand-finish-face-diff | [research/tow02-hand-finish-face-diff.md](../research/tow02-hand-finish-face-diff.md) |  |
+| research/trainer-artifact-first-r95/analyze-py | [research/trainer-artifact-first-r95/analyze.py](../research/trainer-artifact-first-r95/analyze.py) |  |
+| research/trainer-artifact-first-r95/make-bank-py | [research/trainer-artifact-first-r95/make_bank.py](../research/trainer-artifact-first-r95/make_bank.py) |  |
+| research/trainer-artifact-first-r95/receipt-json | [research/trainer-artifact-first-r95/receipt.json](../research/trainer-artifact-first-r95/receipt.json) |  |
+| research/trainer-artifact-first-r95/series-py | [research/trainer-artifact-first-r95/series.py](../research/trainer-artifact-first-r95/series.py) |  |
 | research/trainer-g22-adapter-r97/analyze-py | [research/trainer-g22-adapter-r97/analyze.py](../research/trainer-g22-adapter-r97/analyze.py) |  |
 | research/trainer-g22-adapter-r97/informational-json | [research/trainer-g22-adapter-r97/informational.json](../research/trainer-g22-adapter-r97/informational.json) |  |
 | research/trainer-g22-adapter-r97/make-candidate-py | [research/trainer-g22-adapter-r97/make_candidate.py](../research/trainer-g22-adapter-r97/make_candidate.py) |  |
@@ -514,6 +532,8 @@ Finished plans stay readable by direct link but are hidden from ordinary agent s
 | sources/vyatskaya-tow02 | [sources/vyatskaya-tow02.md](../sources/vyatskaya-tow02.md) |  |
 | tools/max-scripts | [tools/max-scripts.md](../tools/max-scripts.md) |  |
 | tools/openings | [tools/openings.md](../tools/openings.md) |  |
+| trainer/entry-cost-1938 | [trainer/entry-cost-1938.md](../trainer/entry-cost-1938.md) |  |
+| trainer/entry-cost-1938-json | [trainer/entry-cost-1938.json](../trainer/entry-cost-1938.json) |  |
 | trainer/etalons | [trainer/ETALONS.md](../trainer/ETALONS.md) |  |
 | trainer/etalons-json | [trainer/etalons.json](../trainer/etalons.json) |  |
 | trainer/ledger-json | [trainer/ledger.json](../trainer/ledger.json) |  |

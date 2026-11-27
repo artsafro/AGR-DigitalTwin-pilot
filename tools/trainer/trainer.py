@@ -7,6 +7,7 @@ Pattern: n/a | new-case: trainer v0 - practice-run recorder and step scorer over
     uv run agr trainer score ETALON --built FILE.fbx|DIR --out NEW.json [--png NEW.png] [--vlm] [--date D]
     uv run agr trainer calibrate --out NEW_DIR    # accepted vs rejected of every scorable etalon
     uv run agr trainer ledger [--add SCORE.json --lane L --run RUN_DIR]   # headline: share passed first try
+    uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR   # [D415] A/B probe
 
 A practice run gets ONLY the task text and the source copies (never the key, rejected versions or the job's
 history: the practice dir is `git archive` + scrub + `git init` with one commit, no origin). Score steps run the existing checkers in
@@ -34,7 +35,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BANK = ROOT / "docs/trainer/etalons.json"
 LEDGER = ROOT / "docs/trainer/ledger.json"
-STEPS = ("artifact", "readback", "bounds", "topology", "form", "form_v2", "vlm", "package")
+STEPS = ("holdout", "artifact", "readback", "bounds", "topology", "form", "form_v2", "vlm", "package")
 STATUSES = {"pass", "fail", "not_run", "not_measured", "error", "not_applicable"}
 TOL = {"bounds_m": 0.10, "form_p95_m": 0.05, "form_max_m": 0.30, "quad_share_drop": 0.02}
 LANES = {"codex": {"model": "gpt-6.1-terra"}}
@@ -171,7 +172,8 @@ def secret_tokens(e):
 
 
 # The bank itself and the form-check pair registry name every key; a practice worktree never contains them.
-ALWAYS_HIDDEN = ("docs/trainer", "tools/qa/form_check/pairs_v1.json")
+# tools/trainer (the scorer) names the held-out KEYS_DIR (#1955: isolation by context), so it is hidden too.
+ALWAYS_HIDDEN = ("docs/trainer", "tools/qa/form_check/pairs_v1.json", "tools/trainer")
 
 
 def scan_tokens(e):
@@ -184,6 +186,7 @@ def scan_tokens(e):
             toks |= {p, p.replace("/", "\\"), Path(p).name}
         if item.get("sha256"):
             toks |= {item["sha256"], item["sha256"][:12]}
+    toks |= {KEYS_DIR, KEYS_DIR.replace("/", "\\"), KEYS_DIR.replace("/", "\\\\")}  # #1955: never name the keys dir
     return sorted(t.lower() for t in toks if len(t) >= 6)
 
 
@@ -276,9 +279,80 @@ def task_text(e, inputs_dir, out_dir):
                   "report the source hash and reason, and do not escalate or launch a host fallback."]
     text = "\n".join(lines) + "\n"
     leaks = [t for t in secret_tokens(e) if t in text]
+    if KEYS_DIR in _norm(text):
+        leaks.append(KEYS_DIR)
     if leaks:
         raise TrainerError(f"task text would leak the key: {sorted(leaks)}")
     return text
+
+
+# #1955 (orchestrator 2026-11-26): the scorer-only held-out keys (form_v2 key + sections) live on Drive under this
+# folder, same Windows account as the builder. Isolation is by context, not ACL: the prompt never names it and the
+# scorer fails any run whose builder transcript touches it (`holdout` step). A real ACL is an open item for Artem.
+KEYS_DIR = "1855-trainer-v0/keys"
+
+
+def _norm(s):
+    return str(s).replace("\\\\", "/").replace("\\", "/").lower()
+
+
+def key_markers():
+    """Lower-case strings that identify a held-out key read without the literal KEYS_DIR (review #1970 P1-2:
+    `cd .../1855-trainer-v0 && cat keys/...`, Join-Path, globs, `find -name heldout-*`): KEYS_DIR, the `heldout-`
+    stem, and the basename + pinned sha prefix of every pairs_v1 key/sections file under KEYS_DIR."""
+    marks = {KEYS_DIR, "heldout-"}
+    cfg = json.loads((ROOT / "tools/qa/form_check/pairs_v1.json").read_text(encoding="utf-8"))
+    for pair in cfg.get("pairs", []):
+        for f in ("key", "sections"):
+            if KEYS_DIR in _norm(pair.get(f, "")):
+                marks.add(_norm(pair[f]).rsplit("/", 1)[-1])
+                if pair.get(f + "_sha"):
+                    marks.add(str(pair[f + "_sha"]).lower())
+    return marks
+
+
+_KEYS_PARENT = KEYS_DIR.split("/")[0]
+# a `keys` path component, or a `k...` component carrying a glob (`k*`, `k"*`, `ke?s`); bank dirs such as
+# `k2_v002r1` carry no glob and stay clean
+_KEYS_COMPONENT = re.compile(r"""(?:^|[\s/"'(,=])(?:keys|k[\w"'-]*[*?\[][^/\s"')]*)(?=[/\s"')]|$)""")
+# review #1970 r2 P1-1: fail-closed allowlist. Recursive tools (rg, Get-ChildItem -Recurse, find) aimed at a parent
+# of the keys dir read the key without naming it, so `1855-trainer-v0` must be directly followed by the `/bank`
+# component and `agr-evidence` by `/1855-trainer-v0/bank`; any other mention (bare parent, `bankX`) is a read.
+# `..` after either root is a read too (`bank/../keys`). Cost: cd-to-parent then a relative bank path also fails.
+_END = r"""(?=[/\s"')|;&]|$)"""
+_PARENT_NOT_BANK = re.compile(r"1855-trainer-v0(?!/bank" + _END + ")|agr-evidence(?!/1855-trainer-v0/bank" + _END + ")")
+_DOTDOT = re.compile(r"(?:agr-evidence|1855-trainer-v0)/[^\s\"']*(?:^|/)\.\.(?:/|[\s\"']|$)")
+
+
+def _reads_key(cmd, marks):
+    c = _norm(cmd)
+    if any(m in c for m in marks):
+        return True
+    if _PARENT_NOT_BANK.search(c) or _DOTDOT.search(c):
+        return True
+    return _KEYS_PARENT in c and bool(_KEYS_COMPONENT.search(c))  # `1855-trainer-v0` + a keys component
+
+
+def key_dir_reads(run_dir):
+    """Builder commands in run_dir/events.jsonl that read the held-out keys (any slash form or case; see
+    key_markers and _KEYS_COMPONENT) -> list. None when the run has no transcript."""
+    ev = Path(run_dir) / "events.jsonl"
+    if not ev.is_file():
+        return None
+    _, cmds, _ = parse_events(ev.read_text(encoding="utf-8", errors="replace").splitlines())
+    marks = key_markers()
+    return [c for c in cmds if _reads_key(c, marks)]
+
+
+def holdout_step(built):
+    """A trainer run dir (the nearest ancestor of built with run.json) must have a transcript free of KEYS_DIR reads."""
+    run = next((p for p in Path(built).resolve().parents if (p / "run.json").is_file()), None)
+    if run is None:
+        return step("not_applicable", reason="not inside a trainer run dir (no run.json): no builder transcript")
+    reads = key_dir_reads(run)
+    if reads is None:
+        return step("error", reason=f"trainer run without events.jsonl: {run}")
+    return step("fail" if reads else "pass", key_dir_reads=len(reads), commands=reads[:5])
 
 
 def parse_events(lines):
@@ -334,6 +408,39 @@ def new_code_lines(wt):
     return total, files
 
 
+def apply_overlay(wt, variant_dir, e):
+    """[D415] Lay a harness variant (repo-relative files) over the practice tree and commit it as a second
+    commit, so the agent's own diff (new_code_lines) stays separate. Refused (TrainerError) when a file names the
+    key or a rejected version. Empty variant = baseline, no commit. -> {rel: sha256}."""
+    from trainer_ab import AbError, variant_files
+    try:
+        files = variant_files(variant_dir)
+    except AbError as exc:
+        raise TrainerError(str(exc)) from exc
+    if not files:
+        return {}
+    tokens = scan_tokens(e)
+    for rel in files:
+        low = (Path(variant_dir) / rel).read_bytes().decode("utf-8", errors="replace").lower()
+        found = [t for t in tokens if t in low]
+        if found:
+            raise TrainerError(f"harness variant names the key: {rel} contains {found[0]!r}")
+    for rel in files:
+        dst = Path(wt) / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(Path(variant_dir) / rel, dst)
+    env = {**os.environ, "GIT_AUTHOR_NAME": "trainer", "GIT_AUTHOR_EMAIL": "trainer@local",
+           "GIT_COMMITTER_NAME": "trainer", "GIT_COMMITTER_EMAIL": "trainer@local"}
+    for args in (["add", "-A", "-f"], ["commit", "-q", "--no-verify", "--allow-empty", "-m", "harness variant"]):
+        subprocess.run(["git", "-C", str(wt), *args], check=True, capture_output=True, env=env)
+    return files
+
+
+def origin_main_head():
+    return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
 def cmd_run(a, bank):
     e = etalon(bank, a.etalon)
     if not e["practice_ready"]:
@@ -358,10 +465,10 @@ def cmd_run(a, bank):
         shutil.copyfile(s["path"], dst)
         if sha256(dst) != s["sha256"]:
             raise TrainerError(f"source hash mismatch: {s['path']}")
-    head = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "origin/main"], capture_output=True, text=True,
-                          check=True).stdout.strip()
+    head = getattr(a, "head", None) or origin_main_head()
     # archive -> scrub -> git init + one commit: no shared index/history/refs with ROOT, no origin
     scrubbed = practice_tree(ROOT, head, wt, e)
+    overlay = apply_overlay(wt, a.overlay, e) if getattr(a, "overlay", None) else None
     (out / "prompt.txt").write_text(text, encoding="utf-8")
     cmd = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--disable", "memories", "-m",
            LANES[a.lane]["model"], "-c", "model_reasoning_effort=high", "--dangerously-bypass-approvals-and-sandbox",
@@ -388,6 +495,7 @@ def cmd_run(a, bank):
            "new_code_lines_outside_hooks": code, "new_code_files": code_files,
            "built_files": sorted(p.name for p in built.iterdir()), "hidden_repo_paths": e.get("hidden_repo_paths", []),
            "scrubbed_files": scrubbed,
+           "harness_variant": None if overlay is None else {"dir": str(a.overlay).replace("\\", "/"), "files": overlay},
            "last_message": (out / "last.txt").read_text(encoding="utf-8", errors="replace")[-2000:]
            if (out / "last.txt").exists() else ""}
     (out / "run.json").write_text(json.dumps(rec, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -454,8 +562,10 @@ def form_step(dev):
 
 
 def score_value(steps):
-    """Passed-step share, then the form deviation as tie-break (lower is better). Used for ranking only."""
-    counted = [s for s in STEPS if s in steps and steps[s]["status"] != "not_applicable"]
+    """Passed-step share, then the form deviation as tie-break (lower is better). Used for ranking only.
+    `holdout` is a gate (first_failing_step/passed), not a quality step: kept out of the share so earlier scores
+    stay comparable."""
+    counted = [s for s in STEPS if s in steps and s != "holdout" and steps[s]["status"] != "not_applicable"]
     passed = sum(steps[s]["status"] == "pass" for s in counted)
     p95 = steps.get("form", {}).get("p95_m")
     return round(passed / len(counted), 4) if counted else 0.0, (p95 if isinstance(p95, (int, float)) else math.inf)
@@ -506,7 +616,7 @@ def score(e, built, out_dir, vlm=False, allow_key=False):
     work.mkdir(parents=True, exist_ok=False)
     key = Path(e["key"]["path"])
     fbx, zip_ = pick_built(built, e)
-    steps = {}
+    steps = {"holdout": holdout_step(built)}
     if fbx is None or not fbx.is_file():
         steps["artifact"] = step("fail", reason="no FBX in the built result")
     else:
@@ -755,6 +865,14 @@ def main(argv=None):
     lg.add_argument("--lane")
     lg.add_argument("--run")
     lg.add_argument("--date", default=dt.date.today().isoformat())
+    ab = sub.add_parser("ab", help="[D415] A/B probe of one harness edit on one etalon")
+    ab.add_argument("etalon")
+    ab.add_argument("--ab", nargs=2, metavar=("OLD_DIR", "NEW_DIR"), required=True)
+    ab.add_argument("--scope", required=True, help="INVARIANT (entry, context, tools) or DOMAIN (OKS/Ground/...)")
+    ab.add_argument("--lane", default="codex")
+    ab.add_argument("--out", required=True)
+    ab.add_argument("--timeout-s", type=int, default=1800)
+    ab.add_argument("--dry-run", action="store_true")
     ap.add_argument("--bank", default=str(BANK))
     a = ap.parse_args(argv)
     try:
@@ -765,6 +883,13 @@ def main(argv=None):
             return 0
         if a.cmd == "run":
             return cmd_run(a, bank)
+        if a.cmd == "ab":
+            import trainer_ab
+            if a.lane not in LANES:
+                raise TrainerError(f"unknown lane {a.lane!r}; known: {sorted(LANES)}")
+            a.old, a.new = a.ab
+            return trainer_ab.cmd_ab(a, bank, run_fn=cmd_run, score_fn=lambda e, b, w: score(e, b, w),
+                                     head_fn=origin_main_head)
         if a.cmd == "score":
             e = etalon(bank, a.etalon)
             out = Path(a.out).resolve()
@@ -802,7 +927,7 @@ def main(argv=None):
                 LEDGER.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
             print(json.dumps(headline(data["rows"])))
             return 0
-    except TrainerError as exc:
+    except ValueError as exc:  # TrainerError, trainer_ab.AbError
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     return 2

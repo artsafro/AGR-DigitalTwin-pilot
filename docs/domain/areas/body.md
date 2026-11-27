@@ -5,6 +5,11 @@ Area: exterior surface, roof, terraces, parapets and inset slabs. Profiles: NPM 
 Out: window/door construction, decor, UV/atlas and texture production, UCX construction,
 Ground, derivation and packaging. Their interfaces appear only where they constrain BODY.
 
+How stage 1 is built: only the lattice, `agr body PLAN NEW_OUT` (`tools/methods/body/body_lattice.py`) [D373],
+in every profile [D392]; a bad mesh is rebuilt from a fixed plan, never repaired. Older body methods cited below
+(shell, kernel prisms, VARIANTS R14) are superseded for stage 1. Sokolniki NPM body v006
+was accepted [D409] (PR #1833), satisfying the archive condition in [conflict 51](../conflicts.md).
+
 Readiness: [roadmap §4 and §7.1](../../research/capability-roadmap.md#4-coverage-matrix-upstream-main-ea7ecce)
 records BODY at **L3** through user-accepted cases, not official AGR acceptance. L0 means no
 operational coverage; L1 is rule knowledge, L2 is self-checking, L3 is user acceptance on a real
@@ -67,7 +72,7 @@ ELV/KPP1/PSU275 evidence: [report](../../../jobs/master-topology-1420/REPORT.md)
 OKS modelling split [D336]: which parts are inset elements (windows, stained glass,
 roof, flashings, posts), which are texture (panels, with a seam), the per-project
 plinth choice and the `Modelling split [D336]:` job-report line are listed in
-[SKELETONS.md](../../agents/SKELETONS.md#oks-modelling-split-d336). The check above is
+[SKELETONS.md](../../agents/SKELETONS-stages.md#oks-modelling-split-d336). The check above is
 per object: inset elements pass or fail on their own; no check may require
 welding them into the body.
 

@@ -245,6 +245,186 @@ def _rg(root):
 ARCHIVE_SECTION = "## Hidden from search (still in the tree)\n"
 
 
+@pytest.mark.parametrize("case", ["exact", "sibling", "overlap", "entry", "stale", "directory", "outside", "duplicate"])
+def test_live_subtree_archive_exception_is_exact(tmp_path, case):
+    old = "jobs/DONE/open-1/pilot/old.json"
+    sibling = "jobs/DONE/open-1/pilot/old-copy.json"
+    exception = {"directory": old.rsplit("/", 1)[0], "outside": "jobs/DONE/STATE.md"}.get(case, old)
+    config = CONFIG + f"    archive_exceptions:\n      - {exception}\n"
+    if case == "overlap":
+        config += "  - path: jobs/DONE/open-1/pilot\n    ru: другая защита\n"
+    if case == "duplicate":
+        config += f"      - {exception}\n"
+    index = ARCHIVE_SECTION + ("" if case == "stale" else f"- `{old}` — Historical receipt.\n")
+    if case == "sibling":
+        index += f"- `{sibling}` — Still protected.\n"
+    root = _repo(tmp_path, {
+        old: "old", sibling: "sibling", "docs/ARCHIVE.md": index,
+        "AGENTS.md": f"Read `{old}`.\n" if case == "entry" else "# Entry\n",
+    }, config=config)
+    if case == "exact":
+        state = sn.state(root)
+        assert set(state["archive"]) == {old}
+        assert not {old, sibling} & set(state["data"])
+    else:
+        match = "explicitly live" if case in {"sibling", "overlap", "entry"} else "archive_exceptions"
+        with pytest.raises(ValueError, match=match):
+            sn.state(root)
+
+
+OLD = "evidence/old.json"
+HIDE_OLD = ARCHIVE_SECTION + f"- `{OLD}` — old.\n"
+
+
+def _linked_archive_repo(tmp_path, entry, extra=None, archive_extra=""):
+    return _repo(tmp_path, {"AGENTS.md": entry, "docs/domain/a.md": f"see `{OLD}`\n", OLD: "old",
+                            "docs/ARCHIVE.md": archive_extra + HIDE_OLD, **(extra or {})})
+
+
+@pytest.mark.parametrize("case, entry, extra, referrer", [
+    ("one-hop", "[a](docs/domain/a.md) [archive](docs/ARCHIVE.md)\n", None, "docs/domain/a.md"),
+    ("two-hop", "[b](docs/domain/b.md) [archive](docs/ARCHIVE.md)\n",
+     {"docs/domain/b.md": "[a](a.md)\n"}, "docs/domain/a.md"),
+    ("code", "[archive](docs/ARCHIVE.md)\n", {"tools/use_old.py": f"# reads `{OLD}`\n"}, "tools/use_old.py"),
+    ("active-plan", "[archive](docs/ARCHIVE.md)\n",
+     {"docs/plans/p.md": f"# P\nStatus: active (2026-11-26)\n\nRead `{OLD}`.\n"}, "docs/plans/p.md"),
+])
+def test_archive_refuses_a_file_a_live_doc_links(tmp_path, capsys, case, entry, extra, referrer):
+    """#1891: a live (non-entry) doc reached by the closure must not link a hidden archive row."""
+    root = _linked_archive_repo(tmp_path, entry, extra)
+    ignore = root / ".ignore"
+    ignore.write_bytes(b"# unchanged\n")
+    assert sn.main(["--root", str(root), "--write-ignore"]) == 2
+    err = capsys.readouterr().err
+    assert OLD in err and referrer in err and "linked by live" in err
+    assert ignore.read_bytes() == b"# unchanged\n" and (root / OLD).read_bytes() == b"old"
+
+
+def test_archive_mixed_rows_alias_link_names_only_the_linked_file(tmp_path):
+    """A valid unlinked row next to a row a live doc links through a relative alias: only the latter is named."""
+    ok = "evidence/ok.json"
+    root = _linked_archive_repo(tmp_path, "[a](docs/domain/a.md) [archive](docs/ARCHIVE.md)\n", {
+        "docs/domain/a.md": "[old](../../evidence/./old.json)\n", ok: "ok",
+        "docs/ARCHIVE.md": HIDE_OLD + f"- `{ok}` — unlinked receipt.\n"})
+    with pytest.raises(ValueError, match="linked by live") as exc:
+        sn.state(root)
+    assert f"{OLD} <- docs/domain/a.md" in str(exc.value) and ok not in str(exc.value)
+    (root / "docs/domain/a.md").write_text("# no link\n", encoding="utf-8")
+    assert set(sn.state(root)["archive"]) == {OLD, ok}
+
+
+def test_archive_entry_link_control_still_refused(tmp_path):
+    root = _linked_archive_repo(tmp_path, f"Use `{OLD}`. [archive](docs/ARCHIVE.md)\n")
+    with pytest.raises(ValueError, match="explicitly live"):
+        sn.state(root)
+
+
+@needs_rg
+@pytest.mark.parametrize("case", ["unlinked", "archive-tag-table", "ownership-table", "baseline", "reuse-data",
+                                  "hidden-doc", "done-plan"])
+def test_archive_allows_links_from_lookup_inventories_and_hidden_docs(tmp_path, case):
+    """Lookup inventories, archived docs and inactive plans are not live referrers (#1891)."""
+    entry = "[archive](docs/ARCHIVE.md) [index](docs/architecture/README.md)\n"
+    archive_extra, extra = "", {DOC_INDEX: DOC_TABLE + "| old | [Old](../domain/a.md) | |\n"}
+    if case == "archive-tag-table":
+        archive_extra = "| tag | `docs/domain/a.md` | REJECTED |\n\n"
+    if case == "ownership-table":
+        extra = {DOC_INDEX: DOC_TABLE + "| old | [Old](../domain/a.md) | |\n", "docs/guide.md": "# Guide\n"}
+    if case == "baseline":
+        entry += "`docs/agents/job_scripts_baseline.txt`\n"
+        extra["docs/agents/job_scripts_baseline.txt"] = f"{OLD}\n"
+    if case == "reuse-data":
+        entry += "[r](docs/research/reuse-1296/data/duplicate-groups.md)\n"
+        extra["docs/research/reuse-1296/data/duplicate-groups.md"] = f"- `{OLD}`\n"
+    if case == "hidden-doc":
+        archive_extra = "| tag | `docs/domain/a.md` | REJECTED |\n\n"
+        extra["docs/ARCHIVE.md"] = archive_extra + HIDE_OLD + "- `docs/domain/a.md` — old doc.\n"
+    if case == "done-plan":
+        entry += "[p](docs/plans/p.md)\n"
+        extra["docs/plans/p.md"] = f"# P\nStatus: done (2026-11-26)\n\nRead `{OLD}`.\n"
+    root = _linked_archive_repo(tmp_path, entry, extra, archive_extra)
+    assert sn.main(["--root", str(root), "--write-ignore"]) in (0, 1)  # 1: unrelated docs problems are fine
+    state = sn.state(root)
+    assert OLD in state["archive"] and OLD not in _rg(root)
+    assert (root / OLD).read_bytes() == b"old"
+
+
+@needs_rg
+def test_batch_5a_experiments_are_tracked_but_hidden_from_search():
+    historical = {
+        "experiments/bim-autocad-agr/README.md",
+        "experiments/bim-autocad-agr/test_experiment.py",
+        "experiments/complexity-group-index/red.log",
+        "experiments/flora-texture-diagnosis/bark-calibration-v001.json",
+        "experiments/flora-texture-diagnosis/bark_calibration.py",
+        "experiments/flora-texture-diagnosis/calibration-original-tilia.json",
+        "experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json",
+        "experiments/flora-texture-diagnosis/source-integrity-v002.json",
+        "experiments/flora-texture-diagnosis/test_calibration.py",
+        "tools/research/pdf_album/dimension-geometry-evidence.json",
+    }
+    retained = {
+        "benchmark/bench-b03-decor/README.md",  # deferred benchmark, still indexed
+        "docs/research/model-flora-dry-walk-2026-10-16.md",  # disputed; keep wins
+        "experiments/bim-autocad-agr/experiment.py",  # referenced by tests
+        "experiments/flora-texture-diagnosis/calibrate_uv_area.py",  # sibling still used
+        "tools/research/pdf_album/dimension-recall-results/evidence.json",  # cited receipt
+    }
+    tracked = set(sn.tracked(ROOT))
+    visible = _rg(ROOT)
+    assert historical | retained <= tracked
+    assert retained <= visible
+    assert not historical & visible
+
+
+@needs_rg
+def test_batch_5b_receipts_stay_tracked_and_only_exact_paths_leave_search():
+    ac08 = "jobs/TEC26-OKS/AC08"
+    tracked = set(sn.tracked(ROOT))
+    _, _, exceptions, _ = sn.load_config(ROOT, tracked)
+    hidden = exceptions[ac08]
+    visible = _rg(ROOT)
+    assert len(hidden) == 30
+    assert hidden <= tracked and not hidden & visible
+    assert f"{ac08}/pilot-v010/qa_master.json" in visible
+    assert f"{ac08}/kernel-ops-v001/evidence/kernel_ops.json" in visible
+
+
+@needs_rg
+def test_batch_5d_hides_only_the_unreferenced_glb_provenance():
+    glb = "technical_library/glb_atlas/"
+    provenance = glb + "SOURCE.json"
+    tracked = set(sn.tracked(ROOT))
+    visible = _rg(ROOT)
+
+    assert provenance in tracked
+    assert provenance not in visible
+    assert {glb + name for name in ("README.md", "QA.json", "build.py", "scenarios.json")} <= visible
+    assert "technical_library/window_atlas/SOURCE.json" in visible  # linked by its README
+
+
+BATCH_6A_OWNERS = {  # #1960: owner test file -> (merged duplicates, test functions after the merge)
+    "test_course_grid_native.py": (("coalesce", "conform", "finalize_identifiers", "joint_interval_noding",
+                                    "joint_tapers", "joints", "local", "loops", "native_anchor",
+                                    "native_constraint", "protected_tessellation", "udim_encoding"), 44),
+    "test_course_grid_boundary_support.py": (("backtracks", "finalize", "footprint_union", "outward_support",
+                                              "raster_coverage"), 20),
+    "test_course_grid_cut.py": (("cut_generated", "native_pinches", "pages"), 21),
+}
+
+
+def test_batch_6a_course_grid_duplicates_live_only_in_their_owners():
+    tracked = set(sn.tracked(ROOT))
+    for owner, (merged, count) in BATCH_6A_OWNERS.items():
+        text = (ROOT / "tests" / owner).read_text(encoding="utf-8")
+        assert f"tests/{owner}" in tracked
+        assert sum(line.startswith("def test_") for line in text.splitlines()) == count
+        for name in merged:
+            path = f"tests/test_course_grid_{name}.py"
+            assert path not in tracked and not (ROOT / path).exists()
+            assert f"# --- merged from {path} (#1960)" in text
+
+
 @needs_rg
 def test_search_archive_round_trip(tmp_path):
     old, other, sibling = "evidence/old [1].json", "evidence/a.json", "evidence/old 1.json"
@@ -310,6 +490,24 @@ def test_real_search_archive_is_tracked_and_hidden(real):
     assert paths.isdisjoint(_rg(ROOT))
 
 
+@needs_rg
+def test_pre_lattice_regressions_stay_tracked_but_leave_agent_search(real):
+    historical = {"tests/test_body_contours.py", "tests/test_body_optimization.py"}
+    current = {"tools/methods/body/body_lattice.py", "tests/test_live_route_imports.py"}
+    listed = _rg(ROOT)
+    assert historical <= set(real["archive"]) & set(real["files"])
+    assert historical.isdisjoint(listed)
+    assert current <= listed
+
+
+def test_body_archive_gate_cites_accepted_real_npm_lattice_body():
+    for path in ("docs/scenarios/oks-vpm.md", "docs/domain/conflicts.md", "docs/cases.md"):
+        text = (ROOT / path).read_text(encoding="utf-8")
+        assert "v006" in text and "[D409]" in text and "#1833" in text, path
+    scenario = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
+    assert "no NPM body on a real object yet" not in scenario
+
+
 
 # --- real repository ---------------------------------------------------------------------------------------------
 
@@ -373,7 +571,7 @@ def test_real_repo_measure_dropped_against_the_cut():
 
 
 def test_skeletons_doc_names_every_kept_name_and_the_commands():
-    text = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    text = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     assert not [n for n in sn.KEEP_NAMES if f"`{n}`" not in text]
     assert "`skeleton.json` folders" in text and "historical-data" in text and "--verify-evidence" in text
 

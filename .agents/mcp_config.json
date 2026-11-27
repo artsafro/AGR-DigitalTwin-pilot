@@ -20,13 +20,6 @@
       ],
       "env": {}
     },
-    "multiCAD": {
-      "command": "C:\\Users\\artsafro\\AppData\\Local\\CodexMCP\\MultiCAD\\venv\\Scripts\\python.exe",
-      "args": [
-        "C:/Users/artsafro/AGR-DigitalTwin/tools/mcp/multicad_stdio.py"
-      ],
-      "env": {}
-    },
     "revit-bridge": {
       "command": "node",
       "args": [
@@ -48,24 +41,40 @@
     },
     "blender": {
       "command": "C:\\Users\\artsafro\\AppData\\Local\\CodexMCP\\BlenderLab103\\venv\\Scripts\\blender-mcp.exe",
-      "args": ["--transport", "stdio"],
+      "args": [
+        "--transport",
+        "stdio"
+      ],
       "env": {
         "BLENDER_MCP_HOST": "127.0.0.1",
         "BLENDER_MCP_PORT": "9877",
         "BLENDER_PATH": "C:/Program Files/Blender Foundation/Blender 5.1/blender.exe"
       }
     },
-    "speedtree": {
-      "command": "C:/Users/artsafro/AppData/Local/CodexMCP/BlenderLab103/venv/Scripts/python.exe",
-      "args": ["C:/Users/artsafro/AGR-DigitalTwin/tools/mcp/speedtree_server.py"],
-      "env": { "SPEEDTREE_ROOT": "C:/Program Files/SpeedTree/SpeedTree Modeler v10.0.1" }
-    },
     "rizomuv": {
       "command": "C:\\Users\\artsafro\\AppData\\Local\\CodexMCP\\BlenderLab103\\venv\\Scripts\\python.exe",
-      "args": ["C:/Users/artsafro/AGR-DigitalTwin/tools/mcp/rizomuv_server.py"],
+      "args": [
+        "C:/Users/artsafro/AGR-DigitalTwin/tools/mcp/rizomuv_server.py"
+      ],
       "env": {
         "RIZOMUV_EXE": "C:\\Program Files\\Rizom Lab\\RizomUV 2024.1\\rizomuv.exe",
         "RIZOMUV_LINK_DIR": "C:\\Program Files\\Rizom Lab\\RizomUV 2024.1\\RizomUVLink"
+      }
+    },
+    "multiCAD": {
+      "command": "C:\\Users\\artsafro\\AppData\\Local\\CodexMCP\\MultiCAD\\venv\\Scripts\\python.exe",
+      "args": [
+        "C:/Users/artsafro/AGR-DigitalTwin/tools/mcp/multicad_stdio.py"
+      ],
+      "env": {}
+    },
+    "speedtree": {
+      "command": "C:/Users/artsafro/AppData/Local/CodexMCP/BlenderLab103/venv/Scripts/python.exe",
+      "args": [
+        "C:/Users/artsafro/AGR-DigitalTwin/tools/mcp/speedtree_server.py"
+      ],
+      "env": {
+        "SPEEDTREE_ROOT": "C:/Program Files/SpeedTree/SpeedTree Modeler v10.0.1"
       }
     }
   }

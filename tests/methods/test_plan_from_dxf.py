@@ -7,6 +7,8 @@ from __future__ import annotations
 import importlib.util
 import json
 import math
+import subprocess
+import sys
 from pathlib import Path
 
 import ezdxf
@@ -733,3 +735,18 @@ def test_dxf_changing_while_it_is_read_is_an_error_and_writes_nothing(tmp_path, 
     code = pf.main(_extract_argv(dxf, out, rep, "--map", "WALL=wall", "--map", "PATT=hatch", "--z0", "0", "--z1", "3"))
     assert code == 2 and "changed while it was read" in capsys.readouterr().err
     assert not out.exists() and not rep.exists()
+
+
+@pytest.mark.parametrize("command", ["census", "extract"])
+def test_truncated_dxf_stops_cli_without_a_traceback_or_outputs(tmp_path, command):
+    dxf = tmp_path / "truncated.dxf"
+    content = b"  0\r\nSECTION\r\n  2\r\nOBJECTS\r\n  0\r\nXRECORD\r\n100\r\nAcDbXrecord\r\n"
+    dxf.write_bytes(content)
+    out, report = tmp_path / "out.json", tmp_path / "report.json"
+    args = [str(dxf), str(out)] + ([str(report)] if command == "extract" else [])
+    tool = ROOT / "tools/methods/body/plan_from_dxf.py"
+    result = subprocess.run([sys.executable, str(tool), command, *args], capture_output=True, timeout=15)
+    assert result.returncode == 2, result.stderr
+    assert b"PLAN_DXF error:" in result.stderr and b"truncated.dxf" in result.stderr
+    assert b"Traceback" not in result.stderr
+    assert dxf.read_bytes() == content and not out.exists() and not report.exists()

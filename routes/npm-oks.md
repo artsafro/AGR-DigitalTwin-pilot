@@ -1,7 +1,8 @@
 # NPM / OKS — accepted route template (#1296, #1317)
 
 **Accepted route shape [D271]; not approval of any particular model or delivery.**
-Only cell `oks-npm`; `oks-npm-lite` is FROZEN until Artem defines it [D405], and VPM/Ground are not drafted here. The router
+Only cell `oks-npm`; `oks-npm-lite` is FROZEN until Artem defines it [D405], VPM is
+[oks-vpm](../docs/scenarios/oks-vpm.md), Ground -> MAF -> Flora is [routes/site.md](site.md). The router
 [scenarios.json](../docs/scenarios/scenarios.json) points this ready cell here.
 Call `agr --help` before writing a script. Milestone 1 is five thin dispatch aliases
 and six fail-closed pointer stubs (11 named commands, correcting #1317's counting typo).
@@ -10,11 +11,13 @@ use the exact executable forms below. Existing tools retain their validation and
 
 ## Entry: narrow context, explicit contract
 
-Read AGENTS.md, the task and `jobs/<ID>/{TASK.md,STATE.md,LESSONS.md,sources.json}`,
-then the `oks-npm` reads list in scenarios.json, selecting only applicable requirements.
-Start with [BODY](../docs/domain/areas/body.md) and
-[derivation](../docs/domain/areas/derivation.md); load windows and UV/atlas at those steps.
-Use [TASK_TO_MODEL](../docs/procedure/TASK_TO_MODEL.md) for all eight gates.
+Passport first: `jobs/<ID>/passport.json` (K1, `schemas/ProjectPassport.schema.json`) for every task [D397],
+then intake (`docs/agents/task-intake.md`), the cell block
+(`uv run python tools/architecture/skeleton_guard.py --show oks-npm`) and the task's `jobs/<ID>/` files.
+Each step below names its rule; read an area sheet at its step, not before: BODY sheet
+`docs/domain/areas/body.md` at step 3, derivation `docs/domain/areas/derivation.md` at step 5, windows and
+UV/atlas at those steps; gates in `docs/procedure/TASK_TO_MODEL.md`.
+Step 0 (Revit FBX layer split proposed by the agent, corrected and accepted by Artem in Max) lands with PR #1872.
 Do **not** preload Ground/MAF/Flora/UCX rules, all job histories, all tool schemas or
 `docs/agr/` recursively. Read a cross-area interface only when the task actually needs it.
 The required project state read is an index, not permission to load every linked area.
@@ -22,10 +25,8 @@ The required project state read is an index, not permission to load every linked
 At intake: resolve source authority, dimensions, materials, protected geometry/UV/IDs,
 placement/district/address, deliverable and pilot once. Missing facts/conflicts stop the
 dependent step; no generic shell thickness, joint module or georeference is guessed.
-`jobs/<ID>/job.yaml` holds gates. On AGR Tools routes `passport.json` is mandatory;
-on other OKS routes D247 permits equivalent inputs/report facts (do not falsely claim
-that a passport is already universal). The proposed CLI should consume that contract,
-not replace or silently amend it.
+`jobs/<ID>/job.yaml` holds gates; `passport.json` is mandatory on every route [D397] (supersedes [D247]).
+The proposed CLI should consume that contract, not replace or silently amend it.
 
 ## Level and recipes
 
@@ -36,20 +37,17 @@ with one machine readback; `full` for shared code/export changes or `passed=true
 Artem can override; raise the level when scope grows, never silently lower it.
 This research PR follows its card's full-suite requirement, regardless of a future job level.
 
-Recipes: [#1281](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1281)
-will publish production recipes; until merged, the concrete available sources are
-[R6 BODY/facade](../docs/research/agent-step-waste-1273.md#r6-oks-body--facade-standard-full-when-the-delivery-claims-passedtrue),
-[R4 windows](../docs/research/agent-step-waste-1273.md#r4-window--glazing-standard),
-and [R1 colouring](../docs/research/agent-step-waste-1273.md#r1-colouring--finish-swap-fast).
-No dependency branch or unmerged recipe file is consumed.
+Recipes: accepted node recipes R1-R7 live in [NODE_RECIPES](../docs/procedure/NODE_RECIPES.md)
+(R4 windows, R6 facade; #1281 done). The stage-1 body itself is not a recipe: it is the lattice [D373].
 
 ## Route by stage: proposal versus today's tool
 
 | Step / gate | Proposed interface | Reuse today / boundary | Evidence required |
 |---|---|---|---|
+| 0. Scene prepare [D390] | `agr scene prepare SRC.fbx --out NEW_DIR` | агент предлагает раскладку -> Артём правит в Max и принимает -> агент работает по принятым слоям; later stages read only their accepted layer; Revit FBX only (#1867) | `census.md`, `sheet.png`, `split_PROPOSED.fbx`, 00_РЕШИТЬ_ЧЕЛОВЕКУ listed; Artem's accepted split file |
 | 1. Sources / inputs | `agr inspect --manifest JOB.json`; source inventory remains separate | Source inventory; `tools/research/pdf_corpus/pdf_corpus_inventory.py` if applicable; job source census, not automatic interpretation | Original/copy hashes, units, revision, dimensions, source authority; no writes to originals |
 | 2. Parts / user Gate 1 | Same inspect report into confirmed PartsList, no invented auto-approval | `dt_ai.core.models.PartsList`, job contract and checklist | User confirmation of exact parts hash before construction |
-| 3. BODY / operations | Geometry remains the existing approved source/engine route; no universal `agr build` promised | `src/dt_ai/spec`, `src/dt_ai/parts`, `src/dt_ai/ops` for supported cases; existing job build only for its validated object | Separate body/openings/decor per the OKS modelling split [D336] ([list](../docs/agents/SKELETONS.md#oks-modelling-split-d336)), dimensions and source overlays; before/after invariants; deviation when unsupported |
+| 3. BODY / operations | Stage 1 body: `agr body PLAN NEW_OUT` - lattice only [D373], every profile [D392]; never repair a mesh, fix the plan and rebuild. Accepted NPM body precedent: Sokolniki v006 [D409] (PR #1833) | Core `tools/methods/body/body_lattice.py`, plan `schemas/BodyPlan.schema.json`; stages 2-4 (windows, capsules, roof) AGR Tools 1.1.x [D393]; then `tools/qa/mesh_quality_observe.py stage` (observe) | Separate body/openings/decor per the OKS modelling split [D336] ([list](../docs/agents/SKELETONS-stages.md#oks-modelling-split-d336)), dimensions and source overlays; `uv run dt qa xview` on the written body |
 | 4. Facade detail | `agr brick-seams --config CONFIG --out NEW.json` only if approved source calls for brick seams | [Shared stdlib calculation](../docs/procedure/brick-seams.md): explicit source support pages or chart/fold candidate; no bitmap bake, native mutation or NPM conversion; never infer cassette cuts | Source module/phase/width, opening intersections, silhouette and unchanged protected IDs; fresh native readback remains separate |
 | 5. NPM derivation / budgets | `agr vpm-to-npm [--blender BLENDER] ATLAS_ARGS --then-npm NPM_ARGS`; `unwrap-atlas` remains a pointer | `tools/derive/{export_npm,npm_atlas}.py`, `tools/materials/npm_atlas_udim.py`; KPP1 scripts are precedents, not portable executables | Master by task [D292]: VPM+NPM derives NPM from one VPM / mid-poly master; NPM-only builds NPM directly, no mid-poly master. Atlas path A (UDIM) or B (material IDs); profile-specific alpha/atlas, glass separated, NPM no UCX; limits from area sheets, not arbitrary raster density |
 | 6. Delivery / export_readback | `delivery-export` remains a pointer; right after each export `agr build-manifest record EXPORTED... --master MASTER --out NEW.json` (`dt derive npm` and the KPP1 `export_vpm.py` write it automatically into `<export root>/derivation/` and refuse an atlas not bound to the master: `atlas_unbound` / `atlas_master_mismatch` / `atlas_udim_mismatch`, #1505); package `agr package-npm PACKAGE_DIR` (one ZIP owner `adapters/max/agr_tools/package_core.py`, #1377; job-local packagers are historical); then `agr build-manifest build PACKAGE.zip --master MASTER --derivation REC.json|STORE_DIR... --transform-name NAME [--transform-file BRIDGE]` (FBX export owner readback + `<stem>.build.json`, #1423; a package with Ground members takes `--master oks=BLEND --master ground=SOURCE`, the Ground producer `tools/blender/ground_json_to_fbx.py` writes `<fbx>.derivation.json` with its mesh JSON as master, [D328]); `agr validate EXPORT --profile npm --scene --master MASTER --json` | Existing export/readback and `tools/qa/validate_package.py`; `uv run dt qa xview FILE --out NEW.json` after geometry writes and on export. **FBX export owner** (geometry, UV, materials, names, transforms; #1423): the exporter that wrote the FBX records its master revision; the readback that proves it is `build_manifest.readback_summary` over `tools/blender/fbx_readback.py` on the FBX members of the ZIP itself (dimensions, part positions, materials, UV, UCX-to-visual binding) | Fresh-process exported-file topology, UV, materials, transforms; hashes; defects with values/limits, not scene-only QA. V001 "build manifest" refuses two master revisions, a master changed since the build, hashes that differ, a required check not run/finished (skipped = not ready); no manifest = not_run; no `--master` = not_run `manifest_master_unchecked` (Max `qa.package` passes no master, so its V001 stays not_run, never pass) |

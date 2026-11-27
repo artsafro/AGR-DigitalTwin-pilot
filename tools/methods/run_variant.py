@@ -13,6 +13,8 @@ share, frame depth; ground-terrain: vertical deviation from the benchmark's refe
 building-body: source -> variant deviation, closed-shell share, triangles vs [D010]).
 ground-terrain reads the benchmark source FBX as the reference (sha256 checked) and both `<fbx>.placement.json`
 sidecars for the world frame; a missing reference or sidecar gives null figures with the reason.
+Every ground readback (output and reference) is bound to its FBX by `source_sha256`: computed here, or carried by
+a supplied --readback / --extra JSON; unbound evidence is null with the reason, another FBX's evidence an error.
 A metric that cannot be measured is null with a reason, never a made-up number.
 Exit 0 row appended; 2 measurement error (nothing appended); 4 refused (bad arguments, unknown benchmark or
 class, results path aliasing an input).
@@ -124,6 +126,7 @@ def ground_reference(bench: dict, readback: Path | None, extra: Path | None, tmp
         from twinqa.scene import readback as scene_readback
 
         rb = scene_readback(src)
+        rb["source_sha256"] = bench["source"]["sha256"]  # computed from this verified file in this run (#1954)
     if not rb.get("readback_ok"):
         raise metrics.MetricError(f"reference readback failed: {rb.get('error')}")
     if extra:
@@ -134,7 +137,7 @@ def ground_reference(bench: dict, readback: Path | None, extra: Path | None, tmp
         (tmp / "ref").mkdir()
         ex = run_extra(src, tmp / "ref")
     offset, reason = metrics.placement_offset(src)
-    return {"rb": rb, "extra": ex, "offset": offset, "reason": reason}
+    return {"rb": rb, "extra": ex, "offset": offset, "reason": reason, "sha256": bench["source"]["sha256"]}
 
 
 def fbx_from(path: Path, tmp: Path) -> Path:
@@ -216,7 +219,7 @@ def git_head() -> str | None:
 def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: str, variant: str,
               wall: tuple, renders: dict, refs: dict, measure_s: float | None = None,
               tile_sides: dict | None = None, ground_ref: dict | None = None,
-              source_rb: dict | None = None) -> dict:
+              source_rb: dict | None = None, fbx_sha256: str | None = None) -> dict:
     from twinqa.profiles import load_profiles
 
     if not rb.get("readback_ok"):
@@ -238,7 +241,7 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
         "blender": rb.get("blender"),
     }
     if cls == "ucx-collisions":
-        row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra)
+        row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra, sha256=fbx_sha256)
     if cls == "windows-glazing":
         row["class_metrics"]["windows"] = metrics.windows_glazing(rb, extra)
     if cls == "ground-terrain":
@@ -247,6 +250,7 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
         offset, off_reason = metrics.placement_offset(output)
         row["class_metrics"]["ground"] = metrics.ground_terrain(
             rb, extra, ground_ref["rb"], ground_ref["extra"], offset, ground_ref["offset"],
+            sha256=fbx_sha256, ref_sha256=ground_ref.get("sha256"),
             offset_reason=off_reason, ref_reason=ground_ref["reason"])
     if cls == "building-body":
         row["class_metrics"]["body"] = metrics.building_body(rb, source_rb)
@@ -353,12 +357,14 @@ def main(argv=None) -> int:
         refs = references(bench)
         with tempfile.TemporaryDirectory(prefix="methods_") as tmp:
             fbx = fbx_from(a.output, Path(tmp))
+            fbx_sha = sha256(fbx)  # bind Ground and UCX fit readbacks to the measured FBX
             if a.readback:
                 rb = json.loads(a.readback.read_text(encoding="utf-8"))
             else:
                 from twinqa.scene import readback
 
                 rb = readback(fbx)
+                rb["source_sha256"] = fbx_sha  # computed from this file in this run
             extra = json.loads(a.extra.read_text(encoding="utf-8")) if a.extra else (
                 None if a.readback else run_extra(fbx, Path(tmp)))
             sides = metrics.package_tile_sides(tmp) if a.output.suffix.lower() == ".zip" else None
@@ -370,7 +376,9 @@ def main(argv=None) -> int:
                           else source_readback(bench))
             row = build_row(rb=rb, extra=extra, output=a.output, bench=bench, cls=a.cls, variant=a.variant,
                             wall=wall, renders=renders, refs=refs, tile_sides=sides, ground_ref=gref,
-                            source_rb=src_rb)
+                            source_rb=src_rb, fbx_sha256=fbx_sha)
+            if a.cls == "ucx-collisions" and sha256(fbx) != fbx_sha:
+                raise metrics.MetricError(f"{fbx.name}: FBX changed during readback or measurement")
         if built_from is not None:
             row["input"] = built_from
         if methods_only is not None:

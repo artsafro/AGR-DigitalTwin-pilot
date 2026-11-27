@@ -40,6 +40,10 @@ DEFAULT_CFG = {
     "agreed_edge_clamps": {},   # [D378] (3): name -> agreed narrowing at the edge end, m (22daf24 0.268)
     "edge_clamp_tol_m": 0.005,
     "seam_weld_m": 0.001,       # #1802: mate ends must coincide within 1 mm (was 5 cm -> silent slit)
+    # [D410] roof well: volume -> {"deck_z", "parapet_m", "parapet_m_by_edge": {edge: m}}; the top cap becomes a
+    # parapet top band + inner well walls + a deck at deck_z (the outer walls and openings are not touched)
+    "roof_wells": {},
+    "base_by_volume": {},       # [D410] volume -> new base z (a volume standing on a dropped deck, e.g. H on D)
 }
 
 
@@ -91,6 +95,8 @@ def plans_from_volume_lines(vl, cfg=None):
     for vn, v in vols.items():
         ring, reversed_ = _ring(v["ring"])
         levels = [float(z) for z in v["levels"]]
+        if vn in cfg["base_by_volume"]:
+            levels[0] = float(cfg["base_by_volume"][vn])
         if len(levels) < 2 or any(b <= a for a, b in zip(levels, levels[1:])):
             raise ValueError("volume %s: levels must rise strictly, got %r" % (vn, levels))
         src = [list(map(float, p)) for p in (v["ring"][:-1] if v["ring"][0] == v["ring"][-1] else v["ring"])]
@@ -198,9 +204,29 @@ def plans_from_volume_lines(vl, cfg=None):
         if vn == "_unbound":
             continue
         result[vn] = _plan_for_volume(vn, V, cfg)
+        if vn in cfg["roof_wells"]:
+            result[vn]["plan"]["roof_well"] = _roof_well(vn, V, cfg["roof_wells"][vn], edges)
     if "_unbound" in out:
         result["_unbound"] = {"dropped": out["_unbound"]["dropped"]}
     return result
+
+
+def _roof_well(vn, V, spec, edges):
+    """[D410] roof well record of one volume: deck below the top, inside the parapet (validated, edge xy kept)."""
+    levels = V["levels"]
+    deck = spec.get("deck_z")
+    if not (_finite(deck) and levels[-2] < deck < levels[-1]):
+        raise ValueError("roof well %s: deck_z %r must lie between the last inner level %.3f and the top %.3f"
+                         % (vn, deck, levels[-2], levels[-1]))
+    depth = spec.get("parapet_m")
+    by_edge = spec.get("parapet_m_by_edge", {})
+    for k, m in [(None, depth)] + list(by_edge.items()):
+        if not (_finite(m) and 0 < m < 1.0):
+            raise ValueError("roof well %s: parapet depth %r of %s must be in (0, 1) m" % (vn, m, k or "default"))
+        if k is not None and k not in V["off"]:
+            raise ValueError("roof well %s: edge %s is not a side of the volume" % (vn, k))
+    return {"deck_z": float(deck), "parapet_m": float(depth),
+            "edges": [{"edge": k, "xy": edges[k]["xy"], "m": float(m)} for k, m in sorted(by_edge.items())]}
 
 
 def _check_edge_clamp(r, rect, V, cfg):
@@ -531,12 +557,71 @@ def add_caps(core, body, plan, bottom=False):
     for z, up in ((z0 + plan["step"], True), (z0, False)):
         if not up and not bottom:
             continue
+        if up and plan.get("roof_well"):
+            continue  # [D410] the top is the parapet band + well (add_roof_well, after the window planes)
         ring = [idx.one((p[1], p[2], z), "cap at z=%.3f" % z) for p in pts]
         if not up:
             ring = ring[::-1]
         body["faces"].append({"v": tuple(ring), "mat": "ROOF",
                               "uv": [(body["verts"][i][0] / tex, body["verts"][i][1] / tex) for i in ring]})
     return body
+
+
+def add_roof_well(core, body, plan, local=()):
+    """[D410] Roof well instead of the flat top cap: parapet top band (outer ring stations -> inner offset ring, one
+    quad per station segment), inner well walls down to `deck_z` (one quad per segment, facing the well) and the
+    deck n-gon. Built from the ring stations like the cap - the outer walls, reveals and window planes are not
+    touched. The parapet depth is `parapet_m`, or the edge's value when the segment lies on a listed edge; a
+    window whose head rises above the deck must have a reveal shallower than the parapet there (else its plane
+    would meet the well wall). Returns a report dict."""
+    well = plan["roof_well"]
+    pts, _ = core.ring_points(plan["rings"][0]["xy"], plan["rings"][0]["cuts"], plan.get("max_side_m", 0.0))
+    n = len(pts)
+    z0, zt, zd = plan["z0"], plan["z0"] + plan["step"], well["deck_z"]
+    tex = plan.get("wall_tile_m", 3.0)
+    depths = []
+    for j in range(n):
+        p, q = pts[j], pts[(j + 1) % n]
+        mid = ((p[1] + q[1]) / 2.0, (p[2] + q[2]) / 2.0, 0.0)
+        m = well["parapet_m"]
+        for e in well["edges"]:
+            if _on_segment(mid, ((e["xy"][0][0], e["xy"][0][1], 0.0), (e["xy"][1][0], e["xy"][1][1], 0.0))):
+                m = e["m"]
+        depths.append(m)
+    levels = [z0 + z for z in plan["loops"]] + [zt]
+    heads = {lc["window"]: lc["zt"] for lc in local if lc.get("zt") is not None}
+    perim = sum(math.dist(pts[j][1:3], pts[(j + 1) % n][1:3]) for j in range(n))
+    for wi, w in enumerate(plan["windows"]):
+        if heads.get(wi, levels[int(w[4])]) <= zd + EPS:
+            continue
+        for j in range(n):  # segments inside the opening's station range
+            s0, s1 = pts[j][0], pts[(j + 1) % n][0] if j + 1 < n else perim
+            if s0 < w[2] - EPS and s1 > w[1] + EPS and depths[j] <= w[5] + 0.05:
+                raise ValueError("roof well: window %d (head above the deck %.3f) has reveal %.3f >= parapet %.3f - "
+                                 "0.05 at s %.3f; list a deeper parapet for its edge" % (wi, zd, w[5], depths[j], s0))
+    run = [(p[1], p[2]) for p in [pts[-1]] + list(pts) + [pts[0]]]
+    inner = core.offset_run(run, [depths[-1]] + depths)[1:-1]
+    idx = _Index(body["verts"])
+    outer = [idx.one((p[1], p[2], zt), "roof well outer ring at z=%.3f" % zt) for p in pts]
+    vv = body["verts"]
+    it = list(range(len(vv), len(vv) + n))
+    vv += [(x, y, zt) for x, y in inner]
+    idd = list(range(len(vv), len(vv) + n))
+    vv += [(x, y, zd) for x, y in inner]
+    s_acc = 0.0
+    for j in range(n):
+        k = (j + 1) % n
+        ring = (outer[j], outer[k], it[k], it[j])  # CCW from above: along the ring, then inward
+        body["faces"].append({"v": ring, "mat": "WALL", "uv": [(vv[i][0] / tex, vv[i][1] / tex) for i in ring]})
+        L = math.dist(inner[j], inner[k])
+        wall = (idd[k], idd[j], it[j], it[k])  # faces the well (left of the CCW run)
+        body["faces"].append({"v": wall, "mat": "WALL", "uv": [((s_acc + L) / tex, zd / tex), (s_acc / tex, zd / tex),
+                                                                (s_acc / tex, zt / tex), ((s_acc + L) / tex, zt / tex)]})
+        s_acc += L
+    body["faces"].append({"v": tuple(idd), "mat": "ROOF", "uv": [(vv[i][0] / tex, vv[i][1] / tex) for i in idd]})
+    return {"deck_z": zd, "top_z": round(zt, 4), "parapet_m": well["parapet_m"],
+            "parapet_m_by_edge": {e["edge"]: e["m"] for e in well["edges"]}, "segments": n,
+            "faces_added": 2 * n + 1}
 
 
 def merge_planes(body, planes):
@@ -772,6 +857,7 @@ def build_volume(core, entry):
     planes = window_planes(core, plan, entry["local"])
     merge_planes(body, planes)
     plane_joins = merge_stacked_planes(body)
+    well = add_roof_well(core, body, plan, entry["local"]) if plan.get("roof_well") else None
     seam_cells = remove_hidden_seam_cells(body, entry.get("seams", []))
     unused = compact(body)
     rep = {"closure": [r["closure"] for r in module["report"]["rings"]],
@@ -783,6 +869,7 @@ def build_volume(core, entry):
            "local_sills": sum(1 for lc in entry["local"] if lc.get("zs") is not None),
            "stacked_faces_removed": stacked["faces_removed"], "stacked_plane_joins": plane_joins, "stacked_vertices_welded": stacked["welded"],
            "agreed_edges": entry.get("agreed_edges", []),
+           "roof_well": well,
            "body": metrics(body)}
     return {"body": body, "report": rep}
 

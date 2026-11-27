@@ -1,5 +1,8 @@
 # Kanban board — GitHub Projects
 
+Agent work runs on the Hermes Kanban board (one card per issue; `needs_input` = «Needs you»); this file keeps the
+GitHub Projects rules of [D077] for the issue board.
+
 Board: <https://github.com/users/artsafro/projects/1> (project `AGR-DigitalTwin`, number 1, owner
 `artsafro`, private, linked to `artsafro/AGR-DigitalTwin`). Set up by the user's decision on 2026-10-14 [D077].
 

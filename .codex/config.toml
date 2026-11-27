@@ -1,5 +1,7 @@
 # Machine-specific project MCP routes; adapters run from the main checkout C:/Users/artsafro/AGR-DigitalTwin.
 # The user's config also provides 3dsmax-mcp.
+# Owner of the project MCP server list (#1962): `.agents/mcp_config.json` (Antigravity) is generated from it,
+# run `uv run python tools/mcp/sync_config.py` after an edit (tests/test_mcp_config_sync_1962.py checks it).
 [mcp_servers.revit-bridge]
 command = "node"
 args = ["C:\\Users\\artsafro\\tools\\revit-bridge-mcp\\src\\index.js"]

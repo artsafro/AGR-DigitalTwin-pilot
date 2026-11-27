@@ -235,5 +235,5 @@ def test_skeleton_names_the_intake_and_keeps_the_autocad_lane():
     sk = json.loads((ROOT / "docs/agents/skeletons.json").read_text(encoding="utf-8"))["stages"]["sources-dwg"]
     assert "tools/methods/body/dxf_intake.py" in sk["owners"] and "verify_dxf_derivative" in sk["entry_defs"]
     assert "tools/methods/body/dwg_to_dxf.py" in sk["owners"] and "dxf_intake.py" in sk["calls"]
-    doc = (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    doc = (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
     assert "dxf_intake.py" in doc

@@ -103,9 +103,9 @@ def test_unexplained_or_ambiguous_gap_is_not_bridged(tmp_path, gap_extra, decoy)
 
 
 def test_native_kns_inline_rotated_text_gaps_keep_semantic_refusal():
-    pdf = Path('C:/x/t_85bcc27a/native-v004/KNS-section.pdf')
+    pdf = Path('G:/Мой диск/AGR-evidence/1254-pdf-binding/evidence-v001/native-v004/KNS-section.pdf')
     if not pdf.exists():
-        pytest.skip('optional #1290 immutable native PDF not available')
+        pytest.skip('optional #1290 immutable native PDF not available on Drive')
     assert hashlib.sha256(pdf.read_bytes()).hexdigest() == '7ad80d8d79bf3355e451740ab82cf7d79b9975b0f4a95cd39191ef42580b93f1'
     result = bind_album(pdf)
     for raw in ('600', '4520', '7650', '4700', '680'):

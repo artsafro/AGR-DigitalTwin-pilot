@@ -543,13 +543,15 @@ def _drafts(tmp_path):
     return b, cat
 
 
-def test_draft_is_not_available_accept_makes_it_available(tmp_path):
+def test_draft_is_available_marked_accept_makes_it_accepted(tmp_path):
     _b, cat = _drafts(tmp_path)
-    assert pub.available(cat) == []
+    assert all(r["status"] == "draft" for r in pub.available(cat)) and pub.available(cat, drafts=False) == []  # [D421]
+    assert pub.accepted_paths(cat) == set()
     with pytest.raises(pub.PublishError, match="words"):
         pub.accept_records(cat, [ZIP], "  ")
     pub.accept_records(cat, [ZIP], "ок")
-    assert [r["name"] for r in pub.available(cat)] == [ZIP]
+    assert [r["name"] for r in pub.available(cat, drafts=False)] == [ZIP]
+    assert pub.available(cat)[0]["name"] == ZIP  # accepted first
     assert pub.accepted_paths(cat) == {f"maf/{ZIP}/v001".lower()}
     with pytest.raises(pub.PublishError, match="0 matching draft"):
         pub.accept_records(cat, [ZIP], "ок")  # already accepted: no draft left
@@ -571,7 +573,7 @@ def test_reject_writes_remark_to_inbox_and_stays_unavailable(tmp_path):
     pub.reject_record(cat, ZIP, "пропорции не те", tmp_path)
     text = (b / "REJECTED.md").read_text(encoding="utf-8")
     assert ZIP in text and "пропорции не те" in text
-    assert pub.available(cat) == []
+    assert ZIP not in [r["name"] for r in pub.available(cat)]
     with pytest.raises(pub.PublishError):
         pub.accept_records(cat, [f"{ZIP}@v001"], "ок")
 
@@ -618,7 +620,7 @@ def test_assets_browser_scan_shows_only_accepted_published_versions(tmp_path):
 
 def test_repo_catalogue_is_valid_and_default_read_path_uses_it():
     cat = pub.load_catalogue(pub.CATALOGUE)
-    assert core.published_accepted() == {(r["name"].lower(), r["version"]) for r in pub.available(cat)}
+    assert core.published_accepted() == {(r["name"].lower(), r["version"]) for r in pub.available(cat, drafts=False)}
     schema = json.loads((ROOT / "schemas/library_published.schema.json").read_text(encoding="utf-8"))
     assert schema["properties"]["schema"]["const"] == pub.SCHEMA
     assert schema["$defs"]["record"]["properties"]["status"]["enum"] == list(pub.STATUSES)
@@ -672,7 +674,7 @@ def test_skeleton_cell_library_publish_has_the_six_stages():
         assert st["gap"] is None and "tools/library/publish.py" in st["owners"], sid
     cells = json.loads((ROOT / "docs/scenarios/scenarios.json").read_text(encoding="utf-8"))["cells"]
     assert any(c["id"] == "library-publish" and c["status"] == "ready" for c in cells)
-    assert "agr library publish" in (ROOT / "docs/agents/SKELETONS.md").read_text(encoding="utf-8")
+    assert "agr library publish" in (ROOT / "docs/agents/SKELETONS-stages.md").read_text(encoding="utf-8")
 
 
 def test_decisions_rows_for_the_five_answers():

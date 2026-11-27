@@ -73,7 +73,7 @@ def test_skeleton_split_names_inset_and_texture_parts():
 
 
 def test_skeleton_split_is_listed_in_skeletons_md():
-    md = _text("docs/agents/SKELETONS.md")
+    md = _text("docs/agents/SKELETONS-stages.md")
     section = md.split("## OKS modelling split [D336]", 1)[1].split("\n## ", 1)[0]
     split = SK["stages"]["body"]["modelling_split"]
     for part in split["inset"] + split["texture"] + ["plinth", "Modelling split [D336]:"]:
@@ -149,7 +149,7 @@ def test_master_check_is_element_wise_and_does_not_need_a_weld():
 
 
 def test_master_check_list_documents_no_forced_weld():
-    md = _text("docs/agents/SKELETONS.md")
+    md = _text("docs/agents/SKELETONS-stages.md")
     section = md.split("## OKS modelling split [D336]", 1)[1].split("\n## ", 1)[0]
     for check in ("tools/qa/master_topology.py", "tools/qa/body_layout.py"):
         assert check in section, check

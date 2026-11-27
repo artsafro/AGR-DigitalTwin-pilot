@@ -57,7 +57,7 @@ def tile_for(matid, fixed=None, table=None):
     if type(matid) is not int or not 1 <= matid <= MAX_TILE_ID:
         raise ValueError('material ID {} cannot be a UDIM tile (1..{}; IDs >= 1001 are work IDs, K3)'.format(
             matid, MAX_TILE_ID))
-    return 1000 + matid
+    return _udimtile.udim_of_cell((matid - 1) % TILES_PER_ROW, (matid - 1) // TILES_PER_ROW)  # = 1000 + matid
 
 
 def tile_offset(udim):
