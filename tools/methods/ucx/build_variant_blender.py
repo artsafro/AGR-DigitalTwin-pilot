@@ -78,21 +78,21 @@ def world_arrays(objs):
 def _parse(argv):
     if len(argv) < 3:
         return None, "usage -- <model.fbx> <out.fbx> <variant> [cell=<m>]"
-    if argv[2] not in variants.VARIANTS:
-        return None, f"unknown variant {argv[2]!r}; expected one of {variants.VARIANTS}"
+    if argv[2] not in variants.ALL_VARIANTS:
+        return None, f"unknown variant {argv[2]!r}; expected one of {variants.ALL_VARIANTS}"
     if not argv[1].lower().endswith(".fbx"):
         return None, "output must be an .fbx path"
     opts = {}
     for a in argv[3:]:
         k, sep, val = a.partition("=")
         if not sep or k != "cell" or k in opts:
-            return None, f"bad option {a!r} (only cell=<m> once, kernel-boxes only)"
+            return None, f"bad option {a!r} (only cell=<m> once, kernel-boxes / section-boxes)"
         try:
             opts[k] = float(val)
         except ValueError:
             return None, "cell must be a number"
-        if argv[2] != "kernel-boxes":
-            return None, "cell= applies to kernel-boxes only"
+        if argv[2] not in ("kernel-boxes", "section-boxes"):
+            return None, "cell= applies to kernel-boxes and section-boxes only"
     return opts, None
 
 
@@ -119,22 +119,23 @@ def main():
     code = 2
     try:
         bpy.ops.wm.read_factory_settings(use_empty=True)
-        bpy.ops.import_scene.fbx(filepath=str(src))
+        bpy.ops.import_scene.fbx(filepath=str(src), use_image_search=False)
         t0 = time.perf_counter()
         meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
         old = [o for o in meshes if o.name.upper().startswith("UCX")]
         model = [o for o in meshes if o not in old]
+        target = "Ground" if variant in variants.GROUND_VARIANTS else "Main"
         names = [o.name for o in model]
-        main_name, extra, address = ub.select_inputs(names, "Main", None,
-                                                     [n for n in names if not n.endswith("_Main")] or None)
-        report.update({"inputs": [main_name] + extra, "dropped_ucx": sorted(o.name for o in old)})
+        main_name, extra, address = ub.select_inputs(names, target, None,
+                                                     [n for n in names if not n.endswith("_" + target)] or None)
+        report.update({"target": target, "inputs": [main_name] + extra, "dropped_ucx": sorted(o.name for o in old)})
         v, t = world_arrays(model)
         model_tris = int(len(t))
         pieces, info = variants.build(variant, v, t, model_triangles=model_tris, hull_fn=bm_hull, **opts)
         for o in old:
             bpy.data.objects.remove(o, do_unlink=True)
         objs = []
-        for name, (pv, pt) in zip(ub.ucx_names(address, "Main", len(pieces)), pieces):
+        for name, (pv, pt) in zip(ub.ucx_names(address, target, len(pieces)), pieces):
             me = bpy.data.meshes.new(name)
             me.from_pydata([tuple(map(float, p)) for p in pv], [], [tuple(map(int, f)) for f in pt])
             me.update()

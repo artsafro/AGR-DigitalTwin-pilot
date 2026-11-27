@@ -707,9 +707,76 @@ def test_slice_prisms_near_collinear_plan_gives_convex_pieces_after_float32():
 @pytest.mark.parametrize("bad", [np.zeros((0, 3)), np.array([[0, 0, 0], [1, 0, 0], [np.nan, 1, 0]])])
 def test_variants_fail_closed_on_empty_and_nan(bad):
     t = np.zeros((0, 3), np.int64) if len(bad) == 0 else np.array([[0, 1, 2]])
-    for variant in uv_.VARIANTS:
+    for variant in uv_.ALL_VARIANTS:
         with pytest.raises(uv_.VariantError):
             uv_.build(variant, bad, t, model_triangles=1, hull_fn=box_hull)
+
+
+def _inside(pieces, p, eps=1e-6):
+    return any(((np.asarray(pv).min(0) - eps <= p) & (p <= np.asarray(pv).max(0) + eps)).all() for pv, _ in pieces)
+
+
+RING = (((0, 0, 0), (10, 0.3, 3)), ((0, 9.7, 0), (10, 10, 3)), ((0, 0.3, 0), (0.3, 9.7, 3)), ((9.7, 0.3, 0), (10, 9.7, 3)))
+
+
+def test_section_boxes_keep_courtyard_open_and_fill_roofed_room():
+    """#2053: a courtyard (walls, no roof) stays free; the same walls under a roof are one filled room."""
+    v, t = _scene_arrays(*RING)
+    open_ring, _ = uv_.build("section-boxes", v, t, model_triangles=len(t))
+    assert not _inside(open_ring, np.array([5, 5, 1.5])) and _inside(open_ring, np.array([5, 0.15, 1.5]))
+    v, t = _scene_arrays(*RING, ((0, 0, 3), (10, 10, 3.3)))
+    room, info = uv_.build("section-boxes", v, t, model_triangles=len(t))
+    assert _inside(room, np.array([5, 5, 1.5])) and info["pieces"] <= 4
+    assert _min_gap(room) >= uv_._load_builder().GAP_M - 1e-9
+
+
+def test_section_boxes_canopy_over_pavement_is_not_a_pillar():
+    """#2053: a cell with a pavement and a canopy above keeps the walkable space between them free."""
+    v, t = _scene_arrays(((0, 0, 0), (10, 10, 0.1)), ((0, 0, 3), (10, 3, 3.2)))
+    pieces, _ = uv_.build("section-boxes", v, t, model_triangles=len(t))
+    assert not _inside(pieces, np.array([5, 1.5, 1.5]))
+    assert _inside(pieces, np.array([5, 1.5, 3.1])) and _inside(pieces, np.array([5, 5, 0.05]))
+
+
+def test_section_boxes_stack_repeated_storeys_and_fit_the_facade():
+    """#2053: the same plan over two levels is one box, its sides on the facade (gap/2 inside), not on the grid."""
+    v, t = _scene_arrays(((0.07, 0.11, 0), (10.07, 10.11, 3)), ((0.07, 0.11, 3), (10.07, 10.11, 6)))
+    pieces, info = uv_.build("section-boxes", v, t, model_triangles=len(t))
+    assert info["levels_m"] == [0.0, 3.0, 6.0] and len(pieces) == 1
+    h = uv_._load_builder().GAP_M / 2
+    lo, hi = np.asarray(pieces[0][0]).min(0), np.asarray(pieces[0][0]).max(0)
+    assert np.allclose(lo, [0.07 + h, 0.11 + h, h], atol=1e-6) and np.allclose(hi, [10.07 - h, 10.11 - h, 6 - h], atol=1e-6)
+
+
+def _terrain(n=20, size=20.0):
+    """Flat for x < 10, a curved slope (up to 63 deg) for x > 10; a welded grid of 2 n^2 triangles."""
+    xs = np.linspace(0, size, n + 1)
+    gx, gy = np.meshgrid(xs, xs, indexing="ij")
+    gz = np.where(gx > 10, 0.1 * (gx - 10) ** 2, 0.0)
+    v = np.column_stack([gx.ravel(), gy.ravel(), gz.ravel()])
+    t = []
+    for i in range(n):
+        for j in range(n):
+            a, b, c, d = i * (n + 1) + j, (i + 1) * (n + 1) + j, (i + 1) * (n + 1) + j + 1, i * (n + 1) + j + 1
+            t += [(a, b, c), (a, c, d)]
+    return v, np.array(t, np.int64)
+
+
+def test_ground_coarse_faces_flat_coarse_slope_on_existing_faces():
+    """#2053 (K16): the flat half is a few large prisms, every slope face keeps its own plane (deviation 0)."""
+    from twinqa.geometry.ucx_audit import is_closed, is_convex
+
+    v, t = _terrain()
+    pieces, info = uv_.build("ground-coarse-faces", v, t, model_triangles=len(t))
+    assert info["flat_pieces"] <= 4 and info["slope_faces"] > 0
+    assert info["max_vertical_dev_m"] <= uv_.GROUND_TOL_M and info["flat_max_vertical_dev_m"] <= uv_.GROUND_TOL_M
+    strict, sinfo = uv_.build("ground-coarse-faces", v, t, model_triangles=len(t), tol=1e-6)
+    assert sinfo["clusters"] == 9 and sinfo["max_vertical_dev_m"] <= 1e-6  # one prism per planar slope strip
+    assert info["pieces"] == info["flat_pieces"] + info["clusters"] - info["dropped_slivers"]
+    assert _min_gap(pieces) >= 0.002  # [D098] floor between the BSP prisms and the slope prisms too
+    for pv, pt in pieces:
+        pv, pt = [tuple(map(float, p)) for p in pv], [tuple(map(int, f)) for f in pt]
+        assert is_closed(pt) and is_convex(pv, pt)
 
 
 def test_more_than_999_pieces_is_an_error():
