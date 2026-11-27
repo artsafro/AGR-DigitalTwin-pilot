@@ -76,7 +76,9 @@ uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out
 
 Each `run` (including each A/B arm) starts Codex with a fresh child-only home and `CODEX_HOME`.
 The launcher copies only `auth.json`, if present, into the temporary Codex home and removes the home
-after the child exits or times out. The original file is not modified. On Windows, Codex also discovers
+after the child exits or times out. The original file is not modified. On a Windows timeout the launcher
+attempts to terminate the process tree before cleanup. If files still prevent cleanup, the run still records
+`"exit": "timeout"` in `run.json` and logs the remaining directory in `stderr.txt`. On Windows, Codex also discovers
 skills from the OS profile even when `USERPROFILE` is redirected. The launcher explicitly disables
 the skills under that profile's `.agents/skills` by path. The practice repository's `.agents/skills`
 remain enabled. This controls automatic skill availability; it is not a filesystem access boundary.
