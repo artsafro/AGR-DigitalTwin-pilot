@@ -663,6 +663,2608 @@
    },
    "accepted": null,
    "rejected": null
+  },
+  {
+   "name": "GKVysota_TenevoyNavesNordik_VST1519-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:07+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "01_GKVysota_TenevoyNavesNordik_VST1519-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'VST1519-1'"
+   },
+   "card": {
+    "manufacturer": "GKVysota",
+    "title_ru": "Теневой навес 6400x4850x2700 мм",
+    "article": "VST1519-1",
+    "size_m": [
+     6.4,
+     4.85,
+     2.8004
+    ],
+    "tris": {
+     "vpm": 892,
+     "npm": 892
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016",
+      "30_sheet_profiled"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/01_GKVysota_TenevoyNavesNordik_VST1519-1_GroundEl_high.fbx",
+     "sha256": "f9094886ea747a90ef5db170bb17b7b0bcfb2a97fdbec74694c8d95f37ec6090",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/01_GKVysota_TenevoyNavesNordik_VST1519-1_GroundEl_low.fbx",
+     "sha256": "7b0f5c2210fcd65f91523b9258fa1eb27bdc1cdf541bbd3819b95ff358558128",
+     "role": "npm"
+    },
+    {
+     "path": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/01_GKVysota_TenevoyNavesNordik_VST1519-1_review_quad_v001.max",
+     "sha256": "b07b65cfb2f8d37f96a656a2680dcab68ea6e69818a6bd4ee8ac9c32c15b3f22",
+     "role": "max"
+    },
+    {
+     "path": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/preview.png",
+     "sha256": "eda4fa407b1d5959257ab43f0b91ee2f758460cc8de58b748e6412bbd82dbeb8",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016', '30_sheet_profiled']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Robinzon_DoskaDlyaRisovaniya_7W2002",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:10+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "02_Robinzon_DoskaDlyaRisovaniya_7W2002",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '7W2002'"
+   },
+   "card": {
+    "manufacturer": "Robinzon",
+    "title_ru": "Доска для рисования мелом",
+    "article": "7W2002",
+    "size_m": [
+     1.1904,
+     0.1404,
+     1.66
+    ],
+    "tris": {
+     "vpm": 130,
+     "npm": 130
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "1_paint_ral9005"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001/02_Robinzon_DoskaDlyaRisovaniya_7W2002_GroundEl_high.fbx",
+     "sha256": "1e59fe2ef1050c4b6ea6c0c41913a15a2548f27562b5785fd33ef562aad70fcc",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001/02_Robinzon_DoskaDlyaRisovaniya_7W2002_GroundEl_low.fbx",
+     "sha256": "976c12e9dfe6002923e6da8fb0cb70a81aa8f83ee1632ad587904a7fc2483ae4",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001/02_Robinzon_DoskaDlyaRisovaniya_7W2002_review_quad_v001.max",
+     "sha256": "35f3ad90dcc11ada322476e512e3ecd04fcc3d0f115dde290db141461f75f05d",
+     "role": "max"
+    },
+    {
+     "path": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001/preview.png",
+     "sha256": "87ad8191107d7278403c996dcdb1fe56e20f290e07f75abd176d8abe66579604",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '1_paint_ral9005']",
+     "vpm: MAF smoothing: fail: vpm: 02_Robinzon_DoskaDlyaRisovaniya_7W2002_GroundEl: 32 soft edges > 40 deg (max 45.00 deg)",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Robinzon_Sobranie_6W7000",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:13+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "03_Robinzon_Sobranie_6W7000",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '6W7000'"
+   },
+   "card": {
+    "manufacturer": "Robinzon",
+    "title_ru": "Малые архитектурные формы \"Собрание\"",
+    "article": "6W7000",
+    "size_m": [
+     1.7801,
+     1.7888,
+     0.6
+    ],
+    "tris": {
+     "vpm": 332,
+     "npm": 332
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "18_wood_log_end"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Robinzon_Sobranie_6W7000/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Robinzon_Sobranie_6W7000/v001/03_Robinzon_Sobranie_6W7000_GroundEl_high.fbx",
+     "sha256": "5ca0fd11b4fd571478f5c5841a7e40982cc796d2d469a6b67353bdc421b7a160",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Robinzon_Sobranie_6W7000/v001/03_Robinzon_Sobranie_6W7000_GroundEl_low.fbx",
+     "sha256": "e4213d72e2a6834cf5982dd110be8d3fc0132d07b2cff6638c0901a6e9cda770",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Robinzon_Sobranie_6W7000/v001/03_Robinzon_Sobranie_6W7000_review_quad_v001.max",
+     "sha256": "3d59f52c37e541fd03b59a31869b92c16d0122ba81bdd58ac9667c79f58177a3",
+     "role": "max"
+    },
+    {
+     "path": "maf/Robinzon_Sobranie_6W7000/v001/preview.png",
+     "sha256": "90035ff733d4467d7de285f12ae3f56ab2d542330b85467133ef28959013bb30",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '18_wood_log_end']",
+     "vpm: MAF smoothing: fail: vpm: 03_Robinzon_Sobranie_6W7000_GroundEl: 16 soft edges > 40 deg (max 45.00 deg)",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Taiga_BumBrevno_IK0209T-6-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:16+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "04_Taiga_BumBrevno_IK0209T-6-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'IK0209T-6-1'"
+   },
+   "card": {
+    "manufacturer": "Taiga",
+    "title_ru": "Гимнастический комплекс \"БУМ-Бревно\"",
+    "article": "IK0209T-6-1",
+    "size_m": [
+     2.2716,
+     0.315,
+     0.6
+    ],
+    "tris": {
+     "vpm": 330,
+     "npm": 330
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "18_wood_log_end",
+      "20_steel_stainless"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Taiga_BumBrevno_IK0209T-6-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Taiga_BumBrevno_IK0209T-6-1/v001/04_Taiga_BumBrevno_IK0209T-6-1_GroundEl_high.fbx",
+     "sha256": "1a4878e6ef550f8fcf936aad01662eb8cbe5ea2d351d2cb1ab0eb75eda791786",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Taiga_BumBrevno_IK0209T-6-1/v001/04_Taiga_BumBrevno_IK0209T-6-1_GroundEl_low.fbx",
+     "sha256": "677da3329fb961e76473e4223882d73602f7a3e486a11e0c3c82c1685bb2eb5b",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Taiga_BumBrevno_IK0209T-6-1/v001/04_Taiga_BumBrevno_IK0209T-6-1_review_quad_v001.max",
+     "sha256": "326a6e13d3fb8dd7810c575a7238a1e335c20a4dc6329f9bada9db5a409a02f5",
+     "role": "max"
+    },
+    {
+     "path": "maf/Taiga_BumBrevno_IK0209T-6-1/v001/preview.png",
+     "sha256": "e6db460a4032970668256907425b59e349ef5e25a37b42e48dac108664ebeb15",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '18_wood_log_end', '20_steel_stainless']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Taiga_PeregovornyeTruby_IO1215-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:20+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "05_Taiga_PeregovornyeTruby_IO1215-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'IO1215-1'"
+   },
+   "card": {
+    "manufacturer": "Taiga",
+    "title_ru": "Переговорные трубы",
+    "article": "IO1215-1",
+    "size_m": [
+     0.3359,
+     0.1469,
+     1.0739
+    ],
+    "tris": {
+     "vpm": 134,
+     "npm": 134
+    },
+    "materials": {
+     "vpm": [
+      "1_paint_ral9005",
+      "20_steel_stainless"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001/05_Taiga_PeregovornyeTruby_IO1215-1_GroundEl_high.fbx",
+     "sha256": "a8d39758c09cb6acb37c478f21132de20afbc1e559ac26b605dcf32731178e5f",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001/05_Taiga_PeregovornyeTruby_IO1215-1_GroundEl_low.fbx",
+     "sha256": "97649decedc662a301e35fc60dd939cce71ac0963fb8e8ee69dd88dc8d9598c0",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001/05_Taiga_PeregovornyeTruby_IO1215-1_review_quad_v001.max",
+     "sha256": "2b97990aa1c3aaafd737651bb3a6add10f489aa7702077411e2a57f07318894d",
+     "role": "max"
+    },
+    {
+     "path": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001/preview.png",
+     "sha256": "82e8f4fafb2e65eb26dbc13617e48ca6c10e6cb1ffc2f9fdbabb221a0376aad7",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['1_paint_ral9005', '20_steel_stainless']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF smoothing: fail: npm: 05_Taiga_PeregovornyeTruby_IO1215-1_GroundEl: 24 soft edges > 40 deg (max 44.30 deg)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Taiga_Aerofon_IO1204",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:23+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "06_Taiga_Aerofon_IO1204",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'IO1204'"
+   },
+   "card": {
+    "manufacturer": "Taiga",
+    "title_ru": "Аэрофон",
+    "article": "IO1204",
+    "size_m": [
+     1.074,
+     0.234,
+     1.0
+    ],
+    "tris": {
+     "vpm": 404,
+     "npm": 404
+    },
+    "materials": {
+     "vpm": [
+      "1_paint_ral9005",
+      "20_steel_stainless",
+      "5_paint_ral9003"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Taiga_Aerofon_IO1204/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Taiga_Aerofon_IO1204/v001/06_Taiga_Aerofon_IO1204_GroundEl_high.fbx",
+     "sha256": "6c55ff7424ab5c035e50bafcbff1db828b8f3f9aa98bf48f1ed4806d41fb9e0e",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Taiga_Aerofon_IO1204/v001/06_Taiga_Aerofon_IO1204_GroundEl_low.fbx",
+     "sha256": "7dfa47ae30ecc3487fd39aef830f0d0d94b0d54e54d47019db17725c0a1ea295",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Taiga_Aerofon_IO1204/v001/06_Taiga_Aerofon_IO1204_review_quad_v001.max",
+     "sha256": "89600f386ec49aefe217edc04845419f230b8607d1541160c2d6f62283939c63",
+     "role": "max"
+    },
+    {
+     "path": "maf/Taiga_Aerofon_IO1204/v001/preview.png",
+     "sha256": "d76e40061b769b6e8a70202a4a743653bbf3da79bcd6331654dba7720bd0083c",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['1_paint_ral9005', '20_steel_stainless', '5_paint_ral9003']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Taiga_YazychkovyyBaraban_IO1211",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:27+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "07_Taiga_YazychkovyyBaraban_IO1211",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'IO1211'"
+   },
+   "card": {
+    "manufacturer": "Taiga",
+    "title_ru": "Язычковый барабан",
+    "article": "IO1211",
+    "size_m": [
+     0.5762,
+     0.5395,
+     0.8791
+    ],
+    "tris": {
+     "vpm": 224,
+     "npm": 224
+    },
+    "materials": {
+     "vpm": [
+      "20_steel_stainless"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Taiga_YazychkovyyBaraban_IO1211/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Taiga_YazychkovyyBaraban_IO1211/v001/07_Taiga_YazychkovyyBaraban_IO1211_GroundEl_high.fbx",
+     "sha256": "40740da067003ab3c2d12bf0c068a44859036aad41adff4d196afff5ff22a96d",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Taiga_YazychkovyyBaraban_IO1211/v001/07_Taiga_YazychkovyyBaraban_IO1211_GroundEl_low.fbx",
+     "sha256": "b6ed655506578e4fbb0a8506da9f34a8647f6547ab984cbf914f4de7042b499e",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Taiga_YazychkovyyBaraban_IO1211/v001/07_Taiga_YazychkovyyBaraban_IO1211_review_quad_v001.max",
+     "sha256": "f98605522bb9c2c7543f9f2ad693079b10abefc5dd35432f3f916808c558239b",
+     "role": "max"
+    },
+    {
+     "path": "maf/Taiga_YazychkovyyBaraban_IO1211/v001/preview.png",
+     "sha256": "bbbdd11a87460820464dbe1cf1bd2b433168f16dfa528496afd4f58ea6fa2678",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.101 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['20_steel_stainless']",
+     "npm: lowest point -0.101 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF smoothing: fail: npm: 07_Taiga_YazychkovyyBaraban_IO1211_GroundEl: 6 soft edges > 40 deg (max 42.18 deg)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Robinzon_ShahIMat_6U7004",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:31+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "08_Robinzon_ShahIMat_6U7004",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '6U7004'"
+   },
+   "card": {
+    "manufacturer": "Robinzon",
+    "title_ru": "Шахматный стол \"Шах и мат\" (цвет Бежевый)",
+    "article": "6U7004",
+    "size_m": [
+     1.7,
+     0.8,
+     0.856
+    ],
+    "tris": {
+     "vpm": 226,
+     "npm": 226
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "24_concrete_arch"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Robinzon_ShahIMat_6U7004/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Robinzon_ShahIMat_6U7004/v001/08_Robinzon_ShahIMat_6U7004_GroundEl_high.fbx",
+     "sha256": "1879a874cd9b3536f58909ab6374908bc592dbf8c6d82057ae664b68452fd185",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Robinzon_ShahIMat_6U7004/v001/08_Robinzon_ShahIMat_6U7004_GroundEl_low.fbx",
+     "sha256": "240ac1feb027851be6c6dbd47c157bb95ddc0f085367308f255f8fabc25a5ad0",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Robinzon_ShahIMat_6U7004/v001/08_Robinzon_ShahIMat_6U7004_review_quad_v001.max",
+     "sha256": "643ae1ca7a03d5c69f56beeebdd1f23d9e2f26b731d79af99bac96f62a70debf",
+     "role": "max"
+    },
+    {
+     "path": "maf/Robinzon_ShahIMat_6U7004/v001/preview.png",
+     "sha256": "fe72726568577132e4d0ce8cc65ceb8133d70702ca6a7bef387642250f0ea699",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '24_concrete_arch']",
+     "vpm: MAF smoothing: fail: vpm: 08_Robinzon_ShahIMat_6U7004_GroundEl: 82 soft edges > 40 deg (max 45.00 deg)",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF smoothing: fail: npm: 08_Robinzon_ShahIMat_6U7004_GroundEl: 24 soft edges > 40 deg (max 41.46 deg)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Robinzon_StrelaDuga_6U2023",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:34+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "09_Robinzon_StrelaDuga_6U2023",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '6U2023'"
+   },
+   "card": {
+    "manufacturer": "Robinzon",
+    "title_ru": "Скамейка \"Стрела-дуга\"",
+    "article": "6U2023",
+    "size_m": [
+     10.3492,
+     4.3011,
+     0.5
+    ],
+    "tris": {
+     "vpm": 674,
+     "npm": 674
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "6_paint_orange",
+      "7_paint_red"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Robinzon_StrelaDuga_6U2023/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Robinzon_StrelaDuga_6U2023/v001/09_Robinzon_StrelaDuga_6U2023_GroundEl_high.fbx",
+     "sha256": "d85f5679c18fc8d4ec5e892a65acd4dde7a376d7b1e59aa390e468195eb7c0fa",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Robinzon_StrelaDuga_6U2023/v001/09_Robinzon_StrelaDuga_6U2023_GroundEl_low.fbx",
+     "sha256": "c5c7578c5cb931e8720b70eca8a25e9c04ddbf499176ff141e7168475918a7ac",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Robinzon_StrelaDuga_6U2023/v001/09_Robinzon_StrelaDuga_6U2023_review_quad_v001.max",
+     "sha256": "2462d44a1acf46482913e1af901c46b6eea37a4a631bf8a206f867961504c8d1",
+     "role": "max"
+    },
+    {
+     "path": "maf/Robinzon_StrelaDuga_6U2023/v001/preview.png",
+     "sha256": "027917befa16567d99a85fe256ca8bbdf9dc08c03be4f8d856b2f63798a0661a",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '6_paint_orange', '7_paint_red']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Robinzon_Plato1_6W3000-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:38+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "10_Robinzon_Plato1_6W3000-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '6W3000-1'"
+   },
+   "card": {
+    "manufacturer": "Robinzon",
+    "title_ru": "Малые архитектурные формы \"Плато 1\"",
+    "article": "6W3000-1",
+    "size_m": [
+     1.4968,
+     0.921,
+     0.534
+    ],
+    "tris": {
+     "vpm": 124,
+     "npm": 124
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "24_concrete_arch"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Robinzon_Plato1_6W3000-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Robinzon_Plato1_6W3000-1/v001/10_Robinzon_Plato1_6W3000-1_GroundEl_high.fbx",
+     "sha256": "f6769934eb5fd7a666fe1dc2110b3b63888b1e43436871fb8228d31816663734",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Robinzon_Plato1_6W3000-1/v001/10_Robinzon_Plato1_6W3000-1_GroundEl_low.fbx",
+     "sha256": "0eb4fd4eaced5069d998f359a33ef2efd0e09f7e24f84165445f2ec02109ca65",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Robinzon_Plato1_6W3000-1/v001/10_Robinzon_Plato1_6W3000-1_review_quad_v001.max",
+     "sha256": "d6e9f15fe4844c27ada237dd60f7c3f19cd038ef0d9257103a16cc3ef389310f",
+     "role": "max"
+    },
+    {
+     "path": "maf/Robinzon_Plato1_6W3000-1/v001/preview.png",
+     "sha256": "55bad7c806cb3f113350b824c0c92ce810c4dd7f1c659d16f50e0fd2567e001e",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '24_concrete_arch']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Robinzon_HitrouGrand_6W2006-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:42+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "11_Robinzon_HitrouGrand_6W2006-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '6W2006-1'"
+   },
+   "card": {
+    "manufacturer": "Robinzon",
+    "title_ru": "Малые архитектурные формы \"Хитроу гранд\"",
+    "article": "6W2006-1",
+    "size_m": [
+     2.0,
+     1.2,
+     0.8
+    ],
+    "tris": {
+     "vpm": 112,
+     "npm": 112
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Robinzon_HitrouGrand_6W2006-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Robinzon_HitrouGrand_6W2006-1/v001/11_Robinzon_HitrouGrand_6W2006-1_GroundEl_high.fbx",
+     "sha256": "adc6d841cefc30e6e537e6078a73c5d3401663c6ae381a61bc76bb512eafae04",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Robinzon_HitrouGrand_6W2006-1/v001/11_Robinzon_HitrouGrand_6W2006-1_GroundEl_low.fbx",
+     "sha256": "af26e44d9b4744b61c79cf299f79dde779d4057e9d2916f6c335c32d1e0716da",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Robinzon_HitrouGrand_6W2006-1/v001/11_Robinzon_HitrouGrand_6W2006-1_review_quad_v001.max",
+     "sha256": "44538b451047c0442f797cfe645e8a9162d83daa2d33e62af373b18b6c6dcb0f",
+     "role": "max"
+    },
+    {
+     "path": "maf/Robinzon_HitrouGrand_6W2006-1/v001/preview.png",
+     "sha256": "318633054d7b115af86e772fbffa656c27f0fc46e80898cffc14faa35a68d2c5",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Taiga_StolTennisnyy_SO0216-3",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:46+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "17_Taiga_StolTennisnyy_SO0216-3",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'SO0216-3'"
+   },
+   "card": {
+    "manufacturer": "Taiga",
+    "title_ru": "Стол теннисный",
+    "article": "SO0216-3",
+    "size_m": [
+     2.74,
+     1.525,
+     1.0
+    ],
+    "tris": {
+     "vpm": 62,
+     "npm": 62
+    },
+    "materials": {
+     "vpm": [
+      "20_steel_stainless",
+      "24_concrete_arch"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Taiga_StolTennisnyy_SO0216-3/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Taiga_StolTennisnyy_SO0216-3/v001/17_Taiga_StolTennisnyy_SO0216-3_GroundEl_high.fbx",
+     "sha256": "8ddca0279ed13669e111d73182eaed5cf8e973687d7521ee5af61cca4c489988",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Taiga_StolTennisnyy_SO0216-3/v001/17_Taiga_StolTennisnyy_SO0216-3_GroundEl_low.fbx",
+     "sha256": "8ed52d4bd5774134400e99bb62799de1281d637f2657d118fdfc0fd7e89caa4e",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Taiga_StolTennisnyy_SO0216-3/v001/17_Taiga_StolTennisnyy_SO0216-3_review_quad_v001.max",
+     "sha256": "a313eab150f695b75437db29bdcbeea44ff47fb72365b6f8ea99ff8eec9ae187",
+     "role": "max"
+    },
+    {
+     "path": "maf/Taiga_StolTennisnyy_SO0216-3/v001/preview.png",
+     "sha256": "da34d8800d31a4dc653382197a53d6702ba33a70cad1a9c2d67a638197e32623",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['20_steel_stainless', '24_concrete_arch']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Pokolenie_BasketbolnayaStoyka_SO-012",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:49+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "19_Pokolenie_BasketbolnayaStoyka_SO-012",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'SO-012'"
+   },
+   "card": {
+    "manufacturer": "Pokolenie",
+    "title_ru": "Баскетбольная стойка",
+    "article": "SO-012",
+    "size_m": [
+     1.8,
+     1.292,
+     3.6
+    ],
+    "tris": {
+     "vpm": 270,
+     "npm": 270
+    },
+    "materials": {
+     "vpm": [
+      "12_paint_blue_grey",
+      "2_paint_ral7016",
+      "5_paint_ral9003",
+      "7_paint_red"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001/19_Pokolenie_BasketbolnayaStoyka_SO-012_GroundEl_high.fbx",
+     "sha256": "67a2521138f10d9ba1ae18fa1614dacd252ce3c958e4417490fb5e95db71f4a3",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001/19_Pokolenie_BasketbolnayaStoyka_SO-012_GroundEl_low.fbx",
+     "sha256": "afaf6c724ac1de23f587da94cb4e289eb0cfcead73851f3a2ea69fcbe46f1ef9",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001/19_Pokolenie_BasketbolnayaStoyka_SO-012_review_quad_v001.max",
+     "sha256": "ab2d1af39ab68e13ac41869c3a5deb82254eb9cff29abf1bf9fa12a9190c13d6",
+     "role": "max"
+    },
+    {
+     "path": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001/preview.png",
+     "sha256": "aed26466636141b9d6702318c9930d458d9cc756ad9e6566da76b0981a804670",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['12_paint_blue_grey', '2_paint_ral7016', '5_paint_ral9003', '7_paint_red']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:53+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'SO-053'"
+   },
+   "card": {
+    "manufacturer": "Pokolenie",
+    "title_ru": "Спортивный комплекс (волейбол) с возможностью регулирования крепления сетки по высоте, оборудован сеткой, от 6лет",
+    "article": "SO-053",
+    "size_m": [
+     8.6939,
+     0.0739,
+     2.6
+    ],
+    "tris": {
+     "vpm": 118,
+     "npm": 118
+    },
+    "materials": {
+     "vpm": [
+      "12_paint_blue_grey",
+      "27_mesh_chainlink",
+      "2_paint_ral7016",
+      "3_paint_ral7040"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001/21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053_GroundEl_high.fbx",
+     "sha256": "a6bf079da98c6de2fa9ce6b869df6d98876a8542ff94c188dbc021ce9f75bed2",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001/21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053_GroundEl_low.fbx",
+     "sha256": "ff82404b5af9e722387c4560a1b4b120f4c44249a69cde46f6d9c4c8ac24400c",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001/21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053_review_quad_v001.max",
+     "sha256": "38d54d1dcfd16cd9cf6cfac95a4c3d10abf31fe23d66e581cac659809e5a0b5b",
+     "role": "max"
+    },
+    {
+     "path": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001/preview.png",
+     "sha256": "72cb5ef3714e8742dccf0d1f40bd87646b54cd039924d5eacdc25cd5e757dcb9",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['12_paint_blue_grey', '27_mesh_chainlink', '2_paint_ral7016', '3_paint_ral7040']",
+     "vpm: MAF flipped normals: not_run: vpm: 21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053_GroundEl: 1 orientation undetermined",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF flipped normals: not_run: npm: 21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053_GroundEl: 1 orientation undetermined"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "GrandMag_FlagshtokAlyuminievyy_AL-L-06-11",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:56+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "23_GrandMag_FlagshtokAlyuminievyy_AL-L-06-11",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'AL-L-06-11'"
+   },
+   "card": {
+    "manufacturer": "GrandMag",
+    "title_ru": "Уличный флагшток из алюминия",
+    "article": "AL-L-06-11",
+    "size_m": [
+     1.5375,
+     0.3,
+     9.45
+    ],
+    "tris": {
+     "vpm": 154,
+     "npm": 154
+    },
+    "materials": {
+     "vpm": [
+      "20_steel_stainless",
+      "3_paint_ral7040",
+      "5_paint_ral9003"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001/23_GrandMag_FlagshtokAlyuminievyy_AL-L-06-11_GroundEl_high.fbx",
+     "sha256": "4a3a4bfa87e9620dfbee6e9f4968232dce5721750b8b3888e7a63f9158099d82",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001/23_GrandMag_FlagshtokAlyuminievyy_AL-L-06-11_GroundEl_low.fbx",
+     "sha256": "cb14e9ed1112214cbd55119e85eb0297cf52db806dc8f30caa2131036c0e3542",
+     "role": "npm"
+    },
+    {
+     "path": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001/23_GrandMag_FlagshtokAlyuminievyy_AL-L-06-11_review_quad_v001.max",
+     "sha256": "103d671380f1fb489769580a5b67f7afc7c52bda2d78aa1f17cd8632107a2b5e",
+     "role": "max"
+    },
+    {
+     "path": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001/preview.png",
+     "sha256": "d5a397ec161e2eb1fee8e95a82e5df0ae24ea9380c6167d60667fe90a80f4968",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['20_steel_stainless', '3_paint_ral7040', '5_paint_ral9003']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF smoothing: fail: npm: 23_GrandMag_FlagshtokAlyuminievyy_AL-L-06-11_GroundEl: 24 soft edges > 40 deg (max 43.60 deg)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:58:59+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "variant",
+    "of": [
+     {
+      "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+      "from": "a101",
+      "same_maker": true,
+      "dims": {
+       "ok": false,
+       "worst": 0.103,
+       "pairs": [
+        [
+         2005,
+         2005
+        ],
+        [
+         1800,
+         1800
+        ],
+        [
+         953,
+         855
+        ]
+       ]
+      }
+     }
+    ],
+    "reason": "same article; maker or size differs (or size unknown)"
+   },
+   "card": {
+    "manufacturer": "GKVysota",
+    "title_ru": "Стол со скамейкой и диваном",
+    "article": "VST9504-1",
+    "size_m": [
+     1.8,
+     2.0049,
+     0.9534
+    ],
+    "tris": {
+     "vpm": 492,
+     "npm": 492
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001/24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1_GroundEl_high.fbx",
+     "sha256": "824ce0f28d7f1971ec72759c62f394bda8cc4c47f841f74d1ea2db7a633af801",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001/24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1_GroundEl_low.fbx",
+     "sha256": "c5d30eb5bd9fd44213bb9bd7bb30445d11f245a0203ab93cf95d812f78fa0748",
+     "role": "npm"
+    },
+    {
+     "path": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001/24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1_review_quad_v003.max",
+     "sha256": "b21a82af08410919609f94ade1b7cdc4a71adc6dc3e40a857bfe210772004f33",
+     "role": "max"
+    },
+    {
+     "path": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001/preview.png",
+     "sha256": "97c109b0b862037232e106dacb921f010a71c752df51a069d7909d8b360429df",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.098 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016']",
+     "vpm: MAF smoothing: fail: vpm: 24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1_GroundEl: 32 soft edges > 40 deg (max 44.30 deg)",
+     "npm: lowest point -0.098 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF smoothing: fail: npm: 24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1_GroundEl: 32 soft edges > 40 deg (max 44.30 deg)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "GKVysota_Pergola_VST9614-4",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:02+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "25_GKVysota_Pergola_VST9614-4",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'VST9614-4'"
+   },
+   "card": {
+    "manufacturer": "GKVysota",
+    "title_ru": "Пергола",
+    "article": "VST9614-4",
+    "size_m": [
+     5.8,
+     2.0,
+     2.8
+    ],
+    "tris": {
+     "vpm": 684,
+     "npm": 684
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/GKVysota_Pergola_VST9614-4/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/GKVysota_Pergola_VST9614-4/v001/25_GKVysota_Pergola_VST9614-4_GroundEl_high.fbx",
+     "sha256": "c2b2313c3ceba2f486e6f0ac32e7ce06ecbed74bd6d8467e9e9cb0f3fcd45cfc",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/GKVysota_Pergola_VST9614-4/v001/25_GKVysota_Pergola_VST9614-4_GroundEl_low.fbx",
+     "sha256": "c5c05de769bef8aebcbf1cc817bc019d9dc157d32e0712d33e77c03b77ab235c",
+     "role": "npm"
+    },
+    {
+     "path": "maf/GKVysota_Pergola_VST9614-4/v001/25_GKVysota_Pergola_VST9614-4_review_quad_v004.max",
+     "sha256": "b7979f562a1250e08137f3e08b30c21cf1d70b0b5bf6bd47a2a7a126c9cf3c16",
+     "role": "max"
+    },
+    {
+     "path": "maf/GKVysota_Pergola_VST9614-4/v001/preview.png",
+     "sha256": "934ffd2c21ed08dd80cc6e9161a44916b851f5d79b16162db129681081c687e7",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "GKVysota_NavesDlyaMGN_VST9624-3",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:05+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "26_GKVysota_NavesDlyaMGN_VST9624-3",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'VST9624-3'"
+   },
+   "card": {
+    "manufacturer": "GKVysota",
+    "title_ru": "Навес для МГН",
+    "article": "VST9624-3",
+    "size_m": [
+     5.0,
+     1.75,
+     2.1
+    ],
+    "tris": {
+     "vpm": 484,
+     "npm": 472
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016",
+      "31_polycarbonate"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001/26_GKVysota_NavesDlyaMGN_VST9624-3_GroundEl_high.fbx",
+     "sha256": "beeb49c80f94369b1e527570f12267962af9b8bbe0d2aed75a0ecaef727b5345",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001/26_GKVysota_NavesDlyaMGN_VST9624-3_GroundEl_low.fbx",
+     "sha256": "d569abae24ee3828c5e5004b8e715fdf150939b2c83639bbf37432ad26ab9991",
+     "role": "npm"
+    },
+    {
+     "path": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001/26_GKVysota_NavesDlyaMGN_VST9624-3_review_quad_v003.max",
+     "sha256": "0d68b705084579600d8415a1c61a25a9978ffffe3b1d1d3e0546d2cf35ef80fe",
+     "role": "max"
+    },
+    {
+     "path": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001/preview.png",
+     "sha256": "09e43830d85aa8a0bc06722b1990aa430f0a4569a32a1a91af37d0a7998c25fe",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016', '31_polycarbonate']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Adanat_SkameykaSkarletSPodlokotnikami_10027-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:09+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '10027-1'"
+   },
+   "card": {
+    "manufacturer": "Adanat",
+    "title_ru": "Скамейка «Скарлет» с подлокотниками",
+    "article": "10027-1",
+    "size_m": [
+     1.8,
+     0.6448,
+     0.9096
+    ],
+    "tris": {
+     "vpm": 296,
+     "npm": 296
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001/27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1_GroundEl_high.fbx",
+     "sha256": "dc68a4596648ba164b816f2a1535022380fe69dc149c67c4d07d5af0c17a0144",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001/27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1_GroundEl_low.fbx",
+     "sha256": "10a6dfd3504b5a16229a753318bade2f5808aa7673089d490608df64df9c6257",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001/27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1_review_quad_v003.max",
+     "sha256": "b8782f5403edd28096f09abf256778a6a7f634e84fc6efb67405e787f09cea39",
+     "role": "max"
+    },
+    {
+     "path": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001/preview.png",
+     "sha256": "a59890dc357921f8952db537d130330090e476de6c74abff9d14343d8955941b",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.105 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '2_paint_ral7016']",
+     "vpm: MAF smoothing: fail: vpm: 27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1_GroundEl: 8 soft edges > 40 deg (max 45.00 deg)",
+     "npm: lowest point -0.105 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF smoothing: fail: npm: 27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1_GroundEl: 4 soft edges > 40 deg (max 40.21 deg)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Adanat_UrnaGorod_9004",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:12+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "28_Adanat_UrnaGorod_9004",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '9004'"
+   },
+   "card": {
+    "manufacturer": "Adanat",
+    "title_ru": "Урны \"Город\"",
+    "article": "9004",
+    "size_m": [
+     0.4,
+     0.4,
+     1.1
+    ],
+    "tris": {
+     "vpm": 204,
+     "npm": 204
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "1_paint_ral9005",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Adanat_UrnaGorod_9004/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Adanat_UrnaGorod_9004/v001/28_Adanat_UrnaGorod_9004_GroundEl_high.fbx",
+     "sha256": "54236240c9e84a85a5230ca64051f3acc3cba122150ad5b0f3ef1a86b8526963",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Adanat_UrnaGorod_9004/v001/28_Adanat_UrnaGorod_9004_GroundEl_low.fbx",
+     "sha256": "6bb425c7eacc7caff5ba05c69f5f3b5695dee0570a3efbfad851cdb8afe2f7ab",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Adanat_UrnaGorod_9004/v001/28_Adanat_UrnaGorod_9004_review_quad_v001.max",
+     "sha256": "9767d1e80623853aeeff38f21cdeaa5a9dbe9a4bf567bf2b8b30201385596289",
+     "role": "max"
+    },
+    {
+     "path": "maf/Adanat_UrnaGorod_9004/v001/preview.png",
+     "sha256": "83ec40678e3802929cb96f765b9561fa7a08b82c3951886ff56d19a9b86aefca",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '1_paint_ral9005', '2_paint_ral7016']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Adanat_KonteynernayaPloshchadkaBunker_5003-1",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:16+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "32_Adanat_KonteynernayaPloshchadkaBunker_5003-1",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article '5003-1'"
+   },
+   "card": {
+    "manufacturer": "Adanat",
+    "title_ru": "Контейнерная площадка  на 3 контейнера",
+    "article": "5003-1",
+    "size_m": [
+     4.54,
+     2.547,
+     2.59
+    ],
+    "tris": {
+     "vpm": 1058,
+     "npm": 1058
+    },
+    "materials": {
+     "vpm": [
+      "14_wood_light",
+      "1_paint_ral9005",
+      "2_paint_ral7016",
+      "30_sheet_profiled"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001/32_Adanat_KonteynernayaPloshchadkaBunker_5003-1_GroundEl_high.fbx",
+     "sha256": "841514ee3363830e47dc61c85de6e39c6b12c34f4ec8373e52be7b88d1013f7c",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001/32_Adanat_KonteynernayaPloshchadkaBunker_5003-1_GroundEl_low.fbx",
+     "sha256": "053a0e6bad3f8e09683b4cddd58a20f792af0435898959ee24e79a0d09db0f1f",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001/32_Adanat_KonteynernayaPloshchadkaBunker_5003-1_review_quad_v002.max",
+     "sha256": "09818a05dd65f3f3906225c2522f64ab8f7210897e84304f42c9968ef3dd5b72",
+     "role": "max"
+    },
+    {
+     "path": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001/preview.png",
+     "sha256": "051c810fb652dcb03ec9e9b4bcc7a5655933c91f24b66a616a1ac8450a749705",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: pivot not centred on Y (-0.018 m)",
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['14_wood_light', '1_paint_ral9005', '2_paint_ral7016', '30_sheet_profiled']",
+     "npm: pivot not centred on Y (-0.018 m)",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:20+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "34_Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no library record with article 'MK001'"
+   },
+   "card": {
+    "manufacturer": "Pokolenie",
+    "title_ru": "Контейнер для мусора с крышкой",
+    "article": "MK001",
+    "size_m": [
+     1.4,
+     1.4,
+     0.9
+    ],
+    "tris": {
+     "vpm": 182,
+     "npm": 182
+    },
+    "materials": {
+     "vpm": [
+      "23_rubber_black",
+      "2_paint_ral7016",
+      "8_paint_green_light"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001/34_Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001_GroundEl_high.fbx",
+     "sha256": "8645f5097cbebdd8c084a5a849239c35009db088f6a9d4db4dee2b990aeeaa58",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001/34_Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001_GroundEl_low.fbx",
+     "sha256": "b110e5d53804b7646c22f6a5408f00c36d9f7ab45c69d14333b7b9725022bcd0",
+     "role": "npm"
+    },
+    {
+     "path": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001/34_Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001_review_quad_v001.max",
+     "sha256": "6628fb5e270efd29504072e1fb694576229ebd39fddb5db10207b1578493dc23",
+     "role": "max"
+    },
+    {
+     "path": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001/preview.png",
+     "sha256": "9813166c8fc2832155c01b40da1a5545e2148b2b0968f81b540c14c6292c6353",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: materials without texture maps: ['23_rubber_black', '2_paint_ral7016', '8_paint_green_light']"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "AGR_maf_OgrazhdenieProPanel2500x2430_001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:23+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "35_GrandLine_Panel3DProfi_2500x2430",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no article: nothing to match by article"
+   },
+   "card": {
+    "manufacturer": null,
+    "title_ru": "Cварное ограждение PRO  H=2,5 м",
+    "article": null,
+    "size_m": [
+     2.5,
+     0.0,
+     2.43
+    ],
+    "tris": {
+     "vpm": 2,
+     "npm": 2
+    },
+    "materials": {
+     "vpm": [
+      "28_perforation"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001/35-39_fence_kit_review_quad_v002.max",
+     "sha256": "3b89be0931b85697535a2ebafb65ab046604611ab5ca30bd1474242bf681db0d",
+     "role": "max"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001/35_GrandLine_Panel3DProfi_2500x2430_GroundEl_high.fbx",
+     "sha256": "159397ca2a0c901ad4f183f59ebd12aeff7954b9c512899a8803ba5f2ead80fd",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001/35_GrandLine_Panel3DProfi_2500x2430_GroundEl_low.fbx",
+     "sha256": "bbf22fdcb9d8db4690ff7f451c87f8dee733d9761d407effe96139c1a2897bd4",
+     "role": "npm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001/preview.png",
+     "sha256": "003c5ee43a1cab8f061b2f2327bbdc7f6d22d46e9fa0cb807d0dbd488958c1c5",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['28_perforation']",
+     "vpm: MAF flipped normals: not_run: vpm: 35_GrandLine_Panel3DProfi_2500x2430_GroundEl: 1 orientation undetermined",
+     "npm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF flipped normals: not_run: npm: 35_GrandLine_Panel3DProfi_2500x2430_GroundEl: 1 orientation undetermined"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "AGR_maf_OgrazhdenieProStolb60x60x2600_001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:27+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "35_GrandLine_StolbProfi_60x60x2600",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no article: nothing to match by article"
+   },
+   "card": {
+    "manufacturer": null,
+    "title_ru": "Cварное ограждение PRO  H=2,5 м",
+    "article": null,
+    "size_m": [
+     0.06,
+     0.06,
+     2.6
+    ],
+    "tris": {
+     "vpm": 10,
+     "npm": 10
+    },
+    "materials": {
+     "vpm": [
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001/35-39_fence_kit_review_quad_v002.max",
+     "sha256": "3b89be0931b85697535a2ebafb65ab046604611ab5ca30bd1474242bf681db0d",
+     "role": "max"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001/35_GrandLine_StolbProfi_60x60x2600_GroundEl_high.fbx",
+     "sha256": "96a05edac2a9e04e6e11b5f6b55bc4f6cb053d7fa955573cd08815e2a6104cd5",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001/35_GrandLine_StolbProfi_60x60x2600_GroundEl_low.fbx",
+     "sha256": "174a920842930dbad738aad18a4b431cdc04d5b3c446cb4836b1772bee1c7f70",
+     "role": "npm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001/preview.png",
+     "sha256": "ae1314bff09a570085c51769c1e02e3f5c515115f22d3f13a6381cdd528c58a0",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['2_paint_ral7016']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "AGR_maf_KalitkaPerimetr1200x2430_001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:31+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "37_GrandLine_KalitkaProfi_1200x2430",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no article: nothing to match by article"
+   },
+   "card": {
+    "manufacturer": null,
+    "title_ru": "Калитка периметрального ограждения",
+    "article": null,
+    "size_m": [
+     1.22,
+     0.04,
+     2.43
+    ],
+    "tris": {
+     "vpm": 32,
+     "npm": 32
+    },
+    "materials": {
+     "vpm": [
+      "28_perforation",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001/35-39_fence_kit_review_quad_v002.max",
+     "sha256": "3b89be0931b85697535a2ebafb65ab046604611ab5ca30bd1474242bf681db0d",
+     "role": "max"
+    },
+    {
+     "path": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001/37_GrandLine_KalitkaProfi_1200x2430_GroundEl_high.fbx",
+     "sha256": "26e5aff8aaa585f3cce1a93485690c513a5cd48b4c2b90c3ccc577f9af974f1e",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001/37_GrandLine_KalitkaProfi_1200x2430_GroundEl_low.fbx",
+     "sha256": "e0f18a3437a88274fd4eabc76349b27c2de73aacb878726efc81d4eced8553cf",
+     "role": "npm"
+    },
+    {
+     "path": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001/preview.png",
+     "sha256": "e665a64651026678431b8bad6cb690ecd9c43220a77fbac341dd6a5b5d0f18d7",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['28_perforation', '2_paint_ral7016']",
+     "vpm: MAF flipped normals: not_run: vpm: 37_GrandLine_KalitkaProfi_1200x2430_GroundEl: 1 orientation undetermined",
+     "npm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF flipped normals: not_run: npm: 37_GrandLine_KalitkaProfi_1200x2430_GroundEl: 1 orientation undetermined"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "AGR_maf_KalitkaSport1200x3930_001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:35+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "38_GrandLine_KalitkaBastion_1200x3930",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no article: nothing to match by article"
+   },
+   "card": {
+    "manufacturer": null,
+    "title_ru": "Калитка в спор. ограждении",
+    "article": null,
+    "size_m": [
+     1.22,
+     0.04,
+     3.93
+    ],
+    "tris": {
+     "vpm": 40,
+     "npm": 40
+    },
+    "materials": {
+     "vpm": [
+      "27_mesh_chainlink",
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/AGR_maf_KalitkaSport1200x3930_001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/AGR_maf_KalitkaSport1200x3930_001/v001/35-39_fence_kit_review_quad_v002.max",
+     "sha256": "3b89be0931b85697535a2ebafb65ab046604611ab5ca30bd1474242bf681db0d",
+     "role": "max"
+    },
+    {
+     "path": "maf/AGR_maf_KalitkaSport1200x3930_001/v001/38_GrandLine_KalitkaBastion_1200x3930_GroundEl_high.fbx",
+     "sha256": "aa31422a454c5bed81dbcfaffa3e3c84283ec2e6d104bc049c5279e56b0f46ec",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/AGR_maf_KalitkaSport1200x3930_001/v001/38_GrandLine_KalitkaBastion_1200x3930_GroundEl_low.fbx",
+     "sha256": "4e3b60f3750c399908c27620a910e541cfd4282d7123988b310d02d08d40012a",
+     "role": "npm"
+    },
+    {
+     "path": "maf/AGR_maf_KalitkaSport1200x3930_001/v001/preview.png",
+     "sha256": "aa254d89de58135d6a2ecba5a3eefeb0e82cdeb611b0d6e12b93bc2df1e13225",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['27_mesh_chainlink', '2_paint_ral7016']",
+     "vpm: MAF flipped normals: not_run: vpm: 38_GrandLine_KalitkaBastion_1200x3930_GroundEl: 1 orientation undetermined",
+     "npm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF flipped normals: not_run: npm: 38_GrandLine_KalitkaBastion_1200x3930_GroundEl: 1 orientation undetermined"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "AGR_maf_OgrazhdenieSportPanel2500x3930_001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:38+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "39_GrandLine_Panel2DBastion_2500x3930",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no article: nothing to match by article"
+   },
+   "card": {
+    "manufacturer": null,
+    "title_ru": "Ограждение спортивное H=4 м",
+    "article": null,
+    "size_m": [
+     2.5,
+     0.0,
+     3.93
+    ],
+    "tris": {
+     "vpm": 2,
+     "npm": 2
+    },
+    "materials": {
+     "vpm": [
+      "27_mesh_chainlink"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001/35-39_fence_kit_review_quad_v002.max",
+     "sha256": "3b89be0931b85697535a2ebafb65ab046604611ab5ca30bd1474242bf681db0d",
+     "role": "max"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001/39_GrandLine_Panel2DBastion_2500x3930_GroundEl_high.fbx",
+     "sha256": "ad9c6548af7e6af7573a765ab5390422c61c1b1de1a27014d5c330726f8ed5ba",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001/39_GrandLine_Panel2DBastion_2500x3930_GroundEl_low.fbx",
+     "sha256": "d38d7bb6d8458b171c90752c4083e3462aa26215c12327a0fb34428608df463a",
+     "role": "npm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001/preview.png",
+     "sha256": "a3022acf85b99300ddbdb747e0271e5dd374821fbf4464589ac99b2002c22937",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['27_mesh_chainlink']",
+     "vpm: MAF flipped normals: not_run: vpm: 39_GrandLine_Panel2DBastion_2500x3930_GroundEl: 1 orientation undetermined",
+     "npm: lowest point +0.050 m, expected +0.000 m (pivot/seating)",
+     "npm: MAF flipped normals: not_run: npm: 39_GrandLine_Panel2DBastion_2500x3930_GroundEl: 1 orientation undetermined"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
+  },
+  {
+   "name": "AGR_maf_OgrazhdenieSportStolb80x80x4100_001",
+   "kind": "maf",
+   "version": "v001",
+   "status": "draft",
+   "published": "2026-11-27T00:59:41+01:00",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "39_GrandLine_StolbBastion_80x80x4100",
+    "issue": "1743"
+   },
+   "identify": {
+    "result": "new",
+    "of": [],
+    "reason": "no article: nothing to match by article"
+   },
+   "card": {
+    "manufacturer": null,
+    "title_ru": "Ограждение спортивное H=4 м",
+    "article": null,
+    "size_m": [
+     0.08,
+     0.08,
+     4.1
+    ],
+    "tris": {
+     "vpm": 10,
+     "npm": 10
+    },
+    "materials": {
+     "vpm": [
+      "2_paint_ral7016"
+     ],
+     "npm": [
+      "MAF_11_paint_blue",
+      "MAF_14_wood_light",
+      "MAF_15_wood_medium",
+      "MAF_18_wood_log_end",
+      "MAF_1_paint_ral9005",
+      "MAF_20_steel_stainless",
+      "MAF_23_rubber_black",
+      "MAF_24_concrete_arch",
+      "MAF_27_mesh_chainlink",
+      "MAF_28_perforation",
+      "MAF_2_paint_ral7016",
+      "MAF_30_sheet_profiled",
+      "MAF_33_wood_pine",
+      "MAF_3_paint_ral7040",
+      "MAF_5_paint_ral9003",
+      "MAF_6_paint_orange",
+      "MAF_7_paint_red",
+      "MAF_8_paint_green_light",
+      "MAF_9_paint_green"
+     ]
+    }
+   },
+   "preview": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001/preview.png",
+   "files": [
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001/35-39_fence_kit_review_quad_v002.max",
+     "sha256": "3b89be0931b85697535a2ebafb65ab046604611ab5ca30bd1474242bf681db0d",
+     "role": "max"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001/39_GrandLine_StolbBastion_80x80x4100_GroundEl_high.fbx",
+     "sha256": "d29c086b94b0a9b95c715c3f57930de32642bc3627aec841262795bbcf8d2d63",
+     "role": "vpm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001/39_GrandLine_StolbBastion_80x80x4100_GroundEl_low.fbx",
+     "sha256": "66527b87d3dafd0c2c98ee1b0a8299e6bdc89d8b624b25aafebb5fa8d829b61c",
+     "role": "npm"
+    },
+    {
+     "path": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001/preview.png",
+     "sha256": "156a61ce769679e45b9e3fdb864aec4cbe3339593386cb6c7e6ccb5c22402bcf",
+     "role": "preview"
+    }
+   ],
+   "qa": {
+    "verdict": "fail",
+    "findings": [
+     "vpm: lowest point -0.100 m, expected +0.000 m (pivot/seating)",
+     "vpm: materials without texture maps: ['2_paint_ral7016']",
+     "npm: lowest point -0.100 m, expected +0.000 m (pivot/seating)"
+    ]
+   },
+   "accepted": null,
+   "rejected": null
   }
  ]
 }
