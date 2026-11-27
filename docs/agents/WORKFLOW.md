@@ -446,6 +446,13 @@ a merge to `main` keep `main`'s handoff unless the merged branch's handoff is th
 Each kind of fact lives in one place; the others point to it.
 Before adding documentation, check the [topic owner](../architecture/README.md#documentation-ownership) [D386].
 
+**Live trail in the same PR [D386].** The entry chain is `AGENTS.md` -> scenario cell (`docs/agents/SKELETONS.md`,
+`skeleton_guard.py --show <cell>`) -> trail (`routes/*.md` or the cell card) -> rule + command at the step. Each
+decision lives in one place and the rest link to it. A PR that changes a working command, a file location or the
+recommended entry into a task updates the ACTIVE route/scenario section in the same PR and smoke-checks that command
+on a safe entry (`<cmd> --help`; `tests/test_trail_commands_1895.py`). Superseded decisions stay in
+`docs/decisions.md` with the reason; the entry indexes only the live ones.
+
 | Fact | File |
 |---|---|
 | A dated user decision | `docs/decisions.md` (one line, `D<n>`), the full text where it applies |

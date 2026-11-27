@@ -18,6 +18,7 @@ agent reads from AGENTS.md to the first command (see the block above ``COMMON``)
 their contradictory ladder rows on that path. It writes tests/fixtures/cold_entry/cells_baseline.json.
 """
 import argparse
+import importlib.util
 import hashlib
 import json
 import math
@@ -347,6 +348,66 @@ def _sha(commit):
     return commit
 
 
+# --- one door (#1895): AGENTS.md -> SKELETONS index -> cell block -> passport/intake -> trail ----------------
+#
+# The door AGENTS.md prescribes after hygiene batch 3: the index, the printed block of the cell
+# (`skeleton_guard.py --show <cell>`, counted as its printed text), task-intake (passport first, D397), the cell's
+# `trail` from skeletons.json and, for a site cell, the stage skill. Area sheets and cards are read at the trail
+# step that links them, after the first command. A cell without a readable trail fails closed (no default).
+
+DOOR = ("AGENTS.md", "docs/agents/SKELETONS.md")
+DOOR_INTAKE = "docs/agents/task-intake.md"
+
+
+def door_path(root, cell_id, stage=None):
+    """Ordered (label, text) of the one-door entry for a cell (and stage); FailClosed on any gap."""
+    root = Path(root).resolve()
+    guard = root / "tools" / "architecture" / "skeleton_guard.py"
+    if not guard.is_file():
+        raise FailClosed(f"partial: {guard.relative_to(root).as_posix()} missing (no cell block)")
+    spec = importlib.util.spec_from_file_location(f"_skeleton_guard_{abs(hash(str(guard)))}", guard)
+    sg = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sg)
+    if not hasattr(sg, "cell_block"):
+        raise FailClosed("unsupported skeleton_guard: no cell_block (tree before #1895)")
+    cells = _scenarios(root)
+    if cell_id not in cells:
+        raise FailClosed(f"unknown cell: {cell_id}")
+    stages = _card_stages(root, cells[cell_id])
+    if len(stages) > 1 and stage is None:
+        raise FailClosed(f"stage required for {cell_id}: one of {stages}")
+    if stage is not None and stage not in stages:
+        raise FailClosed(f"card of {cell_id} names no skill for stage {stage}")
+    try:
+        skeletons = sg.load_skeletons(root)
+        block = sg.cell_block(root, skeletons, cell_id)
+    except (sg.ConfigError, KeyError) as exc:
+        raise FailClosed(f"cell block of {cell_id}: {exc}") from exc
+    rows = [(rel, _text(root / rel, rel)) for rel in DOOR]
+    rows.append((f"skeleton_guard.py --show {cell_id}", block))
+    trail = skeletons["cells"][cell_id]["trail"]
+    for rel in (DOOR_INTAKE, trail) + ((STAGE_SKILLS[stage],) if stage else ()):
+        if rel not in [r[0] for r in rows]:
+            rows.append((rel, _text(root / rel, rel)))
+    return rows
+
+
+def measure_door(root, counter, commit):
+    """Tokens of the one-door entry per target (same targets as --cells)."""
+    commit = _sha(commit)
+    root = Path(root).resolve()
+    data = {"schema": 1, "kind": "entry_budget_door", "metric": "tokens from AGENTS.md to the first command (one door)",
+            "tokenizer": TOKENIZER, "measured_on": commit, "budget": BUDGET, "targets": {}}
+    for tid in targets(root):
+        cell, _, stage = tid.partition(":")
+        rows = [{"path": label, "chars": len(text), "tokens": _count(counter(text), "tokens", label)}
+                for label, text in door_path(root, cell, stage or None)]
+        total = sum(r["tokens"] for r in rows)
+        data["targets"][tid] = {"cell": cell, "stage": stage or None, "files_count": len(rows),
+                                "total_tokens": total, "within_budget": total <= BUDGET, "files": rows}
+    return data
+
+
 def measure_cells(root, counter, commit, walkers=None):
     """Measure every target's entry path; attach walker coverage when ``walkers`` is given."""
     commit = _sha(commit)
@@ -488,6 +549,23 @@ def write_cells(root, output, counter, commit, walkers_dir=None):
     return data
 
 
+def write_door(root, output, counter, commit):
+    """Measure the one door and write it atomically; refuse an output that is an input."""
+    root = Path(root).resolve()
+    output = Path(output).resolve()
+    inputs = {os.path.normcase(str((root / rel).resolve())) for rel in (*DOOR, DOOR_INTAKE, SCENARIOS,
+                                                                       "docs/agents/skeletons.json")}
+    if os.path.normcase(str(output)) in inputs or (output.exists() and output.is_dir()):
+        raise FailClosed(f"output path is an input: {output}")
+    data = measure_door(root, counter, commit)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    partial = output.with_name(output.name + ".partial")
+    with partial.open("w", encoding="utf-8", newline="\n") as sink:
+        sink.write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    os.replace(partial, output)
+    return data
+
+
 def _cells_main(args):
     if args.output is None:
         print("entry_budget: --cells needs --output", file=sys.stderr)
@@ -496,7 +574,10 @@ def _cells_main(args):
     commit = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"], capture_output=True,
                             text=True).stdout.strip()
     try:
-        data = write_cells(root, args.output, _tiktoken_counter(), commit, args.walkers)
+        if args.door:
+            data = write_door(root, args.output, _tiktoken_counter(), commit)
+        else:
+            data = write_cells(root, args.output, _tiktoken_counter(), commit, args.walkers)
     except FailClosed as exc:
         print(f"entry_budget: {exc.reason}", file=sys.stderr)
         return 1
@@ -519,7 +600,11 @@ def main(argv=None):
     parser.add_argument("--root", type=Path, help="--cells: repository to measure (default: this checkout)")
     parser.add_argument("--walkers", type=Path, help="--cells: directory with the hygiene walker w*.json")
     parser.add_argument("--output", type=Path, help="--cells: baseline JSON to write")
+    parser.add_argument("--door", action="store_true", help="--cells: measure the one-door entry instead (#1895)")
     args = parser.parse_args(argv)
+    if args.door and (not args.cells or args.walkers):
+        print("entry_budget: --door needs --cells and takes no --walkers", file=sys.stderr)
+        return 2
     if args.cells:
         return _cells_main(args)
     try:

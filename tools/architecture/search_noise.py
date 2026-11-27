@@ -11,7 +11,9 @@ A fresh agent searches the repo with ripgrep, which reads the root `.ignore`. #1
   Dated plan status overrides visibility. `--check-docs` validates the existing route index's ownership
   table, plan headers and visibility; adding a path to the generated ignore block cannot waive ownership.
 - explicit search archive (#1885): exact reviewed files in the search-only section of docs/ARCHIVE.md.
-  These paths are never inputs to `--move-evidence`.
+  These paths are never inputs to `--move-evidence`. A row named by an entry doc, or by any file the live closure
+  follows (a live doc, code, an active plan) is refused (#1891); lookup inventories, archived files and inactive
+  plans are not followed for that check.
 "Live surface" (`live_closure`): the entry docs, routes/, docs/scenarios/, .agents/skills/ and the non-test code
 (tools/, src/, adapters/, schemas/, standards/), followed transitively through the files they name (markdown links,
 `backticked` paths, bare repo paths). Job files are leaves: a delivered job's report keeps nothing else alive.
@@ -48,6 +50,9 @@ DOC_TABLE = ("| Topic | Owner | Related |", "|---|---|---|")
 DOC_EXEMPT = frozenset({"docs/decisions.md", "docs/PROJECT_STATE.md"})
 ARCHIVE = "docs/ARCHIVE.md"
 ARCHIVE_SECTION = "## Hidden from search (still in the tree)"
+# Lookup inventories (#1891): they list paths for lookup, so their rows never keep an archived file live.
+LOOKUP_FILES = frozenset({ARCHIVE, "docs/agents/job_scripts_baseline.txt"})
+LOOKUP_DIRS = ("docs/research/reuse-1296/data/",)
 _INDEX_LINK = re.compile(r"\[[^\]\n]+\]\(([^()\s]+)\)")
 _PLAN_STATUS = re.compile(r"(active|done|superseded by (\S+)) \(([0-9]{4}-[0-9]{2}-[0-9]{2})\)")
 MANIFEST = "EVIDENCE-MOVED.json"
@@ -146,24 +151,41 @@ def live_roots(files):
                   or (f.startswith(CODE_DIRS) and not is_test(f)))
 
 
-def live_closure(root, files):
+def live_closure(root, files, skip=frozenset(), extra_roots=(), referrers=None):
     """Every tracked file a live root reaches through named paths. Only roots and reached markdown docs outside
     jobs/ propagate: a reached inventory (yaml/json/txt baseline, context map) or job file is a leaf, so a list of
-    every path does not make everything live."""
+    every path does not make everything live. Files in `skip` are reached but never followed; `referrers`, when
+    given, collects for each reached file the followed files that name it."""
     fileset = set(files)
     dirs = {f.rsplit("/", i)[0] for f in files for i in range(1, f.count("/") + 1)}
-    seen = set(live_roots(files))
+    seen = set(live_roots(files)) | set(extra_roots)
     frontier = sorted(seen)
     while frontier:
         nxt = []
         for f in frontier:
+            if f in skip:
+                continue
             for r in sorted(refs(root, f, fileset, dirs)):
+                if referrers is not None and r != f:
+                    referrers.setdefault(r, set()).add(f)
                 if r not in seen:
                     seen.add(r)
                     if r.endswith(".md") and not r.startswith("jobs/"):
                         nxt.append(r)
         frontier = nxt
     return seen
+
+
+def live_referrers(root, files, archive, statuses):
+    """#1891: for each archived path, the live files that still name it. Lookup inventories (the archive's own tag
+    table, the ownership table, the job-script baseline, the reuse census), archived files and inactive plans are
+    not followed; active plans are extra roots. A hidden file a live doc links is rewritten as 'missing'."""
+    inactive = {rel for rel, status in statuses.items() if status != "active"}
+    lookups = {f for f in files if f in LOOKUP_FILES or f.startswith(LOOKUP_DIRS)}
+    via = {}
+    live_closure(root, files, skip=lookups | set(archive) | inactive,
+                 extra_roots=[rel for rel, status in statuses.items() if status == "active"], referrers=via)
+    return {rel: sorted(via[rel]) for rel in archive if via.get(rel)}
 
 
 def entry_named(root, files):
@@ -178,14 +200,15 @@ def entry_named(root, files):
 
 
 def load_config(root, files):
-    """Read kept jobs, live paths and the exact legacy doc exemption cut."""
+    """Read job classification, live paths, exact archive exceptions and legacy docs."""
     cfg = mini_yaml.load(Path(root) / CONFIG)
     if not isinstance(cfg, dict):
         raise ValueError(f"{CONFIG}: expected a mapping")
     unknown = set(cfg) - {"kept_jobs", "live_paths", "legacy_hidden_docs"}
     if unknown:
         raise ValueError(f"{CONFIG}: unknown keys {sorted(unknown)}")
-    kept, parts = {}, {}
+    kept, parts, exceptions = {}, {}, {}
+    fileset = set(files)
     for i, e in enumerate(cfg.get("kept_jobs") or []):
         job, ru = str(e.get("job", "")), str(e.get("ru", "")).strip()
         if not re.match(r"^jobs/[^/]+$", job) or not ru:
@@ -202,13 +225,21 @@ def load_config(root, files):
         if path not in files and not any(f.startswith(path + "/") for f in files):
             raise ValueError(f"{CONFIG}: live_paths {path} holds no tracked file")
         parts[path] = ru
+        allowed = e.get("archive_exceptions", [])
+        if (not isinstance(allowed, list)
+                or any(not isinstance(rel, str) or rel not in fileset
+                       or not rel.startswith(path + "/") for rel in allowed)
+                or len(set(allowed)) != len(allowed)):
+            raise ValueError(f"{CONFIG}: archive_exceptions for {path} must be unique tracked descendant files")
+        if allowed:
+            exceptions[path] = set(allowed)
     legacy = cfg.get("legacy_hidden_docs", [])
     if (not isinstance(legacy, list)
             or any(not isinstance(p, str) or not p.startswith("docs/") or "\\" in p
                    or posixpath.normpath(p) != p for p in legacy)
             or len(set(legacy)) != len(legacy)):
         raise ValueError(f"{CONFIG}: legacy_hidden_docs must list unique canonical docs paths")
-    return kept, parts, set(legacy)
+    return kept, parts, exceptions, set(legacy)
 
 
 def job_folders(files):
@@ -634,7 +665,7 @@ def state(root):
     files = tracked(root)
     contexts = mini_yaml.load(Path(root) / CONTEXTS)
     finished = dg.finished_jobs(root, contexts)
-    kept, parts, legacy = load_config(root, files)
+    kept, parts, exceptions, legacy = load_config(root, files)
     live = live_closure(root, files)
     statuses, plan_problems = plan_statuses(root, files)
     live.update(rel for rel, status in statuses.items() if status == "active")
@@ -642,13 +673,24 @@ def state(root):
     live.difference_update(inactive)
     data = historical_job_data(root, files, finished, parts, live)
     archive = search_archive(root, files)
+    excepted = set().union(*exceptions.values())
+    stale = excepted.difference(archive)
+    if stale:
+        raise ValueError(f"{CONFIG}: archive_exceptions missing from {ARCHIVE}: {sorted(stale)}")
     if archive:
         named = entry_named(root, files)
         # The archive's own old tag inventory may name its evidence. Entry links, unlike
         # those inventory pointers, must stay visible when a path is adopted again.
         for rel in archive:
-            if rel in named or statuses.get(rel) == "active" or under(rel, parts) or rel.startswith(ENTRY_DIRS):
+            # An exception lifts only its own live_paths row, never an independent guard.
+            protected = under(rel, (p for p in parts if rel not in exceptions.get(p, ())))
+            if (rel in named or statuses.get(rel) == "active" or protected or rel.startswith(ENTRY_DIRS)
+                    or (rel in excepted and rel in live)):
                 raise ValueError(f"{ARCHIVE}: {rel} is explicitly live and cannot be archived")
+        linked = live_referrers(root, files, archive, statuses)
+        if linked:
+            rows = "; ".join(f"{rel} <- {', '.join(by)}" for rel, by in linked.items())
+            raise ValueError(f"{ARCHIVE}: archived files linked by live docs or code (unlink or unarchive): {rows}")
     return {"files": files, "contexts": contexts, "finished": finished, "kept": kept, "parts": parts, "live": live,
             "data": data, "docs": sorted(set(historical_docs(files, live, parts)) | inactive),
             "archive": archive, "legacy_docs": legacy, "statuses": statuses, "plan_problems": plan_problems}

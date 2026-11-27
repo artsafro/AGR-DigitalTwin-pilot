@@ -284,9 +284,10 @@ def test_nonfinite_display_bbox_is_an_error(tmp_path, monkeypatch, bad):
 @pytest.mark.parametrize('album', ['elv', 'cod20207', 'tec26'])
 def test_real_corpus_frozen_kind_accounting(tmp_path, album):
     intake = intake_module()
-    source = Path('C:/x/pdf-album-research/t_5b23c219') / f'{album}.pdf'
+    root = Path('G:/Мой диск/AGR-evidence/pdf-album-research/t_5b23c219-v001')
+    source = root / f'{album}.pdf'
     if not source.is_file():
-        pytest.skip('read-only research corpus not mounted')
+        pytest.skip(f'sealed PDF research input not available on Drive: {source}')
     reference = json.loads((Path('tools/research/pdf_album/results') / f'{album}.json').read_text('utf8'))
     assert hashlib.sha256(source.read_bytes()).hexdigest() == reference['sha256']
     intake.index_album(source, tmp_path / 'out')

@@ -77,6 +77,11 @@
             "type": "command",
             "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hooks/session_context.py\" start",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hygiene/hygiene.py\" session --agent claude",
+            "timeout": 10
           }
         ]
       }
@@ -105,6 +110,16 @@
       }
     ],
     "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "py -3 \"$CLAUDE_PROJECT_DIR/tools/hygiene/hygiene.py\" hook --agent claude",
+            "timeout": 15
+          }
+        ]
+      },
       {
         "matcher": "Bash|PowerShell|Write|Edit|NotebookEdit|SendMessage",
         "hooks": [

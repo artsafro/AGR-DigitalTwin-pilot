@@ -128,6 +128,84 @@ def test_failing_readbacks_are_failures_never_pass(tmp_path):
         assert code == 3 and receipt["status"] == "fail" and receipt["reason"], (mode, receipt)
 
 
+@pytest.mark.parametrize("payload,reason", [
+    (b"", "no DXF"),
+    (b"AutoCAD Binary DXF\r\n\x1a\0", "SECTION"),
+    (b"  0\r\nSECTION\r\n  2\r\nOBJECTS\r\n  0\r\nXRECORD\r\n100\r\nAcDbXrecord\r\n280\r\n1\r\n",
+     "missing terminal"),
+    (DXF_TEXT.replace("EOF\r\n", "").encode("ascii"), "missing terminal"),
+    (DXF_TEXT.replace("  2\r\nHEADER", "  8\r\nHEADER").encode("ascii"), "does not parse"),
+])
+def test_exit_zero_with_incomplete_or_unsupported_dxf_fails(tmp_path, payload, reason):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    (work / "acc.exe").touch()
+    argv, out, rec = _args(src, work)
+    before = _sha(src)
+
+    def write_dxf(cmd, **kwargs):
+        out.write_bytes(payload)
+        return subprocess.CompletedProcess(cmd, 0, stdout=b"done", stderr=b"")
+
+    assert dd.main(argv, runner=write_dxf) == 3
+    result = json.loads(rec.read_bytes())
+    assert result["returncode"] == 0 and result["console_outcome"] == "exited"
+    assert result["status"] == "fail" and reason in result["reason"]
+    assert "dxf" not in result and result["dxf_bytes_observed"] == len(payload)
+    assert out.read_bytes() == payload and _sha(src) == before
+
+
+def test_generated_dxf_truncations_never_pass(tmp_path):
+    import ezdxf
+
+    src = _source(tmp_path)
+    fixture = tmp_path / "synthetic.dxf"
+    doc = ezdxf.new("R2018")
+    doc.modelspace().add_line((0, 0), (1000, 0))
+    doc.saveas(fixture)
+    complete = fixture.read_bytes()
+    # Every byte cut across the terminal record, plus cuts in the file's interior.
+    last_eof = complete.rindex(b"EOF")
+    cuts = sorted({len(complete) * i // 16 for i in range(1, 16)} | set(range(last_eof - 8, last_eof + 3)))
+    for i, end in enumerate([len(complete), *cuts, len(complete)]):
+        work = tmp_path / f"case{i}"
+        work.mkdir()
+        (work / "acc.exe").touch()
+        argv, out, rec = _args(src, work)
+
+        def write_dxf(cmd, **kwargs):
+            out.write_bytes(complete[:end])
+            return subprocess.CompletedProcess(cmd, 0, stdout=b"", stderr=b"")
+
+        valid = end == len(complete)
+        assert dd.main(argv, runner=write_dxf) == (0 if valid else 3), f"byte cut {end}"
+        result = json.loads(rec.read_bytes())
+        assert result["status"] == ("pass" if valid else "fail")
+        assert ("dxf" in result) == valid
+
+
+def test_dxf_changed_during_readback_is_not_certified(tmp_path, monkeypatch):
+    import ezdxf
+
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    (work / "acc.exe").touch()
+    argv, out, rec = _args(src, work)
+    readfile = ezdxf.readfile
+
+    def read_then_truncate(path, *args, **kwargs):
+        doc = readfile(path, *args, **kwargs)
+        out.write_bytes(DXF_TEXT.split("ENDSEC")[0].encode("ascii"))
+        return doc
+
+    monkeypatch.setattr(ezdxf, "readfile", read_then_truncate)
+    assert dd.main(argv, runner=FakeAcc()) == 3
+    result = json.loads(rec.read_bytes())
+    assert result["status"] == "fail" and "changed" in result["reason"] and "dxf" not in result
+
+
 def test_refusals_write_nothing_and_never_touch_the_source(tmp_path, capsys):
     src = _source(tmp_path)
     work = tmp_path / "work"

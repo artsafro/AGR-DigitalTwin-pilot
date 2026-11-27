@@ -31,6 +31,10 @@ confidence. Current checklist: this file. Historical source: `archive/2026-11:do
 5. **Skeleton, not a parallel pipeline [D325].** A job PR that adds its own chain of scripts instead of configuring
    its scenario skeleton (`jobs/<ID>/skeleton.json` + at most 5 `hooks/`, [docs/agents/SKELETONS.md](SKELETONS.md))
    = changes requested, the PR is not merged. Evidence: `uv run python tools/architecture/skeleton_guard.py` exit 0.
+6. **Live trail updated [D386].** A PR that changes a working command, a file location or the recommended entry into
+   a task, but leaves the active route/scenario section (`routes/*.md`, `docs/scenarios/*`, `docs/agents/SKELETONS.md`)
+   pointing at the old one = changes requested. Evidence: the trail diff and a `--help` smoke run of the command
+   (`tests/test_trail_commands_1895.py`). Superseded decisions stay in history with their reason, off the entry.
 
 ## Counterexamples
 

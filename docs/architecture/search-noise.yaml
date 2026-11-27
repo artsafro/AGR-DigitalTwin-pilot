@@ -2,7 +2,9 @@
 # A folder is either delivered (`finished_jobs` of docs/architecture/contexts.yaml, evidence-backed) or listed in
 # `kept_jobs` here with the reason it stays visible (Russian, for Artem). An unclassified or doubly classified folder
 # is an error. `live_paths`: job sub-folders (or a whole delivered job) and docs that an open issue or a running
-# scenario still uses; they stay visible. Check: uv run python tools/architecture/search_noise.py
+# scenario still uses; they stay visible. An archive exception under a live path names one tracked descendant
+# already listed in docs/ARCHIVE.md; siblings and independently live files stay protected.
+# Check: uv run python tools/architecture/search_noise.py
 kept_jobs:
   - job: jobs/_template
     ru: "шаблон новой работы (SKELETONS.md), нужен каждой новой задаче"
@@ -40,6 +42,8 @@ kept_jobs:
     ru: "только LESSONS.md; сценарий ground-vpm ссылается на уроки"
   - job: jobs/maf-atlas-512
     ru: "2 файла, записи о сдаче нет"
+  - job: jobs/mafs-b3
+    ru: "партия МАФ 3 (#1743, #1980): 5 черновиков библиотеки, ждут «ок» Артёма [D421]"
   - job: jobs/master-topology-1420
     ru: "диагностика только для чтения (2026-11-15), записи о сдаче нет"
   - job: jobs/ogorodnyj-proezd-zu4-3
@@ -56,7 +60,38 @@ live_paths:
   - path: jobs/KPP1/package-1361
     ru: "открыт #1609: упаковка КПП1 на quad-v003"
   - path: jobs/TEC26-OKS/AC08
-    ru: "открыт #1105: AC08 через этапы AGR Tools 1-9"
+    ru: "AC08: приёмка v010 открыта; точные архивные исключения пакета 5b [D416]"
+    archive_exceptions:
+      - jobs/TEC26-OKS/AC08/kernel-ops-v001/evidence/DRIVE-SHA256SUMS.txt
+      - jobs/TEC26-OKS/AC08/pilot-v006/DRIVE-SHA256SUMS.txt
+      - jobs/TEC26-OKS/AC08/pilot-v006/Nku_1_VPM_master.blend.build.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/export_meta.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/export_npm_meta.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/npm_atlas.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/qa_master.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/qa_packages-review1.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/qa_packages.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/renders.json
+      - jobs/TEC26-OKS/AC08/pilot-v006/sintez-summary.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/DRIVE-SHA256SUMS.txt
+      - jobs/TEC26-OKS/AC08/pilot-v007/Nku_1_VPM_master.blend.build.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/export_meta.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/export_npm_meta.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/npm_atlas.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/qa_master.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/qa_packages.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/renders.json
+      - jobs/TEC26-OKS/AC08/pilot-v007/sintez-summary.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/DRIVE-SHA256SUMS.txt
+      - jobs/TEC26-OKS/AC08/pilot-v009/Nku_1_VPM_master.blend.build.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/compare.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/export_meta.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/export_npm_meta.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/npm_atlas.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/qa_master.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/qa_packages.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/renders.json
+      - jobs/TEC26-OKS/AC08/pilot-v009/sintez-summary.json
   - path: jobs/VATUTINO-SITE
     ru: "открыты #1499, #1699, #1700; сценарии ground-npm/ground-vpm берут её как эталон"
 

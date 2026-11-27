@@ -17,6 +17,8 @@ Run `git fetch origin tag archive/2026-11` first if the tag is missing locally.
 
 ## Hygiene cleanup rule (2026-11-25)
 
+- `C:/x/` is disposable scratch, not durable storage; historical paths in receipts identify their original runs, not recoverable artifacts (rule 57).
+
 - Cleanup hides paths from agent search through the search-noise generator (`tools/architecture/search_noise.py` -> `.ignore`) and lists them here; git keeps them. Physical deletion only after a trainer before/after measurement; hygiene batch 2 is the only deletion now. Cleanup batches go one PR at a time [D395].
 - The 164 paths the hygiene auditors disagree on (`G:/Мой диск/AGR-evidence/hygiene-20261125/PLAN-ru-conflicts.csv`) stay keep until the owner of the trail decides [D396].
 - The old OKS body route (hygiene batch 4) is archived only after the lattice has built an NPM body on at least one object [D392].
@@ -343,3 +345,97 @@ This list does not repeat files hidden by the earlier historical data, docs or d
 ### `tests/fixtures/`
 
 - `tests/fixtures/pi_guard_smoke_task.txt` — Historical smoke prompt; not the maintained guard test driver.
+
+### Batch B4 (#1932): pre-lattice BODY
+The stage-1 BODY route is superseded by the lattice [D373], [D392]. Sokolniki NPM body v006 was accepted
+[D409] (PR #1833), fulfilling the archive condition. Exact B4 paths below remain at their original
+locations; search visibility is the only change to them. Retained consumers are listed in PR evidence.
+
+#### Body experiments
+
+- `experiments/body-gn-full-snap-edge-locator-rerun/drive.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+- `experiments/body-gn-full-snap-edge-locator-rerun/probe6.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+- `experiments/body-gn-full-snap-edge-locator-rerun/probe7.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+- `experiments/body-gn-full-snap-edge-locator-rerun/run8.py` — Pre-lattice experiment; superseded for production BODY by [D373].
+
+#### Job evidence
+
+- `jobs/KPP1/benchmark-1318/summary.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/KPP1/benchmark-1318/telemetry.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/KPP1/rerun-1230/xview-npm-r1-v002.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/OBR22-K02/body-shell-adapter-verification.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/OBR22-K02/body-shell-from-exterior-adapter.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/OBR22-K02/exterior-adapter-verification.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/PSU275/body-shell-vpm-adapter.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/PSU275/oks/tanks/vpm_textures.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+- `jobs/PSU275/oks/transformer/vpm_textures.json` — Frozen job evidence; not an active stage-1 BODY route [D373].
+
+#### Regression tests
+
+- `tests/jobs/test_kpp1_quad_master_v003_1563.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/jobs/test_kpp1_quad_union_zones_1372.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_contours.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_optimization.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_seam_compaction_1381.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r3.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r4.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r6.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_r7.py` — Historical comparators; still tracked and runnable by pytest.
+- `tests/test_body_training_1619_stage2.py` — Historical comparators; still tracked and runnable by pytest.
+
+### Batch 5a (#1933): research and experiments
+
+Exact paths below stay in Git at their original locations. Only default search visibility changes;
+active consumers and their inputs remain visible. Explicit pytest invocations still work.
+
+- `experiments/bim-autocad-agr/README.md` — Historical experiment instructions, not the active drawing intake route.
+- `experiments/bim-autocad-agr/test_experiment.py` — Historical experiment tests, still runnable by exact path.
+- `experiments/complexity-group-index/red.log` — Frozen pre-fix test output.
+- `experiments/flora-texture-diagnosis/bark-calibration-v001.json` — Frozen bark calibration result.
+- `experiments/flora-texture-diagnosis/bark_calibration.py` — Historical calibration script, not a library entrypoint.
+- `experiments/flora-texture-diagnosis/calibration-original-tilia.json` — Frozen calibration of the original Tilia asset.
+- `experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json` — Frozen source calibration baseline.
+- `experiments/flora-texture-diagnosis/source-integrity-v002.json` — Earlier source-integrity receipt; the cited v003 receipt stays visible.
+- `experiments/flora-texture-diagnosis/test_calibration.py` — Historical experiment tests, still runnable by exact path.
+- `tools/research/pdf_album/dimension-geometry-evidence.json` — Frozen PDF dimension geometry research receipt.
+
+### Batch 5b (#1934): closed-job receipts
+
+Under [D416], the exact historical TEC26 AC08 receipts below leave default search but stay in Git
+at the same paths. The live-path guard still protects the rest of AC08, including v010.
+The referenced KPP1 and 4bk course-grid inputs, current TEC26 evidence, and the exact inputs of retained tests stay in place.
+
+- `jobs/TEC26-OKS/AC08/kernel-ops-v001/evidence/DRIVE-SHA256SUMS.txt` — Historical kernel trial checksum receipt.
+- `jobs/TEC26-OKS/AC08/pilot-v006/DRIVE-SHA256SUMS.txt` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/Nku_1_VPM_master.blend.build.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/export_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/export_npm_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/npm_atlas.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/qa_master.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/qa_packages-review1.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v006/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/DRIVE-SHA256SUMS.txt` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/Nku_1_VPM_master.blend.build.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/export_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/export_npm_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/npm_atlas.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/qa_master.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v007/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/DRIVE-SHA256SUMS.txt` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/Nku_1_VPM_master.blend.build.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/compare.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/export_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/export_npm_meta.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/npm_atlas.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/qa_master.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/qa_packages.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/renders.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+- `jobs/TEC26-OKS/AC08/pilot-v009/sintez-summary.json` — Superseded pilot receipt; current v010 evidence is not archived here.
+
+### Batch 5d (#1936): adapters, library and tools
+
+- `technical_library/glb_atlas/SOURCE.json` — Historical A/B atlas migration provenance with no live consumer; the renderer, its scenario data, and linked QA remain visible.

@@ -5,8 +5,9 @@ How the engineering skills (`grill-with-docs`, `domain-modeling`, `to-spec`, `to
 
 Single-context repo. **The glossary is `GLOSSARY.md`** at the repo root; this repo has no
 `CONTEXT.md`. Wherever a skill says `CONTEXT.md`, read and write `GLOSSARY.md` instead, in its
-existing format (one `## Term` heading per term, a short definition, the source). Decisions
-live in `docs/adr/NNNN-slug.md` (created when the first ADR is needed).
+existing format (one `## Term` heading per term, a short definition, the source). Dated user
+decisions live in `docs/decisions.md` (one `D<n>` row each); `docs/adr/NNNN-slug.md` holds the rare architecture
+records (ADR 0001 exists).
 
 ## Before exploring, read these
 

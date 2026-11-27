@@ -2,6 +2,12 @@
 
 Status: active (2026-11-24)
 
+Planning owners (#1868): intake of raw ideas is `hermes_kanban/moltbook/ideas.md` (outside this repository;
+triage by the orchestrator and the user; an accepted idea becomes a GitHub issue or an item here). This file is the
+actionable queue. The historical record is `docs/research/roadmap-149-audit.md` (closure of #149) with its
+2026-10-15 snapshot `docs/research/capability-roadmap.md`; neither is a queue. There is no unified roadmap until
+Artem gives the direction.
+
 Each item names its default owner (`ROLES.md`). Take one item per branch; move finished
 items out of this file in the same merge. `C<N>` = conflict N in `docs/domain/conflicts.md`.
 

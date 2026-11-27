@@ -39,7 +39,7 @@ STEPS = [
 ]
 STEP_TOKENS = {
     1: ("DXFOUT", "ezdxf", "rotation", "$INSUNITS"),
-    2: ("library/maf/catalogue.json", "spec_matches", "npm_matches", "visual selection", "МАФы_Union_ALLin.max"),
+    2: ("library/published/catalogue.json", "library/maf/catalogue.json", "spec_matches", "npm_matches", "visual selection", "МАФы_Union_ALLin.max"),
     3: ("manufacturer picture", "legend scheme", "separate verify line"),
     4: ("10 cm", "[D094]", "colour", "material layout", "construction", "review"),
     5: ("fewer segments", "round parts", "[D097]", "npm_matches"),

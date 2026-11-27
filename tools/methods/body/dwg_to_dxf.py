@@ -18,7 +18,7 @@ Guarantees (each has a test in tests/methods/test_dwg_to_dxf.py):
   a copy whose SHA-256 differs from the source, or a source that changed, is a failure.
 - The receipt records the source, the copy and the DXF (path, SHA-256), the command, the script,
   the return code and the console log path. ``status`` is ``pass`` only when the return code is 0,
-  the DXF exists, starts with a DXF ``SECTION`` header, the copy and the source are unchanged.
+  the ASCII DXF has a terminal ``ENDSEC``/``EOF`` and parses, and the DXF, copy and source are unchanged.
   Anything else is ``fail`` with the reason and exit 3; never a pass.
 - The DXF, copy, script, log and receipt must not exist at preflight (exit 4, nothing written).
   No two paths may name the same file (exit 4). If a receipt appears after preflight, it is not
@@ -134,11 +134,26 @@ def _decode(raw) -> str:
     return raw.decode("utf-8-sig", errors="replace")
 
 
-def _is_dxf(path: Path) -> bool:
-    with open(path, "rb") as f:
-        head = f.read(64)
-    tokens = head.decode("ascii", "replace").split()
-    return tokens[:2] == ["0", "SECTION"]
+def _readback_dxf(path: Path, size: int) -> dict:
+    import ezdxf
+
+    try:
+        sha = _sha256(path)
+        with path.open("rb") as f:
+            head = f.read(64).split()
+            if head[:2] != [b"0", b"SECTION"]:
+                raise InputError(f"{path.name} does not start with a DXF SECTION header")
+            # The console emits ASCII DXF; ezdxf alone can accept a missing EOF tag.
+            f.seek(max(0, f.seek(0, 2) - 256))
+            tail = f.read().rstrip().splitlines()
+        if [line.strip() for line in tail[-4:]] != [b"0", b"ENDSEC", b"0", b"EOF"]:
+            raise InputError(f"{path.name} is incomplete: missing terminal 0/ENDSEC or 0/EOF")
+        ezdxf.readfile(path)
+        if path.stat().st_size != size or _sha256(path) != sha:
+            raise InputError(f"{path.name} changed during DXF readback")
+    except (ezdxf.DXFError, UnicodeError, OSError) as exc:
+        raise InputError(f"{path.name} does not parse as a complete DXF: {exc}") from exc
+    return {"path": str(path), "sha256": sha, "bytes": size}
 
 
 def _run_console(command, timeout, workdir):
@@ -214,15 +229,17 @@ def run(p: dict, runner=None) -> dict:
     receipt["dxf_bytes_observed"] = size
     if not size:
         problems.append(f"no DXF written at {dxf}")
-    elif not problems and not _is_dxf(dxf):
-        problems.append(f"{dxf.name} does not start with a DXF SECTION header")
+    elif not problems:
+        try:
+            receipt["dxf"] = _readback_dxf(dxf, size)
+        except InputError as exc:
+            problems.append(str(exc))
     if problems:
         receipt["reason"] = "; ".join(problems)
         receipt["action"] = ("Stop at sources-dwg; do not extract a plan. Preserve this receipt and console log; "
                              "ask the operator to check the AutoCAD runtime. Retry only in a new directory "
                              "with the same sandbox and source hash.")
     else:
-        receipt["dxf"] = {"path": str(dxf), "sha256": _sha256(dxf), "bytes": size}
         receipt["status"] = "pass"
     return receipt
 

@@ -108,7 +108,43 @@ def make_user_vjoints(t, size):
     return dif, None, erm.round().astype(np.uint8), normal_from_height(h, 0.5)
 
 
+def make_elevations(t, size):
+    """Trim sheet of whole window / door elevations (#1925 [D417], windows shown as texture): `cells` maps a name
+    to {box: [u0, v0, u1, v1] tile metres (v up), size: [w, h] metres, panes: [[x0, x1, z0, z1], ...] metres from
+    the drawing's lower-left}. Everything that is not a pane is profile (frame, mullion, transom, sash, leaf) in
+    `rgb`; panes are `glass_rgb`, lighter at the top, with a dark 12 mm gasket line. Deterministic."""
+    S = t["S"]
+    px = size / S
+    rgb = np.array(t["rgb"], float)
+    glass = np.array(t["glass_rgb"], float)
+    n = tile(periodic_noise(512, 24, 5), size) * 0.012
+    col = rgb[None, None, :] * (1 + n[..., None])
+    h = np.zeros((size, size))
+    rough = np.full((size, size), t["rough"])
+    for c in t["cells"].values():
+        u0, v0, u1, v1 = c["box"]
+        w, hh = c["size"]
+        sx, sz = (u1 - u0) / w, (v1 - v0) / hh
+        g = max(1, round(t.get("gasket_m", 0.012) * sx * px))
+        for x0, x1, z0, z1 in c["panes"]:
+            c0, c1 = round((u0 + x0 * sx) * px), round((u0 + x1 * sx) * px)
+            r0, r1 = round((S - v0 - z1 * sz) * px), round((S - v0 - z0 * sz) * px)
+            if c1 - c0 < 1 or r1 - r0 < 1:
+                continue
+            ramp = np.linspace(1.18, 0.82, r1 - r0)[:, None, None]       # sky at the top, darker below
+            col[r0:r1, c0:c1] = glass[None, None, :] * ramp
+            col[r0:r0 + g, c0:c1] = col[r1 - g:r1, c0:c1] = rgb * 0.55
+            col[r0:r1, c0:c0 + g] = col[r0:r1, c1 - g:c1] = rgb * 0.55
+            h[r0:r1, c0:c1] = -2.0
+            rough[r0:r1, c0:c1] = 0.05
+    dif = np.clip(col, 0, 255).round().astype(np.uint8)
+    erm = np.stack([np.zeros((size, size)), rough * 255, np.full((size, size), t["metal"] * 255)], -1)
+    return dif, None, erm.round().astype(np.uint8), normal_from_height(h, 0.5)
+
+
 def make_full(t, size):
+    if t["pattern"] == "elevations":
+        return make_elevations(t, size)
     u, v = uv_grid(size, t.get("S", 4.096))
     rgb = np.array(t["rgb"], float)
     h = np.zeros((size, size))

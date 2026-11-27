@@ -239,6 +239,7 @@ stages:
       - D099
       - D097
       - D155
+      - D406
     evidence:
       - tools/qa/validate_package.py
       - src/twinqa/scene.py
@@ -281,12 +282,6 @@ hotspots:
       - D167
     evidence:
       - docs/plans/flora-426-route-2026-11.md
-  - id: c18-opacity
-    stage: checks
-    ru: "FLO-08: нет отдельной карты прозрачности НПМ — review; FLO-11: ручная проверка прозрачности. C18 открыт"
-    evidence:
-      - docs/domain/areas/flora.md
-      - docs/domain/conflicts.md
   - id: size-check-gap
     stage: checks
     ru: "Ватутино: отдельная диагностика по мешам до слияния. Ведомость для V015 не заменяет ручные FLO-01, FLO-02 (нет парсера формулировок), FLO-03 и сверку вида и цвета FLO-04"

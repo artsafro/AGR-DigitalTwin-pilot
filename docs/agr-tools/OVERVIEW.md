@@ -2,6 +2,12 @@
 
 Читайте это первым, если задача касается AGR Tools, панели 3ds Max, `agr-mcp`, окон, материалов или конвейера ОКС. Ссылки ведут только на файлы этого репозитория. Правила для всех агентов — `AGENTS.md`; здесь только карта AGR Tools.
 
+> **Owner of the current AGR Tools scope (#1869, #1870).** AGR Tools are frozen at 1.1.x and off the trail [D393];
+> `agr-mcp` works but is off the trail [D394]. Historical: `docs/plans/agr-tools-suite.md` (plan #853),
+> `docs/plans/agr-tools-1.x.md` (1.0/1.1 execution record), `docs/plans/manual-mode-no-ai.md` (inventory #1374),
+> `docs/plans/agr-mcp-target.md` (closed MCP target), `docs/plans/agr-mcp.md` (phase-0 plan). Current MCP design:
+> `src/agr_mcp/README.md`.
+
 ## Что это
 
 **AGR Tools** — собственная панель 3ds Max (2024 и 2026) для производства цифрового двойника ОКС вместо стороннего скрипта-комбайна. Версия **1.1.0** (ветка `improve/agr-tools-1-1`; база — **1.0.0**, тег `agr-tools-v1.0.0`, и патч **1.0.1**: плотность 1000 px/м, библиотека материалов `materials_v002.json`, KPP1 сквозняком этапы 0–8) — конвейер из этапов 0–9 плюс этап «Агент»:

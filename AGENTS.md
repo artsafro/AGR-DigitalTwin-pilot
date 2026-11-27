@@ -4,10 +4,12 @@ Shared by every agent (Claude Code, Codex, Antigravity). Agent-specific notes:
 `CLAUDE.md`, `docs/agents/codex.md`, `GEMINI.md`. Talk to the user in Russian [D088]; write code,
 commands, identifiers and docs in English.
 
-Any job: read `docs/agents/SKELETONS.md` FIRST; historical job scripts are hidden from search [D324-D327].
-A worker reads three things: this file, `docs/domain/areas/<area>.md`, and the card.
-For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
+One door [D324-D327]: `docs/agents/SKELETONS.md` -> your cell's block
+(`uv run python tools/architecture/skeleton_guard.py --show <cell>`) -> its trail -> rule + command at the step.
+Passport first [D397]: `jobs/<ID>/passport.json` (`schemas/ProjectPassport.schema.json`).
+Trails: OKS `routes/npm-oks.md`, site `routes/site.md`.
 For Revit-source tasks read `routes/revit-intake.md` (read-only intake first, [D237]).
+Read `docs/domain/areas/<area>.md` and the card when the step links them; `agr --help` before any script.
 
 ## Goal
 
@@ -23,14 +25,13 @@ Read on demand. Read the domain file that matches the task before production wor
 disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
 
 - State: `docs/PROJECT_STATE.md` (generated: `python tools/state/project_state.py`).
-- Every dated user decision (`D<n>`): `docs/decisions.md`.
+- Dated user decisions (`D<n>`): `docs/decisions.md`.
 - Fact locations: `docs/agents/WORKFLOW.md`, "Memory map".
 - Who owns what (Claude / Codex / Antigravity): `docs/agents/ROLES.md`.
 - Task loop, handoff, experience capture, snags: `docs/agents/WORKFLOW.md`.
-- Review/author receipts: `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
+- Before PR `scripts/hygiene.sh`; author receipts `docs/agents/REVIEW_CHECKLIST.md`, `docs/agents/WORKFLOW.md#before-requesting-review-author`.
 - Tools/MCP status: `docs/agents/CAPABILITIES.md`.
 - Production rules with citations (NPM/VPM, geometry, UV, materials, export, validation): `docs/domain/`.
-- Open conflicts between sources: `docs/domain/conflicts.md`.
 - Pipeline stages and their status: `docs/pipeline.md`.
 - Unsolved work: `docs/backlog.md`.
 - Archive (tag `archive/2026-11`): `docs/ARCHIVE.md`.
@@ -39,7 +40,7 @@ disagree (`docs/domain/conflicts.md`), ask the user; never pick a side silently.
 - Naming (scripts, jobs, outputs, branches, tags): `docs/agents/NAMING.md`; object ids: `jobs/REGISTRY.md`.
 - Etalons: `benchmark/`; patterns: `docs/domain/patterns/INDEX.md`.
 - Customer sources, outside git: `G:/Мой диск/AGR-assets/<object>/source/` + `SHA256SUMS.txt`; `jobs/<ID>/sources.json`.
-- Machine-readable rules: `standards/` (locked; see `standards/README.md`).
+- Machine-readable rules: `standards/` (locked: `standards/README.md`).
 - AGR knowledge base (Russian, read-only): `docs/agr/INDEX.md` only.
 - Code map, checks and plugin configuration: `docs/agents/agents-reference.md`.
 - Production task (NPM / VPM, OKS / Ground / MAF / Flora / UCX): name its cell in `docs/scenarios/scenarios.json` and follow the `scenario` skill.
@@ -77,4 +78,5 @@ Rule lookup / new decisions: follow `docs/agents/agents-reference.md#rule-lookup
   ≤ 80 lines, fixed sections; `docs/agents/WORKFLOW.md`);
   in task branches report state changes in the final summary.
 - A new tool counts as shared only after it is listed in `docs/agents/CAPABILITIES.md` on `main`.
-- AGR Tools (Max panel, `agr-mcp`, OKS conveyor 1.0): `docs/agr-tools/OVERVIEW.md`; rules: `docs/agents/agr-tools-1.0-rules.md`. Mandatory passport (К1): `jobs/<ID>/passport.json`, `schemas/ProjectPassport.schema.json`.
+- AGR Tools (Max, OKS stages 2-4) are frozen at 1.1.x and off the trail [D393], `agr-mcp` too [D394]:
+  `docs/agr-tools/OVERVIEW.md`.

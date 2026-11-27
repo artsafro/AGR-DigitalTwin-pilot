@@ -23,6 +23,29 @@ def load(path):
         return json.load(fh)
 
 
+def validate_elevations(name, t):
+    """`pattern: elevations` (#1925 [D417]): drawings inside the tile, not overlapping, panes inside each drawing."""
+    rgb = t.get("glass_rgb")
+    if not (isinstance(rgb, list) and len(rgb) == 3 and all(isinstance(c, int) and 0 <= c <= 255 for c in rgb)):
+        raise ValueError(f"finish {name}: elevations need glass_rgb as three ints 0..255, got {rgb}")
+    cells = t.get("cells")
+    if not isinstance(cells, dict) or not cells:
+        raise ValueError(f"finish {name}: elevations need nonempty cells")
+    boxes = []
+    for cn, c in cells.items():
+        u0, v0, u1, v1 = c["box"]
+        w, h = c["size"]
+        if not (0 <= u0 < u1 <= t["S"] and 0 <= v0 < v1 <= t["S"] and w > 0 and h > 0):
+            raise ValueError(f"finish {name}: cell {cn} box {c['box']} / size {c['size']} outside the {t['S']} m tile")
+        for b in boxes:
+            if u0 < b[2] and b[0] < u1 and v0 < b[3] and b[1] < v1:
+                raise ValueError(f"finish {name}: cell {cn} overlaps another cell")
+        boxes.append((u0, v0, u1, v1))
+        for p in c["panes"]:
+            if not (0 <= p[0] < p[1] <= w + 1e-6 and 0 <= p[2] < p[3] <= h + 1e-6):
+                raise ValueError(f"finish {name}: cell {cn} pane {p} outside its {w} x {h} m drawing")
+
+
 def validate_spec(spec, kpp_spec=None, *, legend_check=None):
     """legend_check: optional caller-owned legend validator (job shims route their overrides here)."""
     fin = spec.get("finishes") or {}
@@ -44,6 +67,8 @@ def validate_spec(spec, kpp_spec=None, *, legend_check=None):
             dens = spec["size_full"] / S
             if not 512 <= dens <= 1706:  # reg p.32 §6.2 band
                 raise ValueError(f"finish {name}: density {dens:.0f} px/m outside 512..1706")
+            if t.get("pattern") == "elevations":
+                validate_elevations(name, t)
     src = spec.get("source_ids") or {}
     if not src:
         raise ValueError("spec has no source_ids")

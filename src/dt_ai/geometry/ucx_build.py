@@ -39,6 +39,9 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+# [D012] budget owner (#1962); stdlib, so it loads inside Blender (the drivers put src/ on sys.path).
+from twinqa.geometry.ucx_audit import ucx_triangle_limit  # noqa: F401 - re-exported for callers
+
 TARGETS = ("Main", "Ground")
 GAP_M = 0.004  # analysis rule 4: 3-6 mm keeps float32 read-back inside the [D098] band 2 mm - 1 cm
 GAP_BAND_M = (0.002, 0.01)
@@ -103,13 +106,6 @@ class UcxResult:
     @property
     def triangles(self) -> int:
         return sum(len(p.tris) for p in self.pieces)
-
-
-def ucx_triangle_limit(model_triangles: int) -> int:
-    """[D012] budget, n excludes UCX: n < 50 000 -> 15 000, else min(ceil(5 % n), 100 000)."""
-    if model_triangles < 50000:
-        return 15000
-    return min(math.ceil(model_triangles * 0.05), 100000)
 
 
 def _reserved(value) -> int:
