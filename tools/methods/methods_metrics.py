@@ -216,23 +216,6 @@ def matid(rb: dict, extra: dict) -> dict:
 
 # ---- UCX fit (class ucx-collisions) -------------------------------------------------------------------------------
 
-def _model_triangles(rb: dict, extra: dict | None):
-    vs, ts, off = [], [], 0
-    for m in model_meshes(rb):
-        v = np.asarray(m["face_geometry"]["vertices"], float).reshape(-1, 3)
-        if extra and extra.get("ok"):
-            t = np.asarray(extra["meshes"][m["name"]]["tris"], np.int64).reshape(-1, 3)
-        else:  # fan triangulation of the readback polygons
-            t = np.array([(p[0], p[i], p[i + 1]) for p in m["face_geometry"]["polygons"]
-                          for i in range(1, len(p) - 1)], np.int64).reshape(-1, 3)
-        vs.append(v)
-        ts.append(t + off)
-        off += len(v)
-    if not vs:
-        raise MetricError("no model mesh")
-    return np.concatenate(vs), np.concatenate(ts)
-
-
 def _pieces(rb: dict):
     out = []
     for m in ucx_meshes(rb):
@@ -322,10 +305,28 @@ def _envelope(surface: np.ndarray, r: int) -> np.ndarray:
     return solid[(slice(r + 1, -(r + 1)),) * 3] | surface
 
 
-def ucx_fit(rb: dict, extra: dict | None, max_points: int = FIT_MAX_POINTS) -> dict:
+def ucx_fit(rb: dict, extra: dict | None, max_points: int = FIT_MAX_POINTS, *, sha256: str | None = None) -> dict:
     """One-sided model -> UCX deviation [D134] and voxel volume figures. Measurement only: no R11-R13
-    zone classification (pedestrian / Ground) is made, so the shares are not a tolerance verdict."""
-    v, t = _model_triangles(rb, extra)
+    zone classification (pedestrian / Ground) is made, so the shares are not a tolerance verdict.
+    Only bound imported triangles are measured, not a fan reconstruction. The runner supplies the FBX
+    digest; a direct readback comparison uses the main readback's digest."""
+    if sha256 is None:
+        sha256 = rb.get("source_sha256")
+    if not extra or extra.get("ok") is not True:
+        _bound(extra, sha256, "extra readback")  # even a failed report must not identify a different FBX
+        detail = (extra or {}).get("error") or "imported triangles unavailable"
+        return {"reason": f"not measured: extra readback: {detail}", "model_to_ucx_max_m": None}
+    seen = set()
+    for mesh in model_meshes(rb):
+        name = mesh["name"]
+        if name in seen:
+            raise MetricError(f"duplicate model mesh {name!r}")
+        seen.add(name)
+    v, t, evidence = _strict_model_triangles(rb, extra, sha256)
+    if v is None or t is None:
+        return {"reason": f"not measured: {evidence['reason']}", "model_to_ucx_max_m": None}
+    if not len(t):
+        raise MetricError("no model triangles")
     pieces = _pieces(rb)
     if not pieces:
         return {"reason": "no UCX piece", "model_to_ucx_max_m": None}
@@ -570,11 +571,44 @@ def _strict_index(i, n: int, where: str) -> int:
     return i
 
 
-def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, np.ndarray]:
-    """World-free vertices and triangles of every model mesh with each index validated before any coercion and a
-    complete inventory: with an ok extra readback every model mesh needs its `tris`, and their count must equal
-    the readback's `triangles`; without it the readback polygons (>= 3 valid indices each) are fan-triangulated."""
+GROUND_FAN = ("reconstructed fan of the readback polygons (first vertex -> each edge); NOT the FBX's imported "
+              "triangulation: on a nonplanar polygon the diagonal is a guess")
+GROUND_IMPORTED = "imported loop triangles with their own vertex list (extra readback, one Blender import)"
+GROUND_VERTEX_TOL_M = 1e-6  # readback vs extra readback vertices: two imports of one FBX agree to float noise
+BOUND = "bound by sha256"
+
+
+def _bound(doc: dict | None, sha256: str | None, what: str) -> str:
+    """BOUND when `doc` is bound to the intended FBX (its `source_sha256` equals `sha256`), else the not-measured
+    reason. Evidence of another FBX is an error: mesh name and triangle count never prove the file (#1954)."""
+    if not isinstance(sha256, str) or not sha256:
+        return f"{what}: intended FBX sha256 not given"
+    got = (doc or {}).get("source_sha256")
+    if got is None:
+        return f"{what}: carries no source_sha256, cannot be bound to the FBX {sha256[:12]}"
+    if got != sha256:
+        raise MetricError(f"{what}: source_sha256 {str(got)[:12]} is not the intended FBX {sha256[:12]}")
+    return BOUND
+
+
+def _strict_model_triangles(rb: dict, extra: dict | None, sha256: str | None = None
+                            ) -> tuple[np.ndarray | None, np.ndarray | None, dict]:
+    """World-free vertices and triangles of every model mesh plus their evidence, or (None, None, evidence) with
+    `evidence["reason"]` when the surface cannot be measured (#1954).
+
+    Each index is validated before any coercion and the inventory is complete (#733). With an ok extra readback
+    the triangles index the extra's OWN `vertices` (same import), never the readback's list, and the readback mesh
+    must hold the same vertex multiset (within GROUND_VERTEX_TOL_M); an extra without its own vertex list is not
+    measured (index space unknown). Without an extra the readback polygons are fan-triangulated and labelled
+    reconstructed (GROUND_FAN). Every document used must be bound to the intended FBX by sha256."""
     use_extra = bool(extra and extra.get("ok"))
+    ev = {"fbx_sha256": sha256, "readback": _bound(rb, sha256, "readback"), "extra": None, "index_space": None,
+          "triangulation": None, "verified_import": False, "reason": None}
+    if use_extra:
+        ev["extra"] = _bound(extra, sha256, "extra readback")
+    elif extra is not None:
+        ev["extra"] = f"not ok ({extra.get('error') or 'no mesh'}); not used"
+    unbound = [x for x in (ev["readback"], ev["extra"] if use_extra else BOUND) if x != BOUND]
     vs, ts, off = [], [], 0
     for m in model_meshes(rb):
         name = m.get("name")
@@ -582,6 +616,8 @@ def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, 
         if not isinstance(raw_v, list):
             raise MetricError(f"mesh {name!r}: readback has no face_geometry vertices")
         v = np.asarray(raw_v, float).reshape(-1, 3)
+        if not np.isfinite(v).all():
+            raise MetricError("non-finite vertex in the model meshes")
         n, tris = len(v), []
         if use_extra:
             meshes = (extra or {}).get("meshes")
@@ -590,6 +626,21 @@ def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, 
             raw = meshes[name].get("tris") if isinstance(meshes[name], dict) else None
             if not isinstance(raw, list):
                 raise MetricError(f"mesh {name!r}: extra readback triangle list missing or not a list")
+            own = meshes[name].get("vertices")
+            if own is None:
+                ev["reason"] = ev["reason"] or (f"mesh {name!r}: extra readback triangles carry no vertex list of "
+                                                "their own import; their index space vs the readback is unknown")
+            else:
+                if not isinstance(own, list):
+                    raise MetricError(f"mesh {name!r}: extra readback vertices not a list")
+                ev_v = np.asarray(own, float).reshape(-1, 3)
+                if not np.isfinite(ev_v).all():
+                    raise MetricError("non-finite vertex in the model meshes (extra readback)")
+                a_, b_ = v[np.lexsort(v.T[::-1])], ev_v[np.lexsort(ev_v.T[::-1])]
+                if len(a_) != len(b_) or not np.allclose(a_, b_, rtol=0, atol=GROUND_VERTEX_TOL_M):
+                    raise MetricError(f"mesh {name!r}: extra readback vertices ({len(ev_v)}) are not the readback "
+                                      f"mesh's vertices ({len(v)}); not one FBX import")
+                v, n = ev_v, len(ev_v)
             if raw and all(isinstance(x, list) for x in raw):
                 groups = raw
             elif any(isinstance(x, list) for x in raw):
@@ -625,14 +676,22 @@ def _strict_ground_triangles(rb: dict, extra: dict | None) -> tuple[np.ndarray, 
         off += n
     if not vs:
         raise MetricError("no model mesh")
-    return np.concatenate(vs), np.concatenate(ts)
+    legacy = ev["reason"] is not None  # an extra mesh without its own vertex list
+    ev["index_space"] = ("unknown: extra triangles without their own vertex list" if legacy else
+                         "extra readback vertices" if use_extra else "readback polygons")
+    ev["triangulation"] = ("imported loop triangles of an unknown index space; not used" if legacy else
+                           GROUND_IMPORTED if use_extra else GROUND_FAN)
+    ev["reason"] = "; ".join(unbound + ([ev["reason"]] if ev["reason"] else [])) or None
+    ev["verified_import"] = use_extra and ev["reason"] is None
+    if ev["reason"]:
+        return None, None, ev
+    return np.concatenate(vs), np.concatenate(ts), ev
 
 
-def _ground_tris(rb: dict, extra: dict | None, offset: np.ndarray) -> np.ndarray:
-    v, t = _strict_ground_triangles(rb, extra)
-    if not np.isfinite(v).all():
-        raise MetricError("non-finite vertex in the model meshes")
-    return (v + offset)[t]  # (n, 3, 3) world
+def _ground_tris(rb: dict, extra: dict | None, offset: np.ndarray, sha256: str | None = None
+                 ) -> tuple[np.ndarray | None, dict]:
+    v, t, ev = _strict_model_triangles(rb, extra, sha256)
+    return (None if v is None else (v + offset)[t]), ev  # (n, 3, 3) world
 
 
 def _xy_area2(tri: np.ndarray) -> np.ndarray:
@@ -715,11 +774,16 @@ def footprint_holes(geom, hole_min_m2: float = GROUND_HOLE_MIN_M2):
 
 
 def ground_terrain(rb: dict, extra: dict | None, ref_rb: dict | None, ref_extra: dict | None,
-                   offset: np.ndarray | None, ref_offset: np.ndarray | None, *, offset_reason: str | None = None,
+                   offset: np.ndarray | None, ref_offset: np.ndarray | None, *, sha256: str | None,
+                   ref_sha256: str | None, offset_reason: str | None = None,
                    ref_reason: str | None = None, sample_m: float = GROUND_SAMPLE_M,
                    hole_min_m2: float = GROUND_HOLE_MIN_M2) -> dict:
     """ground-terrain class metrics against the benchmark's reference surface. Each figure is measured or null
-    with its reason: no reference readback, no placement sidecar (frames not comparable), no common sample."""
+    with its reason: no reference readback, no placement sidecar (frames not comparable), no common sample,
+    readback evidence not bound to the intended FBX (`sha256` / `ref_sha256`) or triangles whose index space
+    is unknown (#1954). `surface_evidence` names per side the binding, index space and triangulation source;
+    `surface_verified` is True only when both sides are imported loop triangles bound to their FBX, otherwise
+    `surface_note` says what the figures rest on."""
     model = model_meshes(rb)
     out = {"method": GROUND_METHOD, "sample_m": sample_m, "hole_min_m2": hole_min_m2,
            "triangles": int(sum(m["triangles"] for m in model)), "reference_triangles": None,
@@ -727,7 +791,8 @@ def ground_terrain(rb: dict, extra: dict | None, ref_rb: dict | None, ref_extra:
            "samples_missing": None, "samples_extra": None, "dz_reason": None,
            "holes": None, "reference_holes": None, "holes_matched": None, "hole_count_diff": None,
            "boundary_m": None, "reference_boundary_m": None, "boundary_diff_m": None, "footprint_reason": None,
-           "uv_present": None, "uv_reason": None}
+           "uv_present": None, "uv_reason": None,
+           "surface_evidence": {"output": None, "reference": None}, "surface_verified": False, "surface_note": None}
     if ref_rb is not None:
         out["reference_triangles"] = int(sum(m["triangles"] for m in model_meshes(ref_rb)))
     if not model:
@@ -748,7 +813,19 @@ def ground_terrain(rb: dict, extra: dict | None, ref_rb: dict | None, ref_extra:
     if reason:
         out["dz_reason"] = out["footprint_reason"] = reason
         return out
-    tri, ref = _ground_tris(rb, extra, offset), _ground_tris(ref_rb, ref_extra, ref_offset)
+    (tri, ev), (ref, ref_ev) = (_ground_tris(rb, extra, offset, sha256),
+                                _ground_tris(ref_rb, ref_extra, ref_offset, ref_sha256))
+    out["surface_evidence"] = {"output": ev, "reference": ref_ev}
+    out["surface_verified"] = ev["verified_import"] and ref_ev["verified_import"]
+    if tri is None or ref is None:
+        out["dz_reason"] = out["footprint_reason"] = "not measured: " + "; ".join(
+            f"{side} {e['reason']}" for side, e in (("output", ev), ("reference", ref_ev)) if e["reason"])
+        out["surface_note"] = "no surface measured"
+        return out
+    if not out["surface_verified"]:
+        out["surface_note"] = "not a verified imported-surface measurement: " + "; ".join(
+            f"{side} {e['triangulation']}" for side, e in (("output", ev), ("reference", ref_ev))
+            if not e["verified_import"])
     grid = sample_grid(ref, sample_m)
     zo, zr = top_z(tri, grid), top_z(ref, grid)
     both = np.isfinite(zo) & np.isfinite(zr)

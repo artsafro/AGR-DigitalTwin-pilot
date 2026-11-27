@@ -186,6 +186,47 @@ def test_joint_continuity_v008_uses_shared_function():
     assert "udimtile_core.py" in src and "1001 + int(math.floor" not in src
 
 
+def _spy_cells(mod, monkeypatch):
+    calls = []
+    real = mod._udimtile.udim_of_cell
+
+    def spy(cu, cv):
+        calls.append((cu, cv))
+        return real(cu, cv)
+    monkeypatch.setattr(mod._udimtile, "udim_of_cell", spy)
+    return calls
+
+
+def test_udimplug_tile_for_routes_to_shared_function(ut, monkeypatch):
+    # #1961 (hygiene 6b): the ID -> tile rule 1000 + n lives only in udimtile_core.
+    plug = _load(ROOT / "adapters/max/agr_tools/udimplug_core.py", "agr_tools_udimplug_core_udimtile_test")
+    assert Path(plug._udimtile.__file__).resolve() == CORE.resolve()
+    calls = _spy_cells(plug, monkeypatch)
+    assert [plug.tile_for(n) for n in range(1, 101)] == list(range(1001, 1101))
+    assert len(calls) == 100 and calls[11] == (1, 1)
+    assert plug.tile_for(7, fixed=1042) == 1042 and plug.tile_for(12, table={12: 1004}) == 1004
+    for bad in (0, 101, 1001, True, 1.0):
+        with pytest.raises(ValueError):
+            plug.tile_for(bad)
+
+
+def test_uvtile_measure_layout_routes_to_shared_function(ut, monkeypatch):
+    # #1961 (hygiene 6b): measure_layout's centroid tile comes from udimtile_core, not an inline 1001 + fu + 10 * fv.
+    uvt = _load(ROOT / "adapters/max/agr_tools/uvtile_core.py", "agr_tools_uvtile_core_udimtile_test")
+    calls = _spy_cells(uvt, monkeypatch)
+    # IDs outside ID_MIN..ID_MAX: tile_of_id is not asked, so every spied call is a face centroid cell.
+    mesh = {"ids": [0, 200, 300, 400], "vertices": [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]],
+            "faces": [[0, 1, 2], [0, 2, 3], [0, 1, 2], [0, 1, 2]]}
+    uvs = [[0.1, 0.1], [0.9, 0.1], [0.9, 0.9], [1.1, 1.1], [1.9, 1.1], [1.9, 1.9], [-0.9, 0.1], [-0.1, 0.1],
+           [-0.1, 0.9], [3.1, 2.1], [3.9, 2.1], [4.5, 2.9]]
+    out = uvt.measure_layout(mesh, uvs, [[0, 1, 2], [3, 4, 5], [6, 7, 8], [9, 10, 11]])
+    assert calls == [(0, 0), (1, 1), (3, 2)]          # face 3 (u < 0) has no tile and no call
+    ids = out["ids"]
+    assert [ids[k]["tiles_after"] for k in (0, 200, 300, 400)] == [[1001], [1012], [], [1024]]
+    assert ids[0]["outside_tile"] == [] and ids[200]["outside_tile"] == [] and ids[300]["outside_tile"] == []
+    assert ids[400]["outside_tile"] == [4]            # corner u = 4.5 leaves tile 1024 of its centroid
+
+
 def test_shared_module_ships_in_the_max_package():
     build = (ROOT / "tools/max/build_agr_tools.py").read_text(encoding="utf-8")
     install = (ROOT / "adapters/max/agr_tools/install.ms").read_text(encoding="utf-8-sig")

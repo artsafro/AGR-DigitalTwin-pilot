@@ -405,7 +405,7 @@ def test_density_contract_is_kpp_1000():
     old["finishes"]["PanelVJ30_RAL5015"]["S"] = 5.461333
     with pytest.raises(ValueError, match=r"PanelVJ30_RAL5015: texel density 750.0 px/m != contract 1000.0"):
         fm.validate_spec(old, KPP)
-    with pytest.raises(ValueError, match="KPP spec"):
+    with pytest.raises(ValueError, match="KPP reference spec"):
         fm.validate_spec(SPEC)  # a KPP-twin spec cannot skip the KPP comparison
     for exc, match in (({"px_per_m": 1000.0}, "decision"), ({"px_per_m": 1000.0, "decision": "ok by me"}, "decision"),
                        ({"px_per_m": 800.0, "decision": "D1"}, "contract 800.0"),

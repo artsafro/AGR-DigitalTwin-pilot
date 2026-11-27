@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import math
 import statistics
+from collections import defaultdict
 
 TOL = {"contour_max_dev_m": 0.05, "opening_edge_m": 0.03, "reveal_depth_m": 0.015, "sill_head_m": 0.02,
        "wall_line_search_m": 0.12, "parallel_cos": 0.98, "gap_min_m": 0.20, "basket_out_m": 0.03, "sample_m": 0.05}
@@ -74,6 +75,128 @@ def frame(ring, i, j):
     a, b = ring[i], ring[j]
     L = math.hypot(b[0] - a[0], b[1] - a[1])
     return a, ((b[0] - a[0]) / L, (b[1] - a[1]) / L), L
+
+
+def _sub(a, b):
+    return a[0] - b[0], a[1] - b[1]
+
+
+def _cross(a, b):
+    return a[0] * b[1] - a[1] * b[0]
+
+
+def _dot(a, b):
+    return a[0] * b[0] + a[1] * b[1]
+
+
+def _angle(a, b):
+    return math.degrees(math.atan2(abs(_cross(a, b)), _dot(a, b)))
+
+
+def observe_corner(source, sections, *, interior_side):
+    """OBSERVE an ordered source corner [previous, apex, next] in a native XY section.
+
+    Match the two flanks at independent source stations, then require one connected,
+    unbranched local trace. Never bridge missing geometry or decide acceptance here.
+    Interior is left (+1) or right (-1) when following the source order.
+    """
+    a, o, b = source
+    rays = [_sub(a, o), _sub(b, o)]
+    source_angle = _angle(*rays)
+    convex = -interior_side * _cross(*rays) > 0
+    # Limit the probe to its own corner cell, including short adjacent envelope steps.
+    station = min(0.35, math.dist(a, o) * 0.45, math.dist(b, o) * 0.45)
+    evidence = {"source_xy": o, "source_angle_deg": source_angle,
+                "source_interior_deg": source_angle if convex else 360 - source_angle,
+                "probe_station_m": station}
+    if station <= .002 or not 1 < source_angle < 179:
+        return nm("no resolved source turn", **evidence)
+    # A millimetre graph grid is smaller than the features under observation and
+    # independent of the v1 50 mm detector tolerance.
+    points, edges = {}, set()
+    for edge in sections:
+        snapped = []
+        for p in edge:
+            xy = tuple(p)
+            grid = tuple(round(v, 3) for v in xy)
+            points[grid] = min(points.get(grid, xy), xy)
+            snapped.append(grid)
+        if snapped[0] != snapped[1]:
+            edges.add(tuple(sorted(snapped)))
+    flanks = []
+    for ray in rays:
+        mag = math.hypot(*ray)
+        u = (ray[0] / mag, ray[1] / mag)
+        probe = (o[0] + u[0] * station, o[1] + u[1] * station)
+        options = []
+        for p, q in edges:
+            direction = _sub(points[q], points[p])
+            angle = _angle(u, direction)
+            dist = seg_d(probe, points[p], points[q])
+            if min(angle, 180 - angle) <= 25 and dist <= min(.14, station * .6):
+                near, far = sorted((p, q), key=lambda xy: _dot(_sub(xy, o), u))
+                options.append((dist, -math.dist(p, q), near, far))
+        if not options:
+            return nm("one or both source flank probes have no candidate support", **evidence)
+        flanks.append(min(options)[2:])
+    (start, far_a), (end, far_b) = flanks
+    if {start, far_a} == {end, far_b}:
+        return nm("both flank probes matched one edge", **evidence)
+    adj = defaultdict(set)
+    for p, q in edges - {tuple(sorted(f)) for f in flanks}:
+        if max(math.dist(p, o), math.dist(q, o)) <= station * 2:
+            adj[p].add(q)
+            adj[q].add(p)
+    path = [start]
+    while path[-1] != end:
+        options = adj[path[-1]] - set(path[-2:-1])
+        if len(options) != 1 or (nxt := next(iter(options))) in path:
+            return nm("local candidate trace is missing or branched", **evidence)
+        path.append(nxt)
+    if adj[end] - set(path[-2:-1]):
+        return nm("local candidate trace is branched at the second flank", **evidence)
+
+    trace = [points[p] for p in (far_a, *path, far_b)]
+    bends = [(p, _angle(_sub(l, p), _sub(r, p)), _cross(_sub(p, l), _sub(r, p)))
+             for l, p, r in zip(trace, trace[1:], trace[2:])]
+    bends = [bend for bend in bends if bend[1] < 178]
+    turns = [p for p, _, _ in bends]
+    if not turns:
+        return nm("no candidate turn in the local trace", **evidence)
+
+    def depth(p):
+        x = _sub(p, o)
+        # For a convex corner the local interior is the intersection of the
+        # two interior half-planes; for a reflex corner it is their union.
+        pair = (-interior_side * _cross(rays[0], x) / math.hypot(*rays[0]),
+                interior_side * _cross(rays[1], x) / math.hypot(*rays[1]))
+        return (min if convex else max)(pair)
+
+    # Each signed distance is affine on a connector edge; the only additional
+    # extremum of min/max can occur at their crossing.
+    witnesses = list(turns)
+    def balance(p):
+        x = _sub(p, o)
+        return _cross(rays[0], x) / math.hypot(*rays[0]) + _cross(rays[1], x) / math.hypot(*rays[1])
+
+    for p, q in zip(turns, turns[1:]):
+        v, w = balance(p), balance(q)
+        if v * w < 0:
+            t = v / (v - w)
+            witnesses.append((p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])))
+    inward = max(0.0, *(depth(p) for p in witnesses))
+    outward = max(0.0, *(-depth(p) for p in witnesses))
+    same_turn = len(bends) == 2 and bends[0][2] * bends[1][2] > 0
+    shape = ("direct" if len(turns) == 1 else "chamfer" if same_turn else
+             "extra_recess" if inward > .002 else "multi_turn")
+    angle = _angle(_sub(points[far_a], points[start]), _sub(points[far_b], points[end]))
+    return {**evidence, "status": "observed", "shape": shape, "candidate_flank_angle_deg": angle,
+            "delta_deg": angle - source_angle, "turns_xy": turns, "bend_angles_deg": [angle for _, angle, _ in bends],
+            "candidate_flanks_xy_m": [[points[far_a], points[start]], [points[end], points[far_b]]],
+            "corner_offset_m": min(math.dist(o, p) for p in turns) if len(turns) == 1 else
+            min(seg_d(o, p, q) for p, q in zip(turns, turns[1:])),
+            "inward_depth_m": inward, "outward_depth_m": outward,
+            "connector_length_m": sum(math.dist(p, q) for p, q in zip(turns, turns[1:]))}
 
 
 def local(p, a, u):

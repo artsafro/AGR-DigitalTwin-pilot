@@ -27,6 +27,18 @@ DEGENERATE_AREA_M2 = 1e-10  # zero-area / sliver triangle area at or below this 
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
 CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
 REQ_COLLISION = "2.13.4"  # no intersections; neighbour gap 2 mm - 1 cm [D098], plus SINTEZ too-close [D162]
+# [D012] whole-file UCX budget; single owner (#1962): stdlib, so Blender and the Max bundle slice load it.
+# twinqa.scene, dt_ai.geometry.ucx_build, dt_ai.ops.densify and tools/blender/ucx_audit.py use these; the
+# frozen Max copy adapters/max/agr_tools/ucx_core.py [D393] is pinned by tests/test_ucx_d012_owner_1962.py.
+UCX_SMALL_MODEL, UCX_SMALL_LIMIT, UCX_SHARE, UCX_CAP = 50_000, 15_000, 0.05, 100_000
+
+
+def ucx_triangle_limit(model_triangles: int) -> int:
+    """UCX budget [D012] (reg p.36-37 §13.7-13.8) as SINTEZ AGR Checker v1.6.1 (conflict #3, decided);
+    n excludes UCX: n < 50 000 -> 15 000; else ceil(5 % n) capped at 100 000."""
+    if model_triangles < UCX_SMALL_MODEL:
+        return UCX_SMALL_LIMIT
+    return min(math.ceil(model_triangles * UCX_SHARE), UCX_CAP)
 
 
 def _sub(a, b):

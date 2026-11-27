@@ -1,0 +1,516 @@
+{
+  "schema": 1,
+  "kind": "entry_budget_door",
+  "metric": "tokens from AGENTS.md to the first command (one door)",
+  "tokenizer": "tiktoken o200k_base",
+  "measured_on": "2007503dc020b1b1a0ccf96e3a1fb0546902840a",
+  "budget": 10000,
+  "targets": {
+    "sintez-fix": {
+      "cell": "sintez-fix",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 7115,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show sintez-fix",
+          "chars": 744,
+          "tokens": 211
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/research/sintez-fix-1744.md",
+          "chars": 5989,
+          "tokens": 1698
+        }
+      ]
+    },
+    "vpm-to-npm": {
+      "cell": "vpm-to-npm",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 6479,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show vpm-to-npm",
+          "chars": 1821,
+          "tokens": 537
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/scenarios/vpm-to-npm.md",
+          "chars": 2183,
+          "tokens": 736
+        }
+      ]
+    },
+    "maf-npm-to-vpm": {
+      "cell": "maf-npm-to-vpm",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 7896,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show maf-npm-to-vpm",
+          "chars": 1601,
+          "tokens": 421
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/research/maf-npm-to-vpm-1745.md",
+          "chars": 6953,
+          "tokens": 2269
+        }
+      ]
+    },
+    "npm-to-vpm": {
+      "cell": "npm-to-vpm",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 6079,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show npm-to-vpm",
+          "chars": 983,
+          "tokens": 284
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/scenarios/npm-to-vpm.md",
+          "chars": 2278,
+          "tokens": 589
+        }
+      ]
+    },
+    "oks-vpm": {
+      "cell": "oks-vpm",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 8485,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show oks-vpm",
+          "chars": 2612,
+          "tokens": 747
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/scenarios/oks-vpm.md",
+          "chars": 8913,
+          "tokens": 2532
+        }
+      ]
+    },
+    "ground-npm:ground": {
+      "cell": "ground-npm",
+      "stage": "ground",
+      "files_count": 6,
+      "total_tokens": 10196,
+      "within_budget": false,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show ground-npm",
+          "chars": 2032,
+          "tokens": 577
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/site.md",
+          "chars": 3142,
+          "tokens": 945
+        },
+        {
+          "path": ".agents/skills/model-ground/SKILL.md",
+          "chars": 13686,
+          "tokens": 3468
+        }
+      ]
+    },
+    "ground-npm:maf": {
+      "cell": "ground-npm",
+      "stage": "maf",
+      "files_count": 6,
+      "total_tokens": 10297,
+      "within_budget": false,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show ground-npm",
+          "chars": 2032,
+          "tokens": 577
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/site.md",
+          "chars": 3142,
+          "tokens": 945
+        },
+        {
+          "path": ".agents/skills/model-maf/SKILL.md",
+          "chars": 14010,
+          "tokens": 3569
+        }
+      ]
+    },
+    "ground-npm:flora": {
+      "cell": "ground-npm",
+      "stage": "flora",
+      "files_count": 6,
+      "total_tokens": 11115,
+      "within_budget": false,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show ground-npm",
+          "chars": 2032,
+          "tokens": 577
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/site.md",
+          "chars": 3142,
+          "tokens": 945
+        },
+        {
+          "path": ".agents/skills/model-flora/SKILL.md",
+          "chars": 17138,
+          "tokens": 4387
+        }
+      ]
+    },
+    "oks-npm": {
+      "cell": "oks-npm",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 9458,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show oks-npm",
+          "chars": 2174,
+          "tokens": 599
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/npm-oks.md",
+          "chars": 14493,
+          "tokens": 3653
+        }
+      ]
+    },
+    "oks-npm-lite": {
+      "cell": "oks-npm-lite",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 8952,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show oks-npm-lite",
+          "chars": 327,
+          "tokens": 93
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/npm-oks.md",
+          "chars": 14493,
+          "tokens": 3653
+        }
+      ]
+    },
+    "ground-vpm:ground": {
+      "cell": "ground-vpm",
+      "stage": "ground",
+      "files_count": 6,
+      "total_tokens": 10254,
+      "within_budget": false,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show ground-vpm",
+          "chars": 2249,
+          "tokens": 635
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/site.md",
+          "chars": 3142,
+          "tokens": 945
+        },
+        {
+          "path": ".agents/skills/model-ground/SKILL.md",
+          "chars": 13686,
+          "tokens": 3468
+        }
+      ]
+    },
+    "ground-vpm:maf": {
+      "cell": "ground-vpm",
+      "stage": "maf",
+      "files_count": 6,
+      "total_tokens": 10355,
+      "within_budget": false,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show ground-vpm",
+          "chars": 2249,
+          "tokens": 635
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/site.md",
+          "chars": 3142,
+          "tokens": 945
+        },
+        {
+          "path": ".agents/skills/model-maf/SKILL.md",
+          "chars": 14010,
+          "tokens": 3569
+        }
+      ]
+    },
+    "ground-vpm:flora": {
+      "cell": "ground-vpm",
+      "stage": "flora",
+      "files_count": 6,
+      "total_tokens": 11173,
+      "within_budget": false,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show ground-vpm",
+          "chars": 2249,
+          "tokens": 635
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "routes/site.md",
+          "chars": 3142,
+          "tokens": 945
+        },
+        {
+          "path": ".agents/skills/model-flora/SKILL.md",
+          "chars": 17138,
+          "tokens": 4387
+        }
+      ]
+    },
+    "library-publish": {
+      "cell": "library-publish",
+      "stage": null,
+      "files_count": 5,
+      "total_tokens": 5831,
+      "within_budget": true,
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "chars": 5918,
+          "tokens": 1572
+        },
+        {
+          "path": "docs/agents/SKELETONS.md",
+          "chars": 5708,
+          "tokens": 1943
+        },
+        {
+          "path": "skeleton_guard.py --show library-publish",
+          "chars": 1098,
+          "tokens": 289
+        },
+        {
+          "path": "docs/agents/task-intake.md",
+          "chars": 6654,
+          "tokens": 1691
+        },
+        {
+          "path": "docs/scenarios/library-publish.md",
+          "chars": 1205,
+          "tokens": 336
+        }
+      ]
+    }
+  }
+}

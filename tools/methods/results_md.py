@@ -121,7 +121,8 @@ def render(rows: list[dict], cls: str) -> str:
                                 else _body_cells(r) if body else ""))
         if ground:
             g = (r.get("class_metrics") or {}).get("ground") or {}
-            for key, label in (("dz_reason", "dz"), ("footprint_reason", "footprint"), ("uv_reason", "uv")):
+            for key, label in (("dz_reason", "dz"), ("footprint_reason", "footprint"), ("uv_reason", "uv"),
+                               ("surface_note", "surface")):
                 if g.get(key):
                     reasons.setdefault(f"ground {label}: {g[key]}", []).append(r["row"])
         if body:

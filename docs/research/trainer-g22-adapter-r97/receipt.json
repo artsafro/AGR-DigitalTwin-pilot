@@ -1,0 +1,204 @@
+{
+ "schema": "r97-receipt/1",
+ "e93_audit_sha256": "e78e4927947eab306b6fc004c98a0f1f9140ef752eab35eb5bdd93feb5f96ec3",
+ "runs": {
+  "g22-k2-stage1-codex-r97-B1": {
+   "arm": "B",
+   "etalon": "g22-k2-stage1",
+   "origin_main": "e01aafc9c3ad31ad924d230a5d2ed92445ee13a7",
+   "exit": 0,
+   "wall_s": 167.9,
+   "input_tokens": 1615720,
+   "commands": 23,
+   "fbx_in_built": [
+    "typical_build\\body.fbx"
+   ],
+   "scored": true,
+   "artifact": "pass",
+   "first_failing_step": "form_v2",
+   "score": 0.7143,
+   "form_p95_m": 0.0128,
+   "bounds": "pass",
+   "adapter": {
+    "ran": 0,
+    "promoted_path": 0
+   },
+   "scrubbed_files": 10,
+   "e93_escapes": 8,
+   "e93_verdict": "escape",
+   "e93_paths": [
+    "c:/users/artsafro/agr-pilot/agr-digitaltwin",
+    "c:/users/artsafro/agr-pilot/agr-digitaltwin/.worktrees/prompt-2026-11-25/jobs/garibaldi22/body-training-1619",
+    "c:/users/artsafro/agr-pilot/agr-digitaltwin/.worktrees/prompt-2026-11-25/jobs/garibaldi22/body-training-1619/hooks/envelope_check.py",
+    "c:/users/artsafro/agr-pilot/agr-digitaltwin/.worktrees/prompt-2026-11-25/jobs/garibaldi22/body-training-1619/hooks/floor_from_dump.py"
+   ],
+   "events_sha256": "0aee5035d7b9bee5750725767fbe61ff8d22fe8c1eabb4cb2befdd98402477c8",
+   "score_sha256": "cab8f687a84f38d3c31ded661cb897ac9c9e7029fa1dcc5edbef80108750ea05",
+   "counted_pass": false
+  },
+  "g22-k2-stage1-codex-r97-B2": {
+   "arm": "B",
+   "etalon": "g22-k2-stage1",
+   "origin_main": "e01aafc9c3ad31ad924d230a5d2ed92445ee13a7",
+   "exit": 0,
+   "wall_s": 87.1,
+   "input_tokens": 478507,
+   "commands": 11,
+   "fbx_in_built": [],
+   "scored": true,
+   "artifact": "fail",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "form_p95_m": null,
+   "bounds": "not_run",
+   "adapter": {
+    "ran": 0,
+    "promoted_path": 0
+   },
+   "scrubbed_files": 10,
+   "e93_escapes": 0,
+   "e93_verdict": "clean",
+   "e93_paths": [],
+   "events_sha256": "258d929e4d601e2900cc57ebf46bbdfff2d7f5964e43b8f4f939806b3f4f9e29",
+   "score_sha256": "11eac4ca0239015bdbff30155bc11a8844ef4612566c1f20761a44008327b607",
+   "counted_pass": false
+  },
+  "g22-k2-stage1-codex-r97-B3": {
+   "arm": "B",
+   "etalon": "g22-k2-stage1",
+   "origin_main": "e01aafc9c3ad31ad924d230a5d2ed92445ee13a7",
+   "exit": 0,
+   "wall_s": 156.1,
+   "input_tokens": 1058565,
+   "commands": 47,
+   "fbx_in_built": [],
+   "scored": true,
+   "artifact": "fail",
+   "first_failing_step": "artifact",
+   "score": 0.0,
+   "form_p95_m": null,
+   "bounds": "not_run",
+   "adapter": {
+    "ran": 0,
+    "promoted_path": 0
+   },
+   "scrubbed_files": 10,
+   "e93_escapes": 0,
+   "e93_verdict": "clean",
+   "e93_paths": [],
+   "events_sha256": "33df1c4d4e001023e44956cd9d728396e5dcca5894d1caf892c84afec4e4aba3",
+   "score_sha256": "6944402f4971a97973ac4adf1f4e63c447a01638dd56c56830a7c7531ba50885",
+   "counted_pass": false
+  },
+  "g22-k2-stage1-codex-r97-C1": {
+   "arm": "C",
+   "etalon": "g22-k2-stage1",
+   "origin_main": "97c92f1ec6872fbc2f0f4137798a935ebe2ba351",
+   "exit": 0,
+   "wall_s": 163.5,
+   "input_tokens": 1199690,
+   "commands": 25,
+   "fbx_in_built": [
+    "module\\body.fbx",
+    "typical\\body.fbx"
+   ],
+   "scored": false,
+   "artifact": null,
+   "first_failing_step": "scorer_refusal",
+   "score": null,
+   "form_p95_m": null,
+   "bounds": null,
+   "adapter": {
+    "ran": 1,
+    "promoted_path": 1
+   },
+   "scrubbed_files": 10,
+   "e93_escapes": 0,
+   "e93_verdict": "clean",
+   "e93_paths": [],
+   "events_sha256": "c1bbb776ff0a812ab6fca3d15e2cc578f0026f6f5938708f77a62d679168b207",
+   "score_sha256": null,
+   "counted_pass": false
+  },
+  "g22-k2-stage1-codex-r97-C2": {
+   "arm": "C",
+   "etalon": "g22-k2-stage1",
+   "origin_main": "97c92f1ec6872fbc2f0f4137798a935ebe2ba351",
+   "exit": 0,
+   "wall_s": 121.0,
+   "input_tokens": 865748,
+   "commands": 23,
+   "fbx_in_built": [
+    "typical\\body.fbx"
+   ],
+   "scored": true,
+   "artifact": "pass",
+   "first_failing_step": "form_v2",
+   "score": 0.7143,
+   "form_p95_m": 0.0128,
+   "bounds": "pass",
+   "adapter": {
+    "ran": 1,
+    "promoted_path": 1
+   },
+   "scrubbed_files": 10,
+   "e93_escapes": 0,
+   "e93_verdict": "clean",
+   "e93_paths": [],
+   "events_sha256": "36f118675b56a92e8b759ef8640fc56ff16f981cd2868a53b2eebda7f31d15f6",
+   "score_sha256": "094fa59e7d7d323249137efd744155fadcfc87cad6703b2193a5e50aeaafd0de",
+   "counted_pass": true
+  },
+  "g22-k2-stage1-codex-r97-C3": {
+   "arm": "C",
+   "etalon": "g22-k2-stage1",
+   "origin_main": "97c92f1ec6872fbc2f0f4137798a935ebe2ba351",
+   "exit": 0,
+   "wall_s": 114.3,
+   "input_tokens": 787607,
+   "commands": 21,
+   "fbx_in_built": [
+    "pilot\\body.fbx",
+    "typical\\body.fbx"
+   ],
+   "scored": false,
+   "artifact": null,
+   "first_failing_step": "scorer_refusal",
+   "score": null,
+   "form_p95_m": null,
+   "bounds": null,
+   "adapter": {
+    "ran": 2,
+    "promoted_path": 2
+   },
+   "scrubbed_files": 10,
+   "e93_escapes": 0,
+   "e93_verdict": "clean",
+   "e93_paths": [],
+   "events_sha256": "39e172a98ecdd9fa5ce44845b7931b1f7cb597ec6edf7e07f8c819c972302142",
+   "score_sha256": null,
+   "counted_pass": false
+  }
+ },
+ "table": {
+  "B": {
+   "n": 3,
+   "fbx_any": 1,
+   "artifact_pass": 1,
+   "counted_pass": 0,
+   "escapes": 1,
+   "adapter_ran": 0,
+   "adapter_promoted": 0
+  },
+  "C": {
+   "n": 3,
+   "fbx_any": 3,
+   "artifact_pass": 1,
+   "counted_pass": 1,
+   "escapes": 0,
+   "adapter_ran": 3,
+   "adapter_promoted": 3
+  }
+ },
+ "h97": "inconclusive"
+}

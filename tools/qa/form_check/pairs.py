@@ -1,7 +1,7 @@
 """Form check v1 - run the detector, Artem's rules and the pair judge on Artem's accepted/rejected pairs.
 
 usage (repo root, uv env):
-  python -m tools.qa.form_check.pairs detect --out C:/x/form-check-v1/run01 [--pairs tools/qa/form_check/pairs_v1.json]
+  python -m tools.qa.form_check.pairs detect --out tmp/form-v2/run01 [--pairs tools/qa/form_check/pairs_v1.json]
   python -m tools.qa.form_check.pairs render --out ...       # Blender renders + 2x2 judge composites
   python -m tools.qa.form_check.pairs judge  --out ... [--workers 4]
   python -m tools.qa.form_check.pairs table  --out ... [--png <sheet.png>]
@@ -17,7 +17,8 @@ gates delivery, never refuses a model and never edits a body (card t_73d7ece4, a
 | C1 band contour (0.05 m also at the opening sections) | `detector.py` | #43 (8/12 → 10/12) |
 | Rim-loop fallback | `detector.py` | #53 (not measured 28 → 0 of 60) |
 | Reveal depth from the candidate's own facade flanks at the observed gap edges | `detector.py` | #54–#56 (0 false depths) |
-| Source-wall gap amendment (key ring wrong there) | `detector.py`, `pairs_v1.json` | #52 |
+| Independent 63B source key and source wall references for G22 corners | `source.py`, `pairs_v1.json` | v2 |
+| Corner angle and local chamfer/recess observation (not in verdict) | `detector.py` | v2 |
 | Artem's rules: NARROW (window cut into the accepted opening), accepted deviations with citation (D341, D378) | `rules.py` | Artem 2026-11-20 (63B stage 2), #57, D378 |
 | Pair judge: Claude + Codex, both orders, order-consistent only; #49 equivalence + extra-recess question | `judge.py` | #41, #45, #47, #49 |
 | Neutral renders + 2×2 judge composites | `blender_scene.py render`, `pairs.compose` | #41 rig look |
@@ -31,8 +32,7 @@ detector. Judges are never asked "matches the drawing".
 Fixtures are outside git (`C:/x`, Google Drive) and pinned by SHA-256 prefix; hidden keys are never copied to git.
 Blender 5.1 headless through `dt_ai.core.blender_runner.run_blender`; 3ds Max is not used.
 
-Not measured by v1: corners on real pairs (no Artem-labelled corner pair; chamfer ≤ 0.05 m is inside tolerance;
-judges miss a 0.10 m chamfer, #49), 63B reveal depth (reference open, #53), C1 where the key band is a bare ring
+Not measured: 63B reveal depth (reference open, #53), C1 where the key band is unavailable or a bare ring
 (63B, KPP1), KPP1 back reveals (contour A does not encode them), Sokolniki scene geometry (no key; the t_57b332a4
 `compare.json` findings are used as the known-defect ledger).
 
@@ -52,6 +52,7 @@ from tools.qa.form_check import rules as R
 
 HERE = Path(__file__).resolve().parent
 SCENE = HERE / "blender_scene.py"
+SOURCE_63B_SHA256 = "b5cdbf394e4a10c55db391c13d15096c71e5a4c085be30e0edb595610cd04aea"
 AUTO4 = [{"name": "V1", "caption": "V1: elevation seen from south", "dir": [0, 1, 0]},
          {"name": "V2", "caption": "V2: elevation seen from east", "dir": [-1, 0, 0]},
          {"name": "V3", "caption": "V3: elevation seen from north", "dir": [0, -1, 0]},
@@ -101,17 +102,58 @@ def key_from_contour(spec):
 
 
 def load_key(pair):
+    if pair["id"] == "63B" and ("source_key" not in pair or
+                                  {"key", "sections", "key_from_contour"} & pair.keys()):
+        raise ValueError("63B requires a source-derived key, not a precomputed or builder ring")
+    if "source_key" in pair:
+        from tools.qa.form_check.source import SourceReadback, build_key
+
+        spec = pair["source_key"]
+        if spec.get("kind") != "revit_fbx_triangle_readback":
+            raise ValueError("source key requires a Revit FBX triangle readback")
+        if pair["id"] == "63B" and spec.get("sha256") != SOURCE_63B_SHA256:
+            raise ValueError("not the registered 63B source readback")
+        digest = pinned(spec["path"], spec["sha256"])
+        return build_key(SourceReadback(spec["path"]), spec), {"source_readback_sha256": digest}
     if "key_from_contour" in pair:
         spec = pair["key_from_contour"]
-        src = json.load(open(spec["path"], encoding="utf-8"))
-        assert src["schema"] == "body-contours/1"
-        return key_from_contour(spec), {"contour_sha256": pinned(spec["path"], spec["sha"])}
+        digest = pinned(spec["path"], spec["sha"])
+        src = json.loads(Path(spec["path"]).read_text(encoding="utf-8"))
+        if src["schema"] != "body-contours/1" or src["units"] != "m":
+            raise ValueError("expected the metre contour-A source")
+        for z in map(float, spec["contour_z"]):
+            bands = [b for b in src["bands"] if b["z0"] <= z < b["z1"]]
+            rings = [p["exterior"] for b in bands for p in b["polygons"]]
+            if not any((ring * 2)[i:i + 3] == spec["ring"] for ring in rings for i in range(len(ring))):
+                raise ValueError(f"registered NW flank vertices not in source contour A at {z} m")
+        return key_from_contour(spec), {"contour_sha256": digest}
     key = json.load(open(pair["key"], encoding="utf-8"))
     ksec = json.load(open(pair["sections"], encoding="utf-8"))
     prov = {"key_sha256": pinned(pair["key"], pair["key_sha"]), "sections_sha256": pinned(pair["sections"], pair["sections_sha"])}
     if pair.get("amend"):
         key = {**key, "amend": pair["amend"]}
     return (key, ksec), prov
+
+
+def corner_refs(pair, key):
+    if "corner_source" in pair:
+        from tools.qa.form_check.source import SourceReadback, corners_from_readback
+
+        spec = pair["corner_source"]
+        sha = pinned(spec["path"], spec["sha256"])
+        return corners_from_readback(SourceReadback(spec["path"]), spec), sha
+    if "corner_id" in pair:
+        ring = [v["xy"] for v in key["contour_vertices_in_box"]]
+        return {z: [{"id": pair["corner_id"], "source": ring, "source_z_m": float(z)}]
+                for z in key["profile"]["contour_z"]}, pair["key_from_contour"]["sha"]
+    return {}, None
+
+
+def corner_findings(pair, refs, sections):
+    return [{"section": z, **{k: v for k, v in row.items() if k != "source"},
+             **(D.observe_corner(row["source"], sections.get(z, []), interior_side=pair["interior_side"])
+                if "source" in row else {})}
+            for z, rows in refs.items() for row in rows]
 
 
 # --- Sokolniki: compare.json findings of t_57b332a4 as the known-defect ledger ------------------------------------
@@ -170,7 +212,12 @@ def cmd_detect(cfg, out):
                                 "items": items, "verdict": D.verdict(items), "summary": D.summarize(items)})
             continue
         (key, ksec), prov = load_key(pair)
+        refs, corner_sha = corner_refs(pair, key)
+        if corner_sha:
+            prov["corner_source_sha256"] = corner_sha
         json.dump(key, open(pdir / "key_used.json", "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+        if "source_key" in pair:
+            (pdir / "source_sections.json").write_text(json.dumps(ksec, indent=1), encoding="utf-8")
         for v in pair["variants"]:
             full = pinned(v["fbx"], v["sha"])
             ex = pdir / f"{slug(v['name'])}.extract.json"
@@ -184,6 +231,7 @@ def cmd_detect(cfg, out):
             results.append({"pair": pair["id"], "variant": v["name"], "artem": v["artem"], "cite": v["cite"],
                             "fbx_sha256": full, "provenance": prov, "source": "scene", "items": items,
                             "raw_summary": D.summarize(raw["items"]), "openings_obs": raw["openings_obs"],
+                            "corners_observe": corner_findings(pair, refs, cand["sections"]),
                             "verdict": D.verdict(items), "summary": D.summarize(items)})
     json.dump(results, open(out / "detector.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     for r in results:
@@ -261,7 +309,7 @@ def cmd_judge(cfg, out, workers):
     else:
         jl = J.jobs(pairs)
         json.dump(jl, open(jf, "w", encoding="utf-8"), indent=1)
-    recs = J.run(jl, out / "judge_calls", Path("C:/x/form-check-v1-calls"), workers=workers)
+    recs = J.run(jl, out / "judge_calls", out / "judge_scratch", workers=workers)
     # specificity control (#49 'AA'): the accepted reference against itself, equivalence question only
     cf = out / "judge_jobs_controls.json"
     if cf.exists():
@@ -271,7 +319,7 @@ def cmd_judge(cfg, out, workers):
         cl = J.jobs([{"id": f"{k}|control", "a_png": v, "b_png": v} for k, v in refs.items()],
                     questions=("equivalence",))
         json.dump(cl, open(cf, "w", encoding="utf-8"), indent=1)
-    recs += J.run(cl, out / "judge_calls", Path("C:/x/form-check-v1-calls"), workers=workers)
+    recs += J.run(cl, out / "judge_calls", out / "judge_scratch", workers=workers)
     agg = J.aggregate(recs)
     json.dump(agg, open(out / "judge.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(json.dumps(agg, ensure_ascii=False, indent=1))
@@ -305,7 +353,8 @@ def rows_from(cfg, det, agg):
                 who = {"A": ref, "B": r["variant"]}.get(rc, rc)
                 jv = f"{eq} vs {ref}; extra recess: {who}"
                 # a judge only says 'differs from the accepted reference'; it cannot say which one is right
-                judge_tool = {"Different": "defect", "Same": "ok"}.get(eq, "n/a")
+                judge_tool = ({"Different": "defect", "Same": "ok"}.get(eq, "n/a")
+                              if r["artem"] != "earlier accepted base" else "n/a")
         nmr = nm_reasons(r)
         rows.append({"pair": r["pair"], "variant": r["variant"], "artem": r["artem"], "detector": r["verdict"],
                      "agree_detector": P.agree(r["verdict"], r["artem"]), "judge": jv,
@@ -323,10 +372,11 @@ def main(argv=None):
     ap.add_argument("--pairs", default=str(HERE / "pairs_v1.json"))
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--png")
+    ap.add_argument("--title", default="Проверка формы v2 — замер на парах Артёма (наблюдение)")
     ap.add_argument("--notes", help="UTF-8 text file, one Russian line per note, printed under the table")
     a = ap.parse_args(argv)
     cfg = json.load(open(a.pairs, encoding="utf-8"))
-    out = Path(a.out)
+    out = Path(a.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     if a.cmd == "detect":
         cmd_detect(cfg, out)
@@ -347,7 +397,7 @@ def main(argv=None):
                       "judge": r["judge"].replace("control self-pair: ", "контроль: ").replace(" vs ", " с ")
                       .replace("; extra recess: ", "; ниша: ").replace("Different", "разные").replace("Same", "одинаковы")
                       .replace("no_decision", "нет решения").replace("None", "нет")} for r in rows]
-            P.sheet_png(short, notes, a.png)
+            P.sheet_png(short, notes, a.png, title=a.title)
 
 
 if __name__ == "__main__":

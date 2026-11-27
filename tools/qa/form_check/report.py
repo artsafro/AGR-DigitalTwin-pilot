@@ -9,12 +9,12 @@ COLS = [("pair", "Пара"), ("variant", "Вариант"), ("artem", "Артё
 GOOD = {"ok", "Same", "accepted"}
 BAD = {"defect", "Different", "rejected"}
 RU = {"accepted": "принят", "rejected": "отклонён", "n/a": "—", "ok": "норма", "defect": "дефект", "yes": "да",
-      "no": "НЕТ", "not_measured": "не измерено"}
+      "no": "НЕТ", "not_measured": "не измерено", "earlier accepted base": "ранее принятая база"}
 
 
 def agree(tool, artem):
     """Tool verdict vs Artem's recorded verdict: 'yes' / 'no' / 'n/a' (tool undecided or no Artem verdict)."""
-    a = "good" if artem in ("accepted",) else "bad" if artem in ("rejected",) else None
+    a = "good" if artem in {"accepted", "earlier accepted base"} else "bad" if artem == "rejected" else None
     t = "good" if tool in ("ok",) else "bad" if tool in ("defect",) else None
     if a is None or t is None:
         return "n/a"
@@ -40,7 +40,7 @@ def sheet_png(rows, notes_ru, out_png, title="Проверка формы v1 —
         return ImageFont.load_default()
 
     f_t, f_h, f_b = font(34, True), font(22, True), font(21)
-    widths = [150, 200, 130, 130, 80, 440, 80, 160]
+    widths = [150, 200, 240, 130, 80, 650, 80, 160]
     W = max(sum(widths) + 60, 1900)
     rh = 34
     H = 140 + rh * (len(rows) + 1) + 40 + 30 * len(notes_ru) + 40
@@ -61,8 +61,11 @@ def sheet_png(rows, notes_ru, out_png, title="Проверка формы v1 —
             col = {"yes": (210, 240, 210), "no": (250, 210, 210)}.get(v, "white")
             v = RU.get(v, v)
             d.rectangle([x, y, x + w, y + rh], fill=col, outline="black")
-            maxc = max(4, int(w / 11))
-            d.text((x + 6, y + 6), v if len(v) <= maxc else v[: maxc - 1] + "…", fill="black", font=f_b)
+            if d.textlength(v, font=f_b) > w - 12:
+                while d.textlength(v + "…", font=f_b) > w - 12:
+                    v = v[:-1]
+                v += "…"
+            d.text((x + 6, y + 6), v, fill="black", font=f_b)
             x += w
     y += rh + 30
     for line in notes_ru:

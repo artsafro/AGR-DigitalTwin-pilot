@@ -1,0 +1,218 @@
+{
+ "note": "#1315 t_58e1857b: SIL13 v003 typed spec of the cold run t_d9ae7dc0 (exact D281 OKS footprint 33FBD7A from pinned DXF 35b537cf..., skirt 1.001 m FBX reserve) + cover -> library diffuse binding by Artem's 2026-11-24 decision. Not delivery acceptance.",
+ "site": "SIL13",
+ "zero": {
+  "project_zero_m": 142.1,
+  "source": "VP_5 floor-mark MTEXT 33F8EC4=142.10 beside 33F8EC5=0.000 (#1315 v003; historical branch-local D282 at ff769b0b, not main's D282)"
+ },
+ "covers": [
+  {
+   "id": 1,
+   "name": "Rubber1",
+   "adapter_keys": [
+    "1"
+   ],
+   "colour": [
+    233,
+    224,
+    210
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 2,
+   "name": "Drive2",
+   "adapter_keys": [
+    "2"
+   ],
+   "colour": [
+    199,
+    200,
+    202
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 3,
+   "name": "SeededLawn",
+   "adapter_keys": [
+    "3"
+   ],
+   "colour": [
+    96,
+    150,
+    64
+   ],
+   "colour_reason": "spec; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 4,
+   "name": "Perennials",
+   "adapter_keys": [
+    "4"
+   ],
+   "colour": [
+    159,
+    127,
+    255
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 5,
+   "name": "Asphalt",
+   "adapter_keys": [
+    "5"
+   ],
+   "colour": [
+    70,
+    70,
+    70
+   ],
+   "colour_reason": "spec; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 6,
+   "name": "Rubber6",
+   "adapter_keys": [
+    "6"
+   ],
+   "colour": [
+    0,
+    124,
+    176
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 7,
+   "name": "Drive7",
+   "adapter_keys": [
+    "7"
+   ],
+   "colour": [
+    0,
+    0,
+    252
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 8,
+   "name": "Rubber8",
+   "adapter_keys": [
+    "8"
+   ],
+   "colour": [
+    246,
+    115,
+    44
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 9,
+   "name": "Rubber9",
+   "adapter_keys": [
+    "9"
+   ],
+   "colour": [
+    99,
+    125,
+    150
+   ],
+   "colour_reason": "hatch-bgcolor; retained from pinned DXF fixture extraction"
+  },
+  {
+   "id": 10,
+   "name": "RolledLawn",
+   "adapter_keys": [
+    "10"
+   ],
+   "colour": [
+    70,
+    110,
+    50
+   ],
+   "colour_reason": "spec; retained from pinned DXF fixture extraction"
+  }
+ ],
+ "base_id": 3,
+ "unhatched": {
+  "cover_id": 3,
+  "reason": "Unhatched remainder on base cover ID03 (seeded lawn -> 42 rolled lawn): Artem 2026-11-24 «принимаю рекомендации», decision 1 (#1315)."
+ },
+ "params": {
+  "cell": 3.0,
+  "chord": 0.02,
+  "step": 0.006,
+  "snap": 0.003,
+  "relief_tol": 0.01,
+  "skirt_m": 1.001,
+  "tex_px": 4096,
+  "origin_xy": [
+   835,
+   11035
+  ],
+  "relief_extension": {
+   "max_m": 1.5,
+   "reason": "#1315 G1 + standing-rule comment-6874264219: nearest source TIN plane only on boundary remainder; 7.608474253 m2 outside hull, maximum boundary distance 1.482247067 m. Assumed, not surveyed elevations."
+  },
+  "surfaces": "shared",
+  "footprint_min_area": 12959.738864325082
+ },
+ "adapter": {
+  "path": "G:/Мой диск/AGR-evidence/1315-ground-skirt-materials/typed-curved-footprint.json",
+  "sha256": "a47419c7c501fd076ff666cc062b819c0cb6e9ff0407f9b273b72de4edfe1ffe"
+ },
+ "materials": {
+  "library": "G:/Мой диск/AGR-assets/materials/v001",
+  "decision": "Artem 2026-11-24 «принимаю рекомендации» on SIL13-covers-vs-library.png (#1315, card t_58e1857b): ID03 + unhatched remainder -> 42 rolled lawn; ID04 -> 25 mulch; ID01/06/08/09 -> 27 recoloured to each hatch background colour; ID02/07 -> 19 light 100x300; ID05 -> 22 asphalt and ID10 -> 42 rolled lawn match by name",
+  "by_cover": {
+   "1": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024.png",
+    "recolour": "cover-colour",
+    "reason": "rubber crumb map 27 recoloured to this hatch background colour (decision 3)"
+   },
+   "2": {
+    "diffuse": "19/19_paving_100x300_light_d_npm_2048.png",
+    "reason": "paving with driveway -> 19 light (decision 4)"
+   },
+   "3": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024.png",
+    "reason": "seeded lawn + unhatched remainder -> 42 rolled lawn (decision 1)"
+   },
+   "4": {
+    "diffuse": "25/25_mulch_d_npm_1024.png",
+    "reason": "flower bed Mix14 -> 25 mulch (decision 2)"
+   },
+   "5": {
+    "diffuse": "22/22_asphalt_d_1024.png",
+    "reason": "asphalt -> 22 asphalt (name match; no npm variant, smallest map)"
+   },
+   "6": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024.png",
+    "recolour": "cover-colour",
+    "reason": "rubber crumb map 27 recoloured to this hatch background colour (decision 3)"
+   },
+   "7": {
+    "diffuse": "19/19_paving_100x300_light_d_npm_2048.png",
+    "reason": "paving with driveway -> 19 light (decision 4)"
+   },
+   "8": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024.png",
+    "recolour": "cover-colour",
+    "reason": "rubber crumb map 27 recoloured to this hatch background colour (decision 3)"
+   },
+   "9": {
+    "diffuse": "27/27_rubber_crumb_d_npm_1024.png",
+    "recolour": "cover-colour",
+    "reason": "rubber crumb map 27 recoloured to this hatch background colour (decision 3)"
+   },
+   "10": {
+    "diffuse": "42/42_lawn_rolled_d_npm_1024.png",
+    "reason": "rolled lawn -> 42 rolled lawn (name match)"
+   }
+  }
+ }
+}

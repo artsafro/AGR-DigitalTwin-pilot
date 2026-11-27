@@ -1,13 +1,25 @@
 {
- "schema": "form-check-pairs/1",
- "card": "t_73d7ece4",
+ "schema": "form-check-pairs/2",
+ "card": "t_e3f7ffb3",
  "note": "Fixtures live outside git (C:/x, Google Drive); every file is pinned by its SHA-256 prefix. Artem verdicts are cited per variant.",
  "pairs": [
   {
    "id": "G22 k2",
    "kind": "scene",
-   "key": "C:/x/t_563a40f7/key/heldout-key-v001.json", "key_sha": "843197137db10cdc",
-   "sections": "C:/x/t_563a40f7/key/heldout-sections-v001.json", "sections_sha": "270e83dedbbae380",
+   "key": "G:/Мой диск/AGR-evidence/1855-trainer-v0/keys/heldout-key-v001.json", "key_sha": "843197137db10cdc",
+   "sections": "G:/Мой диск/AGR-evidence/1855-trainer-v0/keys/heldout-sections-v002.json", "sections_sha": "d565545ef6e79551",
+   "key_note": "#1955: C:/x/t_563a40f7 was lost; key restored byte-identical from a key_used.json dump, sections re-extracted from bank k2_v002r1 (#117 substitution, 15/15 stored detector rows, 443 items); keys/SHA256SUMS.txt",
+   "interior_side": 1,
+   "corner_source": {
+    "path": "C:/x/ev_1619/g22_k2_src.npz",
+    "sha256": "5eee4ac6911acb6c79e4d9d9871136d2eeb482fb5f8848f11ca179b397fc4622",
+    "wall_name_contains": "стена",
+    "levels": {"16.85": 16.85, "19.8": 19.8},
+    "corner_ids": ["SE-14", "SE-15", "SE-16", "SE-17", "SE-18", "SE-19", "SE-20", "SE-21", "SE-22", "SE-23", "SE-24"],
+    "stations": [[532.208, 1032.717], [538.129, 1037.544], [537.738, 1038.103], [537.840, 1038.211],
+                 [543.462, 1042.794], [543.943, 1042.283], [549.865, 1047.110], [549.063, 1048.173],
+                 [551.783, 1050.454], [544.346, 1059.577], [541.582, 1057.389], [539.635, 1059.698], [521.940, 1045.273]]
+   },
    "zmap": "16.85=16.85,17.8=17.8,18.2=18.2,19.8=19.8",
    "variants": [
     {"name": "v002r1", "fbx": "C:/x/review-k2/k2_v002r1_body_quad.fbx", "sha": "5b1e8d76c81de07d", "artem": "accepted",
@@ -22,15 +34,29 @@
   {
    "id": "63B",
    "kind": "scene",
-   "key": "C:/x/t_fb3a0b98-r51/key/heldout-key-v001.json", "key_sha": "67a1ae5b88beec6e",
-   "sections": "C:/x/t_fb3a0b98-r51/key/heldout-sections-v001.json", "sections_sha": "07ce9a5bff8a9e4e",
-   "zmap": "16.85=8.03,17.8=8.98,18.2=9.38,19.8=10.98",
-   "amend": {
-    "source_wall_gaps": [{"id": "src-fd517ed-185b002", "ring_seg": [18, 19], "span_m": [3.414374, 4.717635],
-                          "basis": "#52: source outer walls fd517ed/185b002 leave this gap; the key ring (v002 builder) bridges it"}],
-    "reveal_depth_reference": {"status": "open",
-                               "basis": "#53 question to Artem: 0.50 m (source wall faces, as built in accepted v007) or 0.71 m (opening attribute)"}
+   "source_key": {
+    "kind": "revit_fbx_triangle_readback",
+    "path": "C:/x/ev_poly63b7/b63B_src.npz",
+    "sha256": "b5cdbf394e4a10c55db391c13d15096c71e5a4c085be30e0edb595610cd04aea",
+    "basis": "Outer finish-wall witnesses from the Revit FBX triangle crop, cut at +8.03 m (typical spandrel); stable source object indices and endpoint selectors. Window widths and heights projected from their source mesh objects. No builder ring.",
+    "reference_z": 8.03, "label_shift_m": 8.82,
+    "box": [80.684, 13.215, 94.588, 25.707],
+    "profile": {"contour_z": ["16.85", "19.8"], "opening_z": ["17.8", "18.2"], "rim_z0": [17.0, 17.6]},
+    "vertices": [[973, 80.5377, 12.6101], [973, 80.9952, 13.0845], [956, 80.8153, 13.258],
+                 [956, 80.3693, 14.1704], [962, 81.4123, 14.7692], [962, 81.6806, 14.2203],
+                 [974, 81.8817, 14.0035], [976, 84.8003, 17.0294], [977, 85.5201, 16.3351],
+                 [978, 87.8763, 18.8042], [959, 87.7095, 18.965], [960, 87.2393, 19.927],
+                 [961, 88.3174, 20.454], [961, 88.5959, 19.8841], [979, 88.7942, 19.7295], [983, 95.9357, 27.1334]],
+    "openings": [
+     {"id": "рт О_194b464", "source_object": "Окн_Окн_3 Ств Комфорт Комфорт О_194b464", "contour_segment": [6, 7]},
+     {"id": "рт О_415705d", "source_object": "Окн_Окн_2 Ств Комфорт Комфорт О_415705d", "contour_segment": [8, 9]},
+     {"id": "рт О_6189f94", "source_object": "Окн_Окн_2 Ств Комфорт Комфорт О_6189f94", "contour_segment": [14, 15]},
+     {"id": "рт О_010a21f", "source_object": "Окн_Окн_1 Ств Комфорт Комфорт О_010a21f", "contour_segment": [14, 15]},
+     {"id": "рт О_1198368", "source_object": "Окн_Окн_1 Ств Комфорт Комфорт О_1198368", "contour_segment": [14, 15]}
+    ]
    },
+   "zmap": "16.85=8.03,17.8=8.98,18.2=9.38,19.8=10.98",
+
    "accepted_deviations": [
     {"variant": "v007", "item": "opening:рт О_194b464:edges", "rule": "D341",
      "basis": "D341 step-corner clip: the opening narrows to 1.224..3.369 m in floor_A.json (vertex 44, step 0.249 m moved out; #57 true narrowing), v007 accepted by Artem"}
@@ -50,12 +76,13 @@
   {
    "id": "KPP1 NW",
    "kind": "scene",
-   "key_from_contour": {"path": "G:/Мой диск/AGR-evidence/1609-kpp1-contour-pilot/v003/KPP1-NW-A-v001.json", "sha": "d4c18c361b2d5953",
+   "corner_id": "NW-C (contour A, D380)", "interior_side": 1,
+   "key_from_contour": {"path": "G:/Мой диск/AGR-evidence/1609-kpp1-contour-pilot/v003/KPP1-NW-A-v001.json", "sha": "d4c18c361b2d5953b8a264fc289706a023be47a74df0c202c52071d4e2c1074f",
                         "ring": [[5.2, 0.0], [0.0, 0.0], [0.0, -6.15]], "box": [-0.05, -6.10, 5.15, 0.05],
                         "contour_z": ["0.55", "3.175"], "opening_z": ["1.75"], "rim_z0": [1.0, 1.2],
                         "openings": [{"id": "NW-N-O1615731", "seg": [0, 1], "axis": "x", "lo": 1.255, "hi": 4.635},
                                      {"id": "NW-W-O1615704", "seg": [1, 2], "axis": "y", "lo": -5.955, "hi": -1.925}],
-                        "basis": "contour A (t_933a30b6, Artem chose 'A, прямой угол'); back reveals not encoded in A"},
+                        "basis": "contour A (D380; t_933a30b6); back reveals not encoded in A"},
    "zmap": "0.55=0.55,1.75=1.75,3.175=3.175",
    "variants": [
     {"name": "A-proto", "fbx": "C:/x/kpp1-nw-a-t_aadee92c/v002/green-measured/proto.fbx", "sha": "7e5a3f5bcdcef591",
@@ -78,7 +105,7 @@
     {"name": "v005", "fbx": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v005/body_quad.fbx", "sha": "8cdb6d3d4035be8a",
      "artem": "accepted", "cite": "D378, Artem 2026-11-24 «принимаю рекомендации» (sheet step2-compare-v004; README step2-body-v005; branch job/sokolniki-lattice-1784, PR #1786)"},
     {"name": "v004", "fbx": "G:/Мой диск/AGR-evidence/1784-sokolniki-lattice/step2-body-v004/body_quad.fbx", "sha": "722469da1d29b419",
-     "artem": "rejected", "cite": "superseded by v005 per D378; t_57b332a4 compare.json questions 1-4 are its known defects"}
+     "artem": "earlier accepted base", "cite": "Artem 2026-11-24 (t_e3f7ffb3): earlier accepted base; v005 adds the D378 refinements. t_57b332a4 compare.json lists later comparison findings, not a rejection."}
    ],
    "reference": "v005",
    "render": {"crop": "bbox", "panels": "auto4"}

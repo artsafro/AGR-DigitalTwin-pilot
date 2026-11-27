@@ -1,6 +1,11 @@
 # Manual mode without AI: chunk inventory (#1374)
 
-Status: inventory only, 2026-11-15 (finish-or-close audit of #1374). Nothing here is implemented by this note; the
+Status: done (2026-11-24)
+
+> **Historical inventory (#1869).** Not the current AGR Tools scope; that is owned by
+> `docs/agr-tools/OVERVIEW.md` (frozen 1.1.x [D393]). The gaps listed here live in their GitHub issues.
+
+Inventory only, 2026-11-15 (finish-or-close audit of #1374). Nothing here is implemented by this note; the
 gaps are filed as issues. Synthetic data: none.
 
 Requirement (Artem 2026-11-14, #1374, voice, summarized): every pipeline chunk worked out with agents must be usable

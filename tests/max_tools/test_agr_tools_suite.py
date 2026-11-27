@@ -88,6 +88,27 @@ def test_every_check_is_a_plan_row_of_version_07():
             assert r['mode'] == 'read'  # 0.7 is read-only by plan
 
 
+def test_maf_checks_has_no_false_npm_regulatory_mapping():
+    """#1781: place.maf_checks is a clearance diagnostic, not a polycount/atlas check.
+
+    The row must not cite NPM-2.3-6.b (polycount) or NPM-2.5-12 (GroundEl texture set); the
+    description must name the 0 m default target (gap_m override) and point to the D095 placement
+    rule instead. The legitimate owners of those clauses keep them unchanged.
+    """
+    suite = roadmap.load_file(SUITE)
+    r = roadmap.row(suite, 'place.maf_checks')
+    assert r['reqs'] == '-'
+    assert 'NPM-2.3-6.b' not in r['reqs'] and 'NPM-2.5-12' not in r['reqs']
+    assert 'D095' in r['does_ru'] and '0 м' in r['does_ru'] and 'gap_m' in r['does_ru']
+    # the legitimate polycount and atlas rows keep their clauses
+    assert 'NPM-2.3-6.b' in roadmap.row(suite, 'qa.tris')['reqs']
+    assert 'NPM-2.5-12' in roadmap.row(suite, 'atlas.groundel')['reqs']
+    # the panel action (menu/tooltip) agrees: no clause, D095 and gap_m named
+    a = model.BY_TOOL['place.maf_checks']
+    assert a.reqs == ('-',)
+    assert 'D095' in a.tip and 'gap_m' in a.tip
+
+
 # ---- each check: clean pass + named failure -----------------------------------------------------------
 @pytest.mark.parametrize('tool', ['ucx_audit', 'preflight'])
 @pytest.mark.parametrize('gap', [0.01, -0.01])
@@ -853,8 +874,9 @@ def test_maf_clearance_is_a_diagnostic_not_a_regulatory_check(surface):
         assert f'(on execute do python.Execute "agr_tools_runtime.ui(\'{tool}\')")' in macro
         assert 'Треб.: -"' in text
     assert 'NPM-2.3-6.b' not in text and 'NPM-2.5-12' not in text
-    for detail in ('пересечения', '0 м по умолчанию', 'gap_m', 'без запроса зазора',
-                   'D095', 'MAF-23', '0,10 м', 'удалить нижние грани'):
+    for detail in ('без запроса зазора', 'MAF-23', 'AABB-предфильтр', 'лучи вниз',
+                   'пересечения', '0 м по умолчанию', 'gap_m через опции',
+                   'D095', '0,10 м', 'удаление нижних граней'):
         assert detail in text
 
 

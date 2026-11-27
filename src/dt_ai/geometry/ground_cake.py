@@ -24,6 +24,7 @@ import numpy as np
 import shapely
 from shapely import STRtree
 from shapely.geometry import MultiPoint, MultiPolygon, Point, Polygon, box
+from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
 GRID = 1e-6
@@ -213,7 +214,54 @@ def _partition(lines: list, surface, snap: float) -> list[Polygon]:
         return []
     rp = shapely.get_coordinates(shapely.point_on_surface(faces))
     keep = shapely.contains_xy(surface, rp[:, 0], rp[:, 1])
-    return [f for f, k in zip(faces, keep) if k]
+    return _cut_rim_steps([f for f, k in zip(faces, keep) if k], snap)
+
+
+def _ring_key(a, b) -> tuple:
+    return (a, b) if a <= b else (b, a)
+
+
+def _cut_rim_steps(faces: list, snap: float) -> list:
+    """Cut the snap-rounding steps off the partition rim (#1315 SIL13 skirt contacts).
+
+    Snap rounding routes a diagonal outline through every hot pixel it passes, so a TIN mark on the boundary next
+    to a clipped TIN line leaves a one-pixel stair: a rim vertex whose two rim edges are both <= 2 ``snap``. The
+    skirt hangs a wall from each rim edge, and two parallel stair walls ``snap`` apart are an xView contact. A stair
+    vertex owned by one face only, with both incident edges on the rim and a convex turn, is dropped: its face loses
+    a triangle of <= 2 snap^2 (inside the coverage tolerance), no neighbour shares it, so no hole or T-junction
+    opens. Reflex steps (dropping them would add area outside the face) are kept."""
+    lim = 2.0 * snap + 1e-12
+    while True:
+        rings = [[list(r.coords)[:-1] for r in (f.exterior, *f.interiors)]
+                 for f in (orient(f, 1.0) for f in faces)]
+        use: dict = {}
+        owners: dict = {}
+        for i, rs in enumerate(rings):
+            for r in rs:
+                for a, b in zip(r, r[1:] + r[:1]):
+                    use[_ring_key(a, b)] = use.get(_ring_key(a, b), 0) + 1
+                    owners.setdefault(a, set()).add(i)
+        changed = False
+        out = []
+        for i, rs in enumerate(rings):
+            new_rs, cut = [], False
+            for r in rs:
+                n = len(r)
+                for k, v in enumerate(r):  # at most one step per ring and pass: neighbours are re-read next pass
+                    a, b = r[k - 1], r[(k + 1) % n]
+                    cross = (v[0] - a[0]) * (b[1] - v[1]) - (v[1] - a[1]) * (b[0] - v[0])
+                    if n > 3 and len(owners[v]) == 1 and cross > 0 \
+                            and use[_ring_key(a, v)] == 1 and use[_ring_key(v, b)] == 1 \
+                            and math.dist(a, v) <= lim and math.dist(v, b) <= lim:
+                        r = r[:k] + r[k + 1:]
+                        cut = True
+                        break
+                new_rs.append(r)
+            out.append(Polygon(new_rs[0], new_rs[1:]) if cut else faces[i])
+            changed |= cut
+        if not changed:
+            return faces
+        faces = out
 
 
 def _flat_lines(gs) -> list:

@@ -70,10 +70,11 @@ def test_model_entry_sequence(relative):
 def test_oks_vpm_route_policy():
     cell = (ROOT / "docs/scenarios/oks-vpm.md").read_text(encoding="utf-8")
     route = cell.split("## Route by stage", 1)[1].split("## Etalons", 1)[0]
-    for required in ("standard", "AGR Tools stages 1–4", "body", "windows", "roof",
-                     "after Gate 1", "Max is busy", "dt_ai.ops", "R14", "path: deviation",
-                     "all eight gates", "[D250]"):
+    # #1895: stage-1 body = lattice only [D373]/[D392]; D250/R14 stay only as history for the body
+    for required in ("agr body", "[D373]", "[D392]", "body", "windows", "roof", "after Gate 1", "R14",
+                     "path: deviation", "all eight gates", "[D250]", "AGR Tools stages 2–4"):
         assert required in route, required
+    assert "AGR Tools stages 1–4" not in route and "dt_ai.ops" not in route
     procedure = (ROOT / "docs/procedure/TASK_TO_MODEL.md").read_text(encoding="utf-8")
     operations = next(line for line in procedure.splitlines() if line.startswith("| operations |"))
     assert "oks-vpm.md#route-by-stage" in operations
@@ -159,14 +160,30 @@ def test_ground_vpm_rules():
         assert token in text, token
 
 
-def test_ground_vpm_red_blocks():
+def test_ground_vpm_command_limits():
     text = GROUND_VPM.read_text(encoding="utf-8")
     rows = {match[0]: match[1] for match in re.findall(
         r"^\| \d+ — `([a-z]+)` \| (.+)$", text, re.M)}
-    for stage in ("zero", "surfaces", "textures", "relief", "ucx", "placement", "sintez"):
-        assert "RED" in rows[stage], stage
-    for token in ("Vatutino-only", "agr ucx", "unavailable", "no generic", "Conform",
-                  "projection misses", "not_run", "not a pass", "C18", "no D-id"):
+    # #1843: these stages name their existing command, not a blanket "no command" (RED) claim.
+    for stage, command in {
+        "zero": "agr zero",
+        "surfaces": "agr ground site",
+        "textures": "agr ground site",
+        "relief": "agr ground site",
+        "ucx": "agr ucx",
+        "placement": "agr place",
+        "sintez": "agr checker",
+    }.items():
+        assert command in rows[stage], stage
+        assert "RED" not in rows[stage], stage
+    # The false absence claims are gone everywhere.
+    for token in ("is unavailable", "no generic", "no agr/dt placement command",
+                  "no boundary/zero command", "no site-wide"):
+        assert token not in text, token
+    # The remaining manual / unwired items stay visible.
+    for token in ("agr ucx", "obj-to-ucx", "obj-to-placement", "D366", "not_run",
+                  "projection misses", "not a pass", "C18", "no D-id",
+                  "preliminary SINTEZ", "D365"):
         assert token in text, token
 
 

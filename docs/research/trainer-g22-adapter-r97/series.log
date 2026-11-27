@@ -1,0 +1,19 @@
+20:24:33 start g22-k2-stage1-codex-r97-B1
+20:24:33 start g22-k2-stage1-codex-r97-C1
+20:27:41 done g22-k2-stage1-codex-r97-B1 rc=0
+20:27:47 score g22-k2-stage1-codex-r97-B1 rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0128}
+20:27:47 done g22-k2-stage1-codex-r97-C1 rc=0
+20:27:47 score g22-k2-stage1-codex-r97-C1 rc=2 ERROR: several FBX in C:\x\trainer\runs\g22-k2-stage1-codex-r97-C1\built: ['body.fbx', 'body.fbx']; pass --built FILE
+20:27:47 start g22-k2-stage1-codex-r97-B2
+20:27:47 start g22-k2-stage1-codex-r97-C2
+20:29:34 done g22-k2-stage1-codex-r97-B2 rc=0
+20:29:35 score g22-k2-stage1-codex-r97-B2 rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "artifact", "score": 0.0, "form_p95_m": null}
+20:30:08 done g22-k2-stage1-codex-r97-C2 rc=0
+20:30:14 score g22-k2-stage1-codex-r97-C2 rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "form_v2", "score": 0.7143, "form_p95_m": 0.0128}
+20:30:14 start g22-k2-stage1-codex-r97-B3
+20:30:14 start g22-k2-stage1-codex-r97-C3
+20:33:09 done g22-k2-stage1-codex-r97-B3 rc=0
+20:33:10 score g22-k2-stage1-codex-r97-B3 rc=0 {"etalon": "g22-k2-stage1", "first_failing_step": "artifact", "score": 0.0, "form_p95_m": null}
+20:33:10 done g22-k2-stage1-codex-r97-C3 rc=0
+20:33:10 score g22-k2-stage1-codex-r97-C3 rc=2 ERROR: several FBX in C:\x\trainer\runs\g22-k2-stage1-codex-r97-C3\built: ['body.fbx', 'body.fbx']; pass --built FILE
+20:33:10 SERIES DONE

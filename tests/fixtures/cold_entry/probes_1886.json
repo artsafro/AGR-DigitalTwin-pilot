@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "kind": "cold_entry_probes",
+  "issue": "#1886 probes, re-run before/after #1895",
+  "fixed_before_run": "2026-11-25, before the first probe run; expectations are not edited after a run",
+  "protocol": "fresh `claude -p` in a detached worktree of the measured sha; read-only tools (Read, Grep, Glob, `uv run agr ... --help`); stop at the first command; the agent answers one JSON object",
+  "probes": {
+    "npm-oks-body": {
+      "task": "New job: build the stage-1 BODY (massing with openings) of an OKS building for an NPM delivery. Sources: a Revit model dump of the building. Find the scenario cell, the rule that governs how the body is built, the first build command you would run and the mandatory check after it. Do not model; stop at the first command.",
+      "expected": {
+        "cell": ["oks-npm"],
+        "rule": ["D373", "D392"],
+        "first_command": ["agr body"],
+        "check": ["mesh_quality_observe", "mesh-quality", "dt qa xview", "fbx_readback", "readback"]
+      },
+      "traps": ["routes/npm-oks.md recipes 'to be published' (#1281) pointing to research drafts instead of docs/procedure/NODE_RECIPES.md R1-R7", "AGR Tools stage 1 body [D250/R14] instead of the lattice [D373]"]
+    },
+    "ground-npm": {
+      "task": "New job: build the Ground surface (no MAF, no Flora yet) of a new site for an NPM delivery from the SPOZU DWG/DXF. Find the scenario cell, the governing rule for the stage order, the first build command and the mandatory check after it. Do not model; stop at the first command.",
+      "expected": {
+        "cell": ["ground-npm"],
+        "rule": ["D293"],
+        "first_command": ["agr ground site", "dt ground site"],
+        "check": ["skirt_check_export", "dt qa xview", "fbx_readback", "readback", "agr validate"]
+      },
+      "traps": ["`dt ground v015` (Vatutino replay only) as the build command"]
+    }
+  },
+  "answer_format": "{\"cell\": str, \"rule\": [\"D...\"], \"first_command\": str, \"check\": str, \"files_read\": [paths]}"
+}

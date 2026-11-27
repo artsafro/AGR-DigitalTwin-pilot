@@ -11,6 +11,7 @@ import os
 import random
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -127,6 +128,84 @@ def test_failing_readbacks_are_failures_never_pass(tmp_path):
         assert code == 3 and receipt["status"] == "fail" and receipt["reason"], (mode, receipt)
 
 
+@pytest.mark.parametrize("payload,reason", [
+    (b"", "no DXF"),
+    (b"AutoCAD Binary DXF\r\n\x1a\0", "SECTION"),
+    (b"  0\r\nSECTION\r\n  2\r\nOBJECTS\r\n  0\r\nXRECORD\r\n100\r\nAcDbXrecord\r\n280\r\n1\r\n",
+     "missing terminal"),
+    (DXF_TEXT.replace("EOF\r\n", "").encode("ascii"), "missing terminal"),
+    (DXF_TEXT.replace("  2\r\nHEADER", "  8\r\nHEADER").encode("ascii"), "does not parse"),
+])
+def test_exit_zero_with_incomplete_or_unsupported_dxf_fails(tmp_path, payload, reason):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    (work / "acc.exe").touch()
+    argv, out, rec = _args(src, work)
+    before = _sha(src)
+
+    def write_dxf(cmd, **kwargs):
+        out.write_bytes(payload)
+        return subprocess.CompletedProcess(cmd, 0, stdout=b"done", stderr=b"")
+
+    assert dd.main(argv, runner=write_dxf) == 3
+    result = json.loads(rec.read_bytes())
+    assert result["returncode"] == 0 and result["console_outcome"] == "exited"
+    assert result["status"] == "fail" and reason in result["reason"]
+    assert "dxf" not in result and result["dxf_bytes_observed"] == len(payload)
+    assert out.read_bytes() == payload and _sha(src) == before
+
+
+def test_generated_dxf_truncations_never_pass(tmp_path):
+    import ezdxf
+
+    src = _source(tmp_path)
+    fixture = tmp_path / "synthetic.dxf"
+    doc = ezdxf.new("R2018")
+    doc.modelspace().add_line((0, 0), (1000, 0))
+    doc.saveas(fixture)
+    complete = fixture.read_bytes()
+    # Every byte cut across the terminal record, plus cuts in the file's interior.
+    last_eof = complete.rindex(b"EOF")
+    cuts = sorted({len(complete) * i // 16 for i in range(1, 16)} | set(range(last_eof - 8, last_eof + 3)))
+    for i, end in enumerate([len(complete), *cuts, len(complete)]):
+        work = tmp_path / f"case{i}"
+        work.mkdir()
+        (work / "acc.exe").touch()
+        argv, out, rec = _args(src, work)
+
+        def write_dxf(cmd, **kwargs):
+            out.write_bytes(complete[:end])
+            return subprocess.CompletedProcess(cmd, 0, stdout=b"", stderr=b"")
+
+        valid = end == len(complete)
+        assert dd.main(argv, runner=write_dxf) == (0 if valid else 3), f"byte cut {end}"
+        result = json.loads(rec.read_bytes())
+        assert result["status"] == ("pass" if valid else "fail")
+        assert ("dxf" in result) == valid
+
+
+def test_dxf_changed_during_readback_is_not_certified(tmp_path, monkeypatch):
+    import ezdxf
+
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    (work / "acc.exe").touch()
+    argv, out, rec = _args(src, work)
+    readfile = ezdxf.readfile
+
+    def read_then_truncate(path, *args, **kwargs):
+        doc = readfile(path, *args, **kwargs)
+        out.write_bytes(DXF_TEXT.split("ENDSEC")[0].encode("ascii"))
+        return doc
+
+    monkeypatch.setattr(ezdxf, "readfile", read_then_truncate)
+    assert dd.main(argv, runner=FakeAcc()) == 3
+    result = json.loads(rec.read_bytes())
+    assert result["status"] == "fail" and "changed" in result["reason"] and "dxf" not in result
+
+
 def test_refusals_write_nothing_and_never_touch_the_source(tmp_path, capsys):
     src = _source(tmp_path)
     work = tmp_path / "work"
@@ -226,3 +305,99 @@ def test_cli_dry_run_in_a_fresh_process(tmp_path, monkeypatch, inherited_encodin
     assert plan["source"] == {"path": str(src), "sha256": _sha(src)}
     assert plan["dry_run"] is True and not work.exists()
     assert os.environ["PYTHONIOENCODING"] == inherited_encoding
+
+
+@pytest.mark.parametrize("payload", [None, b"", b"0\nSECTION\n"])
+def test_startup_timeout_is_bounded_and_never_admits_a_derivative(tmp_path, payload):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    out, receipt = work / "timeout.dxf", work / "timeout.json"
+    p = dd.plan(src, out, receipt, work, Path(sys.executable), timeout=2)
+    # The native subprocess is a synthetic stand-in, not AutoCAD.
+    p["command"] = [sys.executable, "-c", (
+        "from pathlib import Path; import sys,time; "
+        "sys.stdout.buffer.write('AutoCAD Core Console startup'.encode('utf-16-le')); sys.stdout.flush(); "
+        "sys.stderr.write('waiting for DXFOUT\\n'); sys.stderr.flush(); "
+        + (f"Path({str(out)!r}).write_bytes({payload!r}); " if payload is not None else "")
+        + "time.sleep(60)"
+    )]
+    start = time.monotonic()
+    result = dd.run(p)
+    assert time.monotonic() - start < 10
+    assert result["status"] == "fail" and result["console_outcome"] == "timeout"
+    assert result["timeout_s"] == 2 <= result["console_elapsed_s"] < 10
+    assert result["dxf_bytes_observed"] == (len(payload) if payload is not None else None)
+    assert "returncode" not in result and "dxf" not in result
+    assert "sources-dwg" in result["action"] and "plan" in result["action"]
+    assert result["source_sha256_after"] == result["copy"]["sha256_after"] == _sha(src)
+    log = Path(result["log"]).read_text(encoding="utf-8")
+    assert "AutoCAD Core Console startup" in log and "waiting for DXFOUT" in log
+    receipt.write_text(json.dumps(result), encoding="utf-8")
+    intake_path = ROOT / "tools/methods/body/dxf_intake.py"
+    intake_out = work / "intake.json"
+    proc = subprocess.run([sys.executable, str(intake_path), str(src), str(out), str(receipt), str(intake_out)],
+                          capture_output=True, timeout=10)
+    assert proc.returncode == (2 if payload is None else 3)
+    if intake_out.exists():
+        data = json.loads(intake_out.read_bytes())
+        assert data["passed"] is False and "next" not in data
+    saved = receipt.read_bytes()
+    args = [str(src), str(out), str(receipt), "--workdir", str(work), "--accoreconsole", sys.executable]
+    assert dd.main(args) == 4 and receipt.read_bytes() == saved
+
+
+def test_launch_error_is_not_a_native_exit(tmp_path):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    argv, out, rec = _args(src, work)
+    (work / "acc.exe").touch()
+
+    def denied(*args, **kwargs):
+        raise PermissionError("launch denied")
+
+    assert dd.main(argv, runner=denied) == 3
+    result = json.loads(rec.read_bytes())
+    assert result["console_outcome"] == "launch_error" and "launch denied" in result["reason"]
+    assert "returncode" not in result and not out.exists()
+
+
+@pytest.mark.parametrize("name", ["L03.dxf", "L03.accoreconsole.log", "L03.readback.json"])
+def test_output_hardlink_to_source_is_refused_before_launch(tmp_path, name):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    argv, out, _ = _args(src, work)
+    out.parent.mkdir(parents=True)
+    (work / "acc.exe").touch()
+    alias = out if name == out.name else work / name
+    os.link(src, alias)
+    frozen = src.read_bytes()
+    before = sorted(work.rglob("*"))
+    fake = FakeAcc()
+    assert dd.main(argv, runner=fake) == 4
+    assert not fake.calls and sorted(work.rglob("*")) == before
+    assert src.read_bytes() == alias.read_bytes() == frozen
+
+
+@pytest.mark.parametrize("late", [False, True])
+def test_stale_receipt_is_never_replaced(tmp_path, late):
+    src = _source(tmp_path)
+    work = tmp_path / "work"
+    work.mkdir()
+    argv, out, rec = _args(src, work)
+    (work / "acc.exe").touch()
+    stale = b'{"status":"pass","run":"previous"}'
+    if not late:
+        rec.write_bytes(stale)
+    fake = FakeAcc("nothing")
+
+    def launch(*args, **kwargs):
+        rec.write_bytes(stale)
+        return fake(*args, **kwargs)
+
+    before = sorted(work.iterdir())
+    assert dd.main(argv, runner=launch) == 4
+    assert rec.read_bytes() == stale and not out.exists()
+    assert len(fake.calls) == int(late)
+    if not late:
+        assert sorted(work.iterdir()) == before

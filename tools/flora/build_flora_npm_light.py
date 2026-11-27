@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from dt_ai.core.max_env import max_child_env  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = Path('C:/x/flora-library/v003/flora-library-v003.max')
+SOURCE = Path('G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max')
 OUTPUT = Path('C:/x/flora-light/v001')
 DCC = 'C:/Users/artsafro/hermes_kanban/scripts/dcc_batch.py'
 BLENDER = 'C:/Program Files/Blender Foundation/Blender 5.1/blender.exe'

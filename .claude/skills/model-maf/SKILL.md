@@ -52,15 +52,16 @@ disagree. Lamps on lighting layers are MAF-24 geometry only.
 
 ### Step 2 — Pick from the library
 
-The entry point is the audited catalogue `library/maf/catalogue.json`
-([#183](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/183)): `spec_matches` are dimension-only
+The entry point is the published catalogue `library/published/catalogue.json` (search index `library/assets/maf_unified.json`); the audited `library/maf/catalogue.json` is only the legacy record
+([#183](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/183)). `spec_matches` are dimension-only
 candidates, `npm_matches` are NPM .blend candidates, and previews plus per-MAF .max/FBX paths sit outside git. A
 dimension candidate is not a match: compare the preview with the specification picture (construction, shape). Where
 the catalogue does not reach (a new library scene, a missing entry): visual selection in a copy of the user's
 library scene `МАФы_Union_ALLin.max`, the way the user does it. The catalogue is a technical audit, not
 identification and not acceptance. When the catalogue does not reach, ask Artem first: he names the library object. Only when he cannot find it either does the agent search by specification / manufacturer on the web and send links for his approval — the photos must match the specification AND the DWG contour. No substitution [D164] («Нет замены модели.»).
 
-- Route: catalogue JSON lookup of `library/maf/catalogue.json` plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
+- Route: catalogue JSON lookup via the published index `library/assets/maf_unified.json` (from `library/published/catalogue.json`); `library/maf/catalogue.json` is the legacy record only; plus preview images; `dcc_batch.py max --scene <copy>.max` for a scene read.
+- Drafts [D421]: index records with `source: published` carry `status` (`draft` / `accepted`); take an accepted one first, name a reused draft (`<Name>@vNNN`) in the report; acceptance goes only through Artem ([library-publish](../../../docs/scenarios/library-publish.md)).
 - Needs: headless for candidates; human for the visual choice when several candidates remain.
 - Done when: every spec row has a catalogue id (with the reason) or is listed for Step 3.
 
@@ -73,6 +74,7 @@ to the user as a separate verify line — always, even when all checks pass. Mod
 - Route: 3ds Max batch or Blender headless (primitives and extrusions from the scheme).
 - Needs: human (reference reading and the look), no tool yet.
 - Done when: the model exists at a new versioned path, its source reference is recorded, and its separate verify line is opened.
+- Library [D421]: publish the new model right after this step by the [library-publish](../../../docs/scenarios/library-publish.md) route; at job close `agr library check-job jobs/<ID> --outputs <outputs>` exits 0.
 
 ### Step 4 — Check against the specification
 
@@ -92,7 +94,7 @@ share of [D097]), make a light version: fewer segments, simpler round parts, unt
 times the instances from Step 1. Prefer an existing NPM candidate (`npm_matches`). The silhouette stays (MAF-03).
 The light version goes back through Step 4.
 
-- Route: 3ds Max batch (ProOptimizer or segment edits on a copy) or Blender headless (Decimate or rebuilt primitives).
+- Route: 3ds Max batch (segment edits on a copy) or Blender headless (Decimate or rebuilt primitives).
 - Needs: headless, no tool yet; human for the silhouette look.
 - Done when: a table MAF -> tris full / light -> instances -> total against the MAF share, and the NPM total under the budget.
 

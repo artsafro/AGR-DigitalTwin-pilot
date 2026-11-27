@@ -323,9 +323,11 @@ def test_passport_scope_decision():
 def test_passport_scope_documentation(path, prefix):
     rows = (ROOT / path).read_text(encoding="utf-8").splitlines()
     row = next((line for line in rows if line.startswith(prefix)), "")
-    for fact in ("passport.json", "only on the AGR Tools route", "until a second route exists",
-                 "other OKS routes", "job.yaml", "REPORT", "[D247]"):
+    # [D397] (#1892): the passport is mandatory for every task; the AGR-Tools-only scope of [D247] is superseded.
+    for fact in ("passport.json", "required for every task", "supersedes", "[D247]", "[D397]"):
         assert fact in row, (path, prefix, fact)
+    for stale in ("only on the AGR Tools route", "until a second route exists"):
+        assert stale not in row, (path, prefix, stale)
 
 
 def test_playbook_and_schema():

@@ -14,14 +14,16 @@ rules:
 shared_kernel:
   serves_stage: export
   id: udim
-  ru: "Общее ядро: номер тайла UDIM (UDIM = ID покрытия)"
+  ru: "Общее ядро: номер тайла UDIM"
   owner: adapters/max/agr_tools/udimtile_core.py
-  owner_ru: "одна функция UDIM (#1337); её дубли охраняет карта НПМ (contexts.yaml)"
+  owner_ru: "одна функция UDIM (#1337); Ground передаёт в udim_of_cell плотный индекс покрытия с 1001 независимо от рабочих ID и пишет таблицу ground-udim.json / .md [D399]; опциональный VPM readback поверхности Ground в ground_json_to_fbx.py (#1876) сверяет тайлы по материалам с переданным JSON-эталоном и явным export_meta.json — отдельно от валидации итогового сводного FBX участка в agr validate --scene (V008 в twinqa.scene); дубли формулы охраняет карта НПМ (contexts.yaml)"
   functions:
     - name: udim_tile
       contract: "u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне области — UdimDomainError"
     - name: face_tile
       contract: "углы UV грани -> тайл грани; угол в чужом тайле — UdimCrossTileError"
+    - name: udim_of_cell
+      contract: "целые (столбец, ряд) -> номер тайла"
 contexts:
   - id: sintez
     ref: package-contexts.yaml#sintez
@@ -39,10 +41,10 @@ contexts:
         contract: "скрипт, аргументы, ожидаемые выходы, таймаут -> свежий JSON; старый ответ — ошибка"
   - id: heights
     grid: "1/1"
-    ru: "Граница участка и нулевая отметка"
+    ru: "Проверка нулевой отметки и высот (граница и ноль — из проекта)"
     area: docs/domain/areas/ground-surface.md
     owner: src/dt_ai/core/heights.py
-    owner_ru: "граница и ноль — из проекта или агент уточняет (D293); agr zero проверяет OBJ по заданному нулю, не определяет его"
+    owner_ru: "граница участка и ноль проекта приходят из проекта или уточняются агентом (D293) отдельно от этого модуля; agr zero / dt ground zero (tools/ground/project_zero.py) лишь проверяет OBJ по заданному нулю и рельефу через export_z_check, не определяет ноль и не извлекает границу"
     functions:
       - name: height_values
         contract: "ноль проекта, м; Z нуля в FBX, м; верх модели, м -> высоты App.3 с округлением только в конце"
@@ -53,16 +55,20 @@ contexts:
     ru: "Поверхность Ground: плоские UV → проекция → UDIM поверхности и UV юбки"
     area: docs/domain/areas/ground-surface.md
     owner: src/dt_ai/geometry/ground_site.py
-    owner_ru: "agr ground site / dt ground site пишут ground-flat.obj, SM_<site>_Ground.obj и ground-report.json; не файлы текстур, атлас или рабочий FBX с квадами (D366)"
+    owner_ru: "ground_site оркестрирует ground_cake.build_flat (plan_layers, project_z, add_skirt); agr ground site / dt ground site (tools/ground/build_ground_site.py) пишут ground-flat.obj, SM_<site>_Ground.obj, ground-udim.json / .md [D399] и ground-report.json, а при явном блоке materials в спецификации — .mtl и diffuse PNG из библиотеки (resolve_materials / write_materials), без атласа НПМ, JSON-мастера и рабочего FBX с квадами (D366). Отдельно от исторических писателей JSON-мастера (tools/ground/build_ground_v015.py → master-{npm,vpm}.json; jobs/VATUTINO-SITE/build_ground.py → ground_master_{vpm,npm}.json): равные меши или хеши не предполагаются, прямого перехода OBJ → JSON/FBX нет."
     functions:
       - name: build_site
-        contract: "граница, покрытия с ID, базовый ID, точки рельефа, ноль -> плоский и спроецированный меши с UV, юбка ≥ 1 м, отчёт стадий"
+        contract: "граница, покрытия с ID, базовый ID, точки рельефа, ноль -> оркестрация ground_cake.build_flat (плоский и уточнённый по рельефу меши), UV/UDIM [D399], юбка ≥ 1 м, отчёт стадий"
       - name: covers_from_dxf
         contract: "DXF, строки покрытий (ID, имя, штриховки) -> покрытия; цвет ID = фон штриховки или цвет из спецификации с причиной"
       - name: relief_from_dxf
         contract: "DXF, блок / имена отметок / слои горизонталей -> точки рельефа с родной Z"
       - name: skirt_gaps
         contract: "меш, опуск -> внешние рёбра без квада юбки или с опуском меньше нормы (GND-03, D251)"
+      - name: resolve_materials
+        contract: "блок materials спецификации, покрытия -> привязка каждого ID к diffuse-файлу библиотеки до записи"
+      - name: write_materials
+        contract: "папка, префикс, привязки, таблица тайлов -> .mtl и diffuse PNG по занятым покрытиям (только при materials в спецификации)"
   - id: uv-atlas
     grid: "3/1"
     ru: "Текстуры по ID: UV-острова, тайлы, UDIM / атлас"
@@ -74,23 +80,36 @@ contexts:
         contract: "вершины, UV, грани, материалы, режим, размер, отступ -> новые UV, тайлы UDIM, ячейки"
       - name: atlas_png
         contract: "раскладка -> PNG атласа"
+    duplicates:
+      - at: "tools/materials/npm_atlas_udim.py:785"
+        match: "def main("
+        issue: "#1141"
+        ru: "job-specific инструмент UV / атласа (обход atlas_core до #1141); подсказка agr unwrap-atlas в src/dt_ai/cli/agr.py:30, не исполняемый алиас"
+        status: live-bypass
+        step: "#1380"
   - id: validation
     grid: "2/5"
-    ru: "Проверки Ground, xView, СИНТЕЗ"
+    ru: "Валидатор пакета agr validate и сценовые проверки Ground (отдельно от xView и СИНТЕЗ)"
     area: docs/domain/areas/package.md
     owner: tools/qa/validate_package.py
-    owner_ru: "проверка пакета по регламенту (agr validate)"
+    owner_ru: "проверка пакета по регламенту (agr validate); при --scene add_scene вызывает twinqa.scene.scene_findings (в т.ч. сценовые проверки Ground: V003/GND-03 юбка, бюджет треугольников, покрытие пятна, V008 последовательность тайлов сводного FBX участка, V010 UCX, V012/V013); валидатор не вызывает отдельные инструменты dt qa xview (src/dt_ai/ops/xview_gate.py) и agr checker / СИНТЕЗ (tools/qa/sintez_checker.py) и не связывает их входы; ограничение --master (не провал сдачи и не допуск): по вызову проверяет рабочий FBX в V003 (twinqa/master.py, с --scene) и/или хеш роли в build-манифесте V001, но не сравнивает поверхности рабочего и сдаточного FBX; совпадение числа треугольников не доказывает паритет поверхности D293; с agr checker (sintez) отчёты независимы — хеши между инструментами не сверяются, хеш ZIP не доказывает идентичный FBX (#1805, PR #1830)"
     functions:
       - name: validate_vpm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки ВПМ"
       - name: validate_npm_zip
         contract: "имя, файлы ZIP, профиль, стадии -> находки НПМ"
+      - name: add_scene
+        contract: "FBX (с --scene) -> чтение Blender и сценовые проверки twinqa.scene (в т.ч. V003/GND-03 юбка, бюджет, V008 тайлы Ground, V010 UCX); xView и СИНТЕЗ не вызываются"
+      - name: add_master
+        contract: "профиль, рабочий FBX (с --scene) -> проверки V003 рабочего FBX (twinqa/master.py), без сравнения поверхностей со сдаточным FBX"
+      - name: add_build_manifest
+        contract: "ZIP, build.json, --master [role=]путь -> сверка SHA-256 роли с манифестом в V001, без сравнения поверхностей FBX"
   - id: package
     grid: "2/4"
     ru: "Упаковка готовых файлов НПМ / ВПМ в ZIP"
     area: docs/domain/areas/package.md
     owner: adapters/max/agr_tools/package_core.py
-    owner_ru: "единственный писатель ZIP сдачи (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377)"
+    owner_ru: "общий писатель ZIP сдачи на общем маршруте (_write_zip): agr package-npm / package-vpm (tools/derive) и AGR Tools (#1361, #1377); исторический обход ZIP Ватутино учтён в package-contexts.yaml (historical), без второй хронологии здесь"
     functions:
       - name: zip_plan
         contract: "папка, [адрес], [лимиты] -> архивы НПМ/ВПМ и пропуски с причиной; файлы не трогает"
@@ -106,21 +125,21 @@ contexts:
     ru: "НПМ МАФ и Флора на атласе"
     area: docs/domain/areas/flora.md
     owner: adapters/max/agr_tools/flora_atlas_max.py
-    owner_ru: "атлас МАФ (GroundEl) и Флоры в AGR Tools; конвертация ВПМ → НПМ или параллельно (D293)"
+    owner_ru: "атлас МАФ (GroundEl) и Флоры в 3ds Max (AGR Tools): atlas_groundel и atlas_flora принимают узлы сцены Max, не .blend от dt place site; общий автоматический мост не установлен (ручной перенос не исключён; состав инструментов исторических сдач не утверждается); целевой выбор D293 — конвертация ВПМ → НПМ или параллельно"
     functions:
       - name: atlas_groundel
-        contract: "контекст Max, режим, узлы МАФ, превью -> атлас МАФ НПМ"
+        contract: "контекст Max, режим, узлы сцены Max (МАФ), превью -> копии в слое Max и атлас МАФ НПМ"
       - name: atlas_flora
-        contract: "контекст Max, режим, узлы Флоры, превью -> атлас Флоры НПМ"
+        contract: "контекст Max, режим, узлы сцены Max (Флора), превью -> копии в слое Max и атлас Флоры НПМ"
   - id: placement
     grid: "1/2"
     ru: "Расстановка МАФ и Флоры"
     area: docs/domain/areas/groundel-maf.md
     owner: src/dt_ai/placement/engine.py
-    owner_ru: "agr place / dt place site (placement/site.py): на профиль master JSON + (offset или readback) + (FBX или mesh). OBJ сборщика напрямую не подключён."
+    owner_ru: "agr place / dt place site (src/dt_ai/placement/site.py, D329): на профиль master JSON + (offset или readback) + (FBX или mesh); OBJ сборщика напрямую не подключён. Выход — сцены Blender (.blend через tools/blender/placement_instance.py) и отчёты; Max atlas_groundel принимает узлы сцены Max, общий автоматический мост не установлен (ручной перенос не исключён). Одобренные исключения (exceptions -> apply_ground_exceptions в scene.py) привязаны к снимку точки и sha256 Ground и пишутся в results.json; новый промах вне Ground (engine_report.json) останавливает строгий прогон в make_plan (выход 1) до инстансирования."
     functions:
       - name: place
-        contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом"
+        contract: "точки, вершины и треугольники Ground, библиотека, seed -> экземпляр или отказ с кодом (point_outside_ground / point_over_ground_hole)"
       - name: bottom_face_verdict
         contract: "нижняя грань в мире -> удалить / на проверку (D095, D096)"
       - name: report_json
@@ -144,29 +163,28 @@ contexts:
         status: historical
   - id: ground-export
     grid: "2/3"
-    ru: "Экспорт Ground отдельно от ZIP"
+    ru: "Helper экспорта поверхности Ground (отдельно от сводного экспорта участка и ZIP)"
     area: docs/domain/export-import.md
     owner: tools/blender/ground_json_to_fbx.py
-    owner_ru: "инструмент Blender читает JSON-мастер, не OBJ сборщика; D366 отдельно требует рабочий FBX с квадами вместе с FBX сдачи"
+    owner_ru: "helper Blender выгружает только поверхность Ground из JSON-мастера, не OBJ сборщика и не сводный экспорт участка после расстановки МАФ и Флоры; канонического сборщика участка нет (исторический jobs/VATUTINO-SITE/assemble_delivery.py — только свидетельство триангулированного FBX сдачи, не маршрут и не D366); D366 отдельно требует нетриангулированный рабочий FBX рядом с пакетом (вне ZIP); опциональный readback (#1876) сверяет VPM UDIM поверхности Ground по материалам с переданным JSON-эталоном и явным export_meta.json — отдельно от валидации итогового сводного FBX участка в agr validate"
     functions:
       - name: build
-        contract: "JSON-мастер меша, адрес -> FBX и метаданные экспорта"
+        contract: "JSON-мастер поверхности Ground, адрес -> FBX поверхности Ground и метаданные экспорта (не сводный экспорт участка и не рабочий FBX D366)"
+      - name: readback
+        contract: "FBX поверхности Ground, эталонный JSON-мастер -> опциональный readback (при явном VPM export_meta.json — по-материальная сверка UDIM с эталоном, #1876; отдельно от валидации итогового сводного FBX участка)"
 relations:
-  - from: dcc
-    to: heights
-    ru: "исходники"
   - from: heights
     to: ground
-    ru: "граница и ноль"
+    ru: "проверка нуля: height_values / export_z_check (граница и ноль — из проекта)"
+  - from: udim
+    to: ground
+    ru: "номер тайла по плотному индексу покрытия [D399]"
   - from: udim
     to: ground-export
-    ru: "проверка тайлов при чтении FBX"
-  - from: placement
-    to: npm
-    ru: "точки МАФ / Флоры"
+    ru: "опциональная по-материальная сверка VPM при readback FBX (#1876)"
   - from: ground-export
     to: package
-    ru: "готовые FBX"
+    ru: "FBX поверхности Ground (отдельно от сводного участка)"
   - from: package
     to: validation
     ru: "ZIP / FBX сдачи"

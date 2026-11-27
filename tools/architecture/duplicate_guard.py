@@ -590,6 +590,7 @@ LIVE_BYPASS_BASELINE = frozenset({
     ("package-contexts", "jobs/TEC26-OKS/scripts/package_vpm.py:50", ""),
 
     ("contexts", "tools/materials/npm_atlas_udim.py:785", ""),
+    ("ground-contexts", "tools/materials/npm_atlas_udim.py:785", ""),
 
     # blender-launch: the 16 live tools/ + src/ launches of #1378/#1424 call blender_command since #1530
 })

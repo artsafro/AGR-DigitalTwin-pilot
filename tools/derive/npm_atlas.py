@@ -5,7 +5,7 @@ Pattern: n/a | new-case: one shared NPM atlas tool replacing the per-job make_np
 Generalised from jobs/TEC26-OKS/scripts/make_npm_atlas.py (KPP1 recipe, accepted AC08 pilot-v010), which is
 itself the KPP1 v005 script with an explicit spec; PSU275's extra-OKS options are --address / --index.
 Usage: python tools/derive/npm_atlas.py <spec.json> <new_out_dir> --master <master> [--address A] [--index N]
-    [--recipe-dir D]
+    [--kpp-spec KPP.json] [--recipe-dir EXTERNAL_REPLAY_PAINTER]
 npm_atlas.json also carries `master` {name, sha256, udims} (#1505): export_npm refuses the atlas for any other
 master revision (atlas_master_mismatch) or without the binding (atlas_unbound).
 Writes T_<A>_<NNN>_Main_d_1.png (Diffuse RGB), T_<A>_<NNN>_Main_o_1.png (Opacity RGB, white = solid,
@@ -14,27 +14,29 @@ finish on a 5 x 4 grid of 409 px cells, 16 px per-side edge extrusion [D278], he
 adjacent regions and >=16 px at the outer atlas edge (reg p.9 §5.4 floor: 8 px between islands).
 --cell / --pad retain an explicitly approved job layout (R1: 512 / 8 [D280]);
 padding below 4 px per side is refused before writes (8 px inter-island floor).
-Each region (377 px by default) stands for the
-finish's VPM tile S metres, joints >= 1.5 px. Texture painters (make_textures, finish_map) come from the
-recipe dir (default jobs/TEC26-OKS/scripts, the KPP recipe library).
+Each region (377 px by default) stands for the finish's VPM tile S metres, joints >= 1.5 px.
+The shared route owns finish validation and painting; a declared KPP palette needs explicit reference data.
 """
 import argparse
+import importlib.util
 import json
 import math
 import os
+from pathlib import Path
 import sys
 
 import numpy as np
 from PIL import Image
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-RECIPE = os.path.normpath(os.path.join(HERE, "..", "..", "jobs", "TEC26-OKS", "scripts"))
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+sys.path.insert(0, str(ROOT))  # also works as a script from outside the checkout
+from tools.derive import finish_map, finish_painter  # noqa: E402
 
 
 def _bm():
     """Stdlib build-manifest owner (atlas <-> master binding, #1505), loaded by path like the exporters do."""
-    import importlib.util
-    path = os.path.normpath(os.path.join(HERE, "..", "..", "adapters", "max", "agr_tools", "build_manifest.py"))
+    path = ROOT / "adapters/max/agr_tools/build_manifest.py"
     spec = importlib.util.spec_from_file_location("build_manifest_npm_atlas", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -158,6 +160,28 @@ def copied_region(path, size, mode, resample):
         return np.asarray(image.convert(mode).resize((size, size), resample))
 
 
+def replay_painter(recipe):
+    """Load an explicitly selected external benchmark painter, never a checkout job script."""
+    path = (recipe / "make_textures.py").resolve()
+    if path.is_relative_to((ROOT / "jobs").resolve()):
+        raise ValueError(f"checkout jobs/ is not a shared route recipe: {path}")
+    spec = importlib.util.spec_from_file_location("npm_replay_painter", path)
+    if spec is None or spec.loader is None:
+        raise ValueError(f"no Python painter at {path}")
+    mod = importlib.util.module_from_spec(spec)
+    # Frozen replay packets may have sibling imports. Do not add bytecode to them
+    # or leave their directory on sys.path after loading.
+    previous = sys.dont_write_bytecode
+    sys.path.insert(0, str(recipe))
+    sys.dont_write_bytecode = True
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        sys.dont_write_bytecode = previous
+        sys.path.remove(str(recipe))
+    return mod
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("spec", nargs='?', help="VPM texture spec JSON (address, size_full, finishes)")
@@ -166,7 +190,8 @@ def main(argv=None):
                     help='read-only measurement of an exported atlas layout and its two PNGs')
     ap.add_argument("--address", help="NPM address (default: spec address); extra OKS share the main address")
     ap.add_argument("--index", type=int, default=1, help="OKS index inside the NPM package (NNN), default 1")
-    ap.add_argument("--recipe-dir", default=RECIPE, help="directory with make_textures.py / finish_map.py")
+    ap.add_argument("--kpp-spec", help="explicit KPP reference JSON for a procedural spec with kpp_palette")
+    ap.add_argument("--recipe-dir", type=Path, help="external frozen replay painter directory (not checkout jobs/)")
     ap.add_argument("--master", help="the master file this atlas belongs to (required for generation, #1505): "
                                      "npm_atlas.json records its SHA-256 + the UDIM tiles; export_npm refuses another master")
     ap.add_argument("--cell", type=int, default=CELL, help="atlas cell pixels (default: 409)")
@@ -195,14 +220,31 @@ def main(argv=None):
         raise ValueError(f'--master {a.master} is missing or empty')
     if os.path.normcase(os.path.realpath(a.master)) == os.path.normcase(os.path.realpath(a.spec)):
         raise ValueError('--master is the texture spec itself')
-    sys.path.insert(0, a.recipe_dir)
-    import finish_map
-    spec = json.load(open(a.spec, encoding="utf-8"))
+    recipe = a.recipe_dir.resolve() if a.recipe_dir else None
+    if recipe is not None and recipe.is_relative_to((ROOT / "jobs").resolve()):
+        raise ValueError(f"checkout jobs/ is not a shared route recipe: {recipe}")
+    spec = finish_map.load(a.spec)
+    inputs = [a.spec, HERE, a.master]
+    paint_full = finish_painter.make_full
     if a.copied_udims:
+        if recipe is not None or a.kpp_spec:
+            ap.error("--copied-udims does not use --recipe-dir or --kpp-spec")
         sources = copied_sources(spec["finishes"], a.spec)
     else:
-        import make_textures as mt
-        finish_map.validate_spec(spec, finish_map.load_kpp())
+        reference = finish_map.load(a.kpp_spec) if a.kpp_spec else None
+        if a.kpp_spec and (not isinstance(reference, dict) or not isinstance(reference.get("finishes"), dict)
+                           or not reference["finishes"]):
+            raise ValueError(f"--kpp-spec {a.kpp_spec}: expected nonempty finishes")
+        finish_map.validate_spec(spec, reference)
+        if a.kpp_spec:
+            inputs.append(a.kpp_spec)
+        if recipe is not None:
+            inputs.append(recipe)
+            if any(f["kind"] == "full" for f in spec["finishes"].values()):
+                custom_paint = getattr(replay_painter(recipe), "make_full", None)
+                if not callable(custom_paint):
+                    raise ValueError(f"replay painter {recipe}: missing make_full")
+                paint_full = custom_paint
         sources = {}
     if len(spec["finishes"]) + a.glass_white > cols * (ATLAS // cell):
         raise ValueError(f"{len(spec['finishes'])} finishes do not fit the {cols} x {ATLAS // cell} atlas grid")
@@ -212,7 +254,7 @@ def main(argv=None):
     nnn = f"{a.index:03d}"
     out = a.out
     binding = _bm().atlas_master_binding(a.master, spec["finishes"])  # hashed before any write
-    finish_map.fresh_out_dir(out, [a.spec, HERE, a.recipe_dir, a.master, *sources.values()])
+    finish_map.fresh_out_dir(out, [*inputs, *sources.values()])
     dif = np.zeros((ATLAS, ATLAS, 3), np.uint8)
     opa = np.full((ATLAS, ATLAS, 3), 255, np.uint8)
     layout = {}
@@ -227,7 +269,7 @@ def main(argv=None):
         elif t["kind"] == "full":
             # >= 1.5 px joints whatever metres the region spans (S = 4.096 gives the KPP value 8 mm)
             tt = dict(t, joint_half_mm=max(NPM_JOINT_HALF_MM, math.ceil(750 * t.get("S", 4.096) / region)))
-            d, alpha, _, _ = mt.make_full(tt, spec["size_full"])
+            d, alpha, _, _ = paint_full(tt, spec["size_full"])
             reg = np.asarray(Image.fromarray(d, "RGB").resize((region, region), Image.LANCZOS))
             if alpha is not None:
                 m = np.asarray(Image.fromarray(alpha, "L").resize((region, region), Image.BOX))

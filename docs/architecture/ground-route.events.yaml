@@ -31,20 +31,20 @@ scheme:
       gate_ru: "Прямого перехода от OBJ к agr ucx нет в общем маршруте; швы и юбку проверить"
     - stages: "placement,npm"
       ru: "Расставить МАФ / Флору и получить НПМ"
-      artifact_ru: "Сцены НПМ / ВПМ + список удалённых объектов с причинами"
-      gate_ru: "Расстановка: master JSON + (offset или readback) + (FBX или mesh), не OBJ сборщика; agr vpm-to-npm не конвертирует Ground"
+      artifact_ru: "Сцены НПМ / ВПМ, engine_report.json и results.json (список excluded с причинами / stopped)"
+      gate_ru: "Расстановка (dt_ai.placement): master JSON + (offset или readback) + (FBX или mesh), не OBJ сборщика; цель D302 vs команда — только одобренные исключения по точке и sha256 Ground пропускаются, новый промах останавливает прогон до инстансирования; agr vpm-to-npm не конвертирует Ground"
     - stages: "export"
       ru: "Экспортировать НПМ / ВПМ отдельно от упаковки"
-      artifact_ru: "Ground FBX сдачи и рабочий FBX с квадами (D366)"
-      gate_ru: "Blender Ground JSON-to-FBX читает JSON-мастер, не OBJ сборщика"
+      artifact_ru: "Цель: триангулированный FBX сдачи участка (Ground + МАФ + Флора) и отдельный рабочий FBX без триангуляции рядом с пакетом, вне ZIP (D366); helper ground_json_to_fbx.py выгружает только поверхность Ground"
+      gate_ru: "Отличать helper поверхности Ground (JSON-мастер, не OBJ сборщика) от сводного экспорта участка после расстановки; общего канонического сборщика участка нет (исторический jobs/VATUTINO-SITE/assemble_delivery.py писал только триангулированный FBX сдачи, не D366)"
     - stages: "package"
-      ru: "Упаковать готовые файлы"
-      artifact_ru: "ZIP; схема «Пакет и сдача»"
-      gate_ru: "Упаковка не означает приёмку"
+      ru: "Упаковать готовые файлы общим маршрутом"
+      artifact_ru: "ZIP через package_core._write_zip; схема «Пакет и сдача»"
+      gate_ru: "Общий писатель _write_zip относится к общему маршруту (исторический обход ZIP Ватутино учтён в package-contexts.yaml); упаковка не означает приёмку"
     - stages: "validate,sintez"
-      ru: "Проверить Ground и передать Артёму"
-      artifact_ru: "Отчёт, xView и находки СИНТЕЗ"
-      gate_ru: "Отказы не скрыты; визуальная приёмка — в маршруте сдачи"
+      ru: "Проверить Ground и выполнить СИНТЕЗ (требование одного входа — отдельно от отчётов)"
+      artifact_ru: "Раздельные отчёты agr validate / xView и находки agr checker (СИНТЕЗ)"
+      gate_ru: "Отказы не скрыты; --master проверяет рабочий FBX и/или хеш роли в манифесте, но не сравнивает поверхности FBX (ограничение, не fail и не допуск); инструменты не сверяют хеши друг с другом, хеш ZIP не доказывает идентичный FBX (#1805, PR #1830); визуальная приёмка — в маршруте сдачи"
 object: "VATUTINO-SITE, silikatniy-uvk-pzu-viz, kasatkino-ground, KPP1, TEC26-OKS"
 issue: "#1392"
 actors:
@@ -70,7 +70,7 @@ local_contexts:
     ru: "Коллизии UCX: agr ucx (строит ucx_build, зазоры ucx10_core, D330)"
     owner: adapters/max/agr_tools/ucx10_core.py
   - id: ground-export
-    ru: "Экспорт Ground из JSON-мастера"
+    ru: "Helper экспорта поверхности Ground из JSON-мастера (не сводный экспорт участка)"
     owner: tools/blender/ground_json_to_fbx.py
 stages:
   - id: sources
@@ -117,9 +117,9 @@ stages:
       - D293
     evidence:
       - jobs/VATUTINO-SITE/ground-parts.md
-      - jobs/VATUTINO-SITE/ground-material-ids-v015.json
       - jobs/silikatniy-uvk-pzu-viz/LESSONS.md
       - src/dt_ai/geometry/ground_site.py
+      - src/dt_ai/geometry/ground_cake.py
   - id: quads
     event_ru: "Плоский Ground: треугольники, швы и вставки (квады)"
     actor: agent-dcc
@@ -133,7 +133,7 @@ stages:
       - jobs/VATUTINO-SITE/ground-v015-pairing-session.md
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
   - id: textures
-    event_ru: "Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM = ID"
+    event_ru: "Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM подряд с 1001"
     actor: agent-dcc
     context: ground
     commands:
@@ -144,6 +144,7 @@ stages:
       - D160
       - D210
       - D293
+      - D399
     evidence:
       - jobs/VATUTINO-SITE/ground-textures.md
       - jobs/VATUTINO-SITE/ground-v015-texel-contract-checkpoint.md
@@ -161,7 +162,7 @@ stages:
     evidence:
       - jobs/VATUTINO-SITE/relief-constraints.md
       - tools/ground/build_ground_site.py
-      - tools/ground/build_ground_v015.py
+      - src/dt_ai/geometry/ground_cake.py
       - jobs/kasatkino-ground/LESSONS.md
   - id: skirt
     event_ru: "После проекции: правка текстур и UV, юбка ≥ 1 м вниз по внешнему контуру"
@@ -192,7 +193,7 @@ stages:
       - src/dt_ai/geometry/ucx_command.py
       - docs/domain/areas/ground-surface.md
   - id: placement
-    event_ru: "МАФ и Флора расставлены из библиотеки по точкам / JSON; объект, не попавший на поверхность, удаляется и пишется в отчёт"
+    event_ru: "МАФ и Флора расставлены по точкам / JSON (D329): цель D302 — удаление вне Ground с отчётом; команда dt place site / agr place исключает только одобренные точки (снимок + sha256 Ground), а новый промах останавливает прогон до инстансирования"
     actor: agent
     context: placement
     commands:
@@ -205,8 +206,11 @@ stages:
       - D166
       - D302
     evidence:
-      - jobs/VATUTINO-SITE/placement-report.md
+      - src/dt_ai/placement/engine.py
       - src/dt_ai/placement/site.py
+      - src/dt_ai/placement/scene.py
+      - jobs/VATUTINO-SITE/ground-exceptions-v015.json
+      - jobs/VATUTINO-SITE/placement-report.md
       - jobs/VATUTINO-SITE/place_site.py
   - id: npm
     event_ru: "НПМ-версия в координатах: МАФ НПМ и Флора НПМ на атласе, Ground на атласе"
@@ -218,16 +222,15 @@ stages:
       - D167
     evidence:
       - adapters/max/agr_tools/flora_atlas_max.py
-      - tools/derive/npm_atlas.py
       - jobs/VATUTINO-SITE/site-route-20261109.md
     branches:
       - id: convert
         when_ru: "ВПМ уже расставлена"
-        ru: "конвертация ВПМ → НПМ: в тех же точках НПМ-модели МАФ / Флоры на атласе"
+        ru: "конвертация ВПМ → НПМ: atlas.groundel профиль npm сводит GroundEl / МАФ в атлас до 2048 с заглушками; Флора — отдельный atlas.flora (не сквозная конвертация Флоры); поверхность Ground эти инструменты не покрывают"
         rules:
           - D293
         evidence:
-          - tools/derive/npm_atlas.py
+          - adapters/max/agr_tools/flora_atlas_max.py
       - id: parallel
         when_ru: "расстановка с нуля"
         ru: "low-poly и high-poly МАФ / Флора ставятся вместе в одни точки"
@@ -245,7 +248,7 @@ stages:
         evidence:
           - jobs/VATUTINO-SITE/ground-textures.md
   - id: export
-    event_ru: "Ground НПМ / ВПМ экспортирован; рабочий FBX с квадами вместе с FBX сдачи"
+    event_ru: "Цель (D293, D366): сводный экспорт участка НПМ / ВПМ (Ground + МАФ + Флора) — триангулированный FBX сдачи и отдельный рабочий FBX без триангуляции рядом с пакетом (вне ZIP); helper ground_json_to_fbx.py выгружает только поверхность Ground"
     actor: agent-dcc
     context: ground-export
     rules:
@@ -255,7 +258,7 @@ stages:
       - tools/blender/ground_json_to_fbx.py
       - docs/domain/export-import.md
   - id: package
-    event_ru: "Готовые файлы НПМ / ВПМ собраны в пакеты"
+    event_ru: "Общий маршрут упаковки: готовые файлы НПМ / ВПМ собраны в ZIP через package_core._write_zip (исторический обход ZIP Ватутино учтён в package-contexts.yaml)"
     actor: agent
     context: package
     commands:
@@ -268,9 +271,9 @@ stages:
     evidence:
       - tools/derive/package_vpm.py
       - tools/derive/package_npm.py
-      - jobs/VATUTINO-SITE/site-route-20261109.md
+      - docs/architecture/package-contexts.yaml
   - id: validate
-    event_ru: "Проверки Ground и xView выполнены, отказы записаны"
+    event_ru: "Проверки пакета agr validate (с --scene и доступным readback — сценовые проверки Ground в twinqa.scene, в т.ч. V003/GND-03 юбка) и отдельный dt qa xview выполнены, отказы записаны; валидатор не вызывает xView и СИНТЕЗ и не связывает их входы; --master проверяет рабочий FBX и/или хеш роли в манифесте, но не сравнивает поверхности FBX"
     actor: agent
     context: validation
     commands:
@@ -280,10 +283,14 @@ stages:
       - D152
       - D193
     evidence:
+      - tools/qa/validate_package.py
+      - src/twinqa/scene.py
+      - src/twinqa/master.py
+      - src/dt_ai/ops/xview_gate.py
       - docs/research/xview-parity-ground-v014.md
       - jobs/VATUTINO-SITE/ground-v015-final-xview-session.md
   - id: sintez
-    event_ru: "Чекер СИНТЕЗ отработал на тех же файлах"
+    event_ru: "Чекер СИНТЕЗ: целевое требование — прогон на том же входе, что и validate; оба инструмента пишут независимые отчёты без взаимной сверки хешей"
     actor: checker
     context: sintez
     commands:
@@ -292,8 +299,8 @@ stages:
       - D220
       - D104
     evidence:
-      - jobs/VATUTINO-SITE/site-route-20261109.md
       - tools/qa/sintez_checker.py
+      - docs/architecture/package-contexts.yaml
 hotspots:
   - id: legend-intake
     stage: sources
@@ -303,33 +310,39 @@ hotspots:
       - tools/source/inspect_ground_dxf.py
   - id: hatch-colours
     stage: surfaces
-    ru: "Силикатный: цвет ID = фон штриховки (bgcolor), а не цвет линий — agr ground site берёт bgcolor, без фона — только цвет из спецификации с причиной (#1406); остаётся белая разметка на каждом стыке покрытий"
+    ru: "Силикатный: цвет ID = фон штриховки (bgcolor), а не цвет линий — agr ground site берёт bgcolor, без фона — только цвет из спецификации с причиной (#1406); остаётся белая разметка на каждом стыке покрытий. ID материалов Ватутино v015 (ground-material-ids-v015.json) — историческое свидетельство писателя build_ground_v015.py, не вход ground_site: его ID и материалы приходят из спецификации (covers, блок materials)"
     evidence:
       - jobs/silikatniy-uvk-pzu-viz/LESSONS.md
       - docs/procedure/node-r5-ground.md
+      - jobs/VATUTINO-SITE/ground-material-ids-v015.json
   - id: project-zero
     stage: zero
-    ru: "agr zero проверяет OBJ по рельефу и заданной отметке, не определяет ноль. h_relief = ноль проекта (D279); Силикатный (#1315) — ±0.000 из ПЗУ / ВП_5, система высот КПП1 / ТЭЦ26 — unknown."
+    ru: "Граница участка и ноль приходят из проекта (или агент уточняет, D293); agr zero / dt ground zero (tools/ground/project_zero.py → export_z_check) проверяет OBJ по рельефу и заданной отметке, не определяет ноль и не извлекает границу. h_relief = ноль проекта (D279); Силикатный (#1315) — ±0.000 из ПЗУ / ВП_5, система высот КПП1 / ТЭЦ26 — unknown."
     rules:
       - D279
       - D293
     evidence:
       - docs/research/placement-heights-1330.md
       - src/dt_ai/core/heights.py
+      - tools/ground/project_zero.py
   - id: pairing
     stage: quads
-    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Для v015: D192 заменено D157 (≤ 35 % остаточных треугольников), маршрут A с исключением texel_ready (D193)."
+    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Историческая agr ground v015 / dt ground v015 (build_ground_v015.py) повторяет только Ватутино v014→v015 и спаривает треугольники уже после рельефа, не закрывая общий дорельефный этап quads. Для v015: D192 заменено D157 (≤ 35 % остаточных треугольников), маршрут A с исключением texel_ready (D193)."
     rules:
       - D157
       - D192
       - D193
     evidence:
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
+      - tools/ground/build_ground_v015.py
   - id: flat-uv
     stage: textures
-    ru: "ground_site назначает плоским граням UV / UDIM по ID до проекции, без файлов текстур и атласа НПМ."
+    ru: "ground_site назначает плоским граням UV / UDIM по ID до проекции: плотный индекс занятых покрытий с 1001 независимо от рабочих ID, таблица ground-udim.json / .md (D399, #1898); без блока materials в спецификации — без файлов текстур и атласа НПМ, с ним — .mtl и diffuse PNG из библиотеки, атласа НПМ нет и тогда. Отдельно: опциональный VPM readback поверхности Ground в ground_json_to_fbx.py (#1876) сверяет тайлы по материалам с переданным JSON-эталоном и явным export_meta.json; это не валидация итогового сводного FBX участка (agr validate --scene, V008 в twinqa.scene)."
     evidence:
       - src/dt_ai/geometry/ground_site.py
+      - tools/ground/build_ground_site.py
+      - tools/blender/ground_json_to_fbx.py
+      - src/twinqa/scene.py
   - id: steep-step
     stage: relief
     ru: "Ватутино: ступень 80° на южной границе — обрыв TIN между двумя отметками подпорной стены без геометрии (1079ED / 1079EE, 0,75 м в плане, перепад 3,73 м); вырез под пятно — точечные исключения"
@@ -349,10 +362,14 @@ hotspots:
       - jobs/TEC26-OKS/STATE.md
   - id: builder-outputs
     stage: skirt
-    ru: "ground_site после проекции назначает UDIM по ID поверхности и UV юбки по соседней грани. Выходы: ground-flat.obj, SM_<site>_Ground.obj, ground-report.json."
+    ru: "ground_site оркестрирует ground_cake.build_flat (плоский и уточнённый по рельефу меши), после проекции назначает UDIM по ID поверхности и UV юбки по соседней грани. Выходы agr ground site: ground-flat.obj, SM_<site>_Ground.obj, ground-udim.json / .md, ground-report.json; .mtl и diffuse PNG — только при блоке materials в спецификации. Исторические писатели JSON-мастера — отдельные пути: build_ground_v015.py (Ватутино v015, master-{npm,vpm}.json по ground-material-ids-v015.json) и jobs/VATUTINO-SITE/build_ground.py (ground_master_{vpm,npm}.json); равные меши или хеши с OBJ не предполагаются, прямого перехода OBJ → JSON / FBX нет."
     evidence:
       - src/dt_ai/geometry/ground_site.py
+      - src/dt_ai/geometry/ground_cake.py
       - tools/ground/build_ground_site.py
+      - tools/ground/build_ground_v015.py
+      - jobs/VATUTINO-SITE/build_ground.py
+      - jobs/VATUTINO-SITE/ground-material-ids-v015.json
   - id: obj-to-ucx
     stage: ucx
     ru: "agr ucx принимает FBX или Blend, пишет FBX. Прямой переход от OBJ сборщика не подключён в общем маршруте."
@@ -360,15 +377,30 @@ hotspots:
       - src/dt_ai/geometry/ucx_command.py
   - id: obj-to-placement
     stage: placement
-    ru: "На каждый профиль: master JSON + (offset или readback с placement_offset) + (FBX или mesh). Прямой переход от OBJ сборщика не подключён в общем маршруте."
+    ru: "На каждый профиль: master JSON + (offset или readback с placement_offset) + (FBX или mesh). Прямой переход от OBJ сборщика не подключён в общем маршруте. Выход — сцены Blender (.blend на вариант); Max atlas_groundel принимает узлы сцены Max, общий автоматический мост от .blend к нему не установлен (ручной перенос не исключён)."
     evidence:
       - src/dt_ai/placement/site.py
+      - adapters/max/agr_tools/flora_atlas_max.py
+  - id: outside-ground-stop
+    stage: placement
+    ru: "D302 vs команда (dt_ai.placement, D329): целевое правило D302 — удалить объект вне Ground и записать в отчёт. В dt place site / agr place (site.py + scene.py) одобренные исключения из spec.exceptions (apply_ground_exceptions: approved + снимок точки + ground_master_sha256) исключаются до engine.place и пишутся в results.json (excluded: ground_exception; при новом Ground становятся stale). Новый промах вне Ground (point_outside_ground / point_over_ground_hole в engine_report.json) останавливает строгий парный прогон в make_plan (status=stopped, выход 1) до инстансирования."
+    rules:
+      - D302
+      - D329
+    evidence:
+      - src/dt_ai/placement/engine.py
+      - src/dt_ai/placement/site.py
+      - src/dt_ai/placement/scene.py
+      - jobs/VATUTINO-SITE/ground-exceptions-v015.json
+      - jobs/VATUTINO-SITE/placement-report.md
   - id: ground-atlas
     stage: npm
-    ru: "agr vpm-to-npm не конвертирует Ground. Числа треугольников v015 показывают бюджет, но не доказывают совпадение поверхности."
+    ru: "agr vpm-to-npm не конвертирует Ground. Числа треугольников v015 показывают бюджет, но не доказывают совпадение поверхности. npm_atlas_udim.py — job-specific обход atlas_core; переход мастер→атлас→НПМ FBX не доказан, не измерен. Атлас МАФ / Флоры (atlas_groundel / atlas_flora в 3ds Max) принимает узлы сцены Max, не .blend от dt place site: общий автоматический мост не установлен, ручной перенос не исключён; какие инструменты дали исторические сдачи, не утверждается."
     evidence:
       - src/dt_ai/cli/agr.py
+      - adapters/max/agr_tools/flora_atlas_max.py
       - jobs/VATUTINO-SITE/site-route-20261109.md
+      - tools/materials/npm_atlas_udim.py
   - id: budget
     stage: npm
     ru: "Бюджет НПМ 180 000 (GND-04): Ground 46 479 + МАФ 55 403 + Флора 64 454 = 166 336; ВПМ Флора 443 788 — делит Артём (D167)"
@@ -388,19 +420,45 @@ hotspots:
       - jobs/KPP1/package-1278/latest/REPORT.md
   - id: obj-to-export
     stage: export
-    ru: "Blender Ground JSON-to-FBX принимает JSON-мастер, не OBJ. Прямого перехода от сборщика нет в общем маршруте; это не выпуск рабочего FBX по D366."
+    ru: "Blender Ground JSON-to-FBX (ground_json_to_fbx.py) — helper только поверхности Ground: принимает JSON-мастер, не OBJ сборщика, и не делает сводный экспорт участка после расстановки Ground, МАФ и Флоры. Прямого перехода от сборщика нет в общем маршруте; это не выпуск отдельного рабочего FBX без триангуляции рядом с пакетом (вне ZIP) по D366. Исторический jobs/VATUTINO-SITE/assemble_delivery.py (use_triangles=True) — только историческое свидетельство триангулированного FBX сдачи Ватутино, не канонический маршрут и не реализация D366. Опциональный readback helper (#1876) сверяет VPM UDIM поверхности Ground по материалам с переданным JSON-эталоном и явным export_meta.json — это не валидация итогового сводного FBX участка (agr validate --scene)."
+    rules:
+      - D293
+      - D366
     evidence:
       - tools/blender/ground_json_to_fbx.py
+      - docs/domain/export-import.md
+      - jobs/VATUTINO-SITE/assemble_delivery.py
   - id: package-input
     stage: package
-    ru: "Упаковка берёт готовые файлы, пишет ZIP и не экспортирует FBX. Маршрут сдачи отдельно (#1805)."
+    ru: "Упаковка на общем маршруте (agr package-vpm / package-npm -> package_core._write_zip) берёт готовые файлы, пишет ZIP и не экспортирует FBX. Исторический обход ZIP Ватутино (jobs/VATUTINO-SITE/run_delivery.py, статус historical) уже учтён в package-contexts.yaml, без второй хронологии здесь. Маршрут сдачи отдельно (#1805)."
     evidence:
       - tools/derive/package_vpm.py
       - tools/derive/package_npm.py
+      - docs/architecture/package-contexts.yaml
   - id: xview-parked
     stage: validate
-    ru: "xView v015: последняя записанная сессия — xView не чистый; #371 закрыт, участок #298 шёл на v014 — какая версия идёт в сдачу, сверить с Артёмом"
+    ru: "xView v015: последняя записанная сессия — xView не чистый; срез сдачи 2026-11-09 (option A) называет v015, но xView-находки не сняты и приёмка не подтверждена; #371 закрыт, участок #298 шёл на v014"
     rules:
       - D152
     evidence:
       - jobs/VATUTINO-SITE/ground-v015-final-xview-session.md
+      - docs/deliveries/vatutino-site-2026-11-09.md
+  - id: validate-master-limit
+    stage: validate
+    ru: "Ограничение agr validate --master (не провал сдачи и не утверждённый допуск): в зависимости от вызова --master запускает проверки рабочего FBX (V003 с --scene: квады / треугольники / без n-gon в src/twinqa/master.py; только неименованный путь или одна роль oks) и/или сверяет SHA-256 роли с build-манифестом (V001), но не сравнивает поверхности рабочего и сдаточного FBX. Одинаковое число треугольников недостаточно для доказательства совпадения поверхности Ground по D293."
+    rules:
+      - D293
+      - D366
+    evidence:
+      - tools/qa/validate_package.py
+      - src/twinqa/master.py
+  - id: validate-sintez-input
+    stage: sintez
+    ru: "Требование одного входа для validate → sintez отделено от самих отчётов (#1805, PR #1830): agr validate и agr checker пишут независимые отчёты и не сверяют хеши друг с другом; хеш ZIP не доказывает идентичный входной FBX. Исторический jobs/VATUTINO-SITE/run_delivery.py (учтён в package-contexts.yaml как historical) звал run_agr_checker.py в обход agr checker."
+    rules:
+      - D104
+    evidence:
+      - tools/qa/validate_package.py
+      - tools/qa/sintez_checker.py
+      - docs/architecture/package-contexts.yaml
+      - jobs/VATUTINO-SITE/run_delivery.py
