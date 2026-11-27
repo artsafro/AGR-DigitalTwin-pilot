@@ -10,12 +10,13 @@ The model holds its UCX already (e.g. a delivered archive). Every `UCX_*` mesh i
 to `ucx10_core.resolve`: for each pair under `gap` (default 3 mm, 2 mm - 1 cm [D098]) the smaller convex hull is
 cut by the plane of a face of the larger one moved out by the gap. The cut pieces replace the mesh data of their
 objects (same names, same transforms); every other object is exported unchanged. Before export the driver checks
-the whole-file UCX triangle budget [D012] and the model -> UCX distance [D134] (surface samples of every non-UCX
+the whole-file UCX triangle budget [D012] (reported with its 'over D012 budget by N tris' line, never a failure
+[D427]) and the model -> UCX distance [D134] (surface samples of every non-UCX
 mesh, exact distance to the union of the UCX hulls, limit `limit=` metres, default 1 m = remaining OKS R13).
 The report `<out>.ucx_resolve.json` lists per pair the plane, the gap before/after and the volume removed, and
 the SINTEZ-style intersection count (twinqa ucx_audit) before and after.
 
-Exit 0 resolved and every check passed; 3 written but a check failed (ambiguous or left pair, D012, D134);
+Exit 0 resolved and every check passed; 3 written but a check failed (ambiguous or left pair, D134);
 2 failed (report written, no OUT); 4 refused before any write. The source file is never written.
 """
 import importlib.util
@@ -157,9 +158,10 @@ def main():
             o.data.calc_loop_triangles()
         model_tris = sum(len(o.data.loop_triangles) for o in model)
         ucx_tris = sum(len(r["tris"]) for r in rows_after)
-        limit_d012 = ub.ucx_triangle_limit(model_tris)
-        report.update(model_triangles_excl_ucx=model_tris, ucx_triangles=ucx_tris, file_ucx_limit_D012=limit_d012,
-                      within_D012=ucx_tris <= limit_d012)
+        budget = ub.check_file_budget(model_tris, ucx_tris)  # reported, never a failure [D427]
+        report.update(model_triangles_excl_ucx=model_tris, ucx_triangles=ucx_tris,
+                      file_ucx_limit_D012=budget["limit_D012"], within_D012=budget["within_D012"],
+                      over_D012_by=budget["over_by"], budget_line=budget["line"])
         mv, mt = _world(model, np)
         pts = ub.sample_surface(mv, mt, SAMPLE_M)
         before = ub.hull_deviation(pts, [(r["verts"], r["tris"]) for r in rows if r["tris"]])
@@ -178,7 +180,7 @@ def main():
                                  use_triangles=False, use_custom_props=False, add_leaf_bones=False,
                                  bake_anim=False, path_mode="STRIP", embed_textures=False)
         report["ok"] = True
-        good = (s["ok"] and report["within_D012"] and report["within_D134"])
+        good = (s["ok"] and report["within_D134"])  # D012 is reported only [D427]
         code = 0 if good else 3
     except Exception as exc:  # report, never hide
         report["error"] = f"{type(exc).__name__}: {exc}"

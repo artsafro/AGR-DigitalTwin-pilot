@@ -412,7 +412,7 @@ RESOLVE_OK = {"ok": True, "gap_m": GAP, "pairs_resolved": 2, "pairs_ambiguous": 
               "model_to_ucx_limit_m": 1.0, "within_D012": True, "within_D134": True}
 
 
-@pytest.mark.parametrize("patch,code", [({}, 0), ({"within_D134": False}, 1), ({"within_D012": False}, 1),
+@pytest.mark.parametrize("patch,code", [({}, 0), ({"within_D134": False}, 1), ({"within_D012": False}, 0),
                                         ({"pairs_ambiguous": 1}, 1), ({"left": [{"a": "x"}]}, 1)])
 def test_resolve_chain(patch, code, model, tmp_path, monkeypatch):
     from dt_ai.core import blender_runner as br

@@ -17,7 +17,9 @@ facade frame: no intersection and no touch (R09) by construction, gap inside the
 Every surface point lies in a solid cell, so the Main -> UCX deviation is at most the gap/2 shrink plus
 the sampling spacing; an exposed UCX face belongs to a cell crossed by the surface, so UCX -> Main is at
 most one cell diagonal. When the boxes exceed the [D012] triangle budget the cell grows and the build
-repeats; a build that still exceeds it raises (fail closed).
+repeats (`budget_mode="fit"`, default); a build that still exceeds it keeps the coarsest attempt and reports
+`over_budget_by` - never a refusal [D427] (#2050: form first; the file fits by raising render-mesh triangles).
+`budget_mode="form"` keeps the given cell and only reports the budget.
 
 Ground (#326): binary space partition of the covered plan into convex prisms (2k vertices, 4k - 4
 triangles over a convex k-gon) with planar tops. The covered-region outline (overlapping layer edges of a
@@ -40,7 +42,9 @@ from dataclasses import dataclass, field
 import numpy as np
 
 # [D012] budget owner (#1962); stdlib, so it loads inside Blender (the drivers put src/ on sys.path).
-from twinqa.geometry.ucx_audit import ucx_triangle_limit  # noqa: F401 - re-exported for callers
+from twinqa.geometry.ucx_audit import d012_budget_report, ucx_triangle_limit  # noqa: F401 - re-exported
+
+BUDGET_MODES = ("fit", "form")  # [D427]: fit = grow the cell toward [D012]; form = keep the cell, report only
 
 TARGETS = ("Main", "Ground")
 GAP_M = 0.004  # analysis rule 4: 3-6 mm keeps float32 read-back inside the [D098] band 2 mm - 1 cm
@@ -64,7 +68,8 @@ _BOX_TRIS = np.array([
 
 
 class UcxBuildError(ValueError):
-    """The input cannot give a valid UCX (empty, non-finite, over budget, too many pieces)."""
+    """The input cannot give a valid UCX (empty, non-finite, too many pieces). Over [D012] budget is reported,
+    never raised [D427]."""
 
 
 @dataclass
@@ -107,6 +112,11 @@ class UcxResult:
     def triangles(self) -> int:
         return sum(len(p.tris) for p in self.pieces)
 
+    @property
+    def over_budget_by(self) -> int:
+        """Triangles over the [D012] room of this build (0 when within); reported, never refused [D427]."""
+        return 0 if self.budget is None else max(0, self.triangles - int(self.budget))
+
 
 def _reserved(value) -> int:
     """Triangles of UCX already in the file and kept (other targets/addresses): a non-negative int."""
@@ -116,21 +126,15 @@ def _reserved(value) -> int:
 
 
 def file_budget_available(model_triangles: int, kept_triangles: int) -> int:
-    """[D012] is a whole-file limit: triangles left for new UCX after the kept UCX. Fails when no
-    single box (12 tris) fits."""
-    limit = ucx_triangle_limit(int(model_triangles))
-    free = limit - _reserved(kept_triangles)
-    if free < 12:
-        raise UcxBuildError(f"kept UCX {kept_triangles} tris leave {free} of the file budget {limit}; "
-                            "no box fits")
-    return free
+    """[D012] is a whole-file limit: triangles left for new UCX after the kept UCX. May be < 12 or negative:
+    the build still runs and reports `over_budget_by`, never refused [D427] (#2050)."""
+    return ucx_triangle_limit(int(model_triangles)) - _reserved(kept_triangles)
 
 
-def check_file_budget(model_triangles: int, ucx_triangles: int) -> None:
-    """All UCX of the file (kept + new) must stay within the [D012] limit; checked before export."""
-    limit = ucx_triangle_limit(int(model_triangles))
-    if _reserved(ucx_triangles) > limit:
-        raise UcxBuildError(f"file UCX {ucx_triangles} tris exceed the budget {limit}")
+def check_file_budget(model_triangles: int, ucx_triangles: int) -> dict:
+    """All UCX of the file (kept + new) against the [D012] limit, before export: a report with the
+    'over D012 budget by N tris, allowed by [D427] when form needs it' line, never a refusal (#2050)."""
+    return d012_budget_report(int(model_triangles), _reserved(ucx_triangles))
 
 
 def ucx_names(address: str, target: str, count: int) -> list[str]:
@@ -356,9 +360,13 @@ def _retract(lohi: np.ndarray, pts: np.ndarray, eps: float = 1e-9) -> np.ndarray
 
 def build_main(verts, tris, *, cell: float = 0.25, gap: float = GAP_M, model_triangles: int | None = None,
                angle_deg: float | None = None, grow: float = 1.25, max_attempts: int = 12,
-               retract: bool = True, reserved_triangles: int = 0) -> UcxResult:
+               retract: bool = True, reserved_triangles: int = 0, budget_mode: str = "fit") -> UcxResult:
     """UCX for the Main (OKS) target. `model_triangles` = n of [D012] (all non-UCX triangles of the FBX;
-    default: this mesh); `reserved_triangles` = kept UCX of the file, subtracted from the budget."""
+    default: this mesh); `reserved_triangles` = kept UCX of the file, subtracted from the budget.
+    `budget_mode` [D427]: "fit" grows the cell toward the budget and, when no attempt fits, keeps the coarsest
+    one over budget (reported in `over_budget_by`); "form" keeps `cell`. Only the 999-piece cap refuses."""
+    if budget_mode not in BUDGET_MODES:
+        raise UcxBuildError(f"budget_mode must be one of {BUDGET_MODES}, got {budget_mode!r}")
     v, t = _check_mesh(verts, tris)
     _positive("cell", cell)
     _positive("gap", gap)
@@ -372,21 +380,31 @@ def build_main(verts, tris, *, cell: float = 0.25, gap: float = GAP_M, model_tri
     r = _rot(-angle)  # world -> facade frame
     vf = v @ r.T
     attempts = []
+    last = []
 
     def run(c):
         origin, boxes, pts = _main_boxes(vf, t, c)
         attempts.append({"cell_m": round(c, 4), "pieces": len(boxes), "triangles": 12 * len(boxes)})
+        last[:] = [(c, (origin, boxes, pts))] if len(boxes) <= MAX_PIECES else []
         return (origin, boxes, pts) if 12 * len(boxes) <= budget and len(boxes) <= MAX_PIECES else None
 
     c, bad = float(cell), None
-    for _ in range(max_attempts):
-        got = run(c)
-        if got:
-            break
-        bad, c = c, c * grow
+    if budget_mode == "form":  # [D427]: the cell is the form; the budget is only reported
+        run(c)
+        if not last:
+            raise UcxBuildError(f"cell {c} m gives more than {MAX_PIECES} pieces: {attempts}")
+        got = last[0][1]
     else:
-        raise UcxBuildError(f"no cell within {max_attempts} attempts meets budget {budget} / "
-                            f"{MAX_PIECES} pieces: {attempts}")
+        for _ in range(max_attempts):
+            got = run(c)
+            if got:
+                break
+            bad, c = c, c * grow
+        else:
+            if not last:
+                raise UcxBuildError(f"no cell within {max_attempts} attempts gives <= {MAX_PIECES} pieces: "
+                                    f"{attempts}")
+            (c, got), bad = last[0], None  # over budget, reported [D427]
     if bad is not None:  # bisect between the last failing and the first fitting cell (finer = closer)
         good = c
         for _ in range(3):
@@ -1237,9 +1255,9 @@ def build_ground(verts, tris, *, cell: float = 16.0, min_cell: float = 0.5, tol:
     if filled:
         raise UcxBuildError(f"{filled} uncovered probe points beside the Ground outline lie inside a piece")
     tri_count = sum(len(pc.tris) for pc in pieces)
-    if len(pieces) > MAX_PIECES or tri_count > budget:
-        raise UcxBuildError(f"{len(pieces)} ground pieces / {tri_count} tris exceed {MAX_PIECES} pieces "
-                            f"or budget {budget}")
+    if len(pieces) > MAX_PIECES:
+        raise UcxBuildError(f"{len(pieces)} ground pieces / {tri_count} tris exceed {MAX_PIECES} pieces")
+    # [D427]: tri_count over `budget` is reported (UcxResult.over_budget_by), never refused
     pieces.sort(key=lambda pc: tuple(np.round(pc.plan.mean(axis=0)[::-1], 3)))
     return UcxResult("Ground", pieces, float(cell), gap, 0.0, budget, reserved,
                      [{"min_cell_m": min_cell, "tol_m": tol, "grid_m": [round(sx, 6), round(sy, 6)],

@@ -142,7 +142,10 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
     `gap_bands`; a band never fails the check, and a cross-family pair under gap_m is a `warnings` entry only."""
     core = _ucx10()
     opts = core.gap_options({"gap_m": gap_m})
-    rows, dropped = [], []
+    from twinqa.geometry.ucx_audit import CONVEX_TOL_M  # [D430] 1 mm
+
+    hull_core = core._hull_core()
+    rows, dropped, near_convex = [], [], []
     for i, m in enumerate(meshes):
         hull = m.get("hull") or {}
         if not hull.get("verts") or not hull.get("tris"):
@@ -151,7 +154,17 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
         if not _finite_hull(hull):
             dropped.append({"name": m.get("name"), "reason": "non-finite or malformed vertex in the readback"})
             continue
-        rows.append({"handle": i, "name": m["name"], "verts": hull["verts"], "tris": hull["tris"]})
+        verts, tris = hull["verts"], hull["tris"]
+        try:
+            chk = hull_core.convexity(verts, tris)
+        except ValueError:
+            chk = None  # the core reports it as a finding below
+        if chk and not chk["convex"] and chk["closed"] and not chk["zero_area"] and chk["worst"] <= CONVEX_TOL_M:
+            # [D430] (#2050): within 1 mm of its face planes the body counts as convex; the frozen AGR Tools core
+            # [D393] keeps 0.1 mm, so its gaps are measured on the hull of its vertices (at most 1 mm larger)
+            near_convex.append({"name": m["name"], "worst_m": round(chk["worst"], 6)})
+            verts, tris = (list(map(list, x)) for x in hull_core._convex_hull(verts))
+        rows.append({"handle": i, "name": m["name"], "verts": verts, "tris": tris})
     if not rows:
         return {"ok": False, "error": "no UCX pieces with hull data: an empty set is not a pass",
                 "dropped": dropped, "gap_m": opts["gap_m"]}
@@ -172,7 +185,9 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
             "findings": findings, "fix": "AGR Tools ucx.gap (ucx10_core) in 3ds Max on an export copy",
             "gap_rule": "D339 observe: bands are reported, no refusal by gap size",
             "gap_reach_m": census["reach_m"], "gap_bands": census["bands"], "gap_pairs": census["pairs"],
-            "warnings": census["warnings"], "gap_not_measured": census["not_measured"]}
+            "warnings": census["warnings"], "gap_not_measured": census["not_measured"],
+            "convex_rule": "D430: within 1 mm of its face planes counts as convex",
+            "convex_within_D430": near_convex}
 
 
 def _v010(rb: dict, target: str) -> list[dict]:
@@ -188,6 +203,15 @@ RESOLVE_KEYS = ("gap_m", "pairs_resolved", "pairs_ambiguous", "left", "pairs", "
                 "file_ucx_limit_D012", "within_D012", "model_to_ucx_max_m", "model_to_ucx_before_max_m",
                 "model_to_ucx_limit_m", "within_D134", "D134_not_worse", "intersections_before", "intersections_after",
                 "not_convex", "skipped")
+
+
+def budget_d012(model_triangles, ucx_triangles) -> dict:
+    """The file's [D012] budget as a report line, never a refusal or a failed check [D427] (#2050)."""
+    from twinqa.geometry.ucx_audit import d012_budget_report
+
+    if not all(isinstance(n, int) and not isinstance(n, bool) and n >= 0 for n in (model_triangles, ucx_triangles)):
+        return {"within_D012": None, "line": "D012 budget not measured (no triangle counts in the step report)"}
+    return d012_budget_report(model_triangles, ucx_triangles)
 
 
 def _resolve(a: dict, report: dict):
@@ -212,9 +236,10 @@ def _resolve(a: dict, report: dict):
                                           "log": str(log)}
             return 2, None
     ok = (rep.get("ok") is True and rep.get("pairs_ambiguous") == 0 and not rep.get("left")
-          and rep.get("within_D012") is True and rep.get("within_D134") is True)
+          and rep.get("within_D134") is True)  # [D012] is reported, never a failure [D427]
     report["steps"]["resolve"] = {"ok": ok, "exit": code, "report": str(a["build_report"]),
                                   **{k: rep.get(k) for k in RESOLVE_KEYS}}
+    report["budget_D012"] = budget_d012(rep.get("model_triangles_excl_ucx"), rep.get("ucx_triangles"))
     if rep.get("ok") is not True:
         return 2, None
     return None, rep
@@ -250,6 +275,7 @@ def run(a: dict) -> tuple[int, dict]:
     report["steps"]["build"] = {"ok": build.get("ok") is True, "exit": build_code, "pieces": build.get("pieces"),
                                 "triangles": build.get("triangles"), "gap_m": build.get("gap_m"),
                                 "within_tol": build.get("within_tol"), "report": str(a["build_report"])}
+    report["budget_D012"] = budget_d012(build.get("model_triangles_excl_ucx"), build.get("file_ucx_triangles"))
     if build.get("ok") is not True:
         return 2, report
     return _check(a, report, build, readback, {"build_within_tol": build.get("within_tol") is True})
@@ -289,6 +315,8 @@ def main(argv=None) -> int:
     code, report = run(a)
     report["exit"] = code
     a["report"].write_text(json.dumps(report, ensure_ascii=False, indent=1, allow_nan=False), encoding="utf-8")
+    if report.get("budget_D012"):
+        print(f"AGR_UCX budget: {report['budget_D012']['line']}")
     print(f"AGR_UCX {code} {a['report']}")
     return code
 
