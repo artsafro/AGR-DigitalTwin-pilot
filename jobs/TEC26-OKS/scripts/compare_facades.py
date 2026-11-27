@@ -13,6 +13,7 @@ Counts: slide = joint lines counted on the slide pixels between the field outlin
 renders = joints measured on the rendered pixels (joint_count.render_row + count_joints) - never the spec value. The
 facade legend is validated first (finish_map.validate_legend). Writes compare.json with every count; a facade whose
 slide, VPM or NPM count differs from the contract (ribs - 1) is marked MISMATCH in the image and the JSON.
+Exit 2 without publishing when a spec UDIM does not select the drawn field or a row has no panel samples.
 """
 import hashlib
 import json
@@ -143,18 +144,27 @@ def main(argv):
     uvs = [np.asarray(u, float) for u in vmain["face_uvs"]]
     slide = np.asarray(Image.open(pres["image"]).convert("RGB"))
     boxes = dict(zip(pres["quadrants"], slide_boxes(slide)))
-    os.makedirs(out)
+    fields, errors = {}, []
+    for name, fc in spec["facades"].items():
+        ud = spec["finishes"][fc["finish"]]["udim"]
+        keep = lambda t, ud=ud: int(1001 + np.floor(uvs[t].mean(0)[0]) + 10 * np.floor(uvs[t].mean(0)[1])) == ud  # noqa
+        try:
+            fields[name] = joint_count.checked_panel_field(V, vmain["faces"], keep, fc["normal"], name,
+                                                           sheet["facades"].get(name, {}), f"spec UDIM {ud}")
+        except joint_count.PanelFieldError as exc:
+            errors.append(str(exc))
+    if errors:
+        print("\n".join(errors), file=sys.stderr)
+        return 2
+    images = {}
     report = {"px_per_m": pxm, "slide": pres["image"], "slide_sha256": sha, "slide_no": pres["slide"], "facades": {}}
     for name, fc in spec["facades"].items():
         f = sheet["facades"][name]
         key = fc["normal"]
-        ud = spec["finishes"][fc["finish"]]["udim"]
-        keep = lambda t, ud=ud: int(1001 + np.floor(uvs[t].mean(0)[0]) + 10 * np.floor(uvs[t].mean(0)[1])) == ud  # noqa
-        tris = joint_count.facade_triangles(V, vmain["faces"], keep, key)
-        lo, hi, zlo, zhi = joint_count.field_extent(V, vmain["faces"], tris, key)
+        (lo, hi, zlo, zhi), ground = fields[name]
         # the body outline (frame outer faces) for the crop: field +- the drawing's frame posts
         blo, bhi = lo - f["frame_bands_mm"]["left"] / 1000, hi + f["frame_bands_mm"]["right"] / 1000
-        ground = min(p["bbox_mm"][1] for p in f["plinth"]) / 1000
+
         sc = slide_count(slide, boxes[name], f)
         counts = {"panels": ["slide", "vpm", "npm"], "slide_joints": sc["joints"], "slide_step_mm": sc["step_mm"],
                   "slide_field_mm": sc["field_mm"], "slide_height_scale_ratio": sc["height_scale_ratio"],
@@ -169,7 +179,12 @@ def main(argv):
             for frac in (0.2, 0.95):
                 z = zlo + frac * (zhi - zlo)
                 s, lum = joint_count.render_row(img, view, axis, z, lo, hi)
-                rows[f"z={z:.3f}"] = joint_count.count_joints(s, lum, lo, hi, fc["ribs"], tol=0.01, dark=0.85)
+                row = f"z={z:.3f}"
+                result = joint_count.count_joints(s, lum, lo, hi, fc["ribs"], tol=0.01, dark=0.85)
+                if "reason" in result:
+                    print(joint_count.unsampled_row_reason(tag, name, row, result), file=sys.stderr)
+                    return 2
+                rows[row] = result
             top = rows[f"z={zlo + 0.95 * (zhi - zlo):.3f}"]
             counts[f"{tag}_render_joints"] = top["joints_found"]
             counts[f"{tag}_render_rows"] = rows
@@ -192,10 +207,13 @@ def main(argv):
             d.text((x, 45 + p.height + 6), title, fill=(0, 0, 0), font=font(18))
             d.text((x, 45 + p.height + 30), f"{n + 1} рёбер / {n} швов", fill=(0, 0, 0), font=font(20))
             x += p.width + gap
-        png = os.path.join(out, f"compare_{VIEW[key]}_{name}.png")
-        sheet_img.save(png, optimize=True)
-        counts["png"] = os.path.basename(png)
+        counts["png"] = f"compare_{VIEW[key]}_{name}.png"
+        images[counts["png"]] = sheet_img
         report["facades"][name] = counts
+    os.makedirs(out)
+    for png, img in images.items():
+        img.save(os.path.join(out, png), optimize=True)
+    for name, counts in report["facades"].items():
         print("COMPARE", name, {k: v for k, v in counts.items() if not k.endswith("_rows")})
     with open(os.path.join(out, "compare.json"), "w", encoding="utf-8") as fh:
         json.dump(report, fh, ensure_ascii=False, indent=1)
