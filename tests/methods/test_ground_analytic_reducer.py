@@ -22,9 +22,10 @@ import copy
 import numpy as np
 import pytest
 
-from tests.methods.test_ground_terrain import ground_rb, mm
+from tests.methods.test_ground_terrain import SYN_SHA, ground_rb, mm
 
 ZERO = np.zeros(3)
+BIND = {"sha256": SYN_SHA, "ref_sha256": SYN_SHA}  # fixtures are bound to one synthetic FBX identity (#1954)
 
 
 def rect(x0, x1, y0, y1, zf=lambda x: 0.0, *, flip=False, diag=0, local=(0.0, 0.0, 0.0)):
@@ -48,7 +49,7 @@ def union(parts, **kw):
 
 
 def run(out, ref, off=ZERO, ref_off=ZERO):
-    return mm.ground_terrain(out[0], out[1], ref[0], ref[1], off, ref_off, sample_m=1.0)
+    return mm.ground_terrain(out[0], out[1], ref[0], ref[1], off, ref_off, sample_m=1.0, **BIND)
 
 
 def slope(x):
@@ -140,5 +141,5 @@ def test_inputs_are_not_mutated():
     out, ref = ground_rb(*rect(2, 19, 0, 2)), ground_rb(*union(REF_B))
     off, roff = np.array([1.0, 2.0, 0.0]), np.array([1.0, 2.0, 0.0])
     snap = copy.deepcopy((out, ref)), off.copy(), roff.copy()
-    mm.ground_terrain(out[0], out[1], ref[0], ref[1], off, roff, sample_m=1.0)
+    mm.ground_terrain(out[0], out[1], ref[0], ref[1], off, roff, sample_m=1.0, **BIND)
     assert (out, ref) == snap[0] and np.array_equal(off, snap[1]) and np.array_equal(roff, snap[2])
