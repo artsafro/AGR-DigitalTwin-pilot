@@ -268,7 +268,7 @@ flowchart TD
 | 14 | `master-qa` | Does the master pass topology before export? | an n-gon (> 4 sides) -> fail before export; fix the input and rebuild | AGENT | [D312]: «any n-gon (>4 sides) fails the master check» | stop |
 |  |  |  | unavoidable triangles -> allowed, reported per object | AGENT | [D312]: «Triangles are allowed where unavoidable and must be reported per object» | readback |
 |  |  |  | inset elements -> judged per element, never welded to pass | AGENT | [D336]: «quads are judged per element» | readback |
-| 15 | `readback` | Does the exported file read back clean? | export written (exit 0) -> read back topology, UV, materials, transforms | AGENT | `AGENTS.md`: «A successful import or exit code 0 is not a finished model» | verifier |
+| 15 | `readback` | Does the exported file read back clean? | export written (exit 0) -> read back topology, UV, materials, transforms | AGENT | `docs/agents/agents-reference.md`: «A successful import or exit code 0 is not a finished model» | verifier |
 |  |  |  | xView overlaps -> must be 0 at 2 mm / 5 mm | AGENT | [D152]: «Overlapping Vertices at 0.002 m = 0 and Overlapping Faces at 0.005 m = 0» | verifier |
 |  |  |  | an inset touches the body plane -> offset/embed, never weld | AGENT | `docs/agents/SKELETONS-stages.md`: «never by welding» | verifier |
 | 16 | `verifier` | Does the VLM verifier change the model? | default -> observe only, write verifier.json; positions from geometry | AGENT | `docs/agents/SKELETONS-stages.md`: «The VLM confirms; positions and counts come from geometry and drawing vectors» | build-manifest |
@@ -279,7 +279,7 @@ flowchart TD
 |  |  |  | address / district code / coordinates unknown -> never invent them | AGENT | `routes/npm-oks.md`: «No district code/address/coordinates are invented» | validate |
 |  |  |  | FNO code missing -> issued by SINTEZ after placement by the customer's DWG | AGENT | [D220]: «the FNO code is issued by SINTEZ once the object is placed by that DWG» | validate |
 | 19 | `validate` | Is a validator result a pass? | unsupported, missing, review, not_run or partial -> not a pass; report it | AGENT | `routes/npm-oks.md`: «Unsupported, missing, review, not_run and partial results are not passes» | review-scene |
-|  |  |  | any mandatory check or manual gate open -> passed=true forbidden | AGENT | `AGENTS.md`: «`passed=true` is forbidden while any mandatory check or manual gate is open.» | review-scene |
+|  |  |  | any mandatory check or manual gate open -> passed=true forbidden | AGENT | `docs/agents/agents-reference.md`: «`passed=true` is forbidden while any mandatory check or manual gate is open.» | review-scene |
 | 20 | `review-scene` | Is the model visually accepted? | Max is held by Artem -> open the review copy in Blender | AGENT | [D255]: «Whenever 3ds Max is held by Artem, any modelling or check step that would use Max may run in an agent-owned Blender» | checker |
 |  |  |  | review copy ready -> Artem accepts geometry visually before the final SINTEZ | ARTEM (sheet: acceptance sheet: model over album facades, overlays, material ids vs legend) | [D104, D125]: «geometry is accepted by a person (visual and mathematical) first, SINTEZ last» | stop |
 | 21 | `checker` | What happens with SINTEZ findings? | order of checks -> preliminary SINTEZ, Artem's acceptance, final SINTEZ on the same hashes | AGENT | [D352]: «preliminary SINTEZ → Artem's acceptance → final SINTEZ» | done |

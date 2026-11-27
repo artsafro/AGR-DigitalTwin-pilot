@@ -122,7 +122,7 @@
       "q": "Does the exported file read back clean?",
       "q_ru": "Чист ли экспортированный файл при обратном чтении?",
       "branches": [
-        {"when": "export written (exit 0)", "when_ru": "экспорт записан (код 0)", "then": "read back topology, UV, materials, transforms", "then_ru": "прочитать топологию, UV, материалы, трансформы", "decider": "AGENT", "rule": ["fact:AGENTS.md"], "quote": "A successful import or exit code 0 is not a finished model"},
+        {"when": "export written (exit 0)", "when_ru": "экспорт записан (код 0)", "then": "read back topology, UV, materials, transforms", "then_ru": "прочитать топологию, UV, материалы, трансформы", "decider": "AGENT", "rule": ["fact:docs/agents/agents-reference.md"], "quote": "A successful import or exit code 0 is not a finished model"},
         {"when": "xView overlaps", "when_ru": "наложения xView", "then": "must be 0 at 2 mm / 5 mm", "then_ru": "должно быть 0 при 2 мм / 5 мм", "decider": "AGENT", "rule": ["D152"], "quote": "Overlapping Vertices at 0.002 m = 0 and Overlapping Faces at 0.005 m = 0"},
         {"when": "an inset touches the body plane", "when_ru": "вставка касается плоскости тела", "then": "offset/embed, never weld", "then_ru": "отступ или врезка, не сварка", "decider": "AGENT", "rule": ["fact:docs/agents/SKELETONS-stages.md"], "quote": "never by welding"}
       ]
@@ -165,7 +165,7 @@
       "q_ru": "Является ли результат валидатора проходом?",
       "branches": [
         {"when": "unsupported, missing, review, not_run or partial", "when_ru": "unsupported, missing, review, not_run или partial", "then": "not a pass; report it", "then_ru": "не проход; записать в отчёт", "decider": "AGENT", "rule": ["fact:routes/npm-oks.md"], "quote": "Unsupported, missing, review, not_run and partial results are not passes"},
-        {"when": "any mandatory check or manual gate open", "when_ru": "открыт обязательный шаг или ручной гейт", "then": "passed=true forbidden", "then_ru": "passed=true запрещён", "decider": "AGENT", "rule": ["fact:AGENTS.md"], "quote": "`passed=true` is forbidden while any mandatory check or manual gate is open."}
+        {"when": "any mandatory check or manual gate open", "when_ru": "открыт обязательный шаг или ручной гейт", "then": "passed=true forbidden", "then_ru": "passed=true запрещён", "decider": "AGENT", "rule": ["fact:docs/agents/agents-reference.md"], "quote": "`passed=true` is forbidden while any mandatory check or manual gate is open."}
       ]
     },
     "review-scene": {

@@ -130,7 +130,7 @@ flowchart TD
 | 8 | `npm-to-vpm` | Which conversion mode? | table / no table -> table mode / regions mode | AGENT | `docs/agents/SKELETONS-stages.md`: «`regions` without table, `table` with `npm_table.json`» | readback |
 |  |  |  | a seam policy was answered -> still no deleting or cropping unassigned faces | AGENT | `docs/scenarios/npm-to-vpm.md`: «An answered seam policy is not authority to ignore unassigned faces, crop mixed materials or delete faces.» | readback |
 |  |  |  | job G22: deep overlaps -> keep the exterior finish, trim the neighbour up to 275 mm on a copy | AGENT | [D374]: «preserve the confirmed exterior facade finish» (job-local: `jobs/G22`) | readback |
-| 9 | `readback` | Does the exported file read back clean? | export written (exit 0) -> read back topology, UV, materials, transforms | AGENT | `AGENTS.md`: «A successful import or exit code 0 is not a finished model» | checker |
+| 9 | `readback` | Does the exported file read back clean? | export written (exit 0) -> read back topology, UV, materials, transforms | AGENT | `docs/agents/agents-reference.md`: «A successful import or exit code 0 is not a finished model» | checker |
 |  |  |  | xView overlaps -> must be 0 at 2 mm / 5 mm | AGENT | [D152]: «Overlapping Vertices at 0.002 m = 0 and Overlapping Faces at 0.005 m = 0» | checker |
 |  |  |  | an inset touches the body plane -> offset/embed, never weld | AGENT | `docs/agents/SKELETONS-stages.md`: «never by welding» | checker |
 | 10 | `checker` | Run the checker on this conversion? | conversion plan blocked -> no checker and no package | AGENT | `docs/agents/SKELETONS-stages.md`: «no checker/package on a blocked conversion plan» | stop |
@@ -138,4 +138,4 @@ flowchart TD
 | 11 | `package-vpm` | Is the VPM ZIP allowed now? | no export_meta of the new FBX and its readback -> stop before the ZIP | AGENT | `docs/agents/SKELETONS-stages.md`: «STOP до ZIP без `export_meta` нового FBX и его readback» | stop |
 |  |  |  | every package -> a quad work FBX next to the ZIP | AGENT | [D366, D198]: «Work FBX with quads is made for EVERY package type» | validate |
 | 12 | `validate` | Is a validator result a pass? | unsupported, missing, review, not_run or partial -> not a pass; report it | AGENT | `routes/npm-oks.md`: «Unsupported, missing, review, not_run and partial results are not passes» | done |
-|  |  |  | any mandatory check or manual gate open -> passed=true forbidden | AGENT | `AGENTS.md`: «`passed=true` is forbidden while any mandatory check or manual gate is open.» | done |
+|  |  |  | any mandatory check or manual gate open -> passed=true forbidden | AGENT | `docs/agents/agents-reference.md`: «`passed=true` is forbidden while any mandatory check or manual gate is open.» | done |
