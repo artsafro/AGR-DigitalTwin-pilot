@@ -68,6 +68,11 @@ docs/research/team-scripts-inventory.json
 docs/research/trainer-artifact-first-r95/analyze.py
 docs/research/trainer-artifact-first-r95/receipt.json
 docs/research/trainer-artifact-first-r95/series.py
+# Research #97 (PR #1928): frozen OBSERVE receipts and replay drivers record workstation run paths.
+docs/research/trainer-g22-adapter-r97/analyze.py
+docs/research/trainer-g22-adapter-r97/informational.json
+docs/research/trainer-g22-adapter-r97/series.log
+docs/research/trainer-g22-adapter-r97/series.py
 docs/research/trainer-tower-id-r87/series.sh
 docs/trainer/ledger.json
 evals/capability-b01/reference.json
