@@ -48,6 +48,7 @@ SECTION_GROW = 1.25  # section-boxes: cell growth while the pieces exceed the 99
 SECTION_MIN_M = 0.05  # section-boxes: R04 thin-element limit, the thinnest box side
 GROUND_TOL_M = 0.08  # ground-coarse-faces: = ucx_build.build_ground default tol (max |surface z - top|)
 GROUND_MIN_NZ = 0.05  # ground-coarse-faces: steeper faces (|n_z| < this) get no own prism
+GROUND_FIX_ROUNDS = 6  # ground-coarse-faces: shrink rounds for a slope prism too close to another piece
 GROUND_SLOPE_DEG = 15.0  # ground-coarse-faces: faces steeper than this are "slope" and keep their own shape
 LEVEL_AREA_M2 = 1.0  # slice-prisms: a horizontal face area at one z of at least this starts a level
 LEVEL_MIN_M = 0.5  # slice-prisms: levels closer than this are one level
@@ -732,19 +733,47 @@ def ground_coarse_faces(verts, tris, tol: float = GROUND_TOL_M, depth: float = 0
             owner[cb[0]] = a
             merged = True
     clusters = [c for c in clusters if c is not None]
-    pieces, dropped = [], 0
+    specs = []  # [plan before inset, plane, bottom, extra inset]
     for members, pts, _, plane, _ in clusters:
-        q = ub._simplify(plan_hull(pts[:, :2]), 0.002)
-        q = ub._inset(q, gap / 2) if len(q) >= 3 else np.zeros((0, 2))
-        if len(q) < 3:
-            dropped += 1
-            continue
-        tops = q @ plane[:2] + plane[2]
+        q0 = ub._simplify(plan_hull(pts[:, :2]), 0.002)
+        tops = q0 @ plane[:2] + plane[2] if len(q0) else np.zeros(1)
         low = min([steep_low.get(w, np.inf) for w in set(wt[members].ravel().tolist())])
-        pc = ub._prism(q, plane, min(low, float(tops.min())) - depth)
-        pieces.append((pc.verts, pc.tris))
+        specs.append([q0, plane, min(low, float(tops.min())) - depth, 0.0])
+
+    def prism_of(sp):
+        q = ub._inset(sp[0], gap / 2 + sp[3]) if len(sp[0]) >= 3 else np.zeros((0, 2))
+        return None if len(q) < 3 else ub._prism(q, sp[1], sp[2])
+
+    # a slope prism closer than MERGE_GAP_M to another piece (a BSP piece over the slope's edge, a fold of the
+    # surface) is shrunk further in plan, at most GROUND_FIX_ROUNDS times, then dropped
+    flat_bb = [(np.asarray(fv).min(0), np.asarray(fv).max(0)) for fv, _ in flat_pieces]
+    built = [prism_of(sp) for sp in specs]
+    for rnd in range(GROUND_FIX_ROUNDS + 1):
+        boxes = flat_bb + [(pc.verts.min(0), pc.verts.max(0)) if pc else None for pc in built]
+        geo = list(flat_pieces) + [(pc.verts, pc.tris) if pc else None for pc in built]
+        need = {}
+        for i in range(len(flat_pieces), len(geo)):
+            if geo[i] is None:
+                continue
+            for k in range(len(geo)):
+                if k == i or geo[k] is None or (k >= len(flat_pieces) and k < i):
+                    continue
+                if not ((boxes[i][0] <= boxes[k][1] + MERGE_GAP_M).all() and (boxes[k][0] <= boxes[i][1] + MERGE_GAP_M).all()):
+                    continue
+                g = sat_gap(geo[i], geo[k])
+                if g < MERGE_GAP_M:
+                    j = i - len(flat_pieces)
+                    need[j] = max(need.get(j, 0.0), MERGE_GAP_M - g + 0.001)
+        if not need:
+            break
+        for j, d in need.items():
+            specs[j][3] += d
+            built[j] = prism_of(specs[j]) if rnd < GROUND_FIX_ROUNDS else None
+    pieces = [(pc.verts, pc.tris) for pc in built if pc is not None]
+    dropped = sum(1 for pc in built if pc is None)
     return flat_pieces + pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, **flat_info,
                                   "slope_faces": int(len(kid)), "clusters": len(clusters), "dropped_slivers": dropped,
+                                  "slope_extra_inset_max_m": round(max((sp[3] for sp in specs), default=0.0), 4),
                                   "max_vertical_dev_m": round(max(c[4] for c in clusters), 4),
                                   "single_face_clusters": int(sum(1 for c in clusters if len(c[0]) == 1))}
 

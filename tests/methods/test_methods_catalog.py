@@ -779,6 +779,18 @@ def test_ground_coarse_faces_flat_coarse_slope_on_existing_faces():
         assert is_closed(pt) and is_convex(pv, pt)
 
 
+def test_ground_coarse_faces_never_overlaps_the_bsp_part():
+    """#2053 replay case 06 had 4 overlapping pairs (to 3 mm) between BSP prisms and slope prisms: a slope
+    prism closer than 3 mm to any piece is shrunk, then dropped."""
+    v, t = _terrain()
+    k = len(v)  # a steep face hovering over the flat half: highest surface, but over a BSP prism in plan
+    v = np.vstack([v, [(2.0, 2.0, 0.05), (4.0, 2.0, 0.05), (3.0, 4.0, 0.9)]])
+    t = np.vstack([t, [(k, k + 1, k + 2)]])
+    pieces, info = uv_.build("ground-coarse-faces", v, t, model_triangles=len(t))
+    assert info["dropped_slivers"] >= 1
+    assert _min_gap(pieces) >= uv_.MERGE_GAP_M - 1e-9
+
+
 def test_more_than_999_pieces_is_an_error():
     boxes = [((3 * i, 0, 0), (3 * i + 1, 1, 1)) for i in range(1000)]
     v, t = _scene_arrays(*boxes)
