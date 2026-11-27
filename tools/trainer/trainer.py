@@ -321,8 +321,11 @@ _KEYS_COMPONENT = re.compile(r"""(?:^|[\s/"'(,=])(?:keys|k[\w"'-]*[*?\[][^/\s"')
 _END = r"""(?=[/\s"')|;&]|$)"""
 _BANK = f"{_KEYS_PARENT}/bank{_END}"
 _EVIDENCE_BANK = f"agr-evidence/{_BANK}"
+# Match attached PowerShell arguments and extended Windows paths at token start, not
+# arbitrary colon/slash boundaries inside paths such as C:/g/notes.txt.
+_DRIVE_ROOT = r"""(?:^|[\s"'(,=;|&])(?:-[\w-]+:)?(?://?\?/)?(?:g:|/g)"""
 _PARENT_NOT_BANK = re.compile(
-    rf"""(?:^|[\s"'(,=;|&])(?:g:/|/g/)(?!мой диск/{_EVIDENCE_BANK})"""
+    rf"{_DRIVE_ROOT}{_END}(?!/мой диск/{_EVIDENCE_BANK})"
     rf"|(?<![\w-])мой диск(?![\w-])(?!/{_EVIDENCE_BANK})"
     rf"|agr-evidence(?!/{_BANK})|{_KEYS_PARENT}(?!/bank{_END})"
 )
