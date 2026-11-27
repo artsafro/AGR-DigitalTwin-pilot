@@ -73,6 +73,10 @@ docs/research/trainer-g22-adapter-r97/analyze.py
 docs/research/trainer-g22-adapter-r97/informational.json
 docs/research/trainer-g22-adapter-r97/series.log
 docs/research/trainer-g22-adapter-r97/series.py
+# Merge policy #2038 (PR #2041, red main 2e243d57): C:/x/merge-policy-observe is the OUTPUT
+# observe log, kept outside the repo on purpose (tests/test_merge_policy_2038.py asserts it); not a scratch input.
+docs/agents/MERGE_POLICY.yaml
+tools/merge_policy.py
 docs/research/trainer-tower-id-r87/series.sh
 docs/trainer/ledger.json
 evals/capability-b01/reference.json
