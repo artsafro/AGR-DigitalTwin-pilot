@@ -409,6 +409,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-npm-vpm-render-diff-r128 | [research/autoresearch-npm-vpm-render-diff-r128.md](../research/autoresearch-npm-vpm-render-diff-r128.md) |  |
+| research/autoresearch-npm-vpm-render-diff-r128/replay-py | [research/autoresearch-npm-vpm-render-diff-r128/replay.py](../research/autoresearch-npm-vpm-render-diff-r128/replay.py) |  |
+| research/autoresearch-npm-vpm-render-diff-r128/receipt-json | [research/autoresearch-npm-vpm-render-diff-r128/receipt.json](../research/autoresearch-npm-vpm-render-diff-r128/receipt.json) |  |
+| research/autoresearch-npm-vpm-render-diff-r128/decoded-parity-json | [research/autoresearch-npm-vpm-render-diff-r128/decoded-parity.json](../research/autoresearch-npm-vpm-render-diff-r128/decoded-parity.json) |  |
 | research/autoresearch-trainer-artifact-first | [research/autoresearch-trainer-artifact-first.md](../research/autoresearch-trainer-artifact-first.md) |  |
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
