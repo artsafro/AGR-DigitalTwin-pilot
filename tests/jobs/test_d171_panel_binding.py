@@ -1,4 +1,4 @@
-"""D171 panel binding regressions: synthetic geometry and retained AC08 exports."""
+"""new-case: D171 panel binding regressions on synthetic geometry and retained AC08 exports."""
 import copy
 import hashlib
 import json
