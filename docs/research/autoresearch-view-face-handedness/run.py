@@ -83,7 +83,7 @@ def paired_measure(api, out, n, fixture, reader, deadline):
 
     scope['S'] = SimpleNamespace(face_score=collect, decide=decide_pair, majority=scorer.majority)
     native_subprocess = scope['subprocess']
-    scope['subprocess'] = SimpleNamespace(run=run_bounded)
+    scope['subprocess'] = SimpleNamespace(run=run_bounded, STDOUT=subprocess.STDOUT)
     try:
         rows, _ = measure(out, n, fixture, reader)
     finally:
