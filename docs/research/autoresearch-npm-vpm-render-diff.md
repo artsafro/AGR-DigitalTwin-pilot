@@ -70,7 +70,7 @@ so a held-out check is **not measured** in this round (next target).
 Harness `render_diff.py` sha256 `4ad3ba410b592ce28d9d597ebc55e370a30ed27472bdf8af8c3bb3158042be04` (same file for both
 variants; `--variant` selects). Inputs: every PNG and `renders.json` matched its folder's `SHA256SUMS.txt` (hashes in
 each receipt under `inputs_sha256`). Three runs per variant, byte-identical: V1 `bac9e2dc...35481`, V2 `d9850531...28ff`
-(full SHA-256 of the receipts `receipt_v1.json` / `receipt_v2.json` in the harness folder). Paired spread = 0.
+(SHA-256 of the original run outputs `C:/x/ev_t_a2ac596e/v{1,2}_r{1,2,3}.json`; committed copies `receipt_v1.json` / `receipt_v2.json` are LF-normalised by git, same content). Paired spread = 0.
 
 | Package | Label | V1 score | V2 score | V2 native px/m (S/E) |
 |---|---|---|---|---|

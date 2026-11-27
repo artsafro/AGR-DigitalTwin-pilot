@@ -408,6 +408,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-npm-vpm-render-diff | [research/autoresearch-npm-vpm-render-diff.md](../research/autoresearch-npm-vpm-render-diff.md) |  |
+| research/autoresearch-npm-vpm-render-diff-harness/receipt-v1-json | [research/autoresearch-npm-vpm-render-diff-harness/receipt_v1.json](../research/autoresearch-npm-vpm-render-diff-harness/receipt_v1.json) |  |
+| research/autoresearch-npm-vpm-render-diff-harness/receipt-v2-json | [research/autoresearch-npm-vpm-render-diff-harness/receipt_v2.json](../research/autoresearch-npm-vpm-render-diff-harness/receipt_v2.json) |  |
+| research/autoresearch-npm-vpm-render-diff-harness/render-diff-py | [research/autoresearch-npm-vpm-render-diff-harness/render_diff.py](../research/autoresearch-npm-vpm-render-diff-harness/render_diff.py) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
