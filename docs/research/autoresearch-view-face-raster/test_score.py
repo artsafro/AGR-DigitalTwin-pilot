@@ -46,3 +46,13 @@ def test_width_baseline_abstains_on_equal_widths():
     widths = {0: 16.3, 90: 88.9, 180: 16.3, 270: 88.9}
     assert score.decide_width(89.0, widths, 90)["outcome"] == "abstain"
     assert score.decide_width(89.0, {0: 16.3, 90: 88.9}, 90)["outcome"] == "correct"
+
+
+def test_drop_tall_runs_keeps_window_sized_runs_only():
+    import sheet
+    m = np.zeros((60, 3), bool)
+    m[5:20, 0] = True   # 15 px window run: kept
+    m[0:40, 1] = True   # 40 px cladding band: dropped
+    m[30:56, 2] = True  # 26 px: dropped at max 25
+    out = sheet.drop_tall_runs(m, 25)
+    assert out[:, 0].sum() == 15 and out[:, 1].sum() == 0 and out[:, 2].sum() == 0

@@ -63,16 +63,37 @@ def split_views(luma, gap_px=30, min_w_px=50):
     return views
 
 
-def view_profile(crop):
+def drop_tall_runs(mask, max_run_px):
+    """R2: remove vertical runs of dark pixels taller than max_run_px (cladding bands, not glass)."""
+    out = mask.copy()
+    h = mask.shape[0]
+    for x in range(mask.shape[1]):
+        col = mask[:, x]
+        y = 0
+        while y < h:
+            if col[y]:
+                e = y
+                while e < h and col[e]:
+                    e += 1
+                if e - y > max_run_px:
+                    out[y:e, x] = False
+                y = e
+            else:
+                y += 1
+    return out
+
+
+def view_profile(crop, max_run_px=None):
     ink = crop < WHITE
     dark = crop < DARK
+    glass = drop_tall_runs(dark, max_run_px) if max_run_px else dark
     body = (ink.mean(axis=1) >= 0.9) & (dark.mean(axis=1) <= 0.6)
     if not body.any():
         return np.zeros(crop.shape[1]), 0
-    return dark[body].mean(axis=0), int(body.sum())
+    return glass[body].mean(axis=0), int(body.sum())
 
 
-def read_sheet(pdf, page_index, clip):
+def read_sheet(pdf, page_index, clip, max_run_px=None):
     doc = fitz.open(pdf)
     page = doc[page_index]
     m_per_pt, nmarks = page_scale(page)
@@ -80,7 +101,7 @@ def read_sheet(pdf, page_index, clip):
     out = []
     for r0, r1, c0, c1 in split_views(luma):
         crop = luma[r0:r1, c0:c1]
-        prof, nbody = view_profile(crop)
+        prof, nbody = view_profile(crop, max_run_px)
         out.append({"box_px": [r0, r1, c0, c1], "width_m": round((c1 - c0) * RES, 2),
                     "height_m": round((r1 - r0) * RES, 2), "body_rows": nbody, "crop": crop, "profile": prof})
     return {"m_per_pt": m_per_pt, "level_marks": nmarks, "views": out, "luma_shape": list(luma.shape)}

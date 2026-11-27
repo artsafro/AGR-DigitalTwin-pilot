@@ -1,7 +1,7 @@
 """#141 OBSERVE run: OBR22 K02 raster elevations (PDF p14-15) -> accepted NPM v012 faces.
 
 Usage (repo root): uv run --offline --extra pdf-review python docs/research/autoresearch-view-face-raster/run.py <out_dir>
-<out_dir> must not exist. Writes result.json (+ rays.npz) there. Fresh Blender ray cast and PDF read every run.
+<out_dir> [R1|R2] ; <out_dir> must not exist. Writes result.json (+ rays.npz) there. Fresh Blender ray cast and PDF read every run.
 """
 import hashlib
 import json
@@ -47,7 +47,17 @@ def model_faces(npz):
     return faces
 
 
+VARIANT = {"R1": {"max_run_px": None, "min_density": None},
+           "R2": {"max_run_px": 25, "min_density": 0.02}}  # R2 frozen after R1 (post-hoc, in-sample)
+RV = VARIANT["R1"]
+
+
 def judge(profile, width_m, faces, gt):
+    if RV["min_density"] is not None and float(np.mean(profile)) < RV["min_density"]:
+        c = {"answer": None, "outcome": "abstain", "reason": "low_window_evidence",
+             "density": round(float(np.mean(profile)), 4)}
+        v0 = score.decide_width(width_m, {az: f["width_m"] for az, f in faces.items()}, gt)
+        return {"C": c, "V0": v0}
     per = {az: score.slide(profile, f["profile"]) for az, f in faces.items()}
     c = score.decide({az: s for az, (s, _) in per.items()}, gt)
     c["scores"] = {str(az): round(s, 4) for az, (s, _) in per.items()}
@@ -57,7 +67,10 @@ def judge(profile, width_m, faces, gt):
 
 
 def main():
+    global RV
     out = Path(sys.argv[1])
+    variant = sys.argv[2] if len(sys.argv) > 2 else "R1"
+    RV = VARIANT[variant]
     if out.exists():
         raise SystemExit(f"{out} exists")
     out.mkdir(parents=True)
@@ -75,7 +88,7 @@ def main():
     faces = model_faces(npz)
     cases, sheets = [], {}
     for pg in FIX["pages"]:
-        s = sheet.read_sheet(FIX["inputs"]["pdf"]["path"], pg["index"], FIX["clip_pt"])
+        s = sheet.read_sheet(FIX["inputs"]["pdf"]["path"], pg["index"], FIX["clip_pt"], RV["max_run_px"])
         sheets[pg["index"]] = {"m_per_pt": round(s["m_per_pt"], 6), "level_marks": s["level_marks"],
                                "views": [{k: v[k] for k in ("box_px", "width_m", "height_m", "body_rows")} for v in s["views"]]}
         if len(s["views"]) != len(pg["views"]):
@@ -90,12 +103,12 @@ def main():
                 cw = int(round(w * frac))
                 for pos in FIX["partials"]["positions"]:
                     a = int(round((w - cw) * pos))
-                    prof, _ = sheet.view_profile(crop[:, a:a + cw])
+                    prof, _ = sheet.view_profile(crop[:, a:a + cw], RV["max_run_px"])
                     cases.append({"id": f"{vid}/crop{frac}@{pos}", "kind": "crop", "view": vid, "gt": gt,
                                   "width_m": round(cw * sheet.RES, 2), **judge(prof, cw * sheet.RES, faces, gt)})
             flipped = crop[:, ::-1]
             changed = int((flipped != crop).sum())
-            prof, _ = sheet.view_profile(flipped)
+            prof, _ = sheet.view_profile(flipped, RV["max_run_px"])
             row = {"id": f"{vid}/mirror", "kind": "mirror", "view": vid, "gt": gt, "changed_px": changed,
                    "width_m": v["width_m"]}
             row.update(judge(prof, v["width_m"], faces, gt) if changed else {"status": "not_exercised"})
@@ -108,7 +121,7 @@ def main():
                 k = f"{var}/{kind}/{grp}"
                 summary[k] = {o: sum(c[var]["outcome"] == o for c in sel) for o in ("correct", "wrong", "abstain")}
                 summary[k]["n"] = len(sel)
-    res = {"schema": "view-face-raster-run/1", "hashes": hashes, "rays_log": log,
+    res = {"schema": "view-face-raster-run/1", "variant": variant, "variant_params": RV, "hashes": hashes, "rays_log": log,
            "faces": {str(a): {k: f[k] for k in ("width_m", "window_px")} for a, f in faces.items()},
            "sheets": sheets, "summary": summary, "cases": cases,
            "wall_s": {"rays": round(t_rays, 3), "total": round(time.time() - t0, 3)},

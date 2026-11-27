@@ -47,6 +47,14 @@ PDF, G22/OBR22/Vatutino unmeasured.
   scoring; a failure is published as refuted, not retuned. Stop at run 3 or on hash/extraction mismatch.
 - **Forbidden:** editing the PDF, the accepted model or other cards' files; opening Sokolniki outputs; tuning
   on the scored set; deselecting tests; presenting synthetic crops as real untitled views.
+- **Round 2 addendum (frozen after R1 scoring, before R2 scoring; post-hoc, in-sample — cannot confirm H141):**
+  R1 showed two structural flaws (see Round log): dark cladding bands counted as glass, and an end view with
+  no windows had no admissible windowless candidate. R2 = C with (a) vertical dark runs taller than 25 px
+  (2.5 m, below the 3.0 m storey; glass is one storey at most) removed before the column profile and (b)
+  abstain when the view's mean window fraction < 0.02 (low evidence). Model side, thresholds 0.30/0.10, crops
+  and GT unchanged. Same three-run rule; R1 must replay byte-identical cases after the code change (parity).
+  R2 outcome is labelled `diagnostic` (tuned on the scored cohort); the bounds above are reported for it but a
+  pass would only justify a held-out test, never adoption.
 - **Replay:** `uv run --offline --extra pdf-review python docs/research/autoresearch-view-face-raster/run.py <new_dir>`
   (pilot host: needs the Desktop PDF, `C:/Users/artsafro/.AGR_Project/jobs/OBR22-K02/outputs/` and Blender 4.4;
   preflight and postflight hash every input). Regression: `uv run --offline pytest -q
