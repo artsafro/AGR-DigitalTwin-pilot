@@ -1,0 +1,229 @@
+{
+ "schema": "library-maf-material-ids-change",
+ "from": "library/maf/material_ids_v007.json",
+ "version": "v008",
+ "decision": "D358",
+ "md_ref": "D358",
+ "approval": {
+  "date": "2026-11-21",
+  "quote": "Да, все",
+  "by": "Artem",
+  "source": "chat 2026-11-21 intake answers (jobs/staropetrovskiy-maf-lib/TASK.md); ID 36 colour: Artem, chat 2026-11-21 (pilot T01 review)"
+ },
+ "changelog": "v008 (2026-11-21, D358): six IDs of the Staropetrovskiy MAF job added as used there: 34 `paint_ral1015` #E6D2B5, 35 `paint_ral1002` #D2AA6D, 36 `paint_ral8004` #9E5A47 (measured in the delivered maps; brief #8E402A superseded), 37 `concrete_beige` #CDBFA3, 38 `glass_frosted_white` #EEF1F2, 39 `glass_frosted_amber` #E8A878 (other colours from the job BRIEF.md; 38/39 opaque solid colour cells). Nothing else in v007 changes.",
+ "job_sources": {
+  "brief": {
+   "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/BRIEF.md",
+   "sha256": "6239549502d35eb3ed02d1e189970c9d4f659f8b2bdaba16f5eafc3eb70f6a13"
+  },
+  "atlas_layout": {
+   "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/atlas/atlas_layout_v002.json",
+   "sha256": "810b596083d0f477b163b77dc505df37130fb48fd81d78e08546713dae0f2425"
+  },
+  "job_atlas": {
+   "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/atlas/atlas_npm_512_v002.png",
+   "sha256": "15513d9046c68e6fc92654820f9aa09e6ce5b09a48d07b4a5721872d0f900100"
+  },
+  "delivered_atlas": {
+   "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png",
+   "sha256": "0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943"
+  },
+  "vpm_tiles": {
+   "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/site5/vpm_maps_v004/tiles_maps.json",
+   "sha256": "67e45753eb15c0cfbcb6854a4e1c37c49291ef8b3bd80e645daacae88eb23eae"
+  },
+  "decisions_night": {
+   "path": "G:/Мой диск/AGR-evidence/1783-staropetrovskiy-maf-material-sources-v001/decisions_night.md",
+   "sha256": "986b65b9bfa28b80063caa4300364f34bab58f42be899c63998c8fa4dbf19c44"
+  }
+ },
+ "nulls": {
+  "kind": [
+   38,
+   39
+  ],
+  "ral": [
+   37,
+   38,
+   39
+  ],
+  "vpm_solid_tile": [
+   37
+  ]
+ },
+ "adds": [
+  {
+   "id": 34,
+   "key": "paint_ral1015",
+   "name_ru": "краска RAL 1015 светлая слоновая кость",
+   "kind": "paint",
+   "ral": "1015",
+   "target": "#E6D2B5",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_34_paint_ral1015.png",
+    "px": 512,
+    "flat": "#E6D2B5",
+    "source": "Staropetrovskiy BRIEF.md row 34 (flat #E6D2B5); job atlas_layout_v002 cells ID34_rod_mesh_open, ID34_u_tubes_open, ID34_solid"
+   },
+   "job_cells": [
+    "ID34_rod_mesh_open",
+    "ID34_u_tubes_open",
+    "ID34_solid"
+   ],
+   "vpm_solid_tile": 1044,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 35,
+   "key": "paint_ral1002",
+   "name_ru": "краска RAL 1002 песочно-жёлтая («золото»)",
+   "kind": "paint",
+   "ral": "1002",
+   "target": "#D2AA6D",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_35_paint_ral1002.png",
+    "px": 512,
+    "flat": "#D2AA6D",
+    "source": "Staropetrovskiy BRIEF.md row 35 (flat #D2AA6D); job atlas_layout_v002 cells ID35_radial_soffit, ID35_loop_band_open, ID35_filigree_open, ID35_rod_mesh_open, ID35_solid"
+   },
+   "job_cells": [
+    "ID35_radial_soffit",
+    "ID35_loop_band_open",
+    "ID35_filigree_open",
+    "ID35_rod_mesh_open",
+    "ID35_solid"
+   ],
+   "vpm_solid_tile": 1045,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 36,
+   "key": "paint_ral8004",
+   "name_ru": "краска RAL 8004 медно-коричневая / кортен",
+   "kind": "paint",
+   "ral": "8004",
+   "target": "#9E5A47",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_36_paint_ral8004.png",
+    "px": 512,
+    "flat": "#9E5A47",
+    "source": "delivered NPM map site4/maps_npm/T_ProezdStaropetrovskyi_ZU_7_A_GroundEl_d_1.png (sha256 0c2e1289915640ce163cd14ec77d1f3b52382254f0ee2852b872b054098c9943) cell ID36_solid content_px [260, 388, 56, 56] per-channel median (flat #9E5A47); VPM tile 1046 the same; brief #8E402A superseded (D358)"
+   },
+   "job_cells": [
+    "ID36_lamellas_open",
+    "ID36_radial_slots_open",
+    "ID36_solid"
+   ],
+   "vpm_solid_tile": 1046,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID; colour measured in the delivered maps"
+  },
+  {
+   "id": 37,
+   "key": "concrete_beige",
+   "name_ru": "фибробетон / СФБ бежевый (индивидуальные МАФ)",
+   "kind": "mineral",
+   "ral": null,
+   "target": "#CDBFA3",
+   "size": "M",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_37_concrete_beige.png",
+    "px": 512,
+    "flat": "#CDBFA3",
+    "source": "Staropetrovskiy BRIEF.md row 37 (flat #CDBFA3); job atlas_layout_v002 cells ID37_concrete, ID37_gold_lines, ID37_flutes"
+   },
+   "job_cells": [
+    "ID37_concrete",
+    "ID37_gold_lines",
+    "ID37_flutes"
+   ],
+   "vpm_solid_tile": null,
+   "spec_rows": [],
+   "review": [],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 38,
+   "key": "glass_frosted_white",
+   "name_ru": "стекло матовое белое (арт-объект A01 «Рассветное солнце»), непрозрачная заливка",
+   "kind": null,
+   "ral": null,
+   "target": "#EEF1F2",
+   "size": "S",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_38_glass_frosted_white.png",
+    "px": 512,
+    "flat": "#EEF1F2",
+    "source": "Staropetrovskiy BRIEF.md row 38 (flat #EEF1F2); job atlas_layout_v002 cells ID38_solid"
+   },
+   "job_cells": [
+    "ID38_solid"
+   ],
+   "vpm_solid_tile": 1047,
+   "spec_rows": [],
+   "review": [
+    "kind null: no library kind fits an opaque frosted-glass colour cell (decisions_night #16); translucent = GroundElGlass without texture"
+   ],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  },
+  {
+   "id": 39,
+   "key": "glass_frosted_amber",
+   "name_ru": "стекло матовое янтарное (арт-объект A02 «Закатное солнце»), непрозрачная заливка",
+   "kind": null,
+   "ral": null,
+   "target": "#E8A878",
+   "size": "S",
+   "atlas": true,
+   "tile": {
+    "file": "tiles/ID_39_glass_frosted_amber.png",
+    "px": 512,
+    "flat": "#E8A878",
+    "source": "Staropetrovskiy BRIEF.md row 39 (flat #E8A878); job atlas_layout_v002 cells ID39_solid"
+   },
+   "job_cells": [
+    "ID39_solid"
+   ],
+   "vpm_solid_tile": 1048,
+   "spec_rows": [],
+   "review": [
+    "kind null: as ID 38"
+   ],
+   "status": "approved-v1 (D358): Staropetrovskiy job ID"
+  }
+ ],
+ "inherited_evidence": {
+  "425402cd254125173f8641b95aa4c71ccb9b054f98e427fd3f9878000bcacd75": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v004/max_maps.json",
+  "0e10c2ca524dcd7d3082d69630d1921eec2f9d3c6e6840d926f4a9aab4aacde6": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v004/uv_dump.json",
+  "a862031e835895875ebb8645acddc704bed6d2841a3b6deadc86c5c6a42a14eb": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_1_Diffuse_1.1001_e5pokwfjvgc7.png",
+  "d0760d7674fafca8d7811cd510b3b2c7892c62a42db18a824526daf0f6ea1bbf": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_ID_2____________________f.png",
+  "4e6e9b0e2272448e24202c9d535ba9c5f60ca0ed4c24deb09b02e7d28d58748e": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_MAF_Atlas_001_Diffuse.png",
+  "bccad93fb94ae61d71be0d5287c363f41b25bf80519794a2360b14a962ecd0dd": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_T_Atlas_MAF.png",
+  "ed3d6317e6bdd468c821d673960442327bd9e9c316ceadb3a45b5c32b0112d87": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_T_Pos_Desenovskoe_Kv_23_D_7_GroundEl_d_1.png",
+  "f8d703dd9e39367be09b8001b288e6047c94be69d1e4411400e0c60f168d78f4": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_Untitled_Diffuse_1.1001.png",
+  "e3e14bbbdbf5e1203d32f7c79838afdd21b1aeed68c9827072237ebf04c666a9": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_Untitled_Diffuse_1.1001_ngosp2lcps3p.png",
+  "5cf13dd1927767e59c8463443a08da66da06f711a7314a840048c94a9e6b2a86": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_atlas_01.png",
+  "ac40f719ea5104a2c6a5c94bd2ef9b9db8fefd7a0a0b8ef67ccf12bcd0249261": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_atlas_02.png",
+  "34fd48c9c3fc8a53200abef7e55c8bccd12c1055925f1b49da3338d8c9d5fc98": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_atlas_03.png",
+  "ea72a5c506b46f1d29e4428cb5f74101f29ea7bf731cf86874443a8b7384cddc": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_atlas_04.png",
+  "fedcecc3a5df0f2b8f1e2263d1b007ddaf11f2468ea60644582663987fbc983b": "G:/Мой диск/AGR-evidence/524-maf-material-ids-v005/overlay_example_id_layout.png",
+  "c4dfd7ba60294f78c3d04e28deaf23649e60f265133fe8f8699e5403ac27633c": "G:/Мой диск/AGR-evidence/524-maf-atlases/atlas_01.png",
+  "b0f6c46e30f6cc9fdd467ce27a642e28f0310c7cc9c23c34b17cce97f76153b0": "G:/Мой диск/AGR-evidence/524-maf-atlases/atlas_02.png",
+  "ab9fbdb03e99000c96d7b701afa2b8f27f92a8c67e4087d34fc6bccb36a17e4b": "G:/Мой диск/AGR-evidence/524-maf-atlases/atlas_03.png",
+  "a9e897d6db98c46d9aaf3f141f3965a3e6ef8851de98825c08163ebe094e8155": "G:/Мой диск/AGR-evidence/524-maf-atlases/atlas_04.png",
+  "1c1a6821c11d867ad330f6d7f5a805ff26992e7d31a35514c51f5f1c21d02bf8": "G:/Мой диск/AGR-evidence/524-maf-atlases/example_id_layout.png"
+ }
+}

@@ -194,3 +194,10 @@ uv run python tools/library/maf_gen_catalogue.py --build-dir C:/x/vatutino-maf/g
 ```
 
 and copy both outputs back (outputs may not alias an input). Current: «Верона» rows 2-10 [D202], row 1 not approved.
+
+## Staropetrovskiy ZU_7_A: batch rules and material IDs v008
+
+All 51 masters are already present as drafts in the published catalogue (#1993, [D421]); no second
+`generated` entry or library acceptance. Keep the master pivot (Z=0 at ground level, embedment
+stays) [D357]. Historical VPM results and exceptions: [batch record](../../jobs/staropetrovskiy-maf-lib/TASK.md)
+[D359]. `material_ids_v008.json` adds IDs 34–39 for this job; the active MAF pointer stays v007 [D358].
