@@ -71,6 +71,12 @@ def dims_check(spec_mm, model_mm, tol=TOL):
 def maf_library(unified, vatutino_schedule=None, vatutino_set=None):
     by_art, a101 = {}, []
     for r in unified['records']:
+        if r.get('source') == 'published' and r.get('status') in ('draft', 'accepted'):
+            # agent-made library versions [D421]: searchable by article, each hit keeps its `status`
+            k = lib._article_key(r.get('article') or '')
+            if len(k) >= 4:
+                by_art.setdefault(k, []).append(r)
+            continue
         if r.get('source') != 'a101':
             continue
         a101.append(r)
@@ -215,7 +221,8 @@ def identify(project, maf_rows, flora_rows, kinds, scene_map, maf_unified, flora
         rec = {'key': key, 'kind': 'maf', 'table': r.get('table'), 'row': r.get('row'), 'name': r.get('name'),
                'article': r.get('article'), 'maker': r.get('maker'), 'qty': r.get('qty'),
                'dims_mm': [r.get('L_mm'), r.get('W_mm'), r.get('H_mm')], 'dwg_count': r.get('dwg_count'),
-               'library': [h['name'] for h in hits], 'library_by_name': [] if hits else
+               'library': [h['name'] for h in hits], 'library_status': [h.get('status') for h in hits],
+               'library_by_name': [] if hits else
                maf_name_candidates(r.get('name'), a101), 'project_sets': vat.get(art, []),
                'proposed_name': lib.propose_maf_name(r.get('maker'), r.get('name'), r.get('article'))}
         rec['library_dims'] = [dims_check(rec['dims_mm'], (h.get('bbox_mm') or {}).get('high')) for h in hits]

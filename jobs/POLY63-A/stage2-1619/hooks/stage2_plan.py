@@ -167,7 +167,7 @@ def stop(problems):
 
 
 def claim_openings(openings, n_sources, pick, source_label, check_claimed=None):
-    """THE stage-2 opening -> window-type resolution of every POLY63 tower (63A here, 63C stage2_63c.py, 63B from
+    """THE stage-2 opening -> window-type resolution of every POLY63 tower (63A here, 63C tools/windows/stage2.py, 63B from
     the start; #1714, duplicate_guard rule `poly63-window-match`). Tower-specific matching stays in `pick`.
 
     pick(opening, centre) -> (source index, info) resolves the opening to exactly one source, or (None, problem text).

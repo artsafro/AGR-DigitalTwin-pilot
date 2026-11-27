@@ -16,6 +16,7 @@
  "base_id": 1,
  "unhatched": {"cover_id": 1, "reason": "D283: the 17.009 m2 pink wedge has no hatch in the PZU; adjacent lawn, disclosed orchestrator assumption"},
  "relief": {"block": "ACAD-Силикатный ВП_5 (пониженеие отметок)-Model16.10.2026",
+            "definition_only": true,
             "insert_names": ["Опорная точка планировки", "Отметка_треугольник"],
             "contour_layers": ["ГП_ПОР_Горизонтали проектные"]},
  "params": {"cell": 3.0, "chord": 0.02, "step": 0.006, "snap": 0.001, "relief_tol": 0.01, "skirt_m": 1.0,

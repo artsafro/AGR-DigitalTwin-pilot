@@ -1,0 +1,106 @@
+[
+ {
+  "run": "63a-stage1-codex-r87-1",
+  "tower_id_stop": false,
+  "fbx": [],
+  "fbx_ok": false,
+  "gate1_self": true,
+  "key_hits": [
+   "jobs/poly63-a",
+   "jobs/poly63-b"
+  ],
+  "questions_sha256": "588a37c3e50af58b32f9bb9ef37975e03c2e8457a58de2d6cdbdb6625d9e2c65",
+  "wall_s": 320.7,
+  "exit": 0,
+  "origin_main": "73bf58902ef4926420beb396b7614697bbb42e97"
+ },
+ {
+  "run": "63a-stage1-codex-r87-2",
+  "tower_id_stop": false,
+  "fbx": [],
+  "fbx_ok": false,
+  "gate1_self": true,
+  "key_hits": [
+   "jobs/poly63-a",
+   "jobs/poly63-b"
+  ],
+  "questions_sha256": "96de9e376d85cdb7fdbe305c2fdc4d00127c85ce6f5b3cc581659270094acdd0",
+  "wall_s": 345.8,
+  "exit": 0,
+  "origin_main": "cbd62fda4cd8bae336d4a2951087f9e30215ee3c"
+ },
+ {
+  "run": "63a-stage1-codex-r87-3",
+  "tower_id_stop": false,
+  "fbx": [
+   "body.fbx",
+   "body.fbx"
+  ],
+  "fbx_ok": true,
+  "gate1_self": true,
+  "key_hits": [
+   "63a_stage1_v005",
+   "63a_stage1_v004",
+   "v005.fbx",
+   "v004.fbx",
+   "jobs/poly63-a"
+  ],
+  "questions_sha256": "b67db74616657ba7fef6288ed230bf73b0a3fd9b2b555204051010ace69e75ba",
+  "wall_s": 338.4,
+  "exit": 1,
+  "origin_main": "08015022acc2a140994eeb188444f68a4388c15c"
+ },
+ {
+  "run": "63b-stage1-codex-r87-1",
+  "tower_id_stop": false,
+  "fbx": [],
+  "fbx_ok": false,
+  "gate1_self": true,
+  "key_hits": [],
+  "questions_sha256": "19443c6c787cff4ff24e0ce0ba22228a12ebd080762c8823a33d577837afcd83",
+  "wall_s": 366.2,
+  "exit": 0,
+  "origin_main": "73bf58902ef4926420beb396b7614697bbb42e97"
+ },
+ {
+  "run": "63b-stage1-codex-r87-2",
+  "tower_id_stop": false,
+  "fbx": [],
+  "fbx_ok": false,
+  "gate1_self": false,
+  "key_hits": [],
+  "questions_sha256": null,
+  "wall_s": 60.8,
+  "exit": 1,
+  "origin_main": "cbd62fda4cd8bae336d4a2951087f9e30215ee3c"
+ },
+ {
+  "run": "63b-stage1-codex-r87-3",
+  "tower_id_stop": false,
+  "fbx": [
+   "63B_stage1_partial.fbx",
+   "63B_stage1_partial_v2.fbx",
+   "body.fbx",
+   "body.fbx",
+   "body.fbx",
+   "body.fbx",
+   "body.fbx",
+   "body.fbx",
+   "body.fbx"
+  ],
+  "fbx_ok": true,
+  "gate1_self": true,
+  "key_hits": [
+   "v007.fbx",
+   "v006.fbx",
+   "v005.fbx",
+   "v004.fbx",
+   "jobs/poly63-a",
+   "jobs/poly63-b"
+  ],
+  "questions_sha256": "6fded29b31f31710a4371360c4a7fb40162fecd5fb24e2e17bafa30687702a53",
+  "wall_s": 727.8,
+  "exit": 0,
+  "origin_main": "08015022acc2a140994eeb188444f68a4388c15c"
+ }
+]

@@ -163,9 +163,7 @@ def test_readback_detects_changed_input(tmp_path, monkeypatch):
 @pytest.mark.parametrize('target', ['T_Synthetic_001_Main_d_1.png',
                                     'T_Synthetic_001_Main_o_1.png', 'npm_atlas.json'])
 def test_generator_rejects_racing_output_hardlink(tmp_path, monkeypatch, target):
-    import sys
-    sys.path.insert(0, atlas.RECIPE)
-    import finish_map
+    finish_map = atlas.finish_map
     original = finish_map.fresh_out_dir
     source = synthetic_spec(tmp_path / 'spec.json', 1)
     before = source.read_bytes()

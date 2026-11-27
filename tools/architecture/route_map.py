@@ -11,7 +11,9 @@ route (#1392: vpm-oks-contexts.yaml, ground-contexts.yaml, same schema); `--chec
 map lists every stage context of that route with the same owner (route_coverage). A context without a
 `duplicates` key draws no duplicates box. `serves_stage: <stage id>` associates a helper with its route stage;
 `no_stage: <reason>` explicitly documents an intentional stage-less context. Unannotated stage-less contexts
-(including kernels) are WARNINGs, not check failures. A context may use `ref: <registered map filename>#<id>`;
+(including kernels) are WARNINGs, not check failures. #1930: a context with no incident relation is also a
+WARNING (review hint, not proof of completeness) unless it states `isolated_ru: <reason>`; a reason on a linked
+node is stale (SchemaError). A context may use `ref: <registered map filename>#<id>`;
 owner, owner_ru and functions come from that exact map, never another map with the same context id.
 Each route's `scheme.export_context.ref` explicitly selects the short view's export owner. Missing/ambiguous
 targets and reference cycles raise SchemaError before publication. Optional `grid: "col/row"` on every context of a map places it
@@ -311,6 +313,30 @@ def route_coverage(events, contexts, cmap):
     return problems
 
 
+def relation_hints(cmap):
+    """#1930: review hints (WARNING, never a failure) for context nodes without any incident relation.
+
+    Separate from route_coverage (stage/owner coverage keeps its own contract); `--check` prints both.
+    A node isolated on purpose carries a short Russian ``isolated_ru`` explanation and is silent; an explanation
+    on a node that does have a relation is stale and a SchemaError. No hint is not proof that the relations
+    are complete or true - only that every node has at least one edge or a stated reason for none.
+    """
+    check_contexts(cmap)
+    incident = {rel[end] for rel in cmap.get("relations", []) for end in ("from", "to")}
+    hints = []
+    for c in [cmap["shared_kernel"], *cmap["contexts"]]:
+        if "isolated_ru" in c:
+            value = c["isolated_ru"]
+            if not isinstance(value, str) or not value.strip() or not CYRILLIC.search(value):
+                raise SchemaError(f"context {c['id']}: isolated_ru must be a non-blank Russian explanation")
+            if c["id"] in incident:
+                raise SchemaError(f"context {c['id']}: isolated_ru is stale, the node has a relation")
+        elif c["id"] not in incident:
+            hints.append(f"WARNING: context map: context {c['id']!r} has no relation "
+                         "(review hint, not proof of completeness)")
+    return hints
+
+
 # ---------------------------------------------------------------- references (existence)
 def _dt_commands():
     import argparse as _ap
@@ -330,7 +356,7 @@ def command_exists(command):
         from dt_ai.cli import agr
         if len(words) == 3 and words[1] == "ground":  # agr ground site|zero|v015 (#1406)
             return words[2] in agr.GROUND_STEPS
-        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm", "ucx"}
+        return len(words) == 2 and words[1] in set(agr.ALIASES) | set(agr.SCRIPTS) | {"vpm-to-npm", "ucx", "brick-seams", "body", "maf-npm-to-vpm"}  # #1895: every served command
     if words[0] != "dt":
         return False
     sub = _dt_commands().get(words[1])
@@ -898,6 +924,8 @@ def resolve_context(context, maps, seen=()):
     result = {**target, **context}
     if "grid" not in context:  # placement belongs to this map, not the referenced owner's map
         result.pop("grid", None)
+    if "isolated_ru" not in context:  # #1930: isolation is a fact of this map's relations, not the source map's
+        result.pop("isolated_ru", None)
     for key in ("owner", "owner_ru", "functions"):
         result[key] = _need(target, key, f"context ref {ref!r}", list if key == "functions" else str)
     return result
@@ -1144,7 +1172,7 @@ def main(argv=None):
                 if name != "contexts":
                     problems += [f"{label}: {p}"
                                  for p in verify_references(args.root, {"stages": [], "hotspots": []}, maps[name])]
-                for p in route_coverage(events, contexts, maps[name]):
+                for p in route_coverage(events, contexts, maps[name]) + relation_hints(maps[name]):
                     if p.startswith("WARNING:"):
                         print(f"WARNING: {label}: {p.removeprefix('WARNING: ')}")
                     else:

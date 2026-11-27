@@ -1597,6 +1597,44 @@
    "status": "a101"
   },
   {
+   "id": "maf_a101:GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+   "source": "a101",
+   "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+   "manufacturer": "GKVysota",
+   "title": "StolSoSkameykoyIDivanom",
+   "article": "VST9504-1",
+   "versions": [
+    "high",
+    "low"
+   ],
+   "file": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1.zip",
+   "sidecar": true,
+   "units": "mm",
+   "tris": {
+    "high": 1020,
+    "low": 636
+   },
+   "bbox_mm": {
+    "high": {
+     "x": 1800.0,
+     "y": 2004.9,
+     "z": 854.9
+    },
+    "low": {
+     "x": 1800.0,
+     "y": 2004.9,
+     "z": 854.9
+    }
+   },
+   "spec": [],
+   "preview": "previews/maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1.png",
+   "category": "Скамья",
+   "title_ru": null,
+   "measured": false,
+   "warnings": [],
+   "status": "a101"
+  },
+  {
    "id": "maf_a101:Hobbika_GamakHardwood_25308",
    "source": "a101",
    "name": "Hobbika_GamakHardwood_25308",
@@ -19527,6 +19565,3660 @@
    "file": "C:/x/t_3e6ff1b3/library/max/MAF_0931_Object122.max",
    "preview": "C:/x/t_3e6ff1b3/library/preview/MAF_0931_Object122.png",
    "status": "legacy_unidentified"
+  },
+  {
+   "id": "maf_published:Adanat_NavesLianaSPolikarbonatom_40074@v001",
+   "source": "published",
+   "name": "Adanat_NavesLianaSPolikarbonatom_40074",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Навес Лиана с поликарбонатом",
+   "article": "40074",
+   "bbox_mm": {
+    "high": {
+     "x": 3000.0,
+     "y": 2005.0,
+     "z": 2782.0
+    }
+   },
+   "tris": {
+    "vpm": 1200,
+    "npm": null
+   },
+   "path": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001",
+   "preview": "maf/Adanat_NavesLianaSPolikarbonatom_40074/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "AD40074",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Feniks_InformatsionnyyStendZapovednik_187150@v001",
+   "source": "published",
+   "name": "Feniks_InformatsionnyyStendZapovednik_187150",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Феникс",
+   "title_ru": "Информационный стенд Заповедник",
+   "article": "187150",
+   "bbox_mm": {
+    "high": {
+     "x": 844.0,
+     "y": 145.0,
+     "z": 1820.0
+    }
+   },
+   "tris": {
+    "vpm": 394,
+    "npm": null
+   },
+   "path": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001",
+   "preview": "maf/Feniks_InformatsionnyyStendZapovednik_187150/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "FX187150",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Feniks_SportivnyyVorkautKompleksZapovednik_217280@v001",
+   "source": "published",
+   "name": "Feniks_SportivnyyVorkautKompleksZapovednik_217280",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Феникс",
+   "title_ru": "Спортивный воркаут-комплекс Заповедник",
+   "article": "217280",
+   "bbox_mm": {
+    "high": {
+     "x": 4020.0,
+     "y": 2835.5,
+     "z": 2553.0
+    }
+   },
+   "tris": {
+    "vpm": 1900,
+    "npm": null
+   },
+   "path": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001",
+   "preview": "maf/Feniks_SportivnyyVorkautKompleksZapovednik_217280/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "FX217280",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_RazvivayuschiyElement_MG3402@v001",
+   "source": "published",
+   "name": "Millenium_RazvivayuschiyElement_MG3402",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Развивающий элемент",
+   "article": "MG3402",
+   "bbox_mm": {
+    "high": {
+     "x": 2134.0,
+     "y": 2435.6,
+     "z": 1305.0
+    }
+   },
+   "tris": {
+    "vpm": 1410,
+    "npm": null
+   },
+   "path": "maf/Millenium_RazvivayuschiyElement_MG3402/v001",
+   "preview": "maf/Millenium_RazvivayuschiyElement_MG3402/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "MG3402",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_Pereprava_MG3518@v001",
+   "source": "published",
+   "name": "Millenium_Pereprava_MG3518",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Переправа",
+   "article": "MG3518",
+   "bbox_mm": {
+    "high": {
+     "x": 3000.0,
+     "y": 526.0,
+     "z": 2070.0
+    }
+   },
+   "tris": {
+    "vpm": 1028,
+    "npm": null
+   },
+   "path": "maf/Millenium_Pereprava_MG3518/v001",
+   "preview": "maf/Millenium_Pereprava_MG3518/v001/prev_front.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "mafs-b3-2026-11-26",
+    "object": "MG3518",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:GKVysota_TenevoyNavesNordik_VST1519-1@v001",
+   "source": "published",
+   "name": "GKVysota_TenevoyNavesNordik_VST1519-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "GKVysota",
+   "title_ru": "Теневой навес 6400x4850x2700 мм",
+   "article": "VST1519-1",
+   "bbox_mm": {
+    "high": {
+     "x": 6400.0,
+     "y": 4850.0,
+     "z": 2800.4
+    }
+   },
+   "tris": {
+    "vpm": 892,
+    "npm": 892
+   },
+   "path": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001",
+   "preview": "maf/GKVysota_TenevoyNavesNordik_VST1519-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "01_GKVysota_TenevoyNavesNordik_VST1519-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Robinzon_DoskaDlyaRisovaniya_7W2002@v001",
+   "source": "published",
+   "name": "Robinzon_DoskaDlyaRisovaniya_7W2002",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Robinzon",
+   "title_ru": "Доска для рисования мелом",
+   "article": "7W2002",
+   "bbox_mm": {
+    "high": {
+     "x": 1190.4,
+     "y": 140.4,
+     "z": 1660.0
+    }
+   },
+   "tris": {
+    "vpm": 130,
+    "npm": 130
+   },
+   "path": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001",
+   "preview": "maf/Robinzon_DoskaDlyaRisovaniya_7W2002/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "02_Robinzon_DoskaDlyaRisovaniya_7W2002",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Robinzon_Sobranie_6W7000@v001",
+   "source": "published",
+   "name": "Robinzon_Sobranie_6W7000",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Robinzon",
+   "title_ru": "Малые архитектурные формы \"Собрание\"",
+   "article": "6W7000",
+   "bbox_mm": {
+    "high": {
+     "x": 1780.1,
+     "y": 1788.8,
+     "z": 600.0
+    }
+   },
+   "tris": {
+    "vpm": 332,
+    "npm": 332
+   },
+   "path": "maf/Robinzon_Sobranie_6W7000/v001",
+   "preview": "maf/Robinzon_Sobranie_6W7000/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "03_Robinzon_Sobranie_6W7000",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Taiga_BumBrevno_IK0209T-6-1@v001",
+   "source": "published",
+   "name": "Taiga_BumBrevno_IK0209T-6-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Taiga",
+   "title_ru": "Гимнастический комплекс \"БУМ-Бревно\"",
+   "article": "IK0209T-6-1",
+   "bbox_mm": {
+    "high": {
+     "x": 2271.6,
+     "y": 315.0,
+     "z": 600.0
+    }
+   },
+   "tris": {
+    "vpm": 330,
+    "npm": 330
+   },
+   "path": "maf/Taiga_BumBrevno_IK0209T-6-1/v001",
+   "preview": "maf/Taiga_BumBrevno_IK0209T-6-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "04_Taiga_BumBrevno_IK0209T-6-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Taiga_PeregovornyeTruby_IO1215-1@v001",
+   "source": "published",
+   "name": "Taiga_PeregovornyeTruby_IO1215-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Taiga",
+   "title_ru": "Переговорные трубы",
+   "article": "IO1215-1",
+   "bbox_mm": {
+    "high": {
+     "x": 335.9,
+     "y": 146.9,
+     "z": 1073.9
+    }
+   },
+   "tris": {
+    "vpm": 134,
+    "npm": 134
+   },
+   "path": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001",
+   "preview": "maf/Taiga_PeregovornyeTruby_IO1215-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "05_Taiga_PeregovornyeTruby_IO1215-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Taiga_Aerofon_IO1204@v001",
+   "source": "published",
+   "name": "Taiga_Aerofon_IO1204",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Taiga",
+   "title_ru": "Аэрофон",
+   "article": "IO1204",
+   "bbox_mm": {
+    "high": {
+     "x": 1074.0,
+     "y": 234.0,
+     "z": 1000.0
+    }
+   },
+   "tris": {
+    "vpm": 404,
+    "npm": 404
+   },
+   "path": "maf/Taiga_Aerofon_IO1204/v001",
+   "preview": "maf/Taiga_Aerofon_IO1204/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "06_Taiga_Aerofon_IO1204",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Taiga_YazychkovyyBaraban_IO1211@v001",
+   "source": "published",
+   "name": "Taiga_YazychkovyyBaraban_IO1211",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Taiga",
+   "title_ru": "Язычковый барабан",
+   "article": "IO1211",
+   "bbox_mm": {
+    "high": {
+     "x": 576.2,
+     "y": 539.5,
+     "z": 879.1
+    }
+   },
+   "tris": {
+    "vpm": 224,
+    "npm": 224
+   },
+   "path": "maf/Taiga_YazychkovyyBaraban_IO1211/v001",
+   "preview": "maf/Taiga_YazychkovyyBaraban_IO1211/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "07_Taiga_YazychkovyyBaraban_IO1211",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Robinzon_ShahIMat_6U7004@v001",
+   "source": "published",
+   "name": "Robinzon_ShahIMat_6U7004",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Robinzon",
+   "title_ru": "Шахматный стол \"Шах и мат\" (цвет Бежевый)",
+   "article": "6U7004",
+   "bbox_mm": {
+    "high": {
+     "x": 1700.0,
+     "y": 800.0,
+     "z": 856.0
+    }
+   },
+   "tris": {
+    "vpm": 226,
+    "npm": 226
+   },
+   "path": "maf/Robinzon_ShahIMat_6U7004/v001",
+   "preview": "maf/Robinzon_ShahIMat_6U7004/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "08_Robinzon_ShahIMat_6U7004",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Robinzon_StrelaDuga_6U2023@v001",
+   "source": "published",
+   "name": "Robinzon_StrelaDuga_6U2023",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Robinzon",
+   "title_ru": "Скамейка \"Стрела-дуга\"",
+   "article": "6U2023",
+   "bbox_mm": {
+    "high": {
+     "x": 10349.2,
+     "y": 4301.1,
+     "z": 500.0
+    }
+   },
+   "tris": {
+    "vpm": 674,
+    "npm": 674
+   },
+   "path": "maf/Robinzon_StrelaDuga_6U2023/v001",
+   "preview": "maf/Robinzon_StrelaDuga_6U2023/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "09_Robinzon_StrelaDuga_6U2023",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Robinzon_Plato1_6W3000-1@v001",
+   "source": "published",
+   "name": "Robinzon_Plato1_6W3000-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Robinzon",
+   "title_ru": "Малые архитектурные формы \"Плато 1\"",
+   "article": "6W3000-1",
+   "bbox_mm": {
+    "high": {
+     "x": 1496.8,
+     "y": 921.0,
+     "z": 534.0
+    }
+   },
+   "tris": {
+    "vpm": 124,
+    "npm": 124
+   },
+   "path": "maf/Robinzon_Plato1_6W3000-1/v001",
+   "preview": "maf/Robinzon_Plato1_6W3000-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "10_Robinzon_Plato1_6W3000-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Robinzon_HitrouGrand_6W2006-1@v001",
+   "source": "published",
+   "name": "Robinzon_HitrouGrand_6W2006-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Robinzon",
+   "title_ru": "Малые архитектурные формы \"Хитроу гранд\"",
+   "article": "6W2006-1",
+   "bbox_mm": {
+    "high": {
+     "x": 2000.0,
+     "y": 1200.0,
+     "z": 800.0
+    }
+   },
+   "tris": {
+    "vpm": 112,
+    "npm": 112
+   },
+   "path": "maf/Robinzon_HitrouGrand_6W2006-1/v001",
+   "preview": "maf/Robinzon_HitrouGrand_6W2006-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "11_Robinzon_HitrouGrand_6W2006-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Taiga_StolTennisnyy_SO0216-3@v001",
+   "source": "published",
+   "name": "Taiga_StolTennisnyy_SO0216-3",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Taiga",
+   "title_ru": "Стол теннисный",
+   "article": "SO0216-3",
+   "bbox_mm": {
+    "high": {
+     "x": 2740.0,
+     "y": 1525.0,
+     "z": 1000.0
+    }
+   },
+   "tris": {
+    "vpm": 62,
+    "npm": 62
+   },
+   "path": "maf/Taiga_StolTennisnyy_SO0216-3/v001",
+   "preview": "maf/Taiga_StolTennisnyy_SO0216-3/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "17_Taiga_StolTennisnyy_SO0216-3",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Pokolenie_BasketbolnayaStoyka_SO-012@v001",
+   "source": "published",
+   "name": "Pokolenie_BasketbolnayaStoyka_SO-012",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Pokolenie",
+   "title_ru": "Баскетбольная стойка",
+   "article": "SO-012",
+   "bbox_mm": {
+    "high": {
+     "x": 1800.0,
+     "y": 1292.0,
+     "z": 3600.0
+    }
+   },
+   "tris": {
+    "vpm": 270,
+    "npm": 270
+   },
+   "path": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001",
+   "preview": "maf/Pokolenie_BasketbolnayaStoyka_SO-012/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "19_Pokolenie_BasketbolnayaStoyka_SO-012",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053@v001",
+   "source": "published",
+   "name": "Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Pokolenie",
+   "title_ru": "Спортивный комплекс (волейбол) с возможностью регулирования крепления сетки по высоте, оборудован сеткой, от 6лет",
+   "article": "SO-053",
+   "bbox_mm": {
+    "high": {
+     "x": 8693.9,
+     "y": 73.9,
+     "z": 2600.0
+    }
+   },
+   "tris": {
+    "vpm": 118,
+    "npm": 118
+   },
+   "path": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001",
+   "preview": "maf/Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "21_Pokolenie_VoleybolnyeStoykiSSetkoy_SO-053",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:GrandMag_FlagshtokAlyuminievyy_AL-L-06-11@v001",
+   "source": "published",
+   "name": "GrandMag_FlagshtokAlyuminievyy_AL-L-06-11",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "GrandMag",
+   "title_ru": "Уличный флагшток из алюминия",
+   "article": "AL-L-06-11",
+   "bbox_mm": {
+    "high": {
+     "x": 1537.5,
+     "y": 300.0,
+     "z": 9450.0
+    }
+   },
+   "tris": {
+    "vpm": 154,
+    "npm": 154
+   },
+   "path": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001",
+   "preview": "maf/GrandMag_FlagshtokAlyuminievyy_AL-L-06-11/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "23_GrandMag_FlagshtokAlyuminievyy_AL-L-06-11",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:GKVysota_StolSoSkameykoyIDivanom_VST9504-1@v001",
+   "source": "published",
+   "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "GKVysota",
+   "title_ru": "Стол со скамейкой и диваном",
+   "article": "VST9504-1",
+   "bbox_mm": {
+    "high": {
+     "x": 1800.0,
+     "y": 2004.9,
+     "z": 953.4
+    }
+   },
+   "tris": {
+    "vpm": 492,
+    "npm": 492
+   },
+   "path": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001",
+   "preview": "maf/GKVysota_StolSoSkameykoyIDivanom_VST9504-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "24_GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:GKVysota_Pergola_VST9614-4@v001",
+   "source": "published",
+   "name": "GKVysota_Pergola_VST9614-4",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "GKVysota",
+   "title_ru": "Пергола",
+   "article": "VST9614-4",
+   "bbox_mm": {
+    "high": {
+     "x": 5800.0,
+     "y": 2000.0,
+     "z": 2800.0
+    }
+   },
+   "tris": {
+    "vpm": 684,
+    "npm": 684
+   },
+   "path": "maf/GKVysota_Pergola_VST9614-4/v001",
+   "preview": "maf/GKVysota_Pergola_VST9614-4/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "25_GKVysota_Pergola_VST9614-4",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:GKVysota_NavesDlyaMGN_VST9624-3@v001",
+   "source": "published",
+   "name": "GKVysota_NavesDlyaMGN_VST9624-3",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "GKVysota",
+   "title_ru": "Навес для МГН",
+   "article": "VST9624-3",
+   "bbox_mm": {
+    "high": {
+     "x": 5000.0,
+     "y": 1750.0,
+     "z": 2100.0
+    }
+   },
+   "tris": {
+    "vpm": 484,
+    "npm": 472
+   },
+   "path": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001",
+   "preview": "maf/GKVysota_NavesDlyaMGN_VST9624-3/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "26_GKVysota_NavesDlyaMGN_VST9624-3",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Adanat_SkameykaSkarletSPodlokotnikami_10027-1@v001",
+   "source": "published",
+   "name": "Adanat_SkameykaSkarletSPodlokotnikami_10027-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Скамейка «Скарлет» с подлокотниками",
+   "article": "10027-1",
+   "bbox_mm": {
+    "high": {
+     "x": 1800.0,
+     "y": 644.8,
+     "z": 909.6
+    }
+   },
+   "tris": {
+    "vpm": 296,
+    "npm": 296
+   },
+   "path": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001",
+   "preview": "maf/Adanat_SkameykaSkarletSPodlokotnikami_10027-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "27_Adanat_SkameykaSkarletSPodlokotnikami_10027-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Adanat_UrnaGorod_9004@v001",
+   "source": "published",
+   "name": "Adanat_UrnaGorod_9004",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Урны \"Город\"",
+   "article": "9004",
+   "bbox_mm": {
+    "high": {
+     "x": 400.0,
+     "y": 400.0,
+     "z": 1100.0
+    }
+   },
+   "tris": {
+    "vpm": 204,
+    "npm": 204
+   },
+   "path": "maf/Adanat_UrnaGorod_9004/v001",
+   "preview": "maf/Adanat_UrnaGorod_9004/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "28_Adanat_UrnaGorod_9004",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Adanat_KonteynernayaPloshchadkaBunker_5003-1@v001",
+   "source": "published",
+   "name": "Adanat_KonteynernayaPloshchadkaBunker_5003-1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Контейнерная площадка  на 3 контейнера",
+   "article": "5003-1",
+   "bbox_mm": {
+    "high": {
+     "x": 4540.0,
+     "y": 2547.0,
+     "z": 2590.0
+    }
+   },
+   "tris": {
+    "vpm": 1058,
+    "npm": 1058
+   },
+   "path": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001",
+   "preview": "maf/Adanat_KonteynernayaPloshchadkaBunker_5003-1/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "32_Adanat_KonteynernayaPloshchadkaBunker_5003-1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001@v001",
+   "source": "published",
+   "name": "Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Pokolenie",
+   "title_ru": "Контейнер для мусора с крышкой",
+   "article": "MK001",
+   "bbox_mm": {
+    "high": {
+     "x": 1400.0,
+     "y": 1400.0,
+     "z": 900.0
+    }
+   },
+   "tris": {
+    "vpm": 182,
+    "npm": 182
+   },
+   "path": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001",
+   "preview": "maf/Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "34_Pokolenie_KonteynerDlyaMusoraSKryshkoy_MK001",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_OgrazhdenieProPanel2500x2430_001@v001",
+   "source": "published",
+   "name": "AGR_maf_OgrazhdenieProPanel2500x2430_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Cварное ограждение PRO  H=2,5 м",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 2500.0,
+     "y": 0.0,
+     "z": 2430.0
+    }
+   },
+   "tris": {
+    "vpm": 2,
+    "npm": 2
+   },
+   "path": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001",
+   "preview": "maf/AGR_maf_OgrazhdenieProPanel2500x2430_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "35_GrandLine_Panel3DProfi_2500x2430",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_OgrazhdenieProStolb60x60x2600_001@v001",
+   "source": "published",
+   "name": "AGR_maf_OgrazhdenieProStolb60x60x2600_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Cварное ограждение PRO  H=2,5 м",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 60.0,
+     "y": 60.0,
+     "z": 2600.0
+    }
+   },
+   "tris": {
+    "vpm": 10,
+    "npm": 10
+   },
+   "path": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001",
+   "preview": "maf/AGR_maf_OgrazhdenieProStolb60x60x2600_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "35_GrandLine_StolbProfi_60x60x2600",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KalitkaPerimetr1200x2430_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KalitkaPerimetr1200x2430_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Калитка периметрального ограждения",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 1220.0,
+     "y": 40.0,
+     "z": 2430.0
+    }
+   },
+   "tris": {
+    "vpm": 32,
+    "npm": 32
+   },
+   "path": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001",
+   "preview": "maf/AGR_maf_KalitkaPerimetr1200x2430_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "37_GrandLine_KalitkaProfi_1200x2430",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KalitkaSport1200x3930_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KalitkaSport1200x3930_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Калитка в спор. ограждении",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 1220.0,
+     "y": 40.0,
+     "z": 3930.0
+    }
+   },
+   "tris": {
+    "vpm": 40,
+    "npm": 40
+   },
+   "path": "maf/AGR_maf_KalitkaSport1200x3930_001/v001",
+   "preview": "maf/AGR_maf_KalitkaSport1200x3930_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "38_GrandLine_KalitkaBastion_1200x3930",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_OgrazhdenieSportPanel2500x3930_001@v001",
+   "source": "published",
+   "name": "AGR_maf_OgrazhdenieSportPanel2500x3930_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Ограждение спортивное H=4 м",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 2500.0,
+     "y": 0.0,
+     "z": 3930.0
+    }
+   },
+   "tris": {
+    "vpm": 2,
+    "npm": 2
+   },
+   "path": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001",
+   "preview": "maf/AGR_maf_OgrazhdenieSportPanel2500x3930_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "39_GrandLine_Panel2DBastion_2500x3930",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_OgrazhdenieSportStolb80x80x4100_001@v001",
+   "source": "published",
+   "name": "AGR_maf_OgrazhdenieSportStolb80x80x4100_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Ограждение спортивное H=4 м",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 80.0,
+     "y": 80.0,
+     "z": 4100.0
+    }
+   },
+   "tris": {
+    "vpm": 10,
+    "npm": 10
+   },
+   "path": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001",
+   "preview": "maf/AGR_maf_OgrazhdenieSportStolb80x80x4100_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "moskovsky-sosh1200-maf-v002",
+    "object": "39_GrandLine_StolbBastion_80x80x4100",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkulpturaRassvetnoeSolntse_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkulpturaRassvetnoeSolntse_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скульптура «Рассветное солнце»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 3747.6,
+     "y": 2019.8,
+     "z": 4487.9
+    }
+   },
+   "tris": {
+    "vpm": 354,
+    "npm": 354
+   },
+   "path": "maf/AGR_maf_SkulpturaRassvetnoeSolntse_001/v001",
+   "preview": "maf/AGR_maf_SkulpturaRassvetnoeSolntse_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "A01_sunrise_sculpture",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkulpturaZakatnoeSolntse_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkulpturaZakatnoeSolntse_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скульптура «Закатное солнце»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 7432.2,
+     "y": 1745.8,
+     "z": 3140.0
+    }
+   },
+   "tris": {
+    "vpm": 345,
+    "npm": 345
+   },
+   "path": "maf/AGR_maf_SkulpturaZakatnoeSolntse_001/v001",
+   "preview": "maf/AGR_maf_SkulpturaZakatnoeSolntse_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "A02_sunset_sculpture",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_ParametricheskayaSkamyaTselnaya_001@v001",
+   "source": "published",
+   "name": "AGR_maf_ParametricheskayaSkamyaTselnaya_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Параметрическая скамья цельная",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 6075.0,
+     "y": 595.0,
+     "z": 1300.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 640
+   },
+   "path": "maf/AGR_maf_ParametricheskayaSkamyaTselnaya_001/v001",
+   "preview": "maf/AGR_maf_ParametricheskayaSkamyaTselnaya_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I01_parametric_bench",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_StatsionarnoeKashpoTip1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_StatsionarnoeKashpoTip1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Стационарное кашпо. Тип 1",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 11525.0,
+     "y": 1229.7,
+     "z": 1140.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 606
+   },
+   "path": "maf/AGR_maf_StatsionarnoeKashpoTip1_001/v001",
+   "preview": "maf/AGR_maf_StatsionarnoeKashpoTip1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I02_planter_t1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_StatsionarnoeKashpoSoSkameyTip2_001@v001",
+   "source": "published",
+   "name": "AGR_maf_StatsionarnoeKashpoSoSkameyTip2_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Стационарное кашпо со скамьёй. Тип 2",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 11525.0,
+     "y": 1608.9,
+     "z": 1300.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 980
+   },
+   "path": "maf/AGR_maf_StatsionarnoeKashpoSoSkameyTip2_001/v001",
+   "preview": "maf/AGR_maf_StatsionarnoeKashpoSoSkameyTip2_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I03_planter_bench_t2",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_DekorativnayaPodpornayaStenkaTip1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_DekorativnayaPodpornayaStenkaTip1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Декоративная подпорная стенка. Тип 1",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 11262.9,
+     "y": 1246.6,
+     "z": 2025.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 732
+   },
+   "path": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip1_001/v001",
+   "preview": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I04_retaining_wall_t1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_DekorativnayaPodpornayaStenkaTip4ModifikatsiyaTipa1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_DekorativnayaPodpornayaStenkaTip4ModifikatsiyaTipa1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Декоративная подпорная стенка. Тип 4 (модификация типа 1)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 19520.0,
+     "y": 6058.8,
+     "z": 2028.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 980
+   },
+   "path": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip4ModifikatsiyaTipa1_001/v001",
+   "preview": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip4ModifikatsiyaTipa1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I04a_retaining_wall_t4",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_ParametricheskayaSkamyaTselnayaNaPodporkeBenchVPodpornoySten_001@v001",
+   "source": "published",
+   "name": "AGR_maf_ParametricheskayaSkamyaTselnayaNaPodporkeBenchVPodpornoySten_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Параметрическая скамья цельная на подпорке (бенч в подпорной стенке)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 16540.0,
+     "y": 760.0,
+     "z": 2025.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 1796
+   },
+   "path": "maf/AGR_maf_ParametricheskayaSkamyaTselnayaNaPodporkeBenchVPodpornoySten_001/v001",
+   "preview": "maf/AGR_maf_ParametricheskayaSkamyaTselnayaNaPodporkeBenchVPodpornoySten_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I04b_bench_retaining_wall",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_DekorativnayaPodpornayaStenkaTip2_001@v001",
+   "source": "published",
+   "name": "AGR_maf_DekorativnayaPodpornayaStenkaTip2_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Декоративная подпорная стенка. Тип 2",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 35397.0,
+     "y": 3892.2,
+     "z": 1610.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 544
+   },
+   "path": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip2_001/v001",
+   "preview": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip2_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I05_retaining_wall_t2",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_DekorativnayaPodpornayaStenkaTip5ModifikatsiyaTipa2_001@v001",
+   "source": "published",
+   "name": "AGR_maf_DekorativnayaPodpornayaStenkaTip5ModifikatsiyaTipa2_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Декоративная подпорная стенка. Тип 5 (модификация типа 2)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 18440.0,
+     "y": 2903.9,
+     "z": 1500.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 745
+   },
+   "path": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip5ModifikatsiyaTipa2_001/v001",
+   "preview": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip5ModifikatsiyaTipa2_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I05a_retaining_wall_t5",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_DekorativnayaPodpornayaStenkaTip3_001@v001",
+   "source": "published",
+   "name": "AGR_maf_DekorativnayaPodpornayaStenkaTip3_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Декоративная подпорная стенка. Тип 3",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 14752.4,
+     "y": 1631.4,
+     "z": 1295.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 588
+   },
+   "path": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip3_001/v001",
+   "preview": "maf/AGR_maf_DekorativnayaPodpornayaStenkaTip3_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I06_retaining_wall_t3",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVZoneKureniyaTip1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVZoneKureniyaTip1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в зоне курения. Тип 1",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 21526.8,
+     "y": 3431.6,
+     "z": 4219.8
+    }
+   },
+   "tris": {
+    "vpm": 3566,
+    "npm": 3566
+   },
+   "path": "maf/AGR_maf_NavesVZoneKureniyaTip1_001/v001",
+   "preview": "maf/AGR_maf_NavesVZoneKureniyaTip1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I07_smoking_canopy_t1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVZoneKureniyaTip2_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVZoneKureniyaTip2_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в зоне курения. Тип 2",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 11811.9,
+     "y": 3266.1,
+     "z": 4224.6
+    }
+   },
+   "tris": {
+    "vpm": 1892,
+    "npm": 1892
+   },
+   "path": "maf/AGR_maf_NavesVZoneKureniyaTip2_001/v001",
+   "preview": "maf/AGR_maf_NavesVZoneKureniyaTip2_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I08_smoking_canopy_t2",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVZoneKureniyaTip3_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVZoneKureniyaTip3_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в зоне курения. Тип 3",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 4570.0,
+     "y": 2700.0,
+     "z": 3698.5
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 1080
+   },
+   "path": "maf/AGR_maf_NavesVZoneKureniyaTip3_001/v001",
+   "preview": "maf/AGR_maf_NavesVZoneKureniyaTip3_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I09_smoking_canopy_t3",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaOpornayaPodSpinu_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaOpornayaPodSpinu_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья опорная под спину",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 1170.0,
+     "y": 336.3,
+     "z": 1203.6
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 270
+   },
+   "path": "maf/AGR_maf_SkamyaOpornayaPodSpinu_001/v001",
+   "preview": "maf/AGR_maf_SkamyaOpornayaPodSpinu_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I10_support_bench",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaOpornayaModifikatsiyaRal8004_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaOpornayaModifikatsiyaRal8004_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья опорная — модификация RAL 8004",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 1170.0,
+     "y": 335.0,
+     "z": 1180.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 270
+   },
+   "path": "maf/AGR_maf_SkamyaOpornayaModifikatsiyaRal8004_001/v001",
+   "preview": "maf/AGR_maf_SkamyaOpornayaModifikatsiyaRal8004_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I10a_support_bench",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVZoneOzhidaniyaTip1Zapad_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVZoneOzhidaniyaTip1Zapad_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в зоне ожидания. Тип 1 (запад)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 14478.9,
+     "y": 1487.5,
+     "z": 3455.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 1448
+   },
+   "path": "maf/AGR_maf_NavesVZoneOzhidaniyaTip1Zapad_001/v001",
+   "preview": "maf/AGR_maf_NavesVZoneOzhidaniyaTip1Zapad_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I11_waiting_canopy_t1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVZoneOzhidaniyaTip2Vostok_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVZoneOzhidaniyaTip2Vostok_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в зоне ожидания. Тип 2 (восток)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 13668.4,
+     "y": 5158.4,
+     "z": 3460.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 1562
+   },
+   "path": "maf/AGR_maf_NavesVZoneOzhidaniyaTip2Vostok_001/v001",
+   "preview": "maf/AGR_maf_NavesVZoneOzhidaniyaTip2Vostok_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I12_waiting_canopy_t2",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVTsentralnoyZoneOtdykhaTip1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVTsentralnoyZoneOtdykhaTip1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в центральной зоне отдыха. Тип 1",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 42974.4,
+     "y": 4110.4,
+     "z": 3430.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 3520
+   },
+   "path": "maf/AGR_maf_NavesVTsentralnoyZoneOtdykhaTip1_001/v001",
+   "preview": "maf/AGR_maf_NavesVTsentralnoyZoneOtdykhaTip1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I13_central_canopy_t1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVTsentralnoyZoneOtdykhaTip2_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVTsentralnoyZoneOtdykhaTip2_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в центральной зоне отдыха. Тип 2",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 46028.6,
+     "y": 8030.0,
+     "z": 3500.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 3544
+   },
+   "path": "maf/AGR_maf_NavesVTsentralnoyZoneOtdykhaTip2_001/v001",
+   "preview": "maf/AGR_maf_NavesVTsentralnoyZoneOtdykhaTip2_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I14_central_canopy_t2",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_AmfiteatrVTsentralnoyZoneOtdykha_001@v001",
+   "source": "published",
+   "name": "AGR_maf_AmfiteatrVTsentralnoyZoneOtdykha_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Амфитеатр в центральной зоне отдыха",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 17232.5,
+     "y": 4262.6,
+     "z": 3320.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 2060
+   },
+   "path": "maf/AGR_maf_AmfiteatrVTsentralnoyZoneOtdykha_001/v001",
+   "preview": "maf/AGR_maf_AmfiteatrVTsentralnoyZoneOtdykha_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I15_amphitheatre_central",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_AmfiteatrUVodyZapad_001@v001",
+   "source": "published",
+   "name": "AGR_maf_AmfiteatrUVodyZapad_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Амфитеатр (у воды, запад)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 31712.0,
+     "y": 13802.9,
+     "z": 1560.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 1376
+   },
+   "path": "maf/AGR_maf_AmfiteatrUVodyZapad_001/v001",
+   "preview": "maf/AGR_maf_AmfiteatrUVodyZapad_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I16_amphitheatre_water",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_StolDlyaKovorkingaTip1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_StolDlyaKovorkingaTip1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Стол для коворкинга. Тип 1",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 5530.5,
+     "y": 581.5,
+     "z": 1350.0
+    }
+   },
+   "tris": {
+    "vpm": 502,
+    "npm": 362
+   },
+   "path": "maf/AGR_maf_StolDlyaKovorkingaTip1_001/v001",
+   "preview": "maf/AGR_maf_StolDlyaKovorkingaTip1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I17_cowork_table_t1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_StolDlyaKovorkingaTip2_001@v001",
+   "source": "published",
+   "name": "AGR_maf_StolDlyaKovorkingaTip2_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Стол для коворкинга. Тип 2",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 16620.2,
+     "y": 1107.1,
+     "z": 1350.0
+    }
+   },
+   "tris": {
+    "vpm": 1302,
+    "npm": 938
+   },
+   "path": "maf/AGR_maf_StolDlyaKovorkingaTip2_001/v001",
+   "preview": "maf/AGR_maf_StolDlyaKovorkingaTip2_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I18_cowork_table_t2",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_NavesVZoneUlichnogoFudKorta_001@v001",
+   "source": "published",
+   "name": "AGR_maf_NavesVZoneUlichnogoFudKorta_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Навес в зоне уличного фуд-корта",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 2440.0,
+     "y": 2402.9,
+     "z": 3691.1
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 698
+   },
+   "path": "maf/AGR_maf_NavesVZoneUlichnogoFudKorta_001/v001",
+   "preview": "maf/AGR_maf_NavesVZoneUlichnogoFudKorta_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "I19_foodcourt_canopy",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:MetaforaLab_SkamyaKacheliSkamyaNaArochnoyRame_QBP-011@v001",
+   "source": "published",
+   "name": "MetaforaLab_SkamyaKacheliSkamyaNaArochnoyRame_QBP-011",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "MetaforaLab",
+   "title_ru": "Скамья (качели-скамья на арочной раме)",
+   "article": "QBP-011",
+   "bbox_mm": {
+    "high": {
+     "x": 1500.5,
+     "y": 601.1,
+     "z": 2900.0
+    }
+   },
+   "tris": {
+    "vpm": 264,
+    "npm": 232
+   },
+   "path": "maf/MetaforaLab_SkamyaKacheliSkamyaNaArochnoyRame_QBP-011/v001",
+   "preview": "maf/MetaforaLab_SkamyaKacheliSkamyaNaArochnoyRame_QBP-011/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T01_bench_qbp011",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SkamyaTiide_TID180B@v001",
+   "source": "published",
+   "name": "Mafmarket_SkamyaTiide_TID180B",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Скамья «Тииде»",
+   "article": "TID180B",
+   "bbox_mm": {
+    "high": {
+     "x": 1802.0,
+     "y": 475.8,
+     "z": 1201.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 194
+   },
+   "path": "maf/Mafmarket_SkamyaTiide_TID180B/v001",
+   "preview": "maf/Mafmarket_SkamyaTiide_TID180B/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T02_bench_tiide_tid180b",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SkamyaTiideOdinarnaya_TID80@v001",
+   "source": "published",
+   "name": "Mafmarket_SkamyaTiideOdinarnaya_TID80",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Скамья «Тииде» одинарная",
+   "article": "TID80",
+   "bbox_mm": {
+    "high": {
+     "x": 804.0,
+     "y": 454.0,
+     "z": 470.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 120
+   },
+   "path": "maf/Mafmarket_SkamyaTiideOdinarnaya_TID80/v001",
+   "preview": "maf/Mafmarket_SkamyaTiideOdinarnaya_TID80/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T03_bench_tiide_tid80",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_TaburetTiide_TID50@v001",
+   "source": "published",
+   "name": "Mafmarket_TaburetTiide_TID50",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Табурет «Тииде»",
+   "article": "TID50",
+   "bbox_mm": {
+    "high": {
+     "x": 488.8,
+     "y": 496.3,
+     "z": 469.2
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 112
+   },
+   "path": "maf/Mafmarket_TaburetTiide_TID50/v001",
+   "preview": "maf/Mafmarket_TaburetTiide_TID50/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T04_stool_tiide_tid50",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_StolTiide_TID50T@v001",
+   "source": "published",
+   "name": "Mafmarket_StolTiide_TID50T",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Стол «Тииде»",
+   "article": "TID50T",
+   "bbox_mm": {
+    "high": {
+     "x": 488.8,
+     "y": 496.3,
+     "z": 699.2
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 112
+   },
+   "path": "maf/Mafmarket_StolTiide_TID50T/v001",
+   "preview": "maf/Mafmarket_StolTiide_TID50T/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T05_table_tiide_tid50t",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_KresloVraschayuscheesyaFiligran_LGDP-59@v001",
+   "source": "published",
+   "name": "Millenium_KresloVraschayuscheesyaFiligran_LGDP-59",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Кресло вращающееся «Филигран»",
+   "article": "ЛГДП-59",
+   "bbox_mm": {
+    "high": {
+     "x": 1293.0,
+     "y": 700.0,
+     "z": 1500.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 252
+   },
+   "path": "maf/Millenium_KresloVraschayuscheesyaFiligran_LGDP-59/v001",
+   "preview": "maf/Millenium_KresloVraschayuscheesyaFiligran_LGDP-59/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T06_lounger_filigran_lgdp59",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SkamyaManta_MNT290@v001",
+   "source": "published",
+   "name": "Mafmarket_SkamyaManta_MNT290",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Скамья «Манта»",
+   "article": "MNT290",
+   "bbox_mm": {
+    "high": {
+     "x": 900.0,
+     "y": 898.0,
+     "z": 1105.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 250
+   },
+   "path": "maf/Mafmarket_SkamyaManta_MNT290/v001",
+   "preview": "maf/Mafmarket_SkamyaManta_MNT290/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T07_bench_manta_mnt290",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:PuntoGrupp_UrnaBerlin_PG80516930@v001",
+   "source": "published",
+   "name": "PuntoGrupp_UrnaBerlin_PG80516930",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "PuntoGrupp",
+   "title_ru": "Урна «Берлин»",
+   "article": "PG80516930",
+   "bbox_mm": {
+    "high": {
+     "x": 508.2,
+     "y": 500.4,
+     "z": 930.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 61
+   },
+   "path": "maf/PuntoGrupp_UrnaBerlin_PG80516930/v001",
+   "preview": "maf/PuntoGrupp_UrnaBerlin_PG80516930/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T08_bin_berlin_pg80516930",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_StolSuperkrug4_001@v001",
+   "source": "published",
+   "name": "AGR_maf_StolSuperkrug4_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Стол «Суперкруг 4»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 700.7,
+     "y": 711.5,
+     "z": 750.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 89
+   },
+   "path": "maf/AGR_maf_StolSuperkrug4_001/v001",
+   "preview": "maf/AGR_maf_StolSuperkrug4_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T09_table_superkrug4",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_UlichnyyStulSPodlokotnikamiYo_001@v001",
+   "source": "published",
+   "name": "AGR_maf_UlichnyyStulSPodlokotnikamiYo_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Уличный стул с подлокотниками «Йо»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 524.1,
+     "y": 541.0,
+     "z": 789.6
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 174
+   },
+   "path": "maf/AGR_maf_UlichnyyStulSPodlokotnikamiYo_001/v001",
+   "preview": "maf/AGR_maf_UlichnyyStulSPodlokotnikamiYo_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T10_chair_yo_arm",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_UlichnyyStulBezPodlokotnikovYo_001@v001",
+   "source": "published",
+   "name": "AGR_maf_UlichnyyStulBezPodlokotnikovYo_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Уличный стул без подлокотников «Йо»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 530.5,
+     "y": 541.0,
+     "z": 789.6
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 110
+   },
+   "path": "maf/AGR_maf_UlichnyyStulBezPodlokotnikovYo_001/v001",
+   "preview": "maf/AGR_maf_UlichnyyStulBezPodlokotnikovYo_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T11_chair_yo",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Adanat_StulNaNozhkeBar_40020@v001",
+   "source": "published",
+   "name": "Adanat_StulNaNozhkeBar_40020",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Стул на ножке «Бар»",
+   "article": "40020",
+   "bbox_mm": {
+    "high": {
+     "x": 387.9,
+     "y": 400.1,
+     "z": 810.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 119
+   },
+   "path": "maf/Adanat_StulNaNozhkeBar_40020/v001",
+   "preview": "maf/Adanat_StulNaNozhkeBar_40020/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T12_bar_stool",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SkamyaSoStolomOrbitBolshaya_LOB280@v001",
+   "source": "published",
+   "name": "Mafmarket_SkamyaSoStolomOrbitBolshaya_LOB280",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Скамья со столом «Орбит» (большая)",
+   "article": "LOB280",
+   "bbox_mm": {
+    "high": {
+     "x": 2639.4,
+     "y": 1845.6,
+     "z": 1163.5
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 500
+   },
+   "path": "maf/Mafmarket_SkamyaSoStolomOrbitBolshaya_LOB280/v001",
+   "preview": "maf/Mafmarket_SkamyaSoStolomOrbitBolshaya_LOB280/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T13_orbit_LOB280",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SkamyaSoStolomOrbit_LOB240@v001",
+   "source": "published",
+   "name": "Mafmarket_SkamyaSoStolomOrbit_LOB240",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Скамья со столом «Орбит»",
+   "article": "LOB240",
+   "bbox_mm": {
+    "high": {
+     "x": 1839.4,
+     "y": 1839.4,
+     "z": 1162.9
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 380
+   },
+   "path": "maf/Mafmarket_SkamyaSoStolomOrbit_LOB240/v001",
+   "preview": "maf/Mafmarket_SkamyaSoStolomOrbit_LOB240/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T14_orbit_LOB240",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_PepelnitsaValet_VT120@v001",
+   "source": "published",
+   "name": "Mafmarket_PepelnitsaValet_VT120",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Пепельница «Валет»",
+   "article": "VT120",
+   "bbox_mm": {
+    "high": {
+     "x": 80.9,
+     "y": 120.9,
+     "z": 1400.0
+    }
+   },
+   "tris": {
+    "vpm": 44,
+    "npm": 44
+   },
+   "path": "maf/Mafmarket_PepelnitsaValet_VT120/v001",
+   "preview": "maf/Mafmarket_PepelnitsaValet_VT120/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T15_ashtray_valet_vt120",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KresloDrop_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KresloDrop_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Кресло «Дроп»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 833.2,
+     "y": 828.3,
+     "z": 1250.0
+    }
+   },
+   "tris": {
+    "vpm": 158,
+    "npm": 158
+   },
+   "path": "maf/AGR_maf_KresloDrop_001/v001",
+   "preview": "maf/AGR_maf_KresloDrop_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T16_armchair_drop",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_PufDrop_001@v001",
+   "source": "published",
+   "name": "AGR_maf_PufDrop_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Пуф «Дроп»",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 478.2,
+     "y": 472.7,
+     "z": 789.3
+    }
+   },
+   "tris": {
+    "vpm": 106,
+    "npm": 106
+   },
+   "path": "maf/AGR_maf_PufDrop_001/v001",
+   "preview": "maf/AGR_maf_PufDrop_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T17_pouf_drop",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SetIzDvukhVazonov_POL225@v001",
+   "source": "published",
+   "name": "Mafmarket_SetIzDvukhVazonov_POL225",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Сет из двух вазонов",
+   "article": "POL225",
+   "bbox_mm": {
+    "high": {
+     "x": 618.0,
+     "y": 718.0,
+     "z": 1120.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 170
+   },
+   "path": "maf/Mafmarket_SetIzDvukhVazonov_POL225/v001",
+   "preview": "maf/Mafmarket_SetIzDvukhVazonov_POL225/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T18_planter_set_POL225",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_SetIzChetyrekhVazonov_POL425@v001",
+   "source": "published",
+   "name": "Mafmarket_SetIzChetyrekhVazonov_POL425",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Сет из четырёх вазонов",
+   "article": "POL425",
+   "bbox_mm": {
+    "high": {
+     "x": 618.0,
+     "y": 1940.0,
+     "z": 1050.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 256
+   },
+   "path": "maf/Mafmarket_SetIzChetyrekhVazonov_POL425/v001",
+   "preview": "maf/Mafmarket_SetIzChetyrekhVazonov_POL425/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T19_planter_set_POL425",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Aira_ReshetkaPristvolnayaKorten_RP008@v001",
+   "source": "published",
+   "name": "Aira_ReshetkaPristvolnayaKorten_RP008",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Aira",
+   "title_ru": "Решётка приствольная «Кортен»",
+   "article": "РП 008",
+   "bbox_mm": {
+    "high": {
+     "x": 1163.8,
+     "y": 1181.8,
+     "z": 642.4
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 1134
+   },
+   "path": "maf/Aira_ReshetkaPristvolnayaKorten_RP008/v001",
+   "preview": "maf/Aira_ReshetkaPristvolnayaKorten_RP008/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T20_tree_grate_corten",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Aira_KresloParkovoeKhaytek_SKM157@v001",
+   "source": "published",
+   "name": "Aira_KresloParkovoeKhaytek_SKM157",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Aira",
+   "title_ru": "Кресло парковое «Хайтек»",
+   "article": "СКМ 157",
+   "bbox_mm": {
+    "high": {
+     "x": 650.0,
+     "y": 467.0,
+     "z": 1289.9
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 167
+   },
+   "path": "maf/Aira_KresloParkovoeKhaytek_SKM157/v001",
+   "preview": "maf/Aira_KresloParkovoeKhaytek_SKM157/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T21_park_chair_hitek",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Aira_VeloparkovkaMonokhrom_VP029@v001",
+   "source": "published",
+   "name": "Aira_VeloparkovkaMonokhrom_VP029",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Aira",
+   "title_ru": "Велопарковка «Монохром»",
+   "article": "ВП 029",
+   "bbox_mm": {
+    "high": {
+     "x": 2571.4,
+     "y": 1007.6,
+     "z": 1494.9
+    }
+   },
+   "tris": {
+    "vpm": 604,
+    "npm": 524
+   },
+   "path": "maf/Aira_VeloparkovkaMonokhrom_VP029/v001",
+   "preview": "maf/Aira_VeloparkovkaMonokhrom_VP029/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T22_bike_rack_monochrom",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_OgrazhdayuschieStolbikiMielon_SM100@v001",
+   "source": "published",
+   "name": "Mafmarket_OgrazhdayuschieStolbikiMielon_SM100",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Ограждающие столбики «Mielon»",
+   "article": "SM100",
+   "bbox_mm": {
+    "high": {
+     "x": 72.0,
+     "y": 60.0,
+     "z": 1450.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 70
+   },
+   "path": "maf/Mafmarket_OgrazhdayuschieStolbikiMielon_SM100/v001",
+   "preview": "maf/Mafmarket_OgrazhdayuschieStolbikiMielon_SM100/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "T23_bollard_mielon_sm100",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Aira_KacheliGorodskieDekoKoltsevyePodvesnye_IP033@v001",
+   "source": "published",
+   "name": "Aira_KacheliGorodskieDekoKoltsevyePodvesnye_IP033",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Aira",
+   "title_ru": "Качели городские «DEKO» (кольцевые подвесные)",
+   "article": "ИП 033",
+   "bbox_mm": {
+    "high": {
+     "x": 600.0,
+     "y": 2051.8,
+     "z": 3365.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 292
+   },
+   "path": "maf/Aira_KacheliGorodskieDekoKoltsevyePodvesnye_IP033/v001",
+   "preview": "maf/Aira_KacheliGorodskieDekoKoltsevyePodvesnye_IP033/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "X01_swing_deko",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AlphaGorod_KacheliOliviyaSkamyaKacheli_KCH-0012@v001",
+   "source": "published",
+   "name": "AlphaGorod_KacheliOliviyaSkamyaKacheli_KCH-0012",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "AlphaGorod",
+   "title_ru": "Качели «Оливия» (скамья-качели)",
+   "article": "КЧ-0012",
+   "bbox_mm": {
+    "high": {
+     "x": 1528.8,
+     "y": 589.4,
+     "z": 2555.0
+    }
+   },
+   "tris": {
+    "vpm": 352,
+    "npm": 352
+   },
+   "path": "maf/AlphaGorod_KacheliOliviyaSkamyaKacheli_KCH-0012/v001",
+   "preview": "maf/AlphaGorod_KacheliOliviyaSkamyaKacheli_KCH-0012/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "X02_swing_olivia",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_PodpornayaStenkaSRelefnoyTeksturoyUUlichnogoFronta_001@v001",
+   "source": "published",
+   "name": "AGR_maf_PodpornayaStenkaSRelefnoyTeksturoyUUlichnogoFronta_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Подпорная стенка с рельефной текстурой у уличного фронта",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 7000.0,
+     "y": 1000.0,
+     "z": 1400.0
+    }
+   },
+   "tris": {
+    "vpm": null,
+    "npm": 158
+   },
+   "path": "maf/AGR_maf_PodpornayaStenkaSRelefnoyTeksturoyUUlichnogoFronta_001/v001",
+   "preview": "maf/AGR_maf_PodpornayaStenkaSRelefnoyTeksturoyUUlichnogoFronta_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-staropetrovskiy-maf-v001",
+    "object": "X05_street_relief_wall",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaObschOtdykh2Verona_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaObschOtdykh2Verona_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная общ. отдых 2 (Верона)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 3918.7,
+     "y": 2501.0,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 160,
+    "npm": 160
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaObschOtdykh2Verona_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaObschOtdykh2Verona_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_01",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaObschOtdykh1Verona_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaObschOtdykh1Verona_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная общ. отдых 1 (Верона)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 6699.2,
+     "y": 2500.1,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 184,
+    "npm": 184
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaObschOtdykh1Verona_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaObschOtdykh1Verona_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_02",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaVerona6250_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaVerona6250_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья Верона 6250",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 6250.0,
+     "y": 600.0,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 124,
+    "npm": 124
+   },
+   "path": "maf/AGR_maf_SkamyaVerona6250_001/v001",
+   "preview": "maf/AGR_maf_SkamyaVerona6250_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_03",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaPodAndromedoyVerona_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaPodAndromedoyVerona_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная под Андромедой (Верона)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 5800.4,
+     "y": 2895.7,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 220,
+    "npm": 220
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaPodAndromedoyVerona_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaPodAndromedoyVerona_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_04",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaVerona26080_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaVerona26080_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья Верона 2 6080",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 6084.8,
+     "y": 600.0,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 124,
+    "npm": 124
+   },
+   "path": "maf/AGR_maf_SkamyaVerona26080_001/v001",
+   "preview": "maf/AGR_maf_SkamyaVerona26080_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_05",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaPlDeti13LetVerona_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaPlDeti13LetVerona_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная пл. дети 1-3 лет (Верона)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 4956.9,
+     "y": 5526.4,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 372,
+    "npm": 372
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaPlDeti13LetVerona_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaPlDeti13LetVerona_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_06",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaLestnitsa2Verona_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaLestnitsa2Verona_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная лестница 2 (Верона)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 4920.9,
+     "y": 600.0,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 100,
+    "npm": 100
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaLestnitsa2Verona_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaLestnitsa2Verona_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_07",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaLestnitsa21Verona_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaLestnitsa21Verona_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная лестница 2.1 (Верона)",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 4248.6,
+     "y": 600.0,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 100,
+    "npm": 100
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaLestnitsa21Verona_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaLestnitsa21Verona_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_08",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkamyaIndividualnayaLestnitsa1VeronaA_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkamyaIndividualnayaLestnitsa1VeronaA_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамья индивидуальная лестница 1 (Верона) A",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 2000.0,
+     "y": 600.0,
+     "z": 450.0
+    }
+   },
+   "tris": {
+    "vpm": 68,
+    "npm": 68
+   },
+   "path": "maf/AGR_maf_SkamyaIndividualnayaLestnitsa1VeronaA_001/v001",
+   "preview": "maf/AGR_maf_SkamyaIndividualnayaLestnitsa1VeronaA_001/v001/preview.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3508_09",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkameykaStalnayaAndromeda_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkameykaStalnayaAndromeda_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамейка стальная «Андромеда»",
+   "article": "14122",
+   "bbox_mm": {
+    "high": {
+     "x": 1801.9,
+     "y": 474.4,
+     "z": 800.8
+    }
+   },
+   "tris": {
+    "vpm": 240,
+    "npm": 240
+   },
+   "path": "maf/AGR_maf_SkameykaStalnayaAndromeda_001/v001",
+   "preview": "maf/AGR_maf_SkameykaStalnayaAndromeda_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_01",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_UrnaStalnayaArgo_001@v001",
+   "source": "published",
+   "name": "AGR_maf_UrnaStalnayaArgo_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Урна стальная «Арго»",
+   "article": "19648",
+   "bbox_mm": {
+    "high": {
+     "x": 643.5,
+     "y": 474.8,
+     "z": 1063.9
+    }
+   },
+   "tris": {
+    "vpm": 146,
+    "npm": 146
+   },
+   "path": "maf/AGR_maf_UrnaStalnayaArgo_001/v001",
+   "preview": "maf/AGR_maf_UrnaStalnayaArgo_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_02",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_SkameykaFestivalModul1_001@v001",
+   "source": "published",
+   "name": "AGR_maf_SkameykaFestivalModul1_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Скамейка «Фестиваль» модуль 1",
+   "article": "NV 521-01",
+   "bbox_mm": {
+    "high": {
+     "x": 1698.1,
+     "y": 1846.8,
+     "z": 802.1
+    }
+   },
+   "tris": {
+    "vpm": 364,
+    "npm": 364
+   },
+   "path": "maf/AGR_maf_SkameykaFestivalModul1_001/v001",
+   "preview": "maf/AGR_maf_SkameykaFestivalModul1_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_07",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_LezhakGorodskoy_001@v001",
+   "source": "published",
+   "name": "AGR_maf_LezhakGorodskoy_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Лежак «Городской»",
+   "article": "11061",
+   "bbox_mm": {
+    "high": {
+     "x": 610.7,
+     "y": 1629.7,
+     "z": 933.6
+    }
+   },
+   "tris": {
+    "vpm": 1460,
+    "npm": 730
+   },
+   "path": "maf/AGR_maf_LezhakGorodskoy_001/v001",
+   "preview": "maf/AGR_maf_LezhakGorodskoy_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_09",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KachalkaBalansir_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KachalkaBalansir_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Качалка балансир",
+   "article": "ИО 0410-2",
+   "bbox_mm": {
+    "high": {
+     "x": 572.3,
+     "y": 920.2,
+     "z": 686.6
+    }
+   },
+   "tris": {
+    "vpm": 724,
+    "npm": 434
+   },
+   "path": "maf/AGR_maf_KachalkaBalansir_001/v001",
+   "preview": "maf/AGR_maf_KachalkaBalansir_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_11",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_Kacheli_001@v001",
+   "source": "published",
+   "name": "AGR_maf_Kacheli_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Качели",
+   "article": "ИО 0118Т-1",
+   "bbox_mm": {
+    "high": {
+     "x": 2158.1,
+     "y": 267.1,
+     "z": 1897.4
+    }
+   },
+   "tris": {
+    "vpm": 678,
+    "npm": 678
+   },
+   "path": "maf/AGR_maf_Kacheli_001/v001",
+   "preview": "maf/AGR_maf_Kacheli_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_12",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_DetskayaPloschadka_001@v001",
+   "source": "published",
+   "name": "AGR_maf_DetskayaPloschadka_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Детская площадка",
+   "article": "ДП 090",
+   "bbox_mm": {
+    "high": {
+     "x": 5534.3,
+     "y": 2031.6,
+     "z": 2319.5
+    }
+   },
+   "tris": {
+    "vpm": 4562,
+    "npm": 2281
+   },
+   "path": "maf/AGR_maf_DetskayaPloschadka_001/v001",
+   "preview": "maf/AGR_maf_DetskayaPloschadka_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_16",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_TennisnyyStolPremium_001@v001",
+   "source": "published",
+   "name": "AGR_maf_TennisnyyStolPremium_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Теннисный стол Премиум",
+   "article": "4-060",
+   "bbox_mm": {
+    "high": {
+     "x": 1525.0,
+     "y": 2740.0,
+     "z": 913.1
+    }
+   },
+   "tris": {
+    "vpm": 8696,
+    "npm": 3043
+   },
+   "path": "maf/AGR_maf_TennisnyyStolPremium_001/v001",
+   "preview": "maf/AGR_maf_TennisnyyStolPremium_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_26",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KomplektMebeliLandauStol_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KomplektMebeliLandauStol_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Комплект мебели «Ландау», стол",
+   "article": "13994",
+   "bbox_mm": {
+    "high": {
+     "x": 2282.2,
+     "y": 2282.2,
+     "z": 748.7
+    }
+   },
+   "tris": {
+    "vpm": 540,
+    "npm": 540
+   },
+   "path": "maf/AGR_maf_KomplektMebeliLandauStol_001/v001",
+   "preview": "maf/AGR_maf_KomplektMebeliLandauStol_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_27",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KacheliGnezdoKrug_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KacheliGnezdoKrug_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Качели-гнездо круг",
+   "article": "189.001",
+   "bbox_mm": {
+    "high": {
+     "x": 1708.1,
+     "y": 1999.2,
+     "z": 2387.3
+    }
+   },
+   "tris": {
+    "vpm": 2030,
+    "npm": 2030
+   },
+   "path": "maf/AGR_maf_KacheliGnezdoKrug_001/v001",
+   "preview": "maf/AGR_maf_KacheliGnezdoKrug_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_28",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_KresloPark_001@v001",
+   "source": "published",
+   "name": "AGR_maf_KresloPark_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Кресло «Парк»",
+   "article": "12750",
+   "bbox_mm": {
+    "high": {
+     "x": 457.5,
+     "y": 770.6,
+     "z": 1001.0
+    }
+   },
+   "tris": {
+    "vpm": 320,
+    "npm": 320
+   },
+   "path": "maf/AGR_maf_KresloPark_001/v001",
+   "preview": "maf/AGR_maf_KresloPark_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_29",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_StolLondonTip3_001@v001",
+   "source": "published",
+   "name": "AGR_maf_StolLondonTip3_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Стол «Лондон» тип 3",
+   "article": "13032",
+   "bbox_mm": {
+    "high": {
+     "x": 1000.0,
+     "y": 1000.0,
+     "z": 600.0
+    }
+   },
+   "tris": {
+    "vpm": 212,
+    "npm": 212
+   },
+   "path": "maf/AGR_maf_StolLondonTip3_001/v001",
+   "preview": "maf/AGR_maf_StolLondonTip3_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_31",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_PristvolnayaReshetka_001@v001",
+   "source": "published",
+   "name": "AGR_maf_PristvolnayaReshetka_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Приствольная решётка",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 1000.0,
+     "y": 1000.0,
+     "z": 47.6
+    }
+   },
+   "tris": {
+    "vpm": 3726,
+    "npm": 3726
+   },
+   "path": "maf/AGR_maf_PristvolnayaReshetka_001/v001",
+   "preview": "maf/AGR_maf_PristvolnayaReshetka_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vatutino-maf-v001",
+    "object": "VAT_MAF_T3510_32",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Adanat_KachalkaNaPruzhineBozhyaKorovka_19121@v001",
+   "source": "published",
+   "name": "Adanat_KachalkaNaPruzhineBozhyaKorovka_19121",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Качалка на пружине «Божья коровка»",
+   "article": "19121",
+   "bbox_mm": {
+    "high": {
+     "x": 640.0,
+     "y": 601.8,
+     "z": 752.7
+    }
+   },
+   "tris": {
+    "vpm": 5932,
+    "npm": null
+   },
+   "path": "maf/Adanat_KachalkaNaPruzhineBozhyaKorovka_19121/v001",
+   "preview": "maf/Adanat_KachalkaNaPruzhineBozhyaKorovka_19121/v001/Adanat_KachalkaNaPruzhineBozhyaKorovka_19121.zip#Adanat_KachalkaNaPruzhineBozhyaKorovka_19121.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vlad-mafs-b2-v001",
+    "object": "Adanat_KachalkaNaPruzhineBozhyaKorovka_19121",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Adanat_ParkletTip62SPodsvetkoy_22009@v001",
+   "source": "published",
+   "name": "Adanat_ParkletTip62SPodsvetkoy_22009",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Adanat",
+   "title_ru": "Парклет Тип 6.2 с подсветкой",
+   "article": "22009",
+   "bbox_mm": {
+    "high": {
+     "x": 11430.0,
+     "y": 3130.0,
+     "z": 2884.5
+    }
+   },
+   "tris": {
+    "vpm": 13606,
+    "npm": null
+   },
+   "path": "maf/Adanat_ParkletTip62SPodsvetkoy_22009/v001",
+   "preview": "maf/Adanat_ParkletTip62SPodsvetkoy_22009/v001/Adanat_ParkletTip62SPodsvetkoy_22009.zip#Adanat_ParkletTip62SPodsvetkoy_22009.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vlad-mafs-b2-v001",
+    "object": "Adanat_ParkletTip62SPodsvetkoy_22009",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Aira_NavesParkovyyConfig_PR014@v001",
+   "source": "published",
+   "name": "Aira_NavesParkovyyConfig_PR014",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Aira",
+   "title_ru": "Навес парковый CONFIG",
+   "article": "PR014",
+   "bbox_mm": {
+    "high": {
+     "x": 3552.0,
+     "y": 2984.0,
+     "z": 2591.5
+    }
+   },
+   "tris": {
+    "vpm": 2816,
+    "npm": null
+   },
+   "path": "maf/Aira_NavesParkovyyConfig_PR014/v001",
+   "preview": "maf/Aira_NavesParkovyyConfig_PR014/v001/Aira_NavesParkovyyConfig_PR014.zip#Aira_NavesParkovyyConfig_PR014.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vlad-mafs-b2-v001",
+    "object": "Aira_NavesParkovyyConfig_PR014",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782@v001",
+   "source": "published",
+   "name": "Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Качели «Контур» радиусные, подвес диван",
+   "article": "LGDP-782",
+   "bbox_mm": {
+    "high": {
+     "x": 7973.6,
+     "y": 3338.6,
+     "z": 2750.0
+    }
+   },
+   "tris": {
+    "vpm": 5156,
+    "npm": null
+   },
+   "path": "maf/Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782/v001",
+   "preview": "maf/Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782/v001/Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782.zip#Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vlad-mafs-b2-v001",
+    "object": "Millenium_KacheliKonturRadiusnyePodvesDivan_LGDP-782",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_KaruselGnezdo_LGK-11.21@v001",
+   "source": "published",
+   "name": "Millenium_KaruselGnezdo_LGK-11.21",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Карусель «Гнездо»",
+   "article": "LGK-11.21",
+   "bbox_mm": {
+    "high": {
+     "x": 988.7,
+     "y": 1020.5,
+     "z": 791.6
+    }
+   },
+   "tris": {
+    "vpm": 6682,
+    "npm": null
+   },
+   "path": "maf/Millenium_KaruselGnezdo_LGK-11.21/v001",
+   "preview": "maf/Millenium_KaruselGnezdo_LGK-11.21/v001/Millenium_KaruselGnezdo_LGK-11.21.zip#Millenium_KaruselGnezdo_LGK-11.21.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-vlad-mafs-b2-v001",
+    "object": "Millenium_KaruselGnezdo_LGK-11.21",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050@v001",
+   "source": "published",
+   "name": "Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Agropak",
+   "title_ru": "Евроконтейнер",
+   "article": "22.C19seryy20.807.2kryshka21.050",
+   "bbox_mm": {
+    "high": {
+     "x": 1347.0,
+     "y": 973.3,
+     "z": 1300.0
+    }
+   },
+   "tris": {
+    "vpm": 10,
+    "npm": 10
+   },
+   "path": "maf/Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050/v001",
+   "preview": "maf/Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050/v001/Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050.zip#Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Agropak_Evrokonteyner_22.C19seryy20.807.2kryshka21.050",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Aira_VeloparkovkaVelobox_VP043@v001",
+   "source": "published",
+   "name": "Aira_VeloparkovkaVelobox_VP043",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Aira",
+   "title_ru": "Велопарковка VELOBOX (ВЕЛОБОКС)",
+   "article": "VP043",
+   "bbox_mm": {
+    "high": {
+     "x": 1999.3,
+     "y": 1198.9,
+     "z": 532.0
+    }
+   },
+   "tris": {
+    "vpm": 1244,
+    "npm": 604
+   },
+   "path": "maf/Aira_VeloparkovkaVelobox_VP043/v001",
+   "preview": "maf/Aira_VeloparkovkaVelobox_VP043/v001/Aira_VeloparkovkaVelobox_VP043.zip#Aira_VeloparkovkaVelobox_VP043.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Aira_VeloparkovkaVelobox_VP043",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644@v001",
+   "source": "published",
+   "name": "Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Hobbika",
+   "title_ru": "Контейнерная площадка для ТБО «МАФ - 6»",
+   "article": "12644",
+   "bbox_mm": {
+    "high": {
+     "x": 6051.8,
+     "y": 2008.0,
+     "z": 2404.2
+    }
+   },
+   "tris": {
+    "vpm": 2580,
+    "npm": 1725
+   },
+   "path": "maf/Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644/v001",
+   "preview": "maf/Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644/v001/Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644.zip#Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Hobbika_KonteynernayaPloschadkaDlyaTboMaf6_12644",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_BasketbolnyySchitSKoltsom_SPE100@v001",
+   "source": "published",
+   "name": "Mafmarket_BasketbolnyySchitSKoltsom_SPE100",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Баскетбольный щит с кольцом",
+   "article": "SPE100",
+   "bbox_mm": {
+    "high": {
+     "x": 1968.4,
+     "y": 1416.8,
+     "z": 4535.6
+    }
+   },
+   "tris": {
+    "vpm": 624,
+    "npm": 290
+   },
+   "path": "maf/Mafmarket_BasketbolnyySchitSKoltsom_SPE100/v001",
+   "preview": "maf/Mafmarket_BasketbolnyySchitSKoltsom_SPE100/v001/Mafmarket_BasketbolnyySchitSKoltsom_SPE100.zip#Mafmarket_BasketbolnyySchitSKoltsom_SPE100.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Mafmarket_BasketbolnyySchitSKoltsom_SPE100",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mafmarket_UrnaCrystal_CS330x@v001",
+   "source": "published",
+   "name": "Mafmarket_UrnaCrystal_CS330x",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mafmarket",
+   "title_ru": "Урна «Crystal»",
+   "article": "CS330x",
+   "bbox_mm": {
+    "high": {
+     "x": 774.6,
+     "y": 257.7,
+     "z": 984.5
+    }
+   },
+   "tris": {
+    "vpm": 232,
+    "npm": 136
+   },
+   "path": "maf/Mafmarket_UrnaCrystal_CS330x/v001",
+   "preview": "maf/Mafmarket_UrnaCrystal_CS330x/v001/Mafmarket_UrnaCrystal_CS330x.zip#Mafmarket_UrnaCrystal_CS330x.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Mafmarket_UrnaCrystal_CS330x",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:ParkPro_Naves_L16@v001",
+   "source": "published",
+   "name": "ParkPro_Naves_L16",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "ParkPro",
+   "title_ru": "Навес",
+   "article": "L16",
+   "bbox_mm": {
+    "high": {
+     "x": 5865.5,
+     "y": 2527.9,
+     "z": 2837.1
+    }
+   },
+   "tris": {
+    "vpm": 3092,
+    "npm": 1364
+   },
+   "path": "maf/ParkPro_Naves_L16/v001",
+   "preview": "maf/ParkPro_Naves_L16/v001/ParkPro_Naves_L16.zip#ParkPro_Naves_L16.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "ParkPro_Naves_L16",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:ParkPro_SkamyaPryamaya_L1@v001",
+   "source": "published",
+   "name": "ParkPro_SkamyaPryamaya_L1",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "ParkPro",
+   "title_ru": "Скамья прямая",
+   "article": "L1",
+   "bbox_mm": {
+    "high": {
+     "x": 2956.0,
+     "y": 481.6,
+     "z": 557.8
+    }
+   },
+   "tris": {
+    "vpm": 244,
+    "npm": 164
+   },
+   "path": "maf/ParkPro_SkamyaPryamaya_L1/v001",
+   "preview": "maf/ParkPro_SkamyaPryamaya_L1/v001/ParkPro_SkamyaPryamaya_L1.zip#ParkPro_SkamyaPryamaya_L1.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "ParkPro_SkamyaPryamaya_L1",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Shelby_DetskiyIgrovoyKompleks_SHP0029@v001",
+   "source": "published",
+   "name": "Shelby_DetskiyIgrovoyKompleks_SHP0029",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Shelby",
+   "title_ru": "Детский игровой комплекс",
+   "article": "SHP0029",
+   "bbox_mm": {
+    "high": {
+     "x": 4180.0,
+     "y": 3636.1,
+     "z": 2218.8
+    }
+   },
+   "tris": {
+    "vpm": 1405,
+    "npm": 922
+   },
+   "path": "maf/Shelby_DetskiyIgrovoyKompleks_SHP0029/v001",
+   "preview": "maf/Shelby_DetskiyIgrovoyKompleks_SHP0029/v001/Shelby_DetskiyIgrovoyKompleks_SHP0029.zip#Shelby_DetskiyIgrovoyKompleks_SHP0029.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Shelby_DetskiyIgrovoyKompleks_SHP0029",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Shelby_DetskiyIgrovoyKompleks_SHP0034@v001",
+   "source": "published",
+   "name": "Shelby_DetskiyIgrovoyKompleks_SHP0034",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Shelby",
+   "title_ru": "Детский игровой комплекс",
+   "article": "SHP0034",
+   "bbox_mm": {
+    "high": {
+     "x": 3553.0,
+     "y": 2792.7,
+     "z": 1754.7
+    }
+   },
+   "tris": {
+    "vpm": 1101,
+    "npm": 741
+   },
+   "path": "maf/Shelby_DetskiyIgrovoyKompleks_SHP0034/v001",
+   "preview": "maf/Shelby_DetskiyIgrovoyKompleks_SHP0034/v001/Shelby_DetskiyIgrovoyKompleks_SHP0034.zip#Shelby_DetskiyIgrovoyKompleks_SHP0034.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "Shelby_DetskiyIgrovoyKompleks_SHP0034",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06@v001",
+   "source": "published",
+   "name": "SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "SportivnyeGoroda",
+   "title_ru": "Сетка волейбольная тренировочная D=3,0 мм",
+   "article": "SG-06",
+   "bbox_mm": {
+    "high": {
+     "x": 11335.7,
+     "y": 37.1,
+     "z": 1220.2
+    }
+   },
+   "tris": {
+    "vpm": 196,
+    "npm": 100
+   },
+   "path": "maf/SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06/v001",
+   "preview": "maf/SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06/v001/SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06.zip#SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "SportivnyeGoroda_SetkaVoleybolnayaTrenirovochnayaD30Mm_SG-06",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550@v001",
+   "source": "published",
+   "name": "SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "SportivnyeGoroda",
+   "title_ru": "Стойки волейбольные телескопические Тонус",
+   "article": "SG-1550",
+   "bbox_mm": {
+    "high": {
+     "x": 12069.9,
+     "y": 124.8,
+     "z": 2500.0
+    }
+   },
+   "tris": {
+    "vpm": 240,
+    "npm": 208
+   },
+   "path": "maf/SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550/v001",
+   "preview": "maf/SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550/v001/SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550.zip#SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550.png",
+   "qa": "pass",
+   "origin": {
+    "batch": "backfill-buhv12-maf-v001",
+    "object": "SportivnyeGoroda_StoykiVoleybolnyeTeleskopicheskieTonus_SG-1550",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Mesto_PesochnayaFabrika_171620@v001",
+   "source": "published",
+   "name": "Mesto_PesochnayaFabrika_171620",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Mesto",
+   "title_ru": "Песочная фабрика",
+   "article": "171620",
+   "bbox_mm": {
+    "high": {
+     "x": 3198.2,
+     "y": 3500.0,
+     "z": 2996.0
+    }
+   },
+   "tris": {
+    "vpm": 3978,
+    "npm": null
+   },
+   "path": "maf/Mesto_PesochnayaFabrika_171620/v001",
+   "preview": "maf/Mesto_PesochnayaFabrika_171620/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-two-mafs-v001",
+    "object": "M171620",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:Millenium_IgrovoyKompleks_MG4013@v001",
+   "source": "published",
+   "name": "Millenium_IgrovoyKompleks_MG4013",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "Millenium",
+   "title_ru": "Игровой комплекс",
+   "article": "MG4013",
+   "bbox_mm": {
+    "high": {
+     "x": 11311.9,
+     "y": 8186.7,
+     "z": 4139.7
+    }
+   },
+   "tris": {
+    "vpm": 11538,
+    "npm": null
+   },
+   "path": "maf/Millenium_IgrovoyKompleks_MG4013/v001",
+   "preview": "maf/Millenium_IgrovoyKompleks_MG4013/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-two-mafs-v001",
+    "object": "MG4013",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:AGR_maf_OporaOsvescheniyaSportivnaya6M3Prozhektora_001@v001",
+   "source": "published",
+   "name": "AGR_maf_OporaOsvescheniyaSportivnaya6M3Prozhektora_001",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": null,
+   "title_ru": "Опора освещения спортивная 6 м, 3 прожектора",
+   "article": null,
+   "bbox_mm": {
+    "high": {
+     "x": 1684.0,
+     "y": 300.0,
+     "z": 6020.0
+    }
+   },
+   "tris": {
+    "vpm": 4312,
+    "npm": null
+   },
+   "path": "maf/AGR_maf_OporaOsvescheniyaSportivnaya6M3Prozhektora_001/v001",
+   "preview": "maf/AGR_maf_OporaOsvescheniyaSportivnaya6M3Prozhektora_001/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-sport-floodlight-v001",
+    "object": "SportFloodlight",
+    "issue": "1743"
+   }
+  },
+  {
+   "id": "maf_published:KrasivyyGorod_SkamyaParkovaya_1536@v001",
+   "source": "published",
+   "name": "KrasivyyGorod_SkamyaParkovaya_1536",
+   "version": "v001",
+   "status": "draft",
+   "manufacturer": "KrasivyyGorod",
+   "title_ru": "Скамья парковая",
+   "article": "1536",
+   "bbox_mm": {
+    "high": {
+     "x": 1700.0,
+     "y": 654.3,
+     "z": 840.0
+    }
+   },
+   "tris": {
+    "vpm": 924,
+    "npm": null
+   },
+   "path": "maf/KrasivyyGorod_SkamyaParkovaya_1536/v001",
+   "preview": "maf/KrasivyyGorod_SkamyaParkovaya_1536/v001/preview.png",
+   "qa": "fail",
+   "origin": {
+    "batch": "backfill-kg1536-bench-v001",
+    "object": "KG1536",
+    "issue": "1743"
+   }
   }
  ],
  "spec_without_a101_model": [
@@ -21655,18 +25347,21 @@
   }
  },
  "counts": {
-  "a101": 108,
+  "a101": 109,
   "a101_with_spec": 35,
   "spec_rows": 205,
   "spec_without_a101_model": 170,
   "spec_without_model_with_legacy_candidates": 47,
-  "legacy_entries": 931
+  "legacy_entries": 931,
+  "published_draft": 126,
+  "published_accepted": 0
  },
  "sources": {
   "a101_root": "G:/Мой диск/AGR-assets/maf/a101",
   "catalogue": "library/maf/catalogue.json",
   "measured": "library/assets/maf_measured.json",
-  "measured_unknown": []
+  "measured_unknown": [],
+  "published": "library/published/catalogue.json"
  },
  "audit": {
   "rows": [
@@ -21993,6 +25688,13 @@
     "id": "maf:FunGame_KaruselTaiga_DIO-004.008.000",
     "name": "FunGame_KaruselTaiga_DIO-004.008.000",
     "category": "Карусель",
+    "findings": [],
+    "warnings": []
+   },
+   {
+    "id": "maf:GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+    "name": "GKVysota_StolSoSkameykoyIDivanom_VST9504-1",
+    "category": "Скамья",
     "findings": [],
     "warnings": []
    },
@@ -22608,14 +26310,14 @@
   },
   "stats": {
    "high_tris": {
-    "n": 108,
+    "n": 109,
     "min": 68,
     "median": 890,
     "p90": 3620,
     "max": 26188
    },
    "low_tris": {
-    "n": 108,
+    "n": 109,
     "min": 26,
     "median": 416,
     "p90": 2084,
@@ -22624,7 +26326,7 @@
   },
   "categories": {
    "Игровое оборудование": 14,
-   "Скамья": 12,
+   "Скамья": 13,
    "Пергола": 12,
    "Спортивное оборудование": 10,
    "Стол": 7,
@@ -22648,6 +26350,7 @@
    "Песочница": 1,
    "Вазон": 1
   },
-  "clean": 105
- }
+  "clean": 106
+ },
+ "scan_problems": []
 }

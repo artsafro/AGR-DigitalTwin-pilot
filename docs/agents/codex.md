@@ -1,6 +1,6 @@
 # Codex
-Any job: read `docs/agents/SKELETONS.md` first (skeleton + hooks, no parallel pipeline [D324]).
-For NPM/OKS tasks read `routes/npm-oks.md`; call `agr --help` before writing a script.
+One door, as in `AGENTS.md`: `docs/agents/SKELETONS.md` -> cell block -> trail (`routes/npm-oks.md`,
+`routes/site.md`); skeleton + hooks, no parallel pipeline [D324]; call `agr --help` before writing a script.
 For Revit-source tasks read `routes/revit-intake.md` (read-only intake first, [D237]).
 
 Role and default ownership: `docs/agents/ROLES.md`.

@@ -312,7 +312,7 @@ def test_route_covers_the_issue_stages_and_hotspots():
 @pytest.mark.parametrize("command,ok", [
     ("agr inspect", True), ("agr validate", True), ("agr vpm-to-npm", True), ("agr package-vpm", True),
     ("dt derive atlas", True), ("dt qa xview", True), ("dt spec compare", True), ("dt inspect", True),
-    ("agr unwrap-atlas", False), ("agr ucx", True), ("agr brick-seams", False), ("agr", False), ("dt derive nonsense", False),
+    ("agr unwrap-atlas", False), ("agr ucx", True), ("agr brick-seams", True), ("agr body", True), ("agr maf-npm-to-vpm", True), ("agr open-in-max", False), ("agr", False), ("dt derive nonsense", False),
     ("dt nonsense", False), ("python tools/x.py", False), ("dt qa xview extra", False), ("", False),
 ])
 def test_command_exists(command, ok):
@@ -327,7 +327,7 @@ def _loaded():
 
 
 @pytest.mark.parametrize("mutate,needle", [
-    (lambda e, c: e["stages"][0]["commands"].append("agr brick-seams"), "agr brick-seams"),
+    (lambda e, c: e["stages"][0]["commands"].append("agr unwrap-atlas"), "agr unwrap-atlas"),
     (lambda e, c: e["stages"][0]["rules"].append("D999"), "D999"),
     (lambda e, c: e["stages"][0]["rules"].append("D24"), "D24 "),
     (lambda e, c: e["hotspots"][0]["evidence"].append("jobs/KPP1/nope.md"), "jobs/KPP1/nope.md"),

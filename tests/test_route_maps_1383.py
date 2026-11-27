@@ -160,8 +160,9 @@ def test_every_drawn_label_is_russian(name):
 def test_stage_without_command_is_drawn_dashed(name):
     events = _routes()[name]
     bare = [s["id"] for s in events["stages"] if not s.get("commands")]
-    # integration #1406 + #1404 + #1407: the Ground route got commands on every stage (zero..skirt, ucx,
-    # placement), so a route may have no bare stage left; then nothing is dashed.
+    # Ground has commands on zero..skirt, ucx and placement, but quads, npm and export stay command-less
+    # (agr vpm-to-npm does not convert Ground; the quads / export FBX transitions have no agr/dt command, D366),
+    # so those three stages are drawn dashed «Нет команды agr/dt».
     board = route_map.route_board(events, _contexts())
     dashed = [e for e in board.elements if e["type"] == "rectangle" and e["strokeStyle"] == "dashed"]
     assert len(dashed) == len(bare)
@@ -248,13 +249,14 @@ def test_check_detects_missing_or_edited_new_output(tmp_path, capsys, name):
 def test_check_reports_unknown_reference_in_a_new_route(tmp_path, capsys):
     root = _tmp_arch(tmp_path)
     path = root / route_map.route_events()["vpm-route"]
-    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', '"agr brick-seams"', 1)
-    assert '"agr brick-seams"' in text
+    unknown = "agr fixture-unknown-route-command"
+    text = path.read_text(encoding="utf-8").replace('"agr package-vpm"', f'"{unknown}"', 1)
+    assert f'"{unknown}"' in text
     path.write_text(text, encoding="utf-8")
     route_map.main(["--root", str(root)])          # regenerate so only the reference problem remains
     capsys.readouterr()
     assert route_map.main(["--root", str(root), "--check"]) == 1
-    assert "command 'agr brick-seams' is not an existing agr/dt command" in capsys.readouterr().out
+    assert f"command '{unknown}' is not an existing agr/dt command" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("name", sorted(NEW))

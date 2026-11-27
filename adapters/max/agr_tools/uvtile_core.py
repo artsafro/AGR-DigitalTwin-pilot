@@ -597,7 +597,7 @@ def measure_layout(mesh, uvs, face_uvs, unit=1.0, map_px=DEFAULT_MAP_PX):
         cu = sum(p[0] for p in poly2) / len(poly2)
         cv = sum(p[1] for p in poly2) / len(poly2)
         fu, fv = math.floor(cu), math.floor(cv)
-        tile = 1001 + fu + 10 * fv if 0 <= fu <= 9 and fv >= 0 else None
+        tile = _udimtile.udim_of_cell(fu, fv) if 0 <= fu <= 9 and fv >= 0 else None
         g['tiles'].add(tile)
         if tile is not None:
             for u, v in poly2:

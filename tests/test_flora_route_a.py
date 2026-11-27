@@ -22,6 +22,10 @@ def _plant(size=200, box=(40, 20, 90, 180)):
     return rgb, op
 
 
+def test_route_a_uses_its_sealed_ground_adapter():
+    assert job.ADAPTER == Path('G:/Мой диск/AGR-evidence/1146-flora-star/run-v003/inputs/paving_ground_inputs_v4.json')
+
+
 def test_square_crop_keeps_every_plant_pixel_and_is_square():
     rgb, op = _plant()
     c_rgb, c_op, box = job.square_crop(rgb, op, margin=0.015)

@@ -12,10 +12,13 @@ from pathlib import Path
 
 import bpy
 
-lib = Path(os.environ.get("AGR_MAF_LIB", "C:/x/t_3e6ff1b3/library"))
+lib = Path(os.environ.get("AGR_MAF_LIB", "G:/Мой диск/AGR-assets/maf/union_v001"))
 output = Path(os.environ.get("AGR_MAF_READBACK", "C:/x/t_3e6ff1b3/fbx_readback_v003.json"))
 if output.exists():
     raise RuntimeError("refusing readback overwrite: " + str(output))
+files = sorted((lib / "fbx").glob("*.fbx"))
+if not files:
+    raise FileNotFoundError(f"No MAF FBX files under {lib / 'fbx'}; set AGR_MAF_LIB to a populated library")
 
 
 def bounds(points):
@@ -28,7 +31,7 @@ def bounds(points):
 
 rows = []
 t0 = time.time()
-for path in sorted((lib / "fbx").glob("*.fbx")):
+for path in files:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     row = {"fbx": path.as_posix()}
     try:

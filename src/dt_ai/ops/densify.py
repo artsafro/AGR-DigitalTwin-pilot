@@ -27,19 +27,17 @@ Pattern: new-case: kernel densify operation for the [D012] UCX budget (#1537).
 from __future__ import annotations
 
 from dataclasses import dataclass
-import math
 import time
 
 import numpy as np
 
-from dt_ai.geometry.ucx_build import ucx_triangle_limit
+from twinqa.geometry.ucx_audit import UCX_CAP, ucx_triangle_limit  # [D012] owner (#1962)
 from dt_ai.ops.invariants import WELD_M, InvariantReport, InvariantResult, Mesh, border_edges
 
 DEGENERATE_AREA_M2 = 1e-10   # 3D face area at or below this is degenerate («нулевая площадь 3D»)
 UV_AREA_EPS = 1e-12          # |signed UV area| at or below this is a zero-area UV face; below -eps is mirrored
 BOUNDS_TOL = 1e-9            # bbox / UV bounds must stay equal within this
 MAX_LEVELS = 3               # 1 -> 64 triangles at most; more needs another part, asked of the user
-UCX_CAP = 100_000            # [D012] cap
 _PAIR_BLOCK = 2_000_000      # candidate pairs checked per numpy block
 _GRID_CELLS_MAX = 20_000_000
 

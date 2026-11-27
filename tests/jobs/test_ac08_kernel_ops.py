@@ -409,10 +409,10 @@ def test_combined_regressions_material_index_uv_missing_repeat(real_states):
     assert not K.compare_state(st, _report(payload))["accepted"]    # a UV hole in S16 still fails (#1144)
 
 
-NATIVE_S00 = Path("C:/x/ev_t_1483e1fa/v002/readback/S00_source.json")
+NATIVE_S00 = Path("G:/Мой диск/AGR-evidence/752-ac08-kernel-ops/v002/readback/S00_source.json")
 
 
-@pytest.mark.skipif(not NATIVE_S00.is_file(), reason="native v002 readback receipt is local evidence (Drive)")
+@pytest.mark.skipif(not NATIVE_S00.is_file(), reason="sealed AC08 v002 readback not available on Drive")
 @pytest.mark.parametrize("bad", [None, 0.25, False])
 def test_native_s00_receipt_corner_mutation(bad):
     """Reviewer's exact witness on the real Blender receipt; None = untouched control."""

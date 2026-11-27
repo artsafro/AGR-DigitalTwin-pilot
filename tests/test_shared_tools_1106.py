@@ -624,7 +624,8 @@ def test_atlas_preserves_tec26_ac08_recipe_with_d278_padding(tmp_path):
     rj = run([sys.executable, ROOT / "jobs/TEC26-OKS/scripts/make_npm_atlas.py", spec, tmp_path / "job"])
     master = tmp_path / "inputs/master.blend"  # synthetic master bytes: the atlas is bound to its hash (#1505)
     master.write_bytes(b"synthetic master revision A")
-    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt", "--master", master])
+    reference = ROOT / "jobs/KPP1/scripts/vpm_textures.json"
+    rd = run([sys.executable, ATLAS_TOOL, spec, tmp_path / "dt", "--master", master, "--kpp-spec", reference])
     assert rj.returncode == 0 and rd.returncode == 0, rj.stderr + rd.stderr
     old = json.loads((tmp_path / 'job/npm_atlas.json').read_text())
     new = json.loads((tmp_path / 'dt/npm_atlas.json').read_text())
@@ -661,14 +662,21 @@ def test_atlas_fails_closed_and_writes_nothing(tmp_path, case):
     elif case == "out_is_spec":
         out = spec
     elif case == "out_inside_recipe":
-        out = ROOT / "jobs/TEC26-OKS/scripts/__atlas_probe_1106"
+        recipe = tmp_path / "external-recipe"
+        recipe.mkdir()
+        (recipe / "make_textures.py").write_text(
+            "def make_full(*args):\n    raise AssertionError('painted before alias check')\n", encoding="utf-8")
+        out = recipe / "new-atlas"
+        extra = ["--recipe-dir", recipe]
     elif case == "index_zero":
         extra = ["--index", "0"]
     else:
         extra = ["--index", "1000"]
     before = snapshot(tmp_path)
     master = ROOT / "jobs/TEC26-OKS/AC08/vpm_textures.json"  # any existing file: each case must refuse on its own
-    r = run([sys.executable, ATLAS_TOOL, spec, out, "--master", master, *extra])
+    reference = ROOT / "jobs/KPP1/scripts/vpm_textures.json"
+    r = run([sys.executable, ATLAS_TOOL, spec, out, "--master", master, "--kpp-spec", reference, *extra])
     assert r.returncode != 0 and "refused" in r.stderr, (r.stdout, r.stderr)
     assert snapshot(tmp_path) == before
-    assert not (ROOT / "jobs/TEC26-OKS/scripts/__atlas_probe_1106").exists()
+    if case == "out_inside_recipe":
+        assert "aliases input" in r.stderr and not out.exists()

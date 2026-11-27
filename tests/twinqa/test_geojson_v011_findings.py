@@ -50,6 +50,11 @@ def encode(document):
     return json.dumps(document, ensure_ascii=False).encode("utf-8")
 
 
+def test_empty_s_podz_remains_a_machine_failure(document):
+    document["features"][0]["properties"]["s_podz"] = ""
+    assert findings(encode(document)) == [("s_podz empty", "fail")]
+
+
 @pytest.mark.parametrize("data, expected", [
     pytest.param(b"\xff", [("UTF-8", "fail")], id="invalid-utf8"),
     pytest.param(b'{"type":', [("JSON", "fail")], id="invalid-json"),

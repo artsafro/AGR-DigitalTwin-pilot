@@ -27,6 +27,9 @@ Read the worker policy there before choosing readback, review and image evidence
 
 ## Full intake (task from Artem)
 
+**Passport first** [D397]: create or open `jobs/<ID>/passport.json` (K1, `schemas/ProjectPassport.schema.json`):
+object, profile (VPM / NPM / both / lite), scenario cell, stages, sources, similar etalon, «Не трогать».
+
 1. Read the sources yourself first (read only, 5–10 min): folders, the album/presentation slides that show the
    result, the etalon's maps and report. Ask about production choices, never about a path you were given.
 2. Ask ONE batch of at most 5 questions, each with your recommendation first, only what the sources leave open.
@@ -40,7 +43,8 @@ Read the worker policy there before choosing readback, review and image evidence
 
 ## Preflight (card worker)
 
-Before production work, check the card against the checklist. If an item that changes the result is open and the
+Before production work, check that `jobs/<ID>/passport.json` exists [D397] (passport first), then check the card
+against the checklist. If an item that changes the result is open and the
 sources + `docs/decisions.md` + the card/issue comments do not answer it: block ONCE at the start with ALL such
 questions in one list, each with your recommended answer — do not guess and do not discover them one per run.
 Items listed under «Не трогать» are never changed «to make it work»; a conflict with them is a question.
@@ -48,6 +52,8 @@ Items listed under «Не трогать» are never changed «to make it work»
 ## Checklist
 
 Common:
+- Passport [D397]: the task's `jobs/<ID>/passport.json` (K1, `schemas/ProjectPassport.schema.json`) exists or is
+  created at intake, on every route, not only AGR Tools (supersedes the scope of [D247]).
 - Scope: what changes, what must NOT be touched (geometry, topology, UV, UCX, material IDs, names, other objects).
 - Etalon: «как у X» in numbers — which file, which parameters (texel, tile size, map types, naming, palette).
 - Inputs: which sheet / slide / file is the authority per item; which one wins on conflict (e.g. DWG `_R1` vs PDF).

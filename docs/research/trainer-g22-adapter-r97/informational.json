@@ -1,0 +1,98 @@
+{
+ "schema": "r97-informational/1",
+ "note": "NOT counted in M97: explicit --built FILE scores of the several-FBX runs and the agent-free offline control",
+ "explicit_fbx": {
+  "C1_module": {
+   "first_failing_step": "bounds",
+   "score": 0.4286,
+   "form_p95_m": 22.7501,
+   "steps": {
+    "artifact": "pass",
+    "readback": "pass",
+    "bounds": "fail",
+    "topology": "pass",
+    "form": "fail",
+    "form_v2": "fail",
+    "vlm": "not_run",
+    "package": "not_applicable"
+   },
+   "built_sha256": "c74148d00c3805c806f14c443bad9f7790b41538dc7f9f515f0f5451eae9dc4d",
+   "report_sha256": "281b9ac1bd64e184e67f219285c8209c798c633e66be596fab69ee3b08c928a2"
+  },
+  "C1_typical": {
+   "first_failing_step": "form_v2",
+   "score": 0.7143,
+   "form_p95_m": 0.0128,
+   "steps": {
+    "artifact": "pass",
+    "readback": "pass",
+    "bounds": "pass",
+    "topology": "pass",
+    "form": "pass",
+    "form_v2": "fail",
+    "vlm": "not_run",
+    "package": "not_applicable"
+   },
+   "built_sha256": "d024fd1d5df6fceb69677c54e8c218843340440f2a8962231b3daa19b64a9561",
+   "report_sha256": "5c61828162215add74eb5d6aca8e53995877be527785395c9b560656445999b6"
+  },
+  "C3_pilot": {
+   "first_failing_step": "bounds",
+   "score": 0.4286,
+   "form_p95_m": 22.7501,
+   "steps": {
+    "artifact": "pass",
+    "readback": "pass",
+    "bounds": "fail",
+    "topology": "pass",
+    "form": "fail",
+    "form_v2": "fail",
+    "vlm": "not_run",
+    "package": "not_applicable"
+   },
+   "built_sha256": "dca6c6e4a3f301f99f33372121723d013ec285d7c1cee3c82a8a102fe3362850",
+   "report_sha256": "c6d3dac393ebfc6178b795437f810153b541e53bdc2c516ec2f05563423bc1cf"
+  },
+  "C3_typical": {
+   "first_failing_step": "form_v2",
+   "score": 0.7143,
+   "form_p95_m": 0.0139,
+   "steps": {
+    "artifact": "pass",
+    "readback": "pass",
+    "bounds": "pass",
+    "topology": "pass",
+    "form": "pass",
+    "form_v2": "fail",
+    "vlm": "not_run",
+    "package": "not_applicable"
+   },
+   "built_sha256": "79920aaffdb3951a6208d0dd1161efb3af0861d1681312923eba9c0d24a33cda",
+   "report_sha256": "a20b88011f486e28debf12c31556155debc6547979946a92e8dc8c0e550dd688"
+  }
+ },
+ "offline_control": {
+  "commands": [
+   "uv run --frozen python C:/x/r97s/C/tools/methods/body/floor_from_dump.py g22_k2_src.npz plan.json --openings",
+   "uv run --frozen agr body plan.json body",
+   "python C:/x/r97s/B/tools/trainer/trainer.py score g22-k2-stage1 --built body --out score.json"
+  ],
+  "adapter_exit": 0,
+  "plan_sha256": "7aaf1c55570b5d33aa91e7ddf8b3cd8f48232c21034a9a02cbd41ea5a0676e72",
+  "plan_schema_errors": 0,
+  "first_failing_step": "form",
+  "score": 0.5714,
+  "form_p95_m": 6.2913,
+  "steps": {
+   "artifact": "pass",
+   "readback": "pass",
+   "bounds": "pass",
+   "topology": "pass",
+   "form": "fail",
+   "form_v2": "fail",
+   "vlm": "not_run",
+   "package": "not_applicable"
+  },
+  "built_sha256": "07e4b304539a84f7157e5fd37361f87b3090e81ec317522441414f3abd9054b2"
+ }
+}
