@@ -80,6 +80,8 @@ def material(name, diffuse, normal, mode, variant):
 def main():
     argv = sys.argv[sys.argv.index('--') + 1:]
     kind = argv[argv.index('--kind') + 1]
+    # A1 (amendment before the second measurement): relief-mode light energy; R1 = 120 (saturated)
+    relief_energy = float(argv[argv.index('--relief-energy') + 1]) if '--relief-energy' in argv else 120.0
     out = Path(argv[argv.index('--out') + 1])
     assert bpy.app.version_string == '5.1.2', bpy.app.version_string
     assert bpy.context.scene.unit_settings.scale_length == 1
@@ -142,6 +144,7 @@ def main():
     rows = []
     for variant in VARIANTS[kind]:
         for mode in ('relief', 'full'):
+            ld.energy = relief_energy if mode == 'relief' else 120
             obj.material_slots[slots[0]].material = material(f'r135_{variant}_{mode}', diffuse, normal, mode, variant)
             for shot, target, direction in SHOTS:
                 t = Vector(target)

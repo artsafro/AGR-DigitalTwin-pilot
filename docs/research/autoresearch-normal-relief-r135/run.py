@@ -48,12 +48,13 @@ def preflight():
     return {str(p): h for p, h in PINS.items()}
 
 
-def one_run(out: Path):
+def one_run(out: Path, a1: float | None = None):
     out.mkdir(parents=True)
     t0 = time.perf_counter()
+    extra = ['--relief-energy', str(a1)] if a1 is not None else []
     for kind, blend in BLENDS.items():
         cp = subprocess.run([str(BLENDER), '-b', '--factory-startup', str(blend), '--python',
-                             str(HERE / 'render.py'), '--', '--kind', kind, '--out', str(out)],
+                             str(HERE / 'render.py'), '--', '--kind', kind, '--out', str(out)] + extra,
                             capture_output=True, text=True, encoding='utf-8', errors='replace')
         (out / f'blender_{kind}.log').write_text(cp.stdout[-20000:] + cp.stderr[-5000:], encoding='utf-8')
         if cp.returncode or f'R135_RENDER_DONE {kind}' not in cp.stdout:
@@ -64,7 +65,8 @@ def one_run(out: Path):
         for cand in CANDS:
             for shot in SHOTS:
                 res[f'{mode}/{cand}/{shot}'] = score.shot_score(out / f'{cand}_{mode}_{shot}.png',
-                                                                out / f'S_{mode}_{shot}.png')
+                                                                out / f'S_{mode}_{shot}.png',
+                                                                clip_max=0.01 if a1 is not None else None)
     return wall, res
 
 
@@ -95,6 +97,8 @@ def verdict(res):
 def main():
     out = Path(sys.argv[1]).resolve()
     runs = int(sys.argv[sys.argv.index('--runs') + 1]) if '--runs' in sys.argv else 3
+    # A1: --a1 ENERGY = relief-mode light energy + 1 % clip guard (R1 replay: omit)
+    a1 = float(sys.argv[sys.argv.index('--a1') + 1]) if '--a1' in sys.argv else None
     if out.exists():
         raise SystemExit(f'{out} exists; use a new dir')
     if any(str(out).startswith(str(p.parent)) for p in PINS):
@@ -103,12 +107,12 @@ def main():
     out.mkdir(parents=True)
     rows = []
     for k in range(1, runs + 1):
-        wall, res = one_run(out / f'run{k}')
+        wall, res = one_run(out / f'run{k}', a1)
         rows.append(dict(run=k, wall_s=round(wall, 3), verdict=verdict(res), shots=res))
         print(f'run{k} wall={wall:.1f}s V={rows[-1]["verdict"]["V"]}', flush=True)
     keys = rows[0]['shots'].keys()
-    spread = max((max(r['shots'][k]['score'] for r in rows) - min(r['shots'][k]['score'] for r in rows))
-                 for k in keys if all(r['shots'][k]['score'] is not None for r in rows))
+    spread = max(((max(r['shots'][k]['score'] for r in rows) - min(r['shots'][k]['score'] for r in rows))
+                  for k in keys if all(r['shots'][k]['score'] is not None for r in rows)), default=0.0)
     v = rows[0]['verdict']
     stable = spread <= 1e-9 and all(r['verdict'] == v for r in rows)
     calib = all(v['checks'][c] is True for c in ('margin_ge_0.10', 'shots_ge_4_of_measured',
@@ -116,7 +120,8 @@ def main():
     witnesses = all(v['checks'][c] is True for c in ('N0_zero', 'P1_fires', 'P2_monotone'))
     h = 'inconclusive (unstable)' if not stable else (
         'confirmed' if calib and witnesses else 'inconclusive (witness)' if calib else 'refuted')
-    rec = dict(card='t_33b1b86c', round=135, hypothesis='H135', result=h, stable=stable, max_paired_spread=spread,
+    rec = dict(card='t_33b1b86c', round=135, hypothesis='H135', amendment=None if a1 is None else f'A1 relief_energy={a1} clip_max=0.01',
+               result=h, stable=stable, max_paired_spread=spread,
                pins=pins, blender=str(BLENDER), runs=rows)
     p = out / 'receipt.json'
     p.write_text(json.dumps(rec, indent=1, ensure_ascii=False), encoding='utf-8')

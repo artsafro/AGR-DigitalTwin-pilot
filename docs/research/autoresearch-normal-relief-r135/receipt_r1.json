@@ -1,0 +1,1458 @@
+{
+ "card": "t_33b1b86c",
+ "round": 135,
+ "hypothesis": "H135",
+ "result": "refuted",
+ "stable": true,
+ "max_paired_spread": 0.0,
+ "pins": {
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\stylobate_cut_candidate_v045.blend": "38979c31de1d23086d7b67078ca5b14343cd3db51c70cf4a89b3b0dd61a7bad6",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\stylobate_two_tiles_textured_v096.blend": "070f292765d09756b2d82acffe7e5a5047e16ad9847e081c74bc1d66f02fea58",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v166\\inputs\\1326_source_v001.blend": "e3fdb9193706059fd75bd42819280f140f512c6cc8a206e905b819fc3ce64a18",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\T_1326_Stylo_Diffuse.1001.png": "46b271f2fec85802b9ba54a9fba379c91545794bbd5e3c92f6e57529f0a6192e",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\T_1326_Stylo_Normal.1001.png": "5c5887d426b71c786e8f9784449e36a379a9e07ae451b08eb21a32bd87d2e428",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Diffuse.1001.png": "4f5b1cd7abd46bad3465bc127a56b62dcdd640dcdf16f61f7d9731c95e93af4e",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Diffuse.1002.png": "78d5a0e6809d49c4a22fff82d9c1132745ecfa27af5e4f96cc01fde503ca83fe",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Normal.1001.png": "a594651923ea7e9f2f82cc6d726f1afb2639a50598ba87055cec55e2cccba38a",
+  "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Normal.1002.png": "e191115f2062ef9340354a9b4093b50f3706fb87b9c9f0fa8af044f73202d138",
+  "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_Diffuse.png": "ff846d8e4f97eb9df4f9f1b069cacc5c3f67b86c323945e7c4d379f06e0a884d",
+  "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_Normal.png": "fee4b9729673835c524130eaf562a088d5560322c0e370feb89bb1a8f93b847b"
+ },
+ "blender": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+ "runs": [
+  {
+   "run": 1,
+   "wall_s": 80.471,
+   "verdict": {
+    "V": {
+     "N0": 0.0,
+     "v045": 0.6719022603104446,
+     "v096": 0.6718453954818121,
+     "P1": 8.27284991557855,
+     "P2": 7.139892577678495
+    },
+    "measured_shots": 5,
+    "v045_wins": [
+     "floor-join",
+     "niche"
+    ],
+    "checks": {
+     "margin_ge_0.10": false,
+     "shots_ge_4_of_measured": false,
+     "stripe_signed_negative": false,
+     "N0_zero": true,
+     "P1_fires": true,
+     "P2_monotone": true
+    }
+   },
+   "shots": {
+    "relief/N0/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/v045/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 80236,
+     "status": "measured",
+     "score": 0.625913930683613,
+     "signed_median": 0.05338937515250085
+    },
+    "relief/v045/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 71400,
+     "status": "measured",
+     "score": 0.480836559703168,
+     "signed_median": 0.005260186538544443
+    },
+    "relief/v045/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 87946,
+     "status": "measured",
+     "score": 0.5165456944431283,
+     "signed_median": 0.09287607225621558
+    },
+    "relief/v045/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 104581,
+     "status": "measured",
+     "score": 0.6719022603104446,
+     "signed_median": -0.003991139843252939
+    },
+    "relief/v045/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 71756,
+     "status": "measured",
+     "score": 0.6249826675252897,
+     "signed_median": 0.07031785261570764
+    },
+    "relief/v096/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 80349,
+     "status": "measured",
+     "score": 0.6259228838914896,
+     "signed_median": 0.0533635757263058
+    },
+    "relief/v096/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 69917,
+     "status": "measured",
+     "score": 0.48088362540979607,
+     "signed_median": 0.023597622323030955
+    },
+    "relief/v096/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 86856,
+     "status": "measured",
+     "score": 0.5165383375651688,
+     "signed_median": 0.09288550920522758
+    },
+    "relief/v096/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 101202,
+     "status": "measured",
+     "score": 0.6718453954818121,
+     "signed_median": 0.1034349790997833
+    },
+    "relief/v096/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 70930,
+     "status": "measured",
+     "score": 0.6489236037651447,
+     "signed_median": 0.08626844728256686
+    },
+    "relief/P1/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 119880,
+     "status": "measured",
+     "score": 8.239999465525983,
+     "signed_median": -7.470904709386723
+    },
+    "relief/P1/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 43512,
+     "status": "measured",
+     "score": 7.753099522435547,
+     "signed_median": -1.2413349360099208
+    },
+    "relief/P1/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 122908,
+     "status": "measured",
+     "score": 8.27284991557855,
+     "signed_median": -7.620713896720514
+    },
+    "relief/P1/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 285379,
+     "status": "measured",
+     "score": 1.8546668701778268,
+     "signed_median": -1.563982296901262
+    },
+    "relief/P1/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 99198,
+     "status": "measured",
+     "score": 8.110541699694698,
+     "signed_median": -7.443749340958941
+    },
+    "relief/P2/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 123418,
+     "status": "measured",
+     "score": 2.556900456799842,
+     "signed_median": -0.3271749855674366
+    },
+    "relief/P2/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 60134,
+     "status": "measured",
+     "score": 7.139892577678495,
+     "signed_median": -0.7890666329723646
+    },
+    "relief/P2/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 126662,
+     "status": "measured",
+     "score": 2.88661938487416,
+     "signed_median": -0.3754562535730651
+    },
+    "relief/P2/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 283767,
+     "status": "measured",
+     "score": 1.2311284387900467,
+     "signed_median": 0.03003221094839506
+    },
+    "relief/P2/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 99653,
+     "status": "measured",
+     "score": 1.471184997477533,
+     "signed_median": -0.5522265157059265
+    },
+    "full/N0/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/v045/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 297820,
+     "status": "measured",
+     "score": 0.698642703732194,
+     "signed_median": 0.054789966749727324
+    },
+    "full/v045/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 274121,
+     "status": "measured",
+     "score": 0.3897954882043307,
+     "signed_median": 0.021830843102634112
+    },
+    "full/v045/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 291245,
+     "status": "measured",
+     "score": 0.6220655446095112,
+     "signed_median": 0.006473343117095347
+    },
+    "full/v045/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 248911,
+     "status": "measured",
+     "score": 0.8818005776393492,
+     "signed_median": -0.020734883932027937
+    },
+    "full/v045/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 260512,
+     "status": "measured",
+     "score": 0.6843553570677635,
+     "signed_median": -0.033946150809313826
+    },
+    "full/v096/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 298015,
+     "status": "measured",
+     "score": 0.6986060187047605,
+     "signed_median": 0.05501607386425203
+    },
+    "full/v096/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 273409,
+     "status": "measured",
+     "score": 0.3898376206167441,
+     "signed_median": 0.021923141346750594
+    },
+    "full/v096/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 288725,
+     "status": "measured",
+     "score": 0.6221153411253207,
+     "signed_median": 0.006978968242634739
+    },
+    "full/v096/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 247850,
+     "status": "measured",
+     "score": 0.8813880771385108,
+     "signed_median": 0.13339910367427282
+    },
+    "full/v096/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 256829,
+     "status": "measured",
+     "score": 0.6796666292958952,
+     "signed_median": -0.005393841585625503
+    },
+    "full/P1/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 333992,
+     "status": "measured",
+     "score": 1.0329884039400743,
+     "signed_median": -0.5696002144289115
+    },
+    "full/P1/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 313440,
+     "status": "measured",
+     "score": 0.6543151331204948,
+     "signed_median": -0.22144416225205277
+    },
+    "full/P1/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 354782,
+     "status": "measured",
+     "score": 1.0846680678782783,
+     "signed_median": -0.5200066853379683
+    },
+    "full/P1/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 320906,
+     "status": "measured",
+     "score": 1.4368701336675125,
+     "signed_median": -0.9830745480435239
+    },
+    "full/P1/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 301515,
+     "status": "measured",
+     "score": 1.1091262723728328,
+     "signed_median": -0.659715937788623
+    },
+    "full/P2/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 346319,
+     "status": "measured",
+     "score": 0.7526731654677743,
+     "signed_median": 0.020051100951285348
+    },
+    "full/P2/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 296944,
+     "status": "measured",
+     "score": 0.3920871827712687,
+     "signed_median": -0.05865133134446351
+    },
+    "full/P2/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 347648,
+     "status": "measured",
+     "score": 0.6997982807677181,
+     "signed_median": 0.017997843427376592
+    },
+    "full/P2/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 316311,
+     "status": "measured",
+     "score": 0.9564959470661962,
+     "signed_median": -0.03109828509856311
+    },
+    "full/P2/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 292127,
+     "status": "measured",
+     "score": 0.680275898497258,
+     "signed_median": -0.06992260418617327
+    }
+   }
+  },
+  {
+   "run": 2,
+   "wall_s": 75.326,
+   "verdict": {
+    "V": {
+     "N0": 0.0,
+     "v045": 0.6719022603104446,
+     "v096": 0.6718453954818121,
+     "P1": 8.27284991557855,
+     "P2": 7.139892577678495
+    },
+    "measured_shots": 5,
+    "v045_wins": [
+     "floor-join",
+     "niche"
+    ],
+    "checks": {
+     "margin_ge_0.10": false,
+     "shots_ge_4_of_measured": false,
+     "stripe_signed_negative": false,
+     "N0_zero": true,
+     "P1_fires": true,
+     "P2_monotone": true
+    }
+   },
+   "shots": {
+    "relief/N0/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/v045/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 80236,
+     "status": "measured",
+     "score": 0.625913930683613,
+     "signed_median": 0.05338937515250085
+    },
+    "relief/v045/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 71400,
+     "status": "measured",
+     "score": 0.480836559703168,
+     "signed_median": 0.005260186538544443
+    },
+    "relief/v045/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 87946,
+     "status": "measured",
+     "score": 0.5165456944431283,
+     "signed_median": 0.09287607225621558
+    },
+    "relief/v045/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 104581,
+     "status": "measured",
+     "score": 0.6719022603104446,
+     "signed_median": -0.003991139843252939
+    },
+    "relief/v045/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 71756,
+     "status": "measured",
+     "score": 0.6249826675252897,
+     "signed_median": 0.07031785261570764
+    },
+    "relief/v096/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 80349,
+     "status": "measured",
+     "score": 0.6259228838914896,
+     "signed_median": 0.0533635757263058
+    },
+    "relief/v096/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 69917,
+     "status": "measured",
+     "score": 0.48088362540979607,
+     "signed_median": 0.023597622323030955
+    },
+    "relief/v096/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 86856,
+     "status": "measured",
+     "score": 0.5165383375651688,
+     "signed_median": 0.09288550920522758
+    },
+    "relief/v096/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 101202,
+     "status": "measured",
+     "score": 0.6718453954818121,
+     "signed_median": 0.1034349790997833
+    },
+    "relief/v096/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 70930,
+     "status": "measured",
+     "score": 0.6489236037651447,
+     "signed_median": 0.08626844728256686
+    },
+    "relief/P1/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 119880,
+     "status": "measured",
+     "score": 8.239999465525983,
+     "signed_median": -7.470904709386723
+    },
+    "relief/P1/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 43512,
+     "status": "measured",
+     "score": 7.753099522435547,
+     "signed_median": -1.2413349360099208
+    },
+    "relief/P1/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 122908,
+     "status": "measured",
+     "score": 8.27284991557855,
+     "signed_median": -7.620713896720514
+    },
+    "relief/P1/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 285379,
+     "status": "measured",
+     "score": 1.8546668701778268,
+     "signed_median": -1.563982296901262
+    },
+    "relief/P1/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 99198,
+     "status": "measured",
+     "score": 8.110541699694698,
+     "signed_median": -7.443749340958941
+    },
+    "relief/P2/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 123418,
+     "status": "measured",
+     "score": 2.556900456799842,
+     "signed_median": -0.3271749855674366
+    },
+    "relief/P2/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 60134,
+     "status": "measured",
+     "score": 7.139892577678495,
+     "signed_median": -0.7890666329723646
+    },
+    "relief/P2/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 126662,
+     "status": "measured",
+     "score": 2.88661938487416,
+     "signed_median": -0.3754562535730651
+    },
+    "relief/P2/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 283767,
+     "status": "measured",
+     "score": 1.2311284387900467,
+     "signed_median": 0.03003221094839506
+    },
+    "relief/P2/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 99653,
+     "status": "measured",
+     "score": 1.471184997477533,
+     "signed_median": -0.5522265157059265
+    },
+    "full/N0/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/v045/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 297820,
+     "status": "measured",
+     "score": 0.698642703732194,
+     "signed_median": 0.054789966749727324
+    },
+    "full/v045/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 274121,
+     "status": "measured",
+     "score": 0.3897954882043307,
+     "signed_median": 0.021830843102634112
+    },
+    "full/v045/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 291245,
+     "status": "measured",
+     "score": 0.6220655446095112,
+     "signed_median": 0.006473343117095347
+    },
+    "full/v045/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 248911,
+     "status": "measured",
+     "score": 0.8818005776393492,
+     "signed_median": -0.020734883932027937
+    },
+    "full/v045/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 260512,
+     "status": "measured",
+     "score": 0.6843553570677635,
+     "signed_median": -0.033946150809313826
+    },
+    "full/v096/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 298015,
+     "status": "measured",
+     "score": 0.6986060187047605,
+     "signed_median": 0.05501607386425203
+    },
+    "full/v096/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 273409,
+     "status": "measured",
+     "score": 0.3898376206167441,
+     "signed_median": 0.021923141346750594
+    },
+    "full/v096/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 288725,
+     "status": "measured",
+     "score": 0.6221153411253207,
+     "signed_median": 0.006978968242634739
+    },
+    "full/v096/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 247850,
+     "status": "measured",
+     "score": 0.8813880771385108,
+     "signed_median": 0.13339910367427282
+    },
+    "full/v096/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 256829,
+     "status": "measured",
+     "score": 0.6796666292958952,
+     "signed_median": -0.005393841585625503
+    },
+    "full/P1/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 333992,
+     "status": "measured",
+     "score": 1.0329884039400743,
+     "signed_median": -0.5696002144289115
+    },
+    "full/P1/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 313440,
+     "status": "measured",
+     "score": 0.6543151331204948,
+     "signed_median": -0.22144416225205277
+    },
+    "full/P1/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 354782,
+     "status": "measured",
+     "score": 1.0846680678782783,
+     "signed_median": -0.5200066853379683
+    },
+    "full/P1/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 320906,
+     "status": "measured",
+     "score": 1.4368701336675125,
+     "signed_median": -0.9830745480435239
+    },
+    "full/P1/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 301515,
+     "status": "measured",
+     "score": 1.1091262723728328,
+     "signed_median": -0.659715937788623
+    },
+    "full/P2/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 346319,
+     "status": "measured",
+     "score": 0.7526731654677743,
+     "signed_median": 0.020051100951285348
+    },
+    "full/P2/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 296944,
+     "status": "measured",
+     "score": 0.3920871827712687,
+     "signed_median": -0.05865133134446351
+    },
+    "full/P2/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 347648,
+     "status": "measured",
+     "score": 0.6997982807677181,
+     "signed_median": 0.017997843427376592
+    },
+    "full/P2/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 316311,
+     "status": "measured",
+     "score": 0.9564959470661962,
+     "signed_median": -0.03109828509856311
+    },
+    "full/P2/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 292127,
+     "status": "measured",
+     "score": 0.680275898497258,
+     "signed_median": -0.06992260418617327
+    }
+   }
+  },
+  {
+   "run": 3,
+   "wall_s": 83.536,
+   "verdict": {
+    "V": {
+     "N0": 0.0,
+     "v045": 0.6719022603104446,
+     "v096": 0.6718453954818121,
+     "P1": 8.27284991557855,
+     "P2": 7.139892577678495
+    },
+    "measured_shots": 5,
+    "v045_wins": [
+     "floor-join",
+     "niche"
+    ],
+    "checks": {
+     "margin_ge_0.10": false,
+     "shots_ge_4_of_measured": false,
+     "stripe_signed_negative": false,
+     "N0_zero": true,
+     "P1_fires": true,
+     "P2_monotone": true
+    }
+   },
+   "shots": {
+    "relief/N0/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/N0/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "relief/v045/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 80236,
+     "status": "measured",
+     "score": 0.625913930683613,
+     "signed_median": 0.05338937515250085
+    },
+    "relief/v045/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 71400,
+     "status": "measured",
+     "score": 0.480836559703168,
+     "signed_median": 0.005260186538544443
+    },
+    "relief/v045/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 87946,
+     "status": "measured",
+     "score": 0.5165456944431283,
+     "signed_median": 0.09287607225621558
+    },
+    "relief/v045/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 104581,
+     "status": "measured",
+     "score": 0.6719022603104446,
+     "signed_median": -0.003991139843252939
+    },
+    "relief/v045/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 71756,
+     "status": "measured",
+     "score": 0.6249826675252897,
+     "signed_median": 0.07031785261570764
+    },
+    "relief/v096/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 80349,
+     "status": "measured",
+     "score": 0.6259228838914896,
+     "signed_median": 0.0533635757263058
+    },
+    "relief/v096/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 69917,
+     "status": "measured",
+     "score": 0.48088362540979607,
+     "signed_median": 0.023597622323030955
+    },
+    "relief/v096/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 86856,
+     "status": "measured",
+     "score": 0.5165383375651688,
+     "signed_median": 0.09288550920522758
+    },
+    "relief/v096/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 101202,
+     "status": "measured",
+     "score": 0.6718453954818121,
+     "signed_median": 0.1034349790997833
+    },
+    "relief/v096/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 70930,
+     "status": "measured",
+     "score": 0.6489236037651447,
+     "signed_median": 0.08626844728256686
+    },
+    "relief/P1/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 119880,
+     "status": "measured",
+     "score": 8.239999465525983,
+     "signed_median": -7.470904709386723
+    },
+    "relief/P1/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 43512,
+     "status": "measured",
+     "score": 7.753099522435547,
+     "signed_median": -1.2413349360099208
+    },
+    "relief/P1/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 122908,
+     "status": "measured",
+     "score": 8.27284991557855,
+     "signed_median": -7.620713896720514
+    },
+    "relief/P1/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 285379,
+     "status": "measured",
+     "score": 1.8546668701778268,
+     "signed_median": -1.563982296901262
+    },
+    "relief/P1/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 99198,
+     "status": "measured",
+     "score": 8.110541699694698,
+     "signed_median": -7.443749340958941
+    },
+    "relief/P2/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 123418,
+     "status": "measured",
+     "score": 2.556900456799842,
+     "signed_median": -0.3271749855674366
+    },
+    "relief/P2/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 60134,
+     "status": "measured",
+     "score": 7.139892577678495,
+     "signed_median": -0.7890666329723646
+    },
+    "relief/P2/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 126662,
+     "status": "measured",
+     "score": 2.88661938487416,
+     "signed_median": -0.3754562535730651
+    },
+    "relief/P2/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 283767,
+     "status": "measured",
+     "score": 1.2311284387900467,
+     "signed_median": 0.03003221094839506
+    },
+    "relief/P2/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 99653,
+     "status": "measured",
+     "score": 1.471184997477533,
+     "signed_median": -0.5522265157059265
+    },
+    "full/N0/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/N0/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 0,
+     "status": "measured",
+     "score": 0.0,
+     "signed_median": 0.0
+    },
+    "full/v045/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 297820,
+     "status": "measured",
+     "score": 0.698642703732194,
+     "signed_median": 0.054789966749727324
+    },
+    "full/v045/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 274121,
+     "status": "measured",
+     "score": 0.3897954882043307,
+     "signed_median": 0.021830843102634112
+    },
+    "full/v045/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 291245,
+     "status": "measured",
+     "score": 0.6220655446095112,
+     "signed_median": 0.006473343117095347
+    },
+    "full/v045/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 248911,
+     "status": "measured",
+     "score": 0.8818005776393492,
+     "signed_median": -0.020734883932027937
+    },
+    "full/v045/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 260512,
+     "status": "measured",
+     "score": 0.6843553570677635,
+     "signed_median": -0.033946150809313826
+    },
+    "full/v096/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 298015,
+     "status": "measured",
+     "score": 0.6986060187047605,
+     "signed_median": 0.05501607386425203
+    },
+    "full/v096/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 273409,
+     "status": "measured",
+     "score": 0.3898376206167441,
+     "signed_median": 0.021923141346750594
+    },
+    "full/v096/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 288725,
+     "status": "measured",
+     "score": 0.6221153411253207,
+     "signed_median": 0.006978968242634739
+    },
+    "full/v096/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 247850,
+     "status": "measured",
+     "score": 0.8813880771385108,
+     "signed_median": 0.13339910367427282
+    },
+    "full/v096/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 256829,
+     "status": "measured",
+     "score": 0.6796666292958952,
+     "signed_median": -0.005393841585625503
+    },
+    "full/P1/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 333992,
+     "status": "measured",
+     "score": 1.0329884039400743,
+     "signed_median": -0.5696002144289115
+    },
+    "full/P1/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 313440,
+     "status": "measured",
+     "score": 0.6543151331204948,
+     "signed_median": -0.22144416225205277
+    },
+    "full/P1/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 354782,
+     "status": "measured",
+     "score": 1.0846680678782783,
+     "signed_median": -0.5200066853379683
+    },
+    "full/P1/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 320906,
+     "status": "measured",
+     "score": 1.4368701336675125,
+     "signed_median": -0.9830745480435239
+    },
+    "full/P1/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 301515,
+     "status": "measured",
+     "score": 1.1091262723728328,
+     "signed_median": -0.659715937788623
+    },
+    "full/P2/straight-wall": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 346319,
+     "status": "measured",
+     "score": 0.7526731654677743,
+     "signed_median": 0.020051100951285348
+    },
+    "full/P2/corner": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 296944,
+     "status": "measured",
+     "score": 0.3920871827712687,
+     "signed_median": -0.05865133134446351
+    },
+    "full/P2/floor-join": {
+     "eligible_cells": 36,
+     "masked_px_cand": 360000,
+     "masked_px_src": 360000,
+     "changed_px": 347648,
+     "status": "measured",
+     "score": 0.6997982807677181,
+     "signed_median": 0.017997843427376592
+    },
+    "full/P2/niche": {
+     "eligible_cells": 30,
+     "masked_px_cand": 338334,
+     "masked_px_src": 338334,
+     "changed_px": 316311,
+     "status": "measured",
+     "score": 0.9564959470661962,
+     "signed_median": -0.03109828509856311
+    },
+    "full/P2/joint-stripe": {
+     "eligible_cells": 30,
+     "masked_px_cand": 302282,
+     "masked_px_src": 302282,
+     "changed_px": 292127,
+     "status": "measured",
+     "score": 0.680275898497258,
+     "signed_median": -0.06992260418617327
+    }
+   }
+  }
+ ]
+}

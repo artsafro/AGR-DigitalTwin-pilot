@@ -98,4 +98,35 @@ Replay is limited to this PC (Desktop maps are outside git; hashes pinned above)
 
 ## Results
 
+### R1 (frozen contract, commit `feeae31f`): H135 refuted as frozen, instrument INVALID (saturated)
+
+`run.py C:/x/ev_t_33b1b86c/m1`, 3 fresh runs, wall 80.5 / 75.3 / 83.5 s, max paired spread 0.0, verdict identical.
+Receipt `autoresearch-normal-relief-r135/receipt_r1.json` (SHA-256 `3d47aa7ca79f564194d9205320945416aaa321cd6c4fb207ab2decd26e4dd772`).
+
+| relief mode | V135 | straight | corner | floor-join | niche | stripe |
+|---|---:|---:|---:|---:|---:|---:|
+| v045 rejected | 0.6719 | 0.6259 | 0.4808 | 0.5165 | 0.6719 | 0.6250 |
+| v096 accepted | 0.6718 | 0.6259 | 0.4809 | 0.5165 | 0.6718 | 0.6489 |
+| N0 / P1 / P2 | 0 / 8.273 / 7.140 | | | | | |
+
+Checks: margin 0.00006 < 0.10 (fail), v045 worse on 2/5 (fail), stripe signed median +0.0703 (fail);
+N0 = 0, P1 fires, P2 monotone (pass). Inspection after scoring: the `relief` renders are **saturated** — on the
+source, 68.4 / 46.8 / 67.5 / 16.8 / 69.6 % of masked pixels are clipped (Y >= 0.999; p50 = 1.0 on three
+shots), because the v045 driver's 120 W grazing light was tuned for the dark brick Diffuse, not for 0.5 grey.
+Clipped faces have no gradient, so R1 measures joint edges only; this is an instrument defect, not evidence
+about the labels. `full` mode (not clipped, 0-6.5 %) also gives v045 = v096 to 4 decimals (secondary, no decision).
+
+### Amendment A1 (frozen before the second measurement, label-blind)
+
+Only two changes, chosen on the SOURCE render alone (no candidate looked at):
+1. `relief` light energy 120 -> **10** W (`run.py --a1 10`). Source-only probes: E=15 left niche 1.17 % clipped,
+   E=30 16.4 % on corner; E=10 gives 0.00 % on all five shots (p99 0.31-0.69).
+2. **Clip guard**: a shot whose masked pixels are > 1 % clipped in the candidate or the source is
+   `not_measured_clipped` (it was silently scored in R1).
+
+Metric, cells, shots, thresholds, witnesses and decision rule unchanged. A1 is the last repair on this
+contract; if it refutes, the hypothesis is refuted and the next idea needs a new card.
+
+### A1 result
+
 Not measured yet.

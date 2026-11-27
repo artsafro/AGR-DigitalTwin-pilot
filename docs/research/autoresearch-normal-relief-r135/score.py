@@ -25,9 +25,13 @@ def _sobel(y):
     return np.hypot(gx, gy)
 
 
-def shot_score(cand: Path, src: Path) -> dict:
+def shot_score(cand: Path, src: Path, clip_max: float | None = None) -> dict:
+    """clip_max (A1): a shot whose masked pixels are clipped (Y >= 0.999) above this fraction in either
+    render is not measured; None replays R1 unchanged."""
     yc, mc = _load(cand)
     ys, ms = _load(src)
+    clip = max(float((yc[mc] >= 0.999).mean()) if mc.any() else 0.0,
+               float((ys[ms] >= 0.999).mean()) if ms.any() else 0.0)
     gc, gs = _sobel(yc), _sobel(ys)
     m = mc & ms
     r, signed = [], []
@@ -44,7 +48,10 @@ def shot_score(cand: Path, src: Path) -> dict:
             r.append(abs(s))
     row: dict = dict(eligible_cells=len(r), masked_px_cand=int(mc.sum()), masked_px_src=int(ms.sum()),
                changed_px=int((np.abs(yc - ys) > 0).sum()))
-    if len(r) < MIN_CELLS:
+    row['clip_frac'] = round(clip, 6)
+    if clip_max is not None and clip > clip_max:
+        row.update(status='not_measured_clipped', score=None, signed_median=None)
+    elif len(r) < MIN_CELLS:
         row.update(status='not_measured', score=None, signed_median=None)
     else:
         row.update(status='measured', score=float(np.percentile(r, 95)), signed_median=float(np.median(signed)))
