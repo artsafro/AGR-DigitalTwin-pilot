@@ -100,12 +100,21 @@ def raster_view(seg, res):
     return img, vimg, (x0, x1)
 
 
-def signals_from_masks(occ, vedge, res):
+def signals_from_masks(occ, vedge, res, tall_m=2.0):
     H = occ.shape[0]
     rows = np.where(occ.any(0), occ.argmax(0), H)
     top = (H - rows) * res  # height above raster bottom, 0 where empty
     rhythm = vedge.sum(0).astype(float)
+    if TRIM:  # R1: span = first..last column whose top is >= tall_m above the raster bottom (drops ground lines)
+        cols = np.where(top >= tall_m)[0]
+        if len(cols):
+            top, rhythm = top[cols[0]:cols[-1] + 1], rhythm[cols[0]:cols[-1] + 1]
     return top, rhythm
+
+
+TRIM = True       # R1 (False = R0)
+DEPTH_JUMP = 0.03  # R1 (R0 = 0.15)
+FULL_BONUS = 0.15  # R2 (V4 only)
 
 
 def model_signals(npz, az, res):
@@ -114,7 +123,7 @@ def model_signals(npz, az, res):
     nrm = npz[key + "_normal"]
     occ = np.isfinite(d)
     dd = np.where(occ, d, 1e6)
-    jump = np.abs(np.diff(dd, axis=1)) > 0.15
+    jump = np.abs(np.diff(dd, axis=1)) > DEPTH_JUMP
     dot = (nrm[:, 1:] * nrm[:, :-1]).sum(-1)
     crease = (dot < math.cos(math.radians(30))) & occ[:, 1:] & occ[:, :-1]
     ve = np.zeros_like(occ)
@@ -250,10 +259,16 @@ def main():
                     row[v] = decide({az: per[az][v] for az in per}, gt, dec["tau_margin"], dec["min_score"])
                     if name == "ac08" and row[v]["outcome"] == "wrong" and row[v]["answer"] == pair[gt]:
                         row[v]["outcome"] = "wrong_within_pair"
+                # R2 / V4: full-face hypothesis - V3 + FULL_BONUS for faces whose width equals the view width (<= 5 %)
+                s4 = {az: per[az]["V3"] + (FULL_BONUS if abs(L * res - widths[az]) / widths[az] <= 0.05 else 0.0) for az in per}
+                row["scores"]["V4"] = {str(az): round(s, 4) for az, s in s4.items()}
+                row["V4"] = decide(s4, gt, dec["tau_margin"], dec["min_score"])
+                if name == "ac08" and row["V4"]["outcome"] == "wrong" and row["V4"]["answer"] == pair[gt]:
+                    row["V4"]["outcome"] = "wrong_within_pair"
                 row["V0"] = decide_width(L * res, widths, gt)
                 report["views"].append(row)
     summ = {}
-    for v in ("V0", "V1", "V2", "V3"):
+    for v in ("V0", "V1", "V2", "V3", "V4"):
         for cls in ("full", "partial", "mirror"):
             rows = [r for r in report["views"] if r.get("case", "").startswith(cls) and v in r]
             for fxn in sorted({r["fixture"] for r in rows}):
