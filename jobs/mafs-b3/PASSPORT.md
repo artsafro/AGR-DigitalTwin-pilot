@@ -6,7 +6,7 @@
 
 ## Источник
 
-- путь: `C:/x/library-publish/inbox/mafs-b3-2026-11-26`
+- путь: `G:/Мой диск/AGR-evidence/1743-library-mafs-b3/mafs-b3-2026-11-26`
 - уровень: **C**, класс: `unclassified`
 - заметка: not classified yet: run source.intake / scene.source_class
 
