@@ -1,5 +1,30 @@
 # Autoresearch #140: 2D elevation-to-face matching (OBSERVE)
 
+**Итог: гипотеза подтверждена на калибровке, не на Сокольниках.** На 36 искусственных обрезках KPP1 двумерное сопоставление линий дало 22 верных привязки против 6 по профилю крыши (отказы 14 против 30). На четырёх цельных видах — 3 верных против 2. На 40 симметричных примерах AC08 оба метода отказались. На всех 80 незеркальных случаях — ни одной уверенной ошибки. Это рекомендация испытать метод на реальных неподписанных видах, а не включить автоматический перенос отделки.
+
+Рекомендация для общей OKS-трассы: сначала привязка по осям, ключевому плану и имени вида. Если их нет, сопоставлять 2D-линии с ортографическими проекциями по граням контура и сохранять в листе привязки два лучших варианта, их оценки и причину отказа. Не переносить отделку, пока рамка/ориентация чертежа не подтверждена или результат ниже порога. После закрытия #2001 проверить обе реальные неподписанные врезки внутреннего угла без перенастройки порога; если пары не разделяются, STOP 04 остаётся вопросом. Продуктовый код и поставки не менялись.
+
+## Round log and acceptance
+
+**Hypothesis:** `confirmed` for this cohort only. **Run:** `finished`. **Handoff:** OBSERVE, review of the research branch only; no production adoption or delivery claim. Three fresh paired runs on `a5ad84a4f5a6301a6893cbbec0d75a50a35aa572` took 27.406 / 32.369 / 31.373 s (median 31.373 s, range 4.963 s; whole series 92.048 s). 88/88 baseline identities/decisions matched the historical V1 oracle every run. All three complete per-case pair outputs were byte-identical; correct-count gain was +16 in each run (spread 0).
+
+| Witness | A: correct / wrong / abstain | B: correct / wrong / abstain | Bound and outcome |
+|---|---:|---:|---|
+| KPP1 full (real, title suppressed) | 2 / 0 / 2 | 3 / 0 / 1 | Both long-view positives retained. Short `А-В` resolves at margin 0.124; `В-А` still abstains at 0.0495. |
+| KPP1 partial (synthetic) | 6 / 0 / 30 | 22 / 0 / 14 | +16 >= +4; accuracy on answered 100% both; abstain 83.3% → 38.9%. |
+| AC08 full / partial (symmetric negative) | 0 / 0 / 4 · 0 / 0 / 36 | 0 / 0 / 4 · 0 / 0 / 36 | 40/40 abstain, answered accuracy undefined. |
+| KPP1 mirror (injected, 4 exercised) | 0 / 2 / 2 | 0 / 0 / 4 | B abstained on all exercised mirrors. Not proof against arbitrary orientation/revision drift. |
+| AC08 mirror (injected) | 0 / 0 / 1 | 0 / 0 / 1 | Only 1 exercised; 3 unchanged, not measured. |
+| Exact translation, displaced line, score tie/blank, no artificial border | — | 4 local controls passed | Missing scorer initially failed collection. First short mirror witness was within the matcher tolerance (score 1.0); widened the witness before native scoring, with no change to thresholds or candidate. |
+
+KPP1 crop answers by facade: `1-4` 9/9, `4-1` 8/9, `А-В` 4/9, `В-А` 1/9. The stronger signal does not solve the difficult short/similar faces; 2D arrangement can help without reliable 3D window details, but only when visibly distinctive edges survive. **Not measured:** real untitled partials, re-entrant or rotated faces, raster/vector PDF, G22/OBR22/Vatutino, Revit names/keyplans as algorithms, cross-job transfer, finish-callout transfer and STOP 04. AC08 is a symmetric source-model/recovered-DXF control, not independent evidence of accuracy on an asymmetric project.
+
+Replay detail and all per-view results: [`autoresearch-view-face-2d/receipt.json`](autoresearch-view-face-2d/receipt.json), SHA-256 `63481140b375d08533ee7a5877389889b009fe7d3f3e708247e2df1ee15d79ba`. Git and worktree scorer bytes matched the receipt. KPP1 ZIP was hashed before and after staging, and its selected FBX member and the other three inputs matched the pinned fixture before and after. Replay is available on the pilot host with the mounted evidence/asset store; not portable without those inputs. The elapsed-time stop is conditional on the replay host.
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --extra cad pytest -q --basetemp "$(cygpath -m "$TMPDIR")/pytest-r140-final" docs/research/autoresearch-view-face-2d/test_score.py tests/test_blender_exit_code_guard.py` — 41 passed. Previous combined run hit Windows basetemp collision (40 passed, 1 setup error); the retry isolated the directory without deselecting tests.
+
+Full suite: deferred to merge batch (rule 68).
+
 ## Frozen protocol (before scoring)
 
 **H140:** matching 2D line placement, without titles or axes, yields more correct assignments than #139 roofline V1 on KPP1 synthetic partials, with no confident wrong face. This is a candidate for the shared OKS view-to-face map sheet, not a production change.
