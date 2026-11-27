@@ -1,0 +1,15 @@
+# Standing #130 — AC08 v006 holdout (OBSERVE)
+
+## Frozen contract
+
+H130: the unchanged #128 score separates a second AC08 texture rejection (v006: horizontal joints on panels, [#559 rejection](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/559#issuecomment-6341401650)) from [v010, the accepted visual reference](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/559#issuecomment-6345392389). This is a different rejection of the same building, not independent building validation. #128 had already refuted a universal calibration claim on the shared wrong-pitch error in v007. This round cannot reverse that finding.
+
+- Metric: unchanged #125 V2 as run by #128: maximum across four facades of p95 of 1 m cell mean CIE76 ΔE, common alpha mask excluding the datum, evaluation at 100 px/m. Same paired FLAT camera for both profiles, 400 px/m native. Report each facade and median/range of three fresh rejected-minus-reference pairs. Confirm H130 only if rejection is ≥10% worse on the primary score in each pair and strictly worse on every facade in each pair; otherwise refute after a complete parity-valid series. Report v010 parity vs #128, and decoded RGBA parity across all three fresh rounds. Failed parity, failed required controls, or partial series are inconclusive.
+- Budget: three fresh confirmation pairs, zero new metric candidates. Existing adapter cap 300 s, first pair ≤90 s with ≥2 × first-pair wall +15 s remaining. No shortened series, cached substitution, package edits, removed checks, relaxed tolerances, other cards' files, Max, or production KEEP. Report wall/status separately from H130. Reuse unchanged production renderer/scorer via #128; only the manifest selecting versions changes.
+- Positive witness and exercised accepted control, both labels: unchanged #128 P1 wrong-colour patch, P2 dark stripes and P3 horizontal image shift, NPM south only; require changed RGB >0 for each, exact alpha and VPM parity, and v010 P1 ≥ clean +5 ΔE, P2/P3 > clean. Rejected-side response is diagnostic. N0 requires zero score (NPM copied from VPM) and preserved alpha/VPM. East/north/west are `not_exercised` for P1–P3. No native UV, physical padding, density or same-mutation-on-both-profiles witness in this series.
+- Inputs: `G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v{006,010}/`, manifest in the replay adapter (both archives per label, verified against adjacent SHA256SUMS.txt). #128 replay pinned at `5c15100ee5631e2f5d75e697e14e1977a6361f3d`, and the upstream renderer/spec/UV owner, scorer and Blender binary verified by that adapter. All archive and staged inputs checked before/after. This is limited replay (requires the exact Drive ZIPs and Blender 5.1 on Windows). Python 3.14.9, NumPy 2.5.4, Pillow 13.0.0.
+- Cross-job admission is separate: require same element/facade and both profile exports, byte-bound to both a texture-specific rejection and an accepted reference. Do not substitute a geometry rejection, design decision for a library row, or a one-profile delivery.
+
+```bash
+python docs/research/autoresearch-npm-vpm-render-diff-r130/replay.py tmp/r130-NEW
+```
