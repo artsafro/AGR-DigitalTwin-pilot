@@ -1,5 +1,9 @@
 # Autoresearch #150 — opposite-face reflection veto (OBSERVE)
 
+## Кратко для Артёма
+
+**H150 опровергнута.** Проверка зеркального вида для противоположной стены убрала одну уверенную ошибку на ЭЛВ, но вместе с ней отбросила один из двух правильно распознанных реальных фрагментов и 9 из 40 верных синтетических обрезок. Полные фасады не пострадали: 6 верных, 1 отказ, 0 ошибок. Проверку не предлагаю как общий фильтр для частичных видов. В будущем `view<->face map sheet` пусть сначала показывает привязку по осям и плану, если они есть. При конкуренции противоположных стен — показать обе и запросить один независимый ориентир (например, положение возвратной стены или входа на плане). Не переносить отделку, пока конкретная стена не подтверждена. Сокольники не открывались; STOP 04 остаётся непроверенным до закрытия #2001.
+
 ## Frozen contract (before scoring)
 
 H150: a counterfactual reflection of the view can expose #149's confident opposite-face error without discarding most usable assignments. Compare D (#149, unchanged) with F (D plus a refusal only). If D proposes azimuth `a`, compute the same #149 partition score against `(a + 180) % 360` with the view horizontally reflected. Keep the original proposal only if its nine-decimal score leads that reflected-opposite score by at least 0.10 (inclusive; decimal comparison). Otherwise abstain; do not promote the runner-up. D's minimum score, within-orientation margin, offsets, raster resolution, candidates and view extraction remain unchanged. No geometry, maps, product code or accepted artifacts are changed.
@@ -11,3 +15,24 @@ H150: a counterfactual reflection of the view can expose #149's confident opposi
 - Replay: `uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-handedness/run.py tmp/ar150-NEW`. Fetch `research/autoresearch-standing-149` and `research/autoresearch-standing-147` first if their pinned objects are absent. Whole input manifest: #149 `94b74bcaeb2e00d6cdc1d486bf59ac7420bdf854` (unchanged driver, score, renderer and baseline receipt); its `PINS` include #145 fixture/driver and #147 receipt. Its `stage` checks source PDF `49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545`, source FBX `7ccf502d9dc1494daa885e650dd8b2b7e261c7b90b262ee157c188ec3a78b961` and Blender 4.4 executable. Runner records self and `uv.lock` SHA-256; recheck original/staged inputs after the series. Pilot-host replay limited to hash-matching native inputs (staged copies also listed in #145/#149 evidence). Native files remain read-only. Do not edit deliveries, other cards' files or fixture labels, retune from results, deselect checks or use private scratch as keep evidence.
 - Pre-scoring pin clarification: the #149 receipt is from `94b74bcaeb2e00d6cdc1d486bf59ac7420bdf854`, but the three executable blobs must come from its measured revision `200726691ee7317bc1710ecc3f8e1bbf1456937b` to match the receipt's SHA-256 pins. `94b74bca` adds docstring markers, changing their hashes. This is not a change to the variant or fixture.
 - Not measured by design: physical wall/return identity vs cardinal side, bay localization, independent colour transfer, production finish-callout transfer, real Sokolniki STOP 04, DWG/text/keyplan methods. No product implementation in this round.
+
+## Round log
+
+- Contract `df323c43`; measured driver head `4c5557e0`, SHA-256 `dcb36f93ae8e9717ef8f3fe3fbfa4dae81a1a14914ecd6c25ad76c0b2d822b4c`. Initial shell redirection failed before launch (missing `tmp/`); first preflight then aborted before any rays (bounded subprocess namespace lacked `STDOUT`). The new child-process regression reproduced the exact failure; the fix preserves the constant and does not change any score. The new output directory is `tmp/ar150-v2`.
+- **Hypothesis: refuted. Run status: finished, exit 0.** Fresh pair wall times 65.459 / 64.044 / 65.357 s; median 65.357 s, range 1.415 s; timed total 194.970 s. Each pair reproduced all 80 #149 D rows exactly, and the three paired ledgers are byte-identical (`f638996ab88081b5eda22b6f8d66876c95ec0219bdfb7d5a906b528038d0692c`). Original and staged native input hashes matched after the series.
+
+| Evidence group | D correct / wrong / abstain | F correct / wrong / abstain | F correct / answered; abstain / total | Bound |
+|---|---:|---:|---:|---|
+| Real full views | 6 / 0 / 1 | 6 / 0 / 1 | 6/6; 1/7 | met |
+| Real fragments, normal top | 2 / 0 / 0 | 1 / 0 / 1 | 1/1; 1/2 | **missed** (both required) |
+| Real fragment with top cut | 0 / 0 / 1 | 0 / 0 / 1 | undefined; 1/1 | met |
+| Synthetic horizontal crops | 40 / 0 / 23 | 31 / 0 / 32 | 31/31; 32/63 | **missed** (≥32) |
+| Injected full-view reflections | 2 / 1 / 4 | 2 / 0 / 5 | 2/2; 5/7 | met |
+
+- Positive veto: injected `p19 10-1` gave D's wrong az 270 score **0.440286675**; its counterfactual az 90 scored **0.720170967**, so F refused. The unreflected accepted counterpart still picked az 90. `p18 I-A` remained correct: **0.555504567** vs **0.147951416**. The lost real fragment `p24 8-9` had strong correct az 270 **0.812536808**, but its reflected opposite scored **0.822458631**. That is a positive match and a near-or-better competing explanation, not evidence the original assignment was wrong.
+- Injected mirror changed 460–26,972 pixels in each of 7/7 source views. The per-row counterfactual reflection changed 42–26,972 pixels in 80/80 rasters; 51/80 also exercised the veto score (D answered), while 29/80 were **not measured for the veto** because D already abstained. The receipt preserves the counts and null reflected score per row. These are not new physical partial-view or whole-building results.
+
+## Replay evidence and next targets
+
+- [Receipt](autoresearch-view-face-handedness/receipt.json) SHA-256 `fc433d4d23ac95be578c19529ec6b561e628e97fb756973021d1acbcda56fd2b`. Readable pilot evidence: `G:/Мой диск/AGR-evidence/150-view-face-handedness/` (21/21 mounted-copy hashes verified; cloud sync not checked); `SHA256SUMS.txt` SHA-256 `108944c15b309c7d00d4179decae1a01f897ac35fc65abb9a70c278a32e26316`. The seal includes both source copies, native ray arrays/logs, exact upstream executable blobs and all three ledgers. Replay command and prerequisites above.
+- Result is OBSERVE, branch-only, with no production changes retained. Try an independently registered plan/return-wall cue on `p24 8-9` and the real ELV fragments; score physical side and within-side interval separately. Test #149 D unchanged on an eligible independent coloured PDF/Revit FBX pair. Once #2001 closes, pre-register the two Sokolniki partial ROIs and test transfer without retuning; leave STOP 04 if either binding remains unresolved.
