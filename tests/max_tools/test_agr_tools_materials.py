@@ -51,7 +51,7 @@ def lib():
 # ==== library (K3) ===============================================================================================
 def test_library_pointer_schema_and_ral(lib):
     ptr = json.loads(LIB.read_text(encoding='utf-8'))
-    assert ptr['current'] == 'materials_v002.json' and lib['version'] == 'v002' == ptr['version']
+    assert ptr['current'] == 'materials_v003.json' and lib['version'] == 'v003' == ptr['version']  # v003 = v002 + MAF keys [D423]
     assert lib['sha256'] == ptr['sha256'] and lib['ral_checked']
     # 30..40 records come from the materials audit; later records carry a user decision instead ([D202])
     assert 30 <= len([r for r in lib['materials'] if r['source'].get('audit')]) <= 45
@@ -61,7 +61,8 @@ def test_library_pointer_schema_and_ral(lib):
     ral = json.loads((ROOT / 'tools/materials/ral_classic.json').read_text(encoding='utf-8'))['colors']
     for r in lib['materials']:
         if r['ral']:
-            assert r['ral'] in ral and r['rgb_srgb'] == ml.hex_rgb(ral[r['ral']]), r['key']
+            assert r['ral'] in ral, r['key']
+            assert r.get('rgb_override') or r['rgb_srgb'] == ml.hex_rgb(ral[r['ral']]), r['key']
     classes = {r['class'] for r in lib['materials']}
     assert {'glass', 'interior', 'roof', 'metal', 'paint', 'tile', 'panel', 'paving'} <= classes
     # interior/roof/metal plugs: colour + roughness/metal, no texture
@@ -101,8 +102,8 @@ def test_library_rejects(mutate, match):
 
 
 def test_library_pointer_hash_mismatch(tmp_path):
-    src = ROOT / 'library/materials/materials_v002.json'
-    (tmp_path / 'materials_v002.json').write_bytes(src.read_bytes().replace(b'"v002"', b'"v002" ', 1))
+    src = ROOT / 'library/materials/materials_v003.json'
+    (tmp_path / 'materials_v003.json').write_bytes(src.read_bytes().replace(b'"v003"', b'"v003" ', 1))
     (tmp_path / 'materials.json').write_text(LIB.read_text(encoding='utf-8'), encoding='utf-8')
     with pytest.raises(ValueError, match='sha256'):
         ml.load_library(tmp_path / 'materials.json')
@@ -154,7 +155,7 @@ def test_table_midpoly_ids_dense_and_report(lib):
     glass = next(m for m in multisub if m['id'] == 39)
     assert glass['opacity'] == 0.5 and glass['name'] == 'L039_glass_01'
     rep = ml.report(ec, 'preview', entries, table, multisub, skipped, lib, state_hash='s')
-    assert rep['status'] == 'pass' and rep['plan']['multisub']['name'] == 'AGR_Library_v002'
+    assert rep['status'] == 'pass' and rep['plan']['multisub']['name'] == 'AGR_Library_v003'
     assert ec.check_preview('mat.table', rep) is rep
     assert ml.udim_tables(table) == {'BODY_Mid_001': {3: 1001, 7: 1002, 12: 1003, 31: 1004}, 'GLASS_Mid_001': {39: 1001}}
     # passport schema rows
