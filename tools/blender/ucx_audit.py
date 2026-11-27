@@ -129,7 +129,7 @@ try:
                        "size": [round(x, 4) for x in size], "faces_hvt": ua.face_signature(v, t), "_hull": (wv, wt), "_b": (lo, hi)})
     report["ucx"] = {
         "count": len(pieces), "triangles": ucx_tris, "model_triangles_excl_ucx": model_tris,
-        "limit_D012": (15000 if model_tris < 50000 else min(math.ceil(model_tris * 0.05), 100000)),
+        "limit_D012": ua.ucx_triangle_limit(model_tris),
         "kinds": {k: sum(p["kind"] == k for p in pieces) for k in ("box_aabb", "box_oriented", "convex", "custom")},
         "tris_per_piece": {str(k): sum(p["tris"] == k for p in pieces) for k in sorted({p["tris"] for p in pieces})},
         "faces_hvt": {f"{k[0]}-{k[1]}-{k[2]}": n for k, n in sorted(
