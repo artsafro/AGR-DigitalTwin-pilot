@@ -65,8 +65,6 @@ operations:
     owner: src/dt_ai/placement/site.py
     scope: *guarded
     calls: [dt_ai.placement.engine.place, engine.place]
-    # #1979: this historical NPM-only replay is not a site route; contexts.yaml pins its single call by AST hash.
-    allow: [jobs/moskovsky-sosh1200/scripts/flora_place.py]
   window-generator:
     owner: adapters/max/agr_tools/windowgen_core.py
     scope: *guarded

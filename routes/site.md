@@ -39,6 +39,8 @@ handoff, the help command identifies the build or evidence owner; it does not au
 
 For site acceptance, accompany the Max 2026 QUAD review copy with a flat ID-colour copy [D420].
 Preserve material IDs and cover names in `MS_REVIEW_ID`; do not change delivery materials.
+The [Moskovsky job record](../jobs/moskovsky-sosh1200/STATE.md#evidence-location) locates the historical
+ID-colour and site assembly scripts. They are evidence, not commands on this trail.
 
 Help success is not a site run. `passed=true` requires all mandatory machine and manual gates on the same inputs
 and exports. Keep technical QA, Artem's acceptance and publication separate; `review`, `not_run` and missing

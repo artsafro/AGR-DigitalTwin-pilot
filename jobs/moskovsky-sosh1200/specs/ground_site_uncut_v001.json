@@ -26,7 +26,7 @@
  },
  "materials": {
   "library": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/materials/npm-tiled-v001",
-  "decision": "agent proposal 2026-11-26, NOT yet confirmed by Artem: NPM-tiled copies (jobs/moskovsky-sosh1200/scripts/npm_tiled_maps.py, manifest.json) of library v001 maps 19/22/25/27/42; cell 54 m -> 37.9 px/m (GND-08 10-40)",
+  "decision": "agent proposal 2026-11-26, NOT yet confirmed by Artem: NPM-tiled copies (archived npm_tiled_maps.py; see STATE.md evidence, manifest.json) of library v001 maps 19/22/25/27/42; cell 54 m -> 37.9 px/m (GND-08 10-40)",
   "by_cover": {
    "1": {
     "diffuse": "22/22_asphalt_d_1024_tiled54m_2048.png",
@@ -78,7 +78,7 @@
    }
   }
  },
- "note": "moskovsky-sosh1200 ground-npm v001 UNCUT working version (site + adjacent stadium + adjacent covers outside GPZU), boundary derived by jobs/moskovsky-sosh1200/scripts/uncut_adapter.py (no closed source polyline exists; 28946.1 m2; left out: paving 869.5 m2 80 m away). Same covers/IDs/priority/params as specs/ground_site_v001.json (see its note). Not the deliverable; not delivery acceptance.",
+ "note": "moskovsky-sosh1200 ground-npm v001 UNCUT working version (site + adjacent stadium + adjacent covers outside GPZU), boundary derived by archived uncut_adapter.py; see STATE.md evidence (no closed source polyline exists; 28946.1 m2; left out: paving 869.5 m2 80 m away). Same covers/IDs/priority/params as specs/ground_site_v001.json (see its note). Not the deliverable; not delivery acceptance.",
  "adapter": {
   "path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/inspect/v001/uncut_adapter.json",
   "sha256": "14333ca289bb5774b5ab43482686a72466d7e5b8596016fa7bf2907ffbde2578"

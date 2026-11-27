@@ -1,6 +1,6 @@
 # moskovsky-sosh1200 — Flora NPM plan v001 (2026-11-26)
 
-Machine-readable: `flora_plan.json`; points/beds: `flora_points.json` (`scripts/flora_points.py`).
+Machine-readable: `flora_plan.json`; points/beds: `flora_points.json` (archived `flora_points.py`; see [evidence](../STATE.md#evidence-location)).
 Library: A101 `FLORIO_221.max` (sha256 `c9edd5f3…676b`, copy read headless in 3ds Max 2026 batch →
 `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/flora/inspect/a101_dump.json`, 347 objects). Catalogue v003 (`library/flora/catalogue.json`)
 is not usable for this job: every species' v001 maps are `missing` (`library/flora/maps.json`).
@@ -28,7 +28,7 @@ Beds (hatch → position by the label's leader arrow): hedge = the 253 «Сте�
 ledger area balance (`RESOLVE` in the script): A008FB → 6 (54.4 + 40.7 = 95.1 = ledger 95), A00902, A0090D, A00947
 → 11 (133.4 ≈ ledger 132). Bed areas inside ГПЗУ vs ledger: 6 92.2/95, 7 66.4/66, 9 23.0/23, 10 98.2/97, 11 127.4/132.
 
-Placement v001 (`scripts/flora_place.py` → `dt_ai.placement.engine`, seed 1200): 4 709 placed / 0 failed, sink 0.100 m
+Placement v001 (archived `flora_place.py` → `dt_ai.placement.engine`, seed 1200): 4 709 placed / 0 failed, sink 0.100 m
 on all, random Z rotation, scale ±10 % (D100; schedule band = A101 size, ledger has no sizes). Status `review` only
 for the skirt's vertical triangles skipped (WARN). Ground = v001 GPZU OBJ (flat ±0; to be rebuilt — positions are XY,
 heights 0, so a re-run on the new Ground changes nothing in XY).
@@ -44,7 +44,7 @@ check: 3 species → 1024 tiles (scale 0.496), 11 species → 512 tiles (scale 0
   exact: 4 (106), 7 (224, 6/m²), 8 hedge (301, 5/m²). IDs are job-local.
 - **Pos 9 Астильба, pos 11 Хоста: NOT DONE — waiting for the user's decision how to show them.**
 - Nothing outside ГПЗУ. **User deviation from D100 for this job:** scale exactly 1.0 (no ±10 % jitter), random Z
-  rotation kept (`engine.SCALE_JITTER = 0` in `scripts/flora_place.py`).
+  rotation kept (`engine.SCALE_JITTER = 0` in the archived `flora_place.py`).
 - A101 TextureFlora low maps of these 9 objects approved by the user 2026-11-26 (job scope); recorded in
   `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/flora/job_catalogue_v002.json`.
 - Result `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/outputs/flora-npm-v002/`: 5 689 plants placed / 0 failed, sink 0.100 m, scale 1.0

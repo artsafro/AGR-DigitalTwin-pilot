@@ -10,7 +10,7 @@
   "sha256": "ed87f7f9e49f257c2914e0d0dfef3bf679447869509d4fad59d94de87e501b9d",
   "level": "C",
   "class": "spozu-dwg",
-  "route": "cell ground-npm, trail routes/site.md: agr ground site (Ground), MAF NPM-light + 512 atlas, Flora A101 + 2048 atlas, job-local site assembly (scripts/assemble_site_npm.py), agr package-npm",
+  "route": "cell ground-npm, trail routes/site.md: agr ground site (Ground), MAF NPM-light + 512 atlas, Flora A101 + 2048 atlas, historical job-local site assembly (see STATE.md evidence), agr package-npm",
   "note": "SPOZU DWG (МСК-77, m) -> DXF G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/intake/school.dxf; plus rubber DWG and the PDF (sources.json). Level C: the A/B/C rule (A shell, B panelised) is OKS-only, a SPOZU drawing is unclassified."
  },
  "normalization": {

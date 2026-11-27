@@ -16,6 +16,12 @@ Do not execute them in place or write into the snapshot. Use the relocated specs
 working directory for any future runs. Individual reusable MAFs are [library drafts](../../library/published/catalogue.json)
 from #1985; the assembled MAF review and assembly inputs are historical job artifacts, not library entries.
 
+Historical scripts: `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200-scripts/`.
+The separate `SHA256SUMS.txt` covers 12 original scripts (`original/`, Git `5f5cf971`) and two
+relocated variants (`relocated/`, Git `1ae7efb4`). Its SHA-256 is
+`9706076f1c10d50b5485adb0f32a750f461582975a5ba09143f4d12865e9bbfc`.
+These are read-only provenance, not a supported route or in-place replay. The original 507-file seal is unchanged.
+
 ## User decisions (2026-11-26)
 
 - **No building-footprint hole**: footprint area capped, part of ID02 Paving (user deviation from D251 / hole
@@ -33,7 +39,7 @@ from #1985; the assembled MAF review and assembly inputs are historical job arti
   `bbf22dce…` -> `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/inspect/rubber-v1/rubber.dxf`. Same MSK-77 frame, metres.
 - Specs: `specs/ground_site_v003.json`, `specs/ground_site_uncut_v003.json` (v002 adapters
   `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/inspect/v002/`, re-ID only: ID03 -> ID18 CompactedSoil); markings
-  `scripts/markings_uv.py` on the v002 marking mesh.
+  used the archived `markings_uv.py` on the v002 marking mesh.
 - Outputs `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/outputs/ground-npm-v003/`: `gpzu/` (2 940 tris, UDIM 1001–1009 + markings 1010),
   `uncut/` (4 580 tris, 1001–1010 + markings 1011), `markings/`, `review/{gpzu,uncut}/*_review_{quad,idcolor}_v003.max`,
   `geometry-compare-v002.json` (vertices and faces identical to v002 after the re-ID).
@@ -48,7 +54,7 @@ from #1985; the assembled MAF review and assembly inputs are historical job arti
 
 ## Site NPM package v001 (stage 10, 2026-11-26): diagnostic, not passed
 
-- Assembly `scripts/assemble_site_npm.py` (historical config snapshot, not a replay command: `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/outputs/site-npm-v001/assemble-config.json`):
+- Assembly used archived `assemble_site_npm.py` (historical config snapshot, not a replay command: `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/outputs/site-npm-v001/assemble-config.json`):
   Ground v003 GPZU + markings, MAF v002, Flora v002 -> `package/0000_MoskovskySosh1200_Ground.fbx` (r3; r1/r2 superseded,
   `superseded_r*/WHY.txt`). MSK-77 XY, shared pivot (-9681, -7016, 0), Z 0 = ±0.000 (absolute mark open).
 - ZIP `0000_MoskovskySosh1200.zip` (`agr package-npm --allow-incomplete`: no OKS -> status incomplete).
