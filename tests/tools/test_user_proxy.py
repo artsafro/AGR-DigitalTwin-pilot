@@ -1,5 +1,7 @@
 """#2066: User Proxy (separate from the evaluator), stage-task set dev/holdout, per-run metrics.
 
+Pattern: n/a | new-case: tests/tools/test_user_proxy.py - user proxy isolation, stage set, run metrics.
+
 The proxy answers a practice-run stop ONLY with an approved answer (verbatim from a cited D-row, job decision,
 fact export or delivery key fact); otherwise it records UNRESOLVED. It never sees the hidden key or the evaluator
 criteria (isolation tested like the trainer key-leak guards)."""
