@@ -28,3 +28,11 @@ def test_slack_boundary_and_non_rescue():
     assert VETO('0', 1.600001, {'0': 1.}) is None
     assert VETO(None, 1., {}) is None
     assert VETO('0', .4, {'0': 0.}) is None
+
+
+def test_blender_float_azimuth_grid():
+    rays = {'res': np.array(.1), 'az': np.array([0., 90., 180., 270.])}
+    for az, normal in zip((0, 90, 180, 270), ([1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]), strict=True):
+        rays[f'az{az:03d}_normal'] = np.tile(normal, (10, 4, 1))
+        rays[f'az{az:03d}_depth'] = np.ones((10, 4))
+    assert API['ray_spans'](rays) == {'0': .4, '90': .4, '180': .4, '270': .4}

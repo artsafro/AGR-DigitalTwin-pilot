@@ -52,6 +52,18 @@ def veto(answer, width, spans):
     return answer if supported > 0 and width <= supported + .6 + 1e-9 else None
 
 
+def ray_spans(rays):
+    res = float(rays['res'])
+    if res != .1 or list(rays['az']) != [0, 90, 180, 270]:
+        raise ValueError('unexpected native ray grid')
+    spans = {}
+    for az in map(int, rays['az']):
+        key = f'az{az:03d}'
+        facing = rays[key + '_normal'] @ [cos(radians(az)), np.sin(radians(az)), 0.]
+        spans[str(az)] = span(rays[key + '_depth'], facing, res)
+    return spans
+
+
 def measure(out):
     upstream = out.with_suffix('.r146.py')
     upstream.write_bytes(blob(R146, 'density', 'run.py'))
@@ -64,14 +76,7 @@ def measure(out):
                                    for r in oracle]:
         raise ValueError('ELV baseline parity mismatch')
     with np.load(out / 'native/rays-1.npz') as rays:
-        res = float(rays['res'])
-        if res != .1 or list(rays['az']) != [0, 90, 180, 270]:
-            raise ValueError('unexpected native ray grid')
-        spans = {}
-        for az in rays['az']:
-            key = f'az{az:03d}'
-            facing = rays[key + '_normal'] @ [cos(radians(az)), np.sin(radians(az)), 0.]
-            spans[str(az)] = span(rays[key + '_depth'], facing, res)
+        spans = ray_spans(rays)
     tracked = []
     for historic, row in zip(oracle, rows, strict=True):
         a, b = row['pick'], row['adjusted']['pick']
