@@ -1,5 +1,7 @@
 """#2024: call_chains.edges resolves static repo-root-anchored `Path` joins (subprocess / importlib callers).
 
+Pattern: n/a | new-case: regression tests for repo-root Path join edges in call_chains.
+
 Acceptance table (PR body) -> tests here:
 - the three real Ground research callers reach jobs/VATUTINO-SITE/build_ground.py  -> test_repo_three_ground_callers
 - fixture forms: parents[n], parent, HERE.parents, joinpath, str(), Path(a, b), `..` inside root  -> test_resolves_*
