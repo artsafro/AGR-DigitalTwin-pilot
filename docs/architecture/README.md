@@ -513,6 +513,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/trainer-tower-id-r87/result-json | [research/trainer-tower-id-r87/result.json](../research/trainer-tower-id-r87/result.json) |  |
 | research/trainer-tower-id-r87/score-py | [research/trainer-tower-id-r87/score.py](../research/trainer-tower-id-r87/score.py) |  |
 | research/trainer-tower-id-r87/series-sh | [research/trainer-tower-id-r87/series.sh](../research/trainer-tower-id-r87/series.sh) |  |
+| research/ucx-cases-codex-2042 | [research/ucx-cases-codex-2042.md](../research/ucx-cases-codex-2042.md) |  |
 | research/ucx-etalon-analysis | [research/ucx-etalon-analysis.md](../research/ucx-etalon-analysis.md) |  |
 | research/ucx-etalon-audit-2026-10-15-json | [research/ucx-etalon-audit-2026-10-15.json](../research/ucx-etalon-audit-2026-10-15.json) |  |
 | research/vatutino-ground-80deg-step-source | [research/vatutino-ground-80deg-step-source.md](../research/vatutino-ground-80deg-step-source.md) |  |
