@@ -4,7 +4,16 @@ Card `t_33b1b86c`, OBSERVE mode. Nothing here changes production code, maps or d
 
 ## Кратко (по-русски)
 
-Заполняется после замеров (см. «Results»). Контракт ниже заморожен коммитом ДО первого замера.
+**Гипотеза H135 опровергнута (refuted), стабильно; ничего не оставлено, код production не менялся.**
+Впервые проверена асимметричная пара с меткой Артёма по текстуре: стилобат 4BK (#1326), v045 с плоской
+нормалью шва (отклонена, D295) против v096 с восстановленным рельефом (принята, D310); эталон — исходник, общий
+для обоих. Рендер «только рельеф» с одних и тех же 5 ортокамер, энергия градиента по ячейкам 100 мм.
+R1 оказался пересвечен (до 70 % пикселей в клипе) — исправлено поправкой A1 (свет 10 Вт, защита от клипа),
+выбранной только по исходнику. A1: отклонённая 0.678 против принятой 0.639 — направление верное, но запас 0.038
+меньше замороженного 0.10; на 4 из 5 видов версии совпадают до 1e-4, различие только на полосе шва.
+Контрольные проверки прошли (N0 = 0, плоская нормаль на принятой даёт 2.38, половинная сила 0.93), 3 из 3
+прогонов идентичны. Вывод: дефект D295 — полоса 10–20 мм, ячейка 100 мм его размывает. Следующий шаг (новая
+карточка): считать только пиксели у шва (маска `agr_joint`).
 
 ## Why this target
 
@@ -127,6 +136,42 @@ Only two changes, chosen on the SOURCE render alone (no candidate looked at):
 Metric, cells, shots, thresholds, witnesses and decision rule unchanged. A1 is the last repair on this
 contract; if it refutes, the hypothesis is refuted and the next idea needs a new card.
 
-### A1 result
+### A1 result: H135 REFUTED (stable), witnesses pass
 
-Not measured yet.
+`run.py C:/x/ev_t_33b1b86c/a1 --a1 10`, 3 fresh runs, wall 70.3 / 70.0 / 71.1 s, max paired spread 0.0,
+verdict identical. Clip fraction 0.0 on every relief shot of every variant (guard exercised, nothing dropped).
+Receipt `autoresearch-normal-relief-r135/receipt_a1.json` (on disk SHA-256
+`acd9351e776e97d90421e1644be7512d504d306455728cd114e6932e1e9285a8`; Git stores it with LF).
+
+| relief mode, A1 | V135 | straight | corner | floor-join | niche | stripe |
+|---|---:|---:|---:|---:|---:|---:|
+| v045 rejected | **0.6777** | 0.5360 | 0.3277 | 0.5519 | 0.5402 | **0.6777** |
+| v096 accepted | **0.6394** | 0.5361 | 0.3276 | 0.5519 | 0.5402 | **0.6394** |
+| stripe signed median v045 / v096 | | | | | | +0.0394 / +0.0795 |
+| N0 source vs source | 0 | 0 | 0 | 0 | 0 | 0 |
+| P1 flat Normal on v096 | 2.3790 | 2.3205 | 2.3790 | 2.2534 | 1.7418 | 2.1589 |
+| P2 half-strength on v096 | 0.9278 | 0.8345 | 0.8132 | 0.9262 | 0.9278 | 0.7681 |
+
+Checks: margin +0.0384 < 0.10 (**fail**); v045 worse on 4/5 shots (pass, but three of those «wins» are
+<= 1e-4, i.e. ties); stripe signed median +0.0394, not negative (**fail**). N0 = 0, P1 fires (+1.74),
+P2 monotone (v096 <= 0.928 <= P1) — the instrument reacts to relief loss on an accepted mesh, so the miss is not
+a dead instrument.
+
+**What it means.** The rejected and accepted candidates are identical (to 1e-4) on four of five 0.6 m element
+views; they differ only on the D295 joint stripe, in the right direction (+0.038) but below the frozen margin,
+and both have MORE gradient energy than the source (positive signed medians), so «relief lost» is not visible at
+100 mm cell scale. The D295 defect is a 10-20 mm joint bevel band: a 100 mm cell dilutes it ~5-10x, exactly the
+«area-weighted scores dilute local defects» warning. Same-camera render-diff on whole cells is not a calibrated
+signal for this defect class. Nothing is kept; no production code changed.
+
+Not measured: NPM atlas padding / texel density (not in scope); any held-out (no second labelled Normal pair);
+`full` mode (secondary: A1 full-mode numbers in the receipt, no decision).
+
+Evidence (renders run1 of R1 and A1, both receipts): `G:/Мой диск/AGR-evidence/135-normal-relief/`
+(`SHA256SUMS.txt` 128 rows, SHA-256 `177e7675a16dab6ee63f08e4e94c8c90d60d012d91d77a6ae6eb47f3e09e67f7`).
+
+## Next (not run)
+
+1. Joint-band localisation on the same pair (new card, new contract): render an `agr_joint` face-ID pass from
+   the same cameras and score only pixels within 20 mm of a joint; expected v045 signed < 0 on the stripe.
+2. Second labelled Normal pair for a held-out (another course-grid pilot or a Normal rebake Artem refused).
