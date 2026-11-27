@@ -1,0 +1,8274 @@
+{
+ "status": "finished",
+ "hypothesis": "refuted",
+ "r146": "e839c2ee177c8ea5a766988019f2db6e55b1e61a",
+ "runner": "5fd1b510af496bd8850f41539c29104bbfde91246b07c7deca19d375aa2a3df7",
+ "lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+ "measured_head": "5e09a5ac19b08072dbc41215ab3f00ff3d478b16",
+ "b_parity": [
+  true,
+  true,
+  true
+ ],
+ "pair_hashes": [
+  {
+   "elv": "1af9e2fe514f49645b95477f8bfa53f584b06477d698d5822143b2ce0cb33393",
+   "kpp": "0557156b993ef43300039f8a57bf529d9d379f159fdd199354ffe432788e5bff",
+   "obr": "16be0d3101c9584f57d84304437b08d2da13581bff8e4d4f1a20651a71c6f2b3"
+  },
+  {
+   "elv": "1af9e2fe514f49645b95477f8bfa53f584b06477d698d5822143b2ce0cb33393",
+   "kpp": "0557156b993ef43300039f8a57bf529d9d379f159fdd199354ffe432788e5bff",
+   "obr": "16be0d3101c9584f57d84304437b08d2da13581bff8e4d4f1a20651a71c6f2b3"
+  },
+  {
+   "elv": "1af9e2fe514f49645b95477f8bfa53f584b06477d698d5822143b2ce0cb33393",
+   "kpp": "0557156b993ef43300039f8a57bf529d9d379f159fdd199354ffe432788e5bff",
+   "obr": "16be0d3101c9584f57d84304437b08d2da13581bff8e4d4f1a20651a71c6f2b3"
+  }
+ ],
+ "pair_s": [
+  204.416,
+  201.698,
+  200.938
+ ],
+ "fixture_s": [
+  {
+   "elv": 116.306,
+   "kpp": 25.092,
+   "obr": 62.954
+  },
+  {
+   "elv": 115.457,
+   "kpp": 23.808,
+   "obr": 62.359
+  },
+  {
+   "elv": 115.73,
+   "kpp": 23.125,
+   "obr": 62.011
+  }
+ ],
+ "median_s": 201.698,
+ "min_s": 200.938,
+ "max_s": 204.416,
+ "wall_s": 607.107,
+ "summary": {
+  "ac08/crop/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 36,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/crop/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 36,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/crop/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 36,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/full/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/full/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/full/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/mirror/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 3,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/mirror/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 3,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "ac08/mirror/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 3,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "elv/crop/A": {
+   "correct": 15,
+   "wrong": 13,
+   "abstain": 35,
+   "not_exercised": 0,
+   "accuracy": 0.5357142857142857,
+   "abstain_rate": 0.5555555555555556
+  },
+  "elv/crop/B": {
+   "correct": 37,
+   "wrong": 1,
+   "abstain": 25,
+   "not_exercised": 0,
+   "accuracy": 0.9736842105263158,
+   "abstain_rate": 0.3968253968253968
+  },
+  "elv/crop/C": {
+   "correct": 14,
+   "wrong": 1,
+   "abstain": 48,
+   "not_exercised": 0,
+   "accuracy": 0.9333333333333333,
+   "abstain_rate": 0.7619047619047619
+  },
+  "elv/fragment/A": {
+   "correct": 1,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.5
+  },
+  "elv/fragment/B": {
+   "correct": 1,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.5
+  },
+  "elv/fragment/C": {
+   "correct": 1,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.5
+  },
+  "elv/fragment_top_cut/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "elv/fragment_top_cut/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "elv/fragment_top_cut/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "elv/full/A": {
+   "correct": 5,
+   "wrong": 0,
+   "abstain": 2,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.2857142857142857
+  },
+  "elv/full/B": {
+   "correct": 7,
+   "wrong": 0,
+   "abstain": 0,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.0
+  },
+  "elv/full/C": {
+   "correct": 5,
+   "wrong": 0,
+   "abstain": 2,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.2857142857142857
+  },
+  "elv/mirror/A": {
+   "correct": 2,
+   "wrong": 1,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": 0.6666666666666666,
+   "abstain_rate": 0.5714285714285714
+  },
+  "elv/mirror/B": {
+   "correct": 2,
+   "wrong": 1,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": 0.6666666666666666,
+   "abstain_rate": 0.5714285714285714
+  },
+  "elv/mirror/C": {
+   "correct": 2,
+   "wrong": 1,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": 0.6666666666666666,
+   "abstain_rate": 0.5714285714285714
+  },
+  "kpp1/crop/A": {
+   "correct": 22,
+   "wrong": 0,
+   "abstain": 14,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.3888888888888889
+  },
+  "kpp1/crop/B": {
+   "correct": 26,
+   "wrong": 1,
+   "abstain": 9,
+   "not_exercised": 0,
+   "accuracy": 0.9629629629629629,
+   "abstain_rate": 0.25
+  },
+  "kpp1/crop/C": {
+   "correct": 22,
+   "wrong": 0,
+   "abstain": 14,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.3888888888888889
+  },
+  "kpp1/full/A": {
+   "correct": 3,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.25
+  },
+  "kpp1/full/B": {
+   "correct": 3,
+   "wrong": 1,
+   "abstain": 0,
+   "not_exercised": 0,
+   "accuracy": 0.75,
+   "abstain_rate": 0.0
+  },
+  "kpp1/full/C": {
+   "correct": 3,
+   "wrong": 0,
+   "abstain": 1,
+   "not_exercised": 0,
+   "accuracy": 1.0,
+   "abstain_rate": 0.25
+  },
+  "kpp1/mirror/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "kpp1/mirror/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "kpp1/mirror/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/crop/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 36,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/crop/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 36,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/crop/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 36,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/full/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/full/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/full/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/mirror/A": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/mirror/B": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  },
+  "obr/mirror/C": {
+   "correct": 0,
+   "wrong": 0,
+   "abstain": 4,
+   "not_exercised": 0,
+   "accuracy": null,
+   "abstain_rate": 1.0
+  }
+ },
+ "rows": [
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "full",
+   "pt_per_m": 9.4505,
+   "width_m": 54.5,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.718381,
+    "90": 0.299431,
+    "180": 0.478659,
+    "270": 0.396072
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.362782,
+     "90": 0.022886,
+     "180": 0.091688,
+     "270": 0.046034
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "mirror",
+   "pt_per_m": 9.4505,
+   "width_m": 54.5,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.70471,
+    "90": 0.300241,
+    "180": 0.46791,
+    "270": 0.399794
+   },
+   "changed_pixels": 26290,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.325815,
+     "90": 0.012406,
+     "180": 0.066011,
+     "270": 0.030431
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4505,
+   "width_m": 13.6,
+   "segments": 13915,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.757261,
+    "90": 0.370201,
+    "180": 0.719213,
+    "270": 0.51149
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.386587,
+     "90": 0.089684,
+     "180": 0.303219,
+     "270": 0.091389
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4505,
+   "width_m": 13.6,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.832842,
+    "90": 0.416243,
+    "180": 0.685734,
+    "270": 0.582479
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.506276,
+     "90": 0.057708,
+     "180": 0.248354,
+     "270": 0.11735
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4505,
+   "width_m": 13.6,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.75998,
+    "90": 0.413849,
+    "180": 0.593342,
+    "270": 0.620349
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.490717,
+     "90": 0.235167,
+     "180": 0.242323,
+     "270": 0.332979
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4505,
+   "width_m": 21.8,
+   "segments": 13915,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.721131,
+    "90": 0.360388,
+    "180": 0.639988,
+    "270": 0.565936
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.37156,
+     "90": 0.09874,
+     "180": 0.263552,
+     "270": 0.12188
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4505,
+   "width_m": 21.8,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.781886,
+    "90": 0.315071,
+    "180": 0.566926,
+    "270": 0.5477
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.432501,
+     "90": 0.034422,
+     "180": 0.055868,
+     "270": 0.055649
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4505,
+   "width_m": 21.8,
+   "segments": 13915,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.683925,
+    "90": 0.448546,
+    "180": 0.596555,
+    "270": 0.540626
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.291488,
+     "90": 0.149652,
+     "180": 0.162927,
+     "270": 0.068029
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4505,
+   "width_m": 32.7,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.680111,
+    "90": 0.369365,
+    "180": 0.561743,
+    "270": 0.511677
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.257457,
+     "90": 0.066382,
+     "180": 0.168787,
+     "270": 0.092169
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4505,
+   "width_m": 32.7,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.766221,
+    "90": 0.307799,
+    "180": 0.434209,
+    "270": 0.45502
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.477874,
+     "90": 0.004151,
+     "180": 0.076684,
+     "270": 0.049944
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 I-A",
+   "page": 18,
+   "gt_az": 0,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4505,
+   "width_m": 32.7,
+   "segments": 13915,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.751022,
+    "90": 0.384178,
+    "180": 0.53055,
+    "270": 0.456945
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.401235,
+     "90": 0.083936,
+     "180": 0.157025,
+     "270": 0.053292
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "full",
+   "pt_per_m": 9.4493,
+   "width_m": 88.6,
+   "segments": 12605,
+   "pick": 270,
+   "outcome": "correct",
+   "scores": {
+    "0": -1.0,
+    "90": 0.356562,
+    "180": -1.0,
+    "270": 0.637323
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.128914,
+     "180": -1.0,
+     "270": 0.473304
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "mirror",
+   "pt_per_m": 9.4493,
+   "width_m": 88.6,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": -1.0,
+    "90": 0.417626,
+    "180": -1.0,
+    "270": 0.433277
+   },
+   "changed_pixels": 49614,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.222548,
+     "180": -1.0,
+     "270": 0.146617
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4493,
+   "width_m": 22.2,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.66537,
+    "90": 0.484526,
+    "180": 0.497491,
+    "270": 0.588587
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.289801,
+     "90": 0.299297,
+     "180": 0.258342,
+     "270": 0.39065
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4493,
+   "width_m": 22.2,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.692992,
+    "90": 0.531466,
+    "180": 0.553015,
+    "270": 0.638658
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.318428,
+     "90": 0.34348,
+     "180": 0.29043,
+     "270": 0.381109
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4493,
+   "width_m": 22.2,
+   "segments": 12605,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.755853,
+    "90": 0.368844,
+    "180": 0.598331,
+    "270": 0.618102
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.309817,
+     "90": 0.098933,
+     "180": 0.147865,
+     "270": 0.286832
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4493,
+   "width_m": 35.4,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.61642,
+    "90": 0.398667,
+    "180": 0.458119,
+    "270": 0.530206
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.254095,
+     "90": 0.234435,
+     "180": 0.223135,
+     "270": 0.354393
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4493,
+   "width_m": 35.4,
+   "segments": 12605,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.684659,
+    "90": 0.449857,
+    "180": 0.529509,
+    "270": 0.564428
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.299658,
+     "90": 0.238099,
+     "180": 0.238443,
+     "270": 0.375995
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4493,
+   "width_m": 35.4,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.686668,
+    "90": 0.366718,
+    "180": 0.556232,
+    "270": 0.656142
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.225778,
+     "90": 0.130516,
+     "180": 0.139433,
+     "270": 0.382563
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4493,
+   "width_m": 53.2,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.613719,
+    "90": 0.384893,
+    "180": 0.485799,
+    "270": 0.595393
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.238933,
+     "90": 0.214123,
+     "180": 0.198285,
+     "270": 0.464381
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4493,
+   "width_m": 53.2,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.61351,
+    "90": 0.407108,
+    "180": 0.491796,
+    "270": 0.588614
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.15934,
+     "90": 0.175539,
+     "180": 0.143719,
+     "270": 0.433563
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p18 1-10",
+   "page": 18,
+   "gt_az": 270,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4493,
+   "width_m": 53.2,
+   "segments": 12605,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.644991,
+    "90": 0.382827,
+    "180": 0.452663,
+    "270": 0.636137
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.190229,
+     "90": 0.176729,
+     "180": 0.055521,
+     "270": 0.423255
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "full",
+   "pt_per_m": 9.4493,
+   "width_m": 88.6,
+   "segments": 8697,
+   "pick": 90,
+   "outcome": "correct",
+   "scores": {
+    "0": -1.0,
+    "90": 0.531842,
+    "180": -1.0,
+    "270": 0.427617
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": -1.0,
+     "90": 0.388454,
+     "180": -1.0,
+     "270": 0.15079
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "mirror",
+   "pt_per_m": 9.4493,
+   "width_m": 88.6,
+   "segments": 8697,
+   "pick": 270,
+   "outcome": "wrong",
+   "scores": {
+    "0": -1.0,
+    "90": 0.397525,
+    "180": -1.0,
+    "270": 0.557334
+   },
+   "changed_pixels": 41474,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.199984,
+     "180": -1.0,
+     "270": 0.351998
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "wrong",
+   "verdict_B": "wrong",
+   "veto_pick": "270",
+   "verdict_C": "wrong"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4493,
+   "width_m": 22.2,
+   "segments": 8697,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.734863,
+    "90": 0.480475,
+    "180": 0.500294,
+    "270": 0.650302
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.327177,
+     "90": 0.226405,
+     "180": 0.095598,
+     "270": 0.279293
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4493,
+   "width_m": 22.2,
+   "segments": 8697,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.676724,
+    "90": 0.566593,
+    "180": 0.466142,
+    "270": 0.574208
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.305761,
+     "90": 0.459683,
+     "180": 0.22926,
+     "270": 0.253773
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4493,
+   "width_m": 22.2,
+   "segments": 8697,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.645813,
+    "90": 0.583974,
+    "180": 0.56654,
+    "270": 0.53848
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.276578,
+     "90": 0.465207,
+     "180": 0.313281,
+     "270": 0.331456
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4493,
+   "width_m": 35.4,
+   "segments": 8697,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.700308,
+    "90": 0.505351,
+    "180": 0.524554,
+    "270": 0.452741
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.342398,
+     "90": 0.314032,
+     "180": 0.133161,
+     "270": 0.160897
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4493,
+   "width_m": 35.4,
+   "segments": 8697,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.681543,
+    "90": 0.56788,
+    "180": 0.511569,
+    "270": 0.553105
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.36503,
+     "90": 0.461924,
+     "180": 0.295296,
+     "270": 0.237361
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4493,
+   "width_m": 35.4,
+   "segments": 8697,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.632068,
+    "90": 0.440948,
+    "180": 0.424342,
+    "270": 0.448871
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.298897,
+     "90": 0.294708,
+     "180": 0.172329,
+     "270": 0.25449
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4493,
+   "width_m": 53.2,
+   "segments": 8697,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.603891,
+    "90": 0.521326,
+    "180": 0.493409,
+    "270": 0.451447
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.17364,
+     "90": 0.356164,
+     "180": 0.169094,
+     "270": 0.173631
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4493,
+   "width_m": 53.2,
+   "segments": 8697,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.647227,
+    "90": 0.570148,
+    "180": 0.580182,
+    "270": 0.477767
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.302911,
+     "90": 0.463078,
+     "180": 0.336055,
+     "270": 0.207956
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 10-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4493,
+   "width_m": 53.2,
+   "segments": 8697,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.528,
+    "90": 0.562148,
+    "180": 0.381488,
+    "270": 0.419018
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.125657,
+     "90": 0.451781,
+     "180": 0.064575,
+     "270": 0.240072
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "full",
+   "pt_per_m": 9.4508,
+   "width_m": 54.8,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.629429,
+    "90": 0.43934,
+    "180": 0.716622,
+    "270": 0.43114
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.218525,
+     "90": 0.208451,
+     "180": 0.535537,
+     "270": 0.145165
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "mirror",
+   "pt_per_m": 9.4508,
+   "width_m": 54.8,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.618367,
+    "90": 0.355474,
+    "180": 0.500719,
+    "270": 0.520359
+   },
+   "changed_pixels": 30026,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.199814,
+     "90": 0.126172,
+     "180": 0.161267,
+     "270": 0.247732
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4508,
+   "width_m": 13.7,
+   "segments": 8568,
+   "pick": 180,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.788931,
+    "90": 0.517721,
+    "180": 0.917772,
+    "270": 0.557203
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.491794,
+     "90": 0.210442,
+     "180": 0.816201,
+     "270": 0.19446
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "180",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4508,
+   "width_m": 13.7,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.713738,
+    "90": 0.513397,
+    "180": 0.743331,
+    "270": 0.551456
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.374581,
+     "90": 0.318556,
+     "180": 0.642986,
+     "270": 0.343776
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4508,
+   "width_m": 13.7,
+   "segments": 8568,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.65152,
+    "90": 0.412485,
+    "180": 0.519658,
+    "270": 0.511428
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.310692,
+     "90": 0.155575,
+     "180": 0.162704,
+     "270": 0.12778
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "wrong",
+   "veto_pick": "0",
+   "verdict_C": "wrong"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4508,
+   "width_m": 21.9,
+   "segments": 8568,
+   "pick": 180,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.76183,
+    "90": 0.500977,
+    "180": 0.883033,
+    "270": 0.522196
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.456379,
+     "90": 0.238298,
+     "180": 0.785671,
+     "270": 0.176693
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "180",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4508,
+   "width_m": 21.9,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.670831,
+    "90": 0.464356,
+    "180": 0.733192,
+    "270": 0.593709
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.29336,
+     "90": 0.30482,
+     "180": 0.633789,
+     "270": 0.307233
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4508,
+   "width_m": 21.9,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.626572,
+    "90": 0.407357,
+    "180": 0.522148,
+    "270": 0.55684
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.233832,
+     "90": 0.167976,
+     "180": 0.182554,
+     "270": 0.206826
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4508,
+   "width_m": 32.9,
+   "segments": 8568,
+   "pick": 180,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.718623,
+    "90": 0.50398,
+    "180": 0.854823,
+    "270": 0.464953
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.392742,
+     "90": 0.31465,
+     "180": 0.76053,
+     "270": 0.185595
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "180",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4508,
+   "width_m": 32.9,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.630215,
+    "90": 0.400059,
+    "180": 0.571958,
+    "270": 0.509075
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.218888,
+     "90": 0.182897,
+     "180": 0.345027,
+     "270": 0.165755
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 A-I",
+   "page": 19,
+   "gt_az": 180,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4508,
+   "width_m": 32.9,
+   "segments": 8568,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.630886,
+    "90": 0.412631,
+    "180": 0.531399,
+    "270": 0.513941
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.219823,
+     "90": 0.170316,
+     "180": 0.215113,
+     "270": 0.140096
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "full",
+   "pt_per_m": 9.4378,
+   "width_m": 52.1,
+   "segments": 4429,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.562533,
+    "90": 0.527066,
+    "180": 0.410558,
+    "270": 0.437913
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.135888,
+     "90": 0.390992,
+     "180": 0.101564,
+     "270": 0.245835
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "mirror",
+   "pt_per_m": 9.4378,
+   "width_m": 52.1,
+   "segments": 4429,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.565302,
+    "90": 0.488335,
+    "180": 0.422295,
+    "270": 0.437379
+   },
+   "changed_pixels": 19624,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.141025,
+     "90": 0.335509,
+     "180": 0.125823,
+     "270": 0.244672
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4378,
+   "width_m": 13.0,
+   "segments": 4429,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.726332,
+    "90": 0.587069,
+    "180": 0.539658,
+    "270": 0.616416
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.357166,
+     "90": 0.44068,
+     "180": 0.216816,
+     "270": 0.297641
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4378,
+   "width_m": 13.0,
+   "segments": 4429,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.691344,
+    "90": 0.598827,
+    "180": 0.568497,
+    "270": 0.562355
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.465524,
+     "90": 0.475369,
+     "180": 0.34075,
+     "270": 0.33389
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4378,
+   "width_m": 13.0,
+   "segments": 4429,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.71113,
+    "90": 0.57648,
+    "180": 0.568462,
+    "270": 0.617146
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.397524,
+     "90": 0.432584,
+     "180": 0.409538,
+     "270": 0.281121
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4378,
+   "width_m": 20.8,
+   "segments": 4429,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.653572,
+    "90": 0.56381,
+    "180": 0.478687,
+    "270": 0.59446
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.28995,
+     "90": 0.437104,
+     "180": 0.172288,
+     "270": 0.256683
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4378,
+   "width_m": 20.8,
+   "segments": 4429,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.741943,
+    "90": 0.559301,
+    "180": 0.511872,
+    "270": 0.575256
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.482577,
+     "90": 0.429746,
+     "180": 0.250678,
+     "270": 0.286711
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4378,
+   "width_m": 20.8,
+   "segments": 4429,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.692161,
+    "90": 0.536765,
+    "180": 0.571785,
+    "270": 0.586283
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.384355,
+     "90": 0.390704,
+     "180": 0.343433,
+     "270": 0.285987
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4378,
+   "width_m": 31.3,
+   "segments": 4429,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.613387,
+    "90": 0.559254,
+    "180": 0.451023,
+    "270": 0.446131
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.190657,
+     "90": 0.441952,
+     "180": 0.167269,
+     "270": 0.258003
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4378,
+   "width_m": 31.3,
+   "segments": 4429,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.68072,
+    "90": 0.529314,
+    "180": 0.46986,
+    "270": 0.482329
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.349863,
+     "90": 0.420688,
+     "180": 0.241395,
+     "270": 0.286745
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p19 6-1",
+   "page": 19,
+   "gt_az": 90,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4378,
+   "width_m": 31.3,
+   "segments": 4429,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.668252,
+    "90": 0.539736,
+    "180": 0.535939,
+    "270": 0.51811
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.295143,
+     "90": 0.410702,
+     "180": 0.327762,
+     "270": 0.271287
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "full",
+   "pt_per_m": 9.4504,
+   "width_m": 54.5,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.784604,
+    "90": 0.374361,
+    "180": 0.5301,
+    "270": 0.458741
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.517807,
+     "90": 0.108143,
+     "180": 0.19354,
+     "270": 0.109834
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "mirror",
+   "pt_per_m": 9.4504,
+   "width_m": 54.5,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.760036,
+    "90": 0.377827,
+    "180": 0.536442,
+    "270": 0.461008
+   },
+   "changed_pixels": 26100,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.455545,
+     "90": 0.117759,
+     "180": 0.197235,
+     "270": 0.087501
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4504,
+   "width_m": 13.6,
+   "segments": 13356,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.812121,
+    "90": 0.390756,
+    "180": 0.776305,
+    "270": 0.560578
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.526145,
+     "90": 0.124992,
+     "180": 0.450223,
+     "270": 0.164122
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4504,
+   "width_m": 13.6,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.848553,
+    "90": 0.433867,
+    "180": 0.701372,
+    "270": 0.586579
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.5293,
+     "90": 0.062411,
+     "180": 0.273185,
+     "270": 0.143873
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4504,
+   "width_m": 13.6,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.7623,
+    "90": 0.381016,
+    "180": 0.578287,
+    "270": 0.606507
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.489753,
+     "90": 0.183264,
+     "180": 0.205359,
+     "270": 0.290102
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4504,
+   "width_m": 21.8,
+   "segments": 13356,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.757335,
+    "90": 0.383553,
+    "180": 0.689743,
+    "270": 0.611001
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.468719,
+     "90": 0.143096,
+     "180": 0.367357,
+     "270": 0.229999
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4504,
+   "width_m": 21.8,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.818488,
+    "90": 0.360804,
+    "180": 0.601257,
+    "270": 0.556542
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.512521,
+     "90": 0.116528,
+     "180": 0.111971,
+     "270": 0.15702
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4504,
+   "width_m": 21.8,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.794164,
+    "90": 0.447442,
+    "180": 0.65817,
+    "270": 0.564997
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.568676,
+     "90": 0.183941,
+     "180": 0.303106,
+     "270": 0.267949
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4504,
+   "width_m": 32.7,
+   "segments": 13356,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.681219,
+    "90": 0.39897,
+    "180": 0.587073,
+    "270": 0.554567
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.247125,
+     "90": 0.108069,
+     "180": 0.206464,
+     "270": 0.142378
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4504,
+   "width_m": 32.7,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.822449,
+    "90": 0.38695,
+    "180": 0.48574,
+    "270": 0.526085
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.608593,
+     "90": 0.127025,
+     "180": 0.154307,
+     "270": 0.173964
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 I-A",
+   "page": 21,
+   "gt_az": 0,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4504,
+   "width_m": 32.7,
+   "segments": 13356,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.814013,
+    "90": 0.435583,
+    "180": 0.578558,
+    "270": 0.524514
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.555947,
+     "90": 0.164162,
+     "180": 0.23135,
+     "270": 0.120437
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "full",
+   "pt_per_m": 9.4478,
+   "width_m": 88.1,
+   "segments": 10779,
+   "pick": 270,
+   "outcome": "correct",
+   "scores": {
+    "0": -1.0,
+    "90": 0.310378,
+    "180": -1.0,
+    "270": 0.603752
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.078775,
+     "180": -1.0,
+     "270": 0.424125
+    }
+   },
+   "group": "elv/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "mirror",
+   "pt_per_m": 9.4478,
+   "width_m": 88.1,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": -1.0,
+    "90": 0.400131,
+    "180": -1.0,
+    "270": 0.40205
+   },
+   "changed_pixels": 48186,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.205655,
+     "180": -1.0,
+     "270": 0.102317
+    }
+   },
+   "group": "elv/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial25@0.0",
+   "pt_per_m": 9.4478,
+   "width_m": 22.0,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.653303,
+    "90": 0.491958,
+    "180": 0.572304,
+    "270": 0.658958
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.31977,
+     "90": 0.340176,
+     "180": 0.356701,
+     "270": 0.561854
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial25@0.5",
+   "pt_per_m": 9.4478,
+   "width_m": 22.0,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.699125,
+    "90": 0.52682,
+    "180": 0.558405,
+    "270": 0.657362
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.323034,
+     "90": 0.32069,
+     "180": 0.304076,
+     "270": 0.347726
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial25@1.0",
+   "pt_per_m": 9.4478,
+   "width_m": 22.0,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.71728,
+    "90": 0.396086,
+    "180": 0.544281,
+    "270": 0.71012
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.203608,
+     "90": 0.089984,
+     "180": 0.084603,
+     "270": 0.400346
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial40@0.0",
+   "pt_per_m": 9.4478,
+   "width_m": 35.2,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.583633,
+    "90": 0.477487,
+    "180": 0.49327,
+    "270": 0.657684
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.150245,
+     "90": 0.331874,
+     "180": 0.273078,
+     "270": 0.561478
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial40@0.5",
+   "pt_per_m": 9.4478,
+   "width_m": 35.2,
+   "segments": 10779,
+   "pick": 0,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.673655,
+    "90": 0.392805,
+    "180": 0.486631,
+    "270": 0.554408
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.277032,
+     "90": 0.196619,
+     "180": 0.244817,
+     "270": 0.328058
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "wrong",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial40@1.0",
+   "pt_per_m": 9.4478,
+   "width_m": 35.2,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.660977,
+    "90": 0.328978,
+    "180": 0.511407,
+    "270": 0.611373
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.156942,
+     "90": 0.067717,
+     "180": 0.098856,
+     "270": 0.293953
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial60@0.0",
+   "pt_per_m": 9.4478,
+   "width_m": 52.9,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.602007,
+    "90": 0.418284,
+    "180": 0.496444,
+    "270": 0.573725
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.210183,
+     "90": 0.258353,
+     "180": 0.222644,
+     "270": 0.438982
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial60@0.5",
+   "pt_per_m": 9.4478,
+   "width_m": 52.9,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.571721,
+    "90": 0.357638,
+    "180": 0.448782,
+    "270": 0.547091
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.104824,
+     "90": 0.148283,
+     "180": 0.101648,
+     "270": 0.376626
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p21 1-12",
+   "page": 21,
+   "gt_az": 270,
+   "case": "partial60@1.0",
+   "pt_per_m": 9.4478,
+   "width_m": 52.9,
+   "segments": 10779,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.617022,
+    "90": 0.331815,
+    "180": 0.411434,
+    "270": 0.595585
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.139116,
+     "90": 0.118989,
+     "180": 0.0,
+     "270": 0.354154
+    }
+   },
+   "group": "elv/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p23 frag D-G",
+   "page": 23,
+   "gt_az": 0,
+   "case": "fragment",
+   "pt_per_m": 28.3414,
+   "width_m": 20.2,
+   "segments": 5755,
+   "pick": 0,
+   "outcome": "correct",
+   "scores": {
+    "0": 0.860406,
+    "90": 0.402793,
+    "180": 0.648438,
+    "270": 0.600441
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.620092,
+     "90": 0.164987,
+     "180": 0.213886,
+     "270": 0.12934
+    }
+   },
+   "group": "elv/fragment",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "view": "p24 frag 8-9",
+   "page": 24,
+   "gt_az": 270,
+   "case": "fragment",
+   "pt_per_m": 28.3426,
+   "width_m": 14.9,
+   "segments": 1765,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.736786,
+    "90": 0.421736,
+    "180": 0.636995,
+    "270": 0.583188
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.287276,
+     "90": 0.178693,
+     "180": 0.215017,
+     "270": 0.189563
+    }
+   },
+   "group": "elv/fragment",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "view": "p20 frag 9-10",
+   "page": 20,
+   "gt_az": 270,
+   "case": "fragment_top_cut",
+   "pt_per_m": 85.9593,
+   "width_m": 3.7,
+   "segments": 340,
+   "pick": null,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.984848,
+    "90": 0.855491,
+    "180": 0.950872,
+    "270": 0.942004
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.34176,
+     "90": 0.291858,
+     "180": 0.385991,
+     "270": 0.370337
+    }
+   },
+   "group": "elv/fragment_top_cut",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "full",
+   "A": {
+    "answer": 270,
+    "best": 270,
+    "score": 0.9189,
+    "margin": 0.147,
+    "outcome": "correct"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.519644,
+    "180": -1.0,
+    "270": 0.865992
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.13993,
+     "180": -1.0,
+     "270": 0.746023
+    }
+   },
+   "group": "kpp1/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "mirror",
+   "A": {
+    "answer": 90,
+    "best": 90,
+    "score": 0.9215,
+    "margin": 0.1476,
+    "outcome": "wrong"
+   },
+   "B": null,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.570325,
+    "180": -1.0,
+    "270": 0.594201
+   },
+   "changed_pixels": 9562,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.237039,
+     "180": -1.0,
+     "270": 0.207892
+    }
+   },
+   "group": "kpp1/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 1.0,
+    "margin": 0.051,
+    "outcome": "abstain"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": 0.665414,
+    "90": 0.700416,
+    "180": 0.553548,
+    "270": 0.866408
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.280589,
+     "90": 0.439591,
+     "180": 0.193987,
+     "270": 0.778944
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9948,
+    "margin": 0.0353,
+    "outcome": "abstain"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": 0.650194,
+    "90": 0.700355,
+    "180": 0.617249,
+    "270": 0.853886
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.147114,
+     "90": 0.297503,
+     "180": 0.313208,
+     "270": 0.734447
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": 270,
+    "best": 270,
+    "score": 0.993,
+    "margin": 0.1866,
+    "outcome": "correct"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": 0.659222,
+    "90": 0.710041,
+    "180": 0.62928,
+    "270": 0.866429
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.299605,
+     "90": 0.331129,
+     "180": 0.295597,
+     "270": 0.693929
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.9545,
+    "margin": 0.0031,
+    "outcome": "abstain"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": 0.703259,
+    "90": 0.669504,
+    "180": 0.629504,
+    "270": 0.880275
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.38794,
+     "90": 0.361853,
+     "180": 0.30383,
+     "270": 0.784644
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.995,
+    "margin": 0.0341,
+    "outcome": "abstain"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": 0.560913,
+    "90": 0.698669,
+    "180": 0.543889,
+    "270": 0.865685
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.016804,
+     "90": 0.390189,
+     "180": 0.2048,
+     "270": 0.759263
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": 270,
+    "best": 270,
+    "score": 0.9935,
+    "margin": 0.1724,
+    "outcome": "correct"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": 0.638852,
+    "90": 0.712297,
+    "180": 0.599895,
+    "270": 0.866815
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.250858,
+     "90": 0.42623,
+     "180": 0.22672,
+     "270": 0.730696
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.9293,
+    "margin": 0.0172,
+    "outcome": "abstain"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.637842,
+    "180": -1.0,
+    "270": 0.8683
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.321029,
+     "180": -1.0,
+     "270": 0.762381
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9951,
+    "margin": 0.0335,
+    "outcome": "abstain"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.660765,
+    "180": -1.0,
+    "270": 0.870314
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.313703,
+     "180": -1.0,
+     "270": 0.761753
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "1-4",
+   "gt_az": 270,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": 270,
+    "best": 270,
+    "score": 0.9922,
+    "margin": 0.2404,
+    "outcome": "correct"
+   },
+   "B": 270,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.6207,
+    "180": -1.0,
+    "270": 0.860083
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": -1.0,
+     "90": 0.339676,
+     "180": -1.0,
+     "270": 0.727243
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "270",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "full",
+   "A": {
+    "answer": 90,
+    "best": 90,
+    "score": 0.9165,
+    "margin": 0.1134,
+    "outcome": "correct"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.818384,
+    "180": -1.0,
+    "270": 0.562614
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": -1.0,
+     "90": 0.693097,
+     "180": -1.0,
+     "270": 0.201075
+    }
+   },
+   "group": "kpp1/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "mirror",
+   "A": {
+    "answer": 270,
+    "best": 270,
+    "score": 0.9139,
+    "margin": 0.113,
+    "outcome": "wrong"
+   },
+   "B": null,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.565519,
+    "180": -1.0,
+    "270": 0.62816
+   },
+   "changed_pixels": 7550,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.268536,
+     "180": -1.0,
+     "270": 0.32585
+    }
+   },
+   "group": "kpp1/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": 90,
+    "best": 90,
+    "score": 0.9925,
+    "margin": 0.1666,
+    "outcome": "correct"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": 0.58341,
+    "90": 0.834468,
+    "180": 0.581087,
+    "270": 0.602778
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.274623,
+     "90": 0.768684,
+     "180": 0.344531,
+     "270": 0.332787
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9963,
+    "margin": 0.0349,
+    "outcome": "abstain"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": 0.682003,
+    "90": 0.917008,
+    "180": 0.640203,
+    "270": 0.750211
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.353825,
+     "90": 0.834051,
+     "180": 0.340586,
+     "270": 0.519093
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.9928,
+    "margin": 0.0487,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.641446,
+    "90": 0.732998,
+    "180": 0.500812,
+    "270": 0.680618
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.369824,
+     "90": 0.517656,
+     "180": 0.255112,
+     "270": 0.474789
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": 90,
+    "best": 90,
+    "score": 0.9931,
+    "margin": 0.1565,
+    "outcome": "correct"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": 0.549035,
+    "90": 0.809488,
+    "180": 0.527734,
+    "270": 0.608738
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.168882,
+     "90": 0.738781,
+     "180": 0.177988,
+     "270": 0.357231
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9964,
+    "margin": 0.0338,
+    "outcome": "abstain"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": 0.69838,
+    "90": 0.923941,
+    "180": 0.614758,
+    "270": 0.762166
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.375149,
+     "90": 0.848698,
+     "180": 0.341137,
+     "270": 0.507436
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.9506,
+    "margin": 0.0046,
+    "outcome": "abstain"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": 0.585108,
+    "90": 0.799411,
+    "180": 0.495539,
+    "270": 0.650124
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.190235,
+     "90": 0.624269,
+     "180": 0.166354,
+     "270": 0.383317
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": 90,
+    "best": 90,
+    "score": 0.9924,
+    "margin": 0.226,
+    "outcome": "correct"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.842723,
+    "180": -1.0,
+    "270": 0.669105
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": -1.0,
+     "90": 0.751579,
+     "180": -1.0,
+     "270": 0.388156
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9965,
+    "margin": 0.0331,
+    "outcome": "abstain"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.885899,
+    "180": -1.0,
+    "270": 0.644363
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": -1.0,
+     "90": 0.809859,
+     "180": -1.0,
+     "270": 0.328629
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "4-1",
+   "gt_az": 90,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9272,
+    "margin": 0.0243,
+    "outcome": "abstain"
+   },
+   "B": 90,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.837985,
+    "180": -1.0,
+    "270": 0.632149
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": -1.0,
+     "90": 0.682007,
+     "180": -1.0,
+     "270": 0.343172
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "90",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "full",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.6599,
+    "margin": 0.0192,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.541731,
+    "90": 0.622906,
+    "180": 0.607719,
+    "270": 0.672417
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 270,
+    "scores": {
+     "0": 0.160364,
+     "90": 0.319083,
+     "180": 0.323114,
+     "270": 0.428158
+    }
+   },
+   "group": "kpp1/full",
+   "verdict_A": "abstain",
+   "verdict_B": "wrong",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "mirror",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.66,
+    "margin": 0.019,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.641147,
+    "90": 0.642457,
+    "180": 0.48933,
+    "270": 0.678359
+   },
+   "changed_pixels": 2572,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.32784,
+     "90": 0.381042,
+     "180": 0.087562,
+     "270": 0.404644
+    }
+   },
+   "group": "kpp1/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9587,
+    "margin": 0.0264,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.669692,
+    "90": 0.712364,
+    "180": 0.680015,
+    "270": 0.670851
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.506667,
+     "90": 0.42844,
+     "180": 0.39994,
+     "270": 0.385551
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.785587,
+    "90": 0.770436,
+    "180": 0.795551,
+    "270": 0.803961
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.509129,
+     "90": 0.52946,
+     "180": 0.486413,
+     "270": 0.532633
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.9601,
+    "margin": 0.0309,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.665718,
+    "90": 0.734089,
+    "180": 0.636496,
+    "270": 0.690191
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.42996,
+     "90": 0.55444,
+     "180": 0.36555,
+     "270": 0.513012
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.9267,
+    "margin": 0.0016,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.654789,
+    "90": 0.692864,
+    "180": 0.717414,
+    "270": 0.679867
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.291707,
+     "90": 0.369165,
+     "180": 0.491069,
+     "270": 0.32697
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9953,
+    "margin": 0.014,
+    "outcome": "abstain"
+   },
+   "B": 180,
+   "scores_B": {
+    "0": 0.652994,
+    "90": 0.680582,
+    "180": 0.853999,
+    "270": 0.750533
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.262027,
+     "90": 0.327712,
+     "180": 0.72516,
+     "270": 0.484571
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "180",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.9483,
+    "margin": 0.0076,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.633291,
+    "90": 0.672328,
+    "180": 0.585782,
+    "270": 0.711783
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.382816,
+     "90": 0.475449,
+     "180": 0.326185,
+     "270": 0.550043
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.925,
+    "margin": 0.0014,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.699988,
+    "90": 0.675679,
+    "180": 0.695872,
+    "270": 0.731695
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.277016,
+     "90": 0.353904,
+     "180": 0.460657,
+     "270": 0.504897
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.7979,
+    "margin": 0.066,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.568034,
+    "90": 0.659464,
+    "180": 0.81527,
+    "270": 0.722955
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 180,
+    "scores": {
+     "0": 0.133341,
+     "90": 0.297724,
+     "180": 0.694072,
+     "270": 0.483203
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "В-А",
+   "gt_az": 180,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.9459,
+    "margin": 0.0003,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.568249,
+    "90": 0.68718,
+    "180": 0.552716,
+    "270": 0.703485
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.176026,
+     "90": 0.468058,
+     "180": 0.271392,
+     "270": 0.50678
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "full",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.6607,
+    "margin": 0.0173,
+    "outcome": "abstain"
+   },
+   "B": 0,
+   "scores_B": {
+    "0": 0.774611,
+    "90": 0.646948,
+    "180": 0.477956,
+    "270": 0.650615
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.548112,
+     "90": 0.342341,
+     "180": 0.023354,
+     "270": 0.33848
+    }
+   },
+   "group": "kpp1/full",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "mirror",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.6604,
+    "margin": 0.0157,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.577999,
+    "90": 0.640613,
+    "180": 0.517185,
+    "270": 0.62408
+   },
+   "changed_pixels": 2696,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.195412,
+     "90": 0.305256,
+     "180": 0.150347,
+     "270": 0.31276
+    }
+   },
+   "group": "kpp1/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9644,
+    "margin": 0.0357,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.792642,
+    "90": 0.727896,
+    "180": 0.614808,
+    "270": 0.672195
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.733042,
+     "90": 0.57009,
+     "180": 0.39055,
+     "270": 0.466939
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.877953,
+    "90": 0.748183,
+    "180": 0.782373,
+    "270": 0.822384
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.778424,
+     "90": 0.41452,
+     "180": 0.392523,
+     "270": 0.534296
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "correct",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.9554,
+    "margin": 0.024,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.666161,
+    "90": 0.680578,
+    "180": 0.653175,
+    "270": 0.676946
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.337429,
+     "90": 0.397553,
+     "180": 0.354378,
+     "270": 0.371344
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9558,
+    "margin": 0.0155,
+    "outcome": "abstain"
+   },
+   "B": 0,
+   "scores_B": {
+    "0": 0.85051,
+    "90": 0.656071,
+    "180": 0.567223,
+    "270": 0.688
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.790708,
+     "90": 0.48063,
+     "180": 0.323375,
+     "270": 0.508153
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.9921,
+    "margin": 0.0251,
+    "outcome": "abstain"
+   },
+   "B": 0,
+   "scores_B": {
+    "0": 0.92817,
+    "90": 0.753593,
+    "180": 0.735704,
+    "270": 0.73986
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.842155,
+     "90": 0.445948,
+     "180": 0.416206,
+     "270": 0.388295
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.9297,
+    "margin": 0.0016,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.743067,
+    "90": 0.719486,
+    "180": 0.589324,
+    "270": 0.724407
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 90,
+    "scores": {
+     "0": 0.313303,
+     "90": 0.505904,
+     "180": 0.340745,
+     "270": 0.404007
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "wrong",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.9532,
+    "margin": 0.008,
+    "outcome": "abstain"
+   },
+   "B": 0,
+   "scores_B": {
+    "0": 0.849882,
+    "90": 0.657492,
+    "180": 0.608242,
+    "270": 0.644989
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.774297,
+     "90": 0.425465,
+     "180": 0.305539,
+     "270": 0.400392
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 270,
+    "score": 0.7975,
+    "margin": 0.0245,
+    "outcome": "abstain"
+   },
+   "B": 0,
+   "scores_B": {
+    "0": 0.907407,
+    "90": 0.692009,
+    "180": 0.701567,
+    "270": 0.711147
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": 0,
+    "scores": {
+     "0": 0.819979,
+     "90": 0.388313,
+     "180": 0.397339,
+     "270": 0.313777
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "correct",
+   "verdict_B": "correct",
+   "veto_pick": "0",
+   "verdict_C": "correct"
+  },
+  {
+   "fixture": "kpp1",
+   "title": "А-В",
+   "gt_az": 0,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 180,
+    "score": 0.9288,
+    "margin": 0.0015,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.767631,
+    "90": 0.694025,
+    "180": 0.554688,
+    "270": 0.678126
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.412153,
+     "90": 0.311184,
+     "180": 0.215596,
+     "270": 0.324478
+    }
+   },
+   "group": "kpp1/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "full",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0302,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.714286,
+    "90": 0.714286,
+    "180": 0.714286,
+    "270": 0.714286
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "mirror",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0302,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.714286,
+    "90": 0.714286,
+    "180": 0.714286,
+    "270": 0.714286
+   },
+   "changed_pixels": 0,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/mirror",
+   "verdict_A": "not_exercised",
+   "verdict_B": "not_exercised",
+   "veto_pick": null,
+   "verdict_C": "not_exercised"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.4082,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 1.0,
+    "90": 1.0,
+    "180": 1.0,
+    "270": 1.0
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.4082,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 1.0,
+    "90": 1.0,
+    "180": 1.0,
+    "270": 1.0
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.4082,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 1.0,
+    "90": 1.0,
+    "180": 1.0,
+    "270": 1.0
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.378,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.917874,
+    "90": 0.917874,
+    "180": 0.917874,
+    "270": 0.917874
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.378,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.917874,
+    "90": 0.917874,
+    "180": 0.917874,
+    "270": 0.917874
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.378,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.917874,
+    "90": 0.917874,
+    "180": 0.917874,
+    "270": 0.917874
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0714,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.7875,
+    "90": 0.7875,
+    "180": 0.7875,
+    "270": 0.7875
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0714,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.7875,
+    "90": 0.7875,
+    "180": 0.7875,
+    "270": 0.7875
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "А-Б",
+   "gt_az": 180,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0714,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.7875,
+    "90": 0.7875,
+    "180": 0.7875,
+    "270": 0.7875
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "full",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.006,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.624788,
+    "180": -1.0,
+    "270": 0.624788
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "mirror",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.006,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.624788,
+    "180": -1.0,
+    "270": 0.624788
+   },
+   "changed_pixels": 0,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/mirror",
+   "verdict_A": "not_exercised",
+   "verdict_B": "not_exercised",
+   "veto_pick": null,
+   "verdict_C": "not_exercised"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2774,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.790123,
+    "90": 0.790123,
+    "180": 0.790123,
+    "270": 0.790123
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2774,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.790123,
+    "90": 0.790123,
+    "180": 0.790123,
+    "270": 0.790123
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2774,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.790123,
+    "90": 0.790123,
+    "180": 0.790123,
+    "270": 0.790123
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0259,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.744361,
+    "90": 0.702913,
+    "180": 0.744361,
+    "270": 0.702913
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2041,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.713693,
+    "90": 0.713693,
+    "180": 0.713693,
+    "270": 0.713693
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0259,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.744361,
+    "90": 0.702913,
+    "180": 0.744361,
+    "270": 0.702913
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.1741,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.69589,
+    "90": 0.666667,
+    "180": 0.69589,
+    "270": 0.666667
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.1741,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.69589,
+    "90": 0.666667,
+    "180": 0.69589,
+    "270": 0.666667
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "1-2",
+   "gt_az": 90,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.1741,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.69589,
+    "90": 0.666667,
+    "180": 0.69589,
+    "270": 0.666667
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "full",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0302,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.714286,
+    "90": 0.714286,
+    "180": 0.714286,
+    "270": 0.714286
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "mirror",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0302,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.714286,
+    "90": 0.714286,
+    "180": 0.714286,
+    "270": 0.714286
+   },
+   "changed_pixels": 0,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/mirror",
+   "verdict_A": "not_exercised",
+   "verdict_B": "not_exercised",
+   "veto_pick": null,
+   "verdict_C": "not_exercised"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.4082,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 1.0,
+    "90": 1.0,
+    "180": 1.0,
+    "270": 1.0
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.4082,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 1.0,
+    "90": 1.0,
+    "180": 1.0,
+    "270": 1.0
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.4082,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 1.0,
+    "90": 1.0,
+    "180": 1.0,
+    "270": 1.0
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.378,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.917874,
+    "90": 0.917874,
+    "180": 0.917874,
+    "270": 0.917874
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.378,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.917874,
+    "90": 0.917874,
+    "180": 0.917874,
+    "270": 0.917874
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.378,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.917874,
+    "90": 0.917874,
+    "180": 0.917874,
+    "270": 0.917874
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0714,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.7875,
+    "90": 0.7875,
+    "180": 0.7875,
+    "270": 0.7875
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0714,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.7875,
+    "90": 0.7875,
+    "180": 0.7875,
+    "270": 0.7875
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "Б-А",
+   "gt_az": 0,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0714,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.7875,
+    "90": 0.7875,
+    "180": 0.7875,
+    "270": 0.7875
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "full",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.0531,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.655462,
+    "180": -1.0,
+    "270": 0.655462
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.231286,
+     "180": -1.0,
+     "270": 0.231286
+    }
+   },
+   "group": "ac08/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "mirror",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.0531,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": -1.0,
+    "90": 0.655462,
+    "180": -1.0,
+    "270": 0.655462
+   },
+   "changed_pixels": 204,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.224262,
+     "180": -1.0,
+     "270": 0.224262
+    }
+   },
+   "group": "ac08/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial25@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2774,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.790123,
+    "90": 0.790123,
+    "180": 0.790123,
+    "270": 0.790123
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial25@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2774,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.790123,
+    "90": 0.790123,
+    "180": 0.790123,
+    "270": 0.790123
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial25@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.5603,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.892857,
+    "90": 0.892857,
+    "180": 0.892857,
+    "270": 0.892857
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.706073,
+     "90": 0.706073,
+     "180": 0.706073,
+     "270": 0.706073
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial40@0.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.0259,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.744361,
+    "90": 0.702913,
+    "180": 0.744361,
+    "270": 0.702913
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial40@0.5",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2041,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.713693,
+    "90": 0.713693,
+    "180": 0.713693,
+    "270": 0.713693
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial40@1.0",
+   "A": {
+    "answer": null,
+    "best": 0,
+    "score": 0.2501,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.808824,
+    "90": 0.770398,
+    "180": 0.808824,
+    "270": 0.770398
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.497388,
+     "90": 0.423929,
+     "180": 0.497388,
+     "270": 0.423929
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial60@0.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.1741,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.69589,
+    "90": 0.666667,
+    "180": 0.69589,
+    "270": 0.666667
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial60@0.5",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.1617,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.693042,
+    "90": 0.669444,
+    "180": 0.693042,
+    "270": 0.669444
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.0,
+     "90": 0.0,
+     "180": 0.0,
+     "270": 0.0
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "fixture": "ac08",
+   "title": "2-1",
+   "gt_az": 270,
+   "case": "partial60@1.0",
+   "A": {
+    "answer": null,
+    "best": 90,
+    "score": 0.2243,
+    "margin": 0.0,
+    "outcome": "abstain"
+   },
+   "B": null,
+   "scores_B": {
+    "0": 0.683616,
+    "90": 0.712707,
+    "180": 0.683616,
+    "270": 0.712707
+   },
+   "changed_pixels": null,
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.177525,
+     "90": 0.345332,
+     "180": 0.177525,
+     "270": 0.345332
+    }
+   },
+   "group": "ac08/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/full",
+   "kind": "full",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 89.0,
+   "C": {
+    "best": 90,
+    "score": 0.8659,
+    "margin": 0.485,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8659,
+     "180": -1.0,
+     "270": 0.3809
+    },
+    "offset_px": {
+     "0": null,
+     "90": 0,
+     "180": null,
+     "270": -1
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.0,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.089479,
+     "180": -1.0,
+     "270": 0.079901
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.016095,
+     "180": -1.0,
+     "270": 0.012036
+    }
+   },
+   "group": "obr/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.25@0.0",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 22.2,
+   "C": {
+    "best": 90,
+    "score": 0.7595,
+    "margin": 0.3428,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.7595,
+     "180": -1.0,
+     "270": 0.4168
+    },
+    "offset_px": {
+     "0": null,
+     "90": 588,
+     "180": null,
+     "270": 479
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3537,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.093938,
+     "180": -1.0,
+     "270": 0.09112
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.020066,
+     "180": -1.0,
+     "270": 0.025446
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.25@0.5",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 22.2,
+   "C": {
+    "best": 90,
+    "score": 0.6706,
+    "margin": 0.2677,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.6706,
+     "180": -1.0,
+     "270": 0.4028
+    },
+    "offset_px": {
+     "0": null,
+     "90": 40,
+     "180": null,
+     "270": 148
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3537,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.096754,
+     "180": -1.0,
+     "270": 0.09526
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.022656,
+     "180": -1.0,
+     "270": 0.028737
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.25@1.0",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 22.2,
+   "C": {
+    "best": 90,
+    "score": 0.8601,
+    "margin": 0.3799,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8601,
+     "180": -1.0,
+     "270": 0.4802
+    },
+    "offset_px": {
+     "0": null,
+     "90": 373,
+     "180": null,
+     "270": 187
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3537,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.094213,
+     "180": -1.0,
+     "270": 0.091278
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.020186,
+     "180": -1.0,
+     "270": 0.026906
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.4@0.0",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 35.6,
+   "C": {
+    "best": 90,
+    "score": 0.8758,
+    "margin": 0.4117,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8758,
+     "180": -1.0,
+     "270": 0.4641
+    },
+    "offset_px": {
+     "0": null,
+     "90": 294,
+     "180": null,
+     "270": -1
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.6,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.090216,
+     "180": -1.0,
+     "270": 0.088017
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.015713,
+     "180": -1.0,
+     "270": 0.022209
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.4@0.5",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 35.6,
+   "C": {
+    "best": 90,
+    "score": 0.8694,
+    "margin": 0.3966,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8694,
+     "180": -1.0,
+     "270": 0.4728
+    },
+    "offset_px": {
+     "0": null,
+     "90": 267,
+     "180": null,
+     "270": 8
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.6,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.083777,
+     "180": -1.0,
+     "270": 0.082444
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.010374,
+     "180": -1.0,
+     "270": 0.01606
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.4@1.0",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 35.6,
+   "C": {
+    "best": 90,
+    "score": 0.8783,
+    "margin": 0.3975,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8783,
+     "180": -1.0,
+     "270": 0.4807
+    },
+    "offset_px": {
+     "0": null,
+     "90": 239,
+     "180": null,
+     "270": 274
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.6,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.09012,
+     "180": -1.0,
+     "270": 0.088427
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.015262,
+     "180": -1.0,
+     "270": 0.022128
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.6@0.0",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 53.4,
+   "C": {
+    "best": 90,
+    "score": 0.8648,
+    "margin": 0.4768,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8648,
+     "180": -1.0,
+     "270": 0.388
+    },
+    "offset_px": {
+     "0": null,
+     "90": 294,
+     "180": null,
+     "270": 186
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.4,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.091437,
+     "180": -1.0,
+     "270": 0.088024
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.017217,
+     "180": -1.0,
+     "270": 0.022194
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.6@0.5",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 53.4,
+   "C": {
+    "best": 90,
+    "score": 0.8703,
+    "margin": 0.3979,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8703,
+     "180": -1.0,
+     "270": 0.4724
+    },
+    "offset_px": {
+     "0": null,
+     "90": 178,
+     "180": null,
+     "270": 177
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.4,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.08852,
+     "180": -1.0,
+     "270": 0.087277
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.014459,
+     "180": -1.0,
+     "270": 0.021048
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/crop0.6@1.0",
+   "kind": "crop",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "width_m": 53.4,
+   "C": {
+    "best": 90,
+    "score": 0.8662,
+    "margin": 0.4425,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8662,
+     "180": -1.0,
+     "270": 0.4238
+    },
+    "offset_px": {
+     "0": null,
+     "90": 356,
+     "180": null,
+     "270": 169
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.4,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.09131,
+     "180": -1.0,
+     "270": 0.088928
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.016957,
+     "180": -1.0,
+     "270": 0.023055
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.1-2.25/mirror",
+   "kind": "mirror",
+   "view": "2.1-2.25",
+   "gt": 90,
+   "changed_px": 236418,
+   "width_m": 89.0,
+   "C": {
+    "best": 90,
+    "score": 0.8671,
+    "margin": 0.4881,
+    "answer": 90,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.8671,
+     "180": -1.0,
+     "270": 0.3789
+    },
+    "offset_px": {
+     "0": null,
+     "90": -1,
+     "180": null,
+     "270": -1
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.0,
+    "outcome": "abstain"
+   },
+   "changed_edge_px": 30186,
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.089305,
+     "180": -1.0,
+     "270": 0.079766
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.015165,
+     "180": -1.0,
+     "270": 0.011573
+    }
+   },
+   "group": "obr/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/full",
+   "kind": "full",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 17.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0144
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.0671,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.173191,
+     "90": 0.27806,
+     "180": 0.173191,
+     "270": 0.284143
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.150865,
+     "90": 0.227206,
+     "180": 0.150865,
+     "270": 0.238716
+    }
+   },
+   "group": "obr/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.25@0.0",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 4.4,
+   "C": {
+    "best": 270,
+    "score": 0.9917,
+    "margin": 0.5433,
+    "answer": 270,
+    "outcome": "wrong",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4484,
+     "180": -1.0,
+     "270": 0.9917
+    },
+    "offset_px": {
+     "0": null,
+     "90": 271,
+     "180": null,
+     "270": 99
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.7317,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.065751,
+     "90": 0.132103,
+     "180": 0.065751,
+     "270": 0.136286
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.028031,
+     "90": 0.064152,
+     "180": 0.028031,
+     "270": 0.064152
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.25@0.5",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 4.4,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.003
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.7317,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.382007,
+     "90": 0.623299,
+     "180": 0.382007,
+     "270": 0.643609
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.360484,
+     "90": 0.600889,
+     "180": 0.360484,
+     "270": 0.620152
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.25@1.0",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 4.4,
+   "C": {
+    "best": 270,
+    "score": 0.9925,
+    "margin": 0.5547,
+    "answer": 270,
+    "outcome": "wrong",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4379,
+     "180": -1.0,
+     "270": 0.9925
+    },
+    "offset_px": {
+     "0": null,
+     "90": 278,
+     "180": null,
+     "270": 109
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.7317,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.106871,
+     "90": 0.217391,
+     "180": 0.106871,
+     "270": 0.217391
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.084404,
+     "90": 0.165152,
+     "180": 0.084404,
+     "270": 0.165152
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.4@0.0",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 7.0,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0166
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.5732,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.219086,
+     "90": 0.224557,
+     "180": 0.219086,
+     "270": 0.234841
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.193004,
+     "90": 0.169236,
+     "180": 0.193004,
+     "270": 0.187974
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.4@0.5",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 7.0,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0002
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.5732,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.37894,
+     "90": 0.602095,
+     "180": 0.37894,
+     "270": 0.613738
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.360868,
+     "90": 0.57981,
+     "180": 0.360868,
+     "270": 0.590491
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.4@1.0",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 7.0,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0194
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.5732,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.152352,
+     "90": 0.279289,
+     "180": 0.152352,
+     "270": 0.286736
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.131542,
+     "90": 0.228128,
+     "180": 0.131542,
+     "270": 0.235275
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.6@0.0",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 10.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0111
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3598,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.19874,
+     "90": 0.29227,
+     "180": 0.19874,
+     "270": 0.307898
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.17658,
+     "90": 0.243336,
+     "180": 0.17658,
+     "270": 0.264848
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.6@0.5",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 10.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0002
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3598,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.322295,
+     "90": 0.477099,
+     "180": 0.322295,
+     "270": 0.471648
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.302915,
+     "90": 0.444564,
+     "180": 0.302915,
+     "270": 0.443239
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/crop0.6@1.0",
+   "kind": "crop",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "width_m": 10.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0129
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3598,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.188227,
+     "90": 0.341174,
+     "180": 0.188227,
+     "270": 0.334149
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.168688,
+     "90": 0.296529,
+     "180": 0.168688,
+     "270": 0.289797
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "А.2-Е.2/mirror",
+   "kind": "mirror",
+   "view": "А.2-Е.2",
+   "gt": 180,
+   "changed_px": 42904,
+   "width_m": 17.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0144
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.0671,
+    "outcome": "abstain"
+   },
+   "changed_edge_px": 2540,
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.173191,
+     "90": 0.278329,
+     "180": 0.173191,
+     "270": 0.283767
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.150865,
+     "90": 0.227654,
+     "180": 0.150865,
+     "270": 0.238311
+    }
+   },
+   "group": "obr/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/full",
+   "kind": "full",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 88.9,
+   "C": {
+    "best": 270,
+    "score": 0.4833,
+    "margin": 0.1721,
+    "answer": 270,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.3112,
+     "180": -1.0,
+     "270": 0.4833
+    },
+    "offset_px": {
+     "0": null,
+     "90": 0,
+     "180": null,
+     "270": 0
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.0011,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.071117,
+     "180": -1.0,
+     "270": 0.057677
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "obr/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.25@0.0",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 22.2,
+   "C": {
+    "best": 90,
+    "score": 0.4386,
+    "margin": 0.0441,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4386,
+     "180": -1.0,
+     "270": 0.3945
+    },
+    "offset_px": {
+     "0": null,
+     "90": 554,
+     "180": null,
+     "270": 550
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3537,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.079375,
+     "180": -1.0,
+     "270": 0.074499
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.004132,
+     "180": -1.0,
+     "270": 0.009625
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.25@0.5",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 22.2,
+   "C": {
+    "best": 90,
+    "score": 0.4689,
+    "margin": 0.0059,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4689,
+     "180": -1.0,
+     "270": 0.4631
+    },
+    "offset_px": {
+     "0": null,
+     "90": 5,
+     "180": null,
+     "270": 39
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3537,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.083353,
+     "180": -1.0,
+     "270": 0.081305
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.008612,
+     "180": -1.0,
+     "270": 0.013029
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.25@1.0",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 22.2,
+   "C": {
+    "best": 90,
+    "score": 0.4931,
+    "margin": 0.0955,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4931,
+     "180": -1.0,
+     "270": 0.3975
+    },
+    "offset_px": {
+     "0": null,
+     "90": 46,
+     "180": null,
+     "270": 530
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3537,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.079465,
+     "180": -1.0,
+     "270": 0.07628
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.00432,
+     "180": -1.0,
+     "270": 0.011194
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.4@0.0",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 35.6,
+   "C": {
+    "best": 270,
+    "score": 0.5263,
+    "margin": 0.0245,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.5018,
+     "180": -1.0,
+     "270": 0.5263
+    },
+    "offset_px": {
+     "0": null,
+     "90": 260,
+     "180": null,
+     "270": 0
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.6,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.069642,
+     "180": -1.0,
+     "270": 0.066789
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.4@0.5",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 35.6,
+   "C": {
+    "best": 90,
+    "score": 0.485,
+    "margin": 0.001,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.485,
+     "180": -1.0,
+     "270": 0.484
+    },
+    "offset_px": {
+     "0": null,
+     "90": 525,
+     "180": null,
+     "270": 266
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.6,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.064947,
+     "180": -1.0,
+     "270": 0.063085
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.4@1.0",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 35.6,
+   "C": {
+    "best": 270,
+    "score": 0.5216,
+    "margin": 0.01,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.5116,
+     "180": -1.0,
+     "270": 0.5216
+    },
+    "offset_px": {
+     "0": null,
+     "90": 499,
+     "180": null,
+     "270": 533
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.6,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.07041,
+     "180": -1.0,
+     "270": 0.068003
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.000312
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.6@0.0",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 53.3,
+   "C": {
+    "best": 90,
+    "score": 0.4533,
+    "margin": 0.0008,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4533,
+     "180": -1.0,
+     "270": 0.4525
+    },
+    "offset_px": {
+     "0": null,
+     "90": 260,
+     "180": null,
+     "270": 0
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.4011,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.072977,
+     "180": -1.0,
+     "270": 0.070293
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.003484
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.6@0.5",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 53.3,
+   "C": {
+    "best": 270,
+    "score": 0.5252,
+    "margin": 0.0104,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.5147,
+     "180": -1.0,
+     "270": 0.5252
+    },
+    "offset_px": {
+     "0": null,
+     "90": 143,
+     "180": null,
+     "270": 178
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.4011,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.066965,
+     "180": -1.0,
+     "270": 0.066207
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/crop0.6@1.0",
+   "kind": "crop",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "width_m": 53.3,
+   "C": {
+    "best": 90,
+    "score": 0.4636,
+    "margin": 0.0142,
+    "answer": null,
+    "outcome": "abstain",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4636,
+     "180": -1.0,
+     "270": 0.4494
+    },
+    "offset_px": {
+     "0": null,
+     "90": 28,
+     "180": null,
+     "270": 61
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.4011,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.073721,
+     "180": -1.0,
+     "270": 0.069877
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.002694
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "2.25-2.1/mirror",
+   "kind": "mirror",
+   "view": "2.25-2.1",
+   "gt": 270,
+   "changed_px": 198142,
+   "width_m": 88.9,
+   "C": {
+    "best": 270,
+    "score": 0.4811,
+    "margin": 0.1703,
+    "answer": 270,
+    "outcome": "correct",
+    "scores": {
+     "0": -1.0,
+     "90": 0.3108,
+     "180": -1.0,
+     "270": 0.4811
+    },
+    "offset_px": {
+     "0": null,
+     "90": 0,
+     "180": null,
+     "270": 0
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 90,
+    "err": 0.0011,
+    "outcome": "abstain"
+   },
+   "changed_edge_px": 24706,
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.070565,
+     "180": -1.0,
+     "270": 0.057882
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": -1.0,
+     "90": 0.0,
+     "180": -1.0,
+     "270": 0.0
+    }
+   },
+   "group": "obr/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/full",
+   "kind": "full",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 17.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0144
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.0671,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.16377,
+     "90": 0.286782,
+     "180": 0.16377,
+     "270": 0.28553
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.141188,
+     "90": 0.237843,
+     "180": 0.141188,
+     "270": 0.240975
+    }
+   },
+   "group": "obr/full",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.25@0.0",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 4.4,
+   "C": {
+    "best": 270,
+    "score": 0.9964,
+    "margin": 0.5514,
+    "answer": 270,
+    "outcome": "wrong",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4451,
+     "180": -1.0,
+     "270": 0.9964
+    },
+    "offset_px": {
+     "0": null,
+     "90": 271,
+     "180": null,
+     "270": 99
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.7317,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.143796,
+     "90": 0.271337,
+     "180": 0.143796,
+     "270": 0.271337
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.110905,
+     "90": 0.225291,
+     "180": 0.110905,
+     "270": 0.225291
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.25@0.5",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 4.4,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0009
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.7317,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.406577,
+     "90": 0.551338,
+     "180": 0.406577,
+     "270": 0.568134
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.386378,
+     "90": 0.522255,
+     "180": 0.386378,
+     "270": 0.538379
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.25@1.0",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 4.4,
+   "C": {
+    "best": 270,
+    "score": 0.9937,
+    "margin": 0.5445,
+    "answer": 270,
+    "outcome": "wrong",
+    "scores": {
+     "0": -1.0,
+     "90": 0.4492,
+     "180": -1.0,
+     "270": 0.9937
+    },
+    "offset_px": {
+     "0": null,
+     "90": 278,
+     "180": null,
+     "270": 109
+    }
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.7317,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.056799,
+     "90": 0.118266,
+     "180": 0.056799,
+     "270": 0.120469
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.01953,
+     "90": 0.048161,
+     "180": 0.01953,
+     "270": 0.048161
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.4@0.0",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 7.0,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0182
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.5732,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.195986,
+     "90": 0.33779,
+     "180": 0.195986,
+     "270": 0.346929
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.170553,
+     "90": 0.293991,
+     "180": 0.170553,
+     "270": 0.303121
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.4@0.5",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 7.0,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0033
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.5732,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.319183,
+     "90": 0.561069,
+     "180": 0.319183,
+     "270": 0.566827
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.298292,
+     "90": 0.532329,
+     "180": 0.298292,
+     "270": 0.53929
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.4@1.0",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 7.0,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0169
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.5732,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.126588,
+     "90": 0.193731,
+     "180": 0.126588,
+     "270": 0.201672
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.104863,
+     "90": 0.136415,
+     "180": 0.104863,
+     "270": 0.156734
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.6@0.0",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 10.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0121
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3598,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.237002,
+     "90": 0.379299,
+     "180": 0.237002,
+     "270": 0.378093
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.214318,
+     "90": 0.338619,
+     "180": 0.214318,
+     "270": 0.338188
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.6@0.5",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 10.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0007
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3598,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.273874,
+     "90": 0.454291,
+     "180": 0.273874,
+     "270": 0.447065
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.257223,
+     "90": 0.41774,
+     "180": 0.257223,
+     "270": 0.417658
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/crop0.6@1.0",
+   "kind": "crop",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "width_m": 10.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0113
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.3598,
+    "outcome": "abstain"
+   },
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.157529,
+     "90": 0.260837,
+     "180": 0.157529,
+     "270": 0.273911
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.136914,
+     "90": 0.208666,
+     "180": 0.136914,
+     "270": 0.226844
+    }
+   },
+   "group": "obr/crop",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  },
+  {
+   "id": "Е.2-А.2/mirror",
+   "kind": "mirror",
+   "view": "Е.2-А.2",
+   "gt": 0,
+   "changed_px": 47450,
+   "width_m": 17.5,
+   "C": {
+    "answer": null,
+    "outcome": "abstain",
+    "reason": "low_window_evidence",
+    "density": 0.0144
+   },
+   "V0": {
+    "answer": null,
+    "best": 0,
+    "err": 0.0671,
+    "outcome": "abstain"
+   },
+   "changed_edge_px": 2094,
+   "B": {
+    "answer": null,
+    "scores": {
+     "0": 0.16377,
+     "90": 0.286277,
+     "180": 0.16377,
+     "270": 0.285217
+    },
+    "outcome": "abstain"
+   },
+   "adjusted": {
+    "pick": null,
+    "scores": {
+     "0": 0.141188,
+     "90": 0.237149,
+     "180": 0.141188,
+     "270": 0.240665
+    }
+   },
+   "group": "obr/mirror",
+   "verdict_A": "abstain",
+   "verdict_B": "abstain",
+   "veto_pick": null,
+   "verdict_C": "abstain"
+  }
+ ]
+}
