@@ -448,6 +448,8 @@ print(json.dumps(report))
     out = tmp_path / "run"
     etalon = {**_E, "id": "synthetic", "practice_ready": True, "scenario": "fixture", "sources": [],
               "task": "Synthetic skill discovery probe."}
+    monkeypatch.setattr(T, "_run_windows_codex",
+                        lambda cmd, **kwargs: run(cmd, text=True, encoding="utf-8", **kwargs).returncode)
     args = SimpleNamespace(etalon="synthetic", lane="codex", out=out, head="HEAD", dry_run=False, timeout_s=30)
     assert T.cmd_run(args, {"etalons": [etalon]}) == 0
     assert json.loads((out / "run.json").read_text(encoding="utf-8"))["exit"] == 0
@@ -489,10 +491,80 @@ def test_practice_disables_windows_known_folder_skills(tmp_path, monkeypatch):
     monkeypatch.setattr(T.subprocess, "run", run)
     etalon = {**_E, "id": "synthetic", "practice_ready": True, "scenario": "fixture", "sources": [],
               "task": "Synthetic Windows skill discovery probe."}
+    monkeypatch.setattr(T, "_run_windows_codex", lambda cmd, **kwargs: run(cmd, **kwargs).returncode)
     args = SimpleNamespace(etalon="synthetic", lane="codex", out=tmp_path / "run", head="HEAD",
                            dry_run=False, timeout_s=30)
     assert T.cmd_run(args, {"etalons": [etalon]}) == 0
     assert disabled == {p.resolve() for p in skills}
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows CMD and file sharing semantics")
+@pytest.mark.parametrize("taskkill_available", [True, False], ids=["tree-killed", "cleanup-degraded"])
+def test_practice_timeout_cleans_locked_codex_home(tmp_path, monkeypatch, taskkill_available):
+    """A synthetic npm-style launcher must not outlive the timeout holding CODEX_HOME open."""
+    import time
+
+    src = _repo(tmp_path, {"docs/agents/skeletons.json": '{"cells": {}}'})
+    _git(src, "-c", "user.name=test", "-c", "user.email=t@t", "commit", "-qm", "fixture")
+    monkeypatch.setattr(T, "ROOT", src)
+    monkeypatch.setattr(T, "_windows_profile", lambda: None)
+    monkeypatch.setattr(T.tempfile, "tempdir", str(tmp_path))
+    auth = tmp_path / "original-home" / "auth.json"
+    auth.parent.mkdir()
+    auth.write_bytes(b'{"synthetic":true}')
+    monkeypatch.setenv("CODEX_HOME", str(auth.parent))
+    child = tmp_path / "child.py"
+    child.write_text("""
+import os, sys, time
+from pathlib import Path
+
+assert 'Synthetic timeout probe.' in sys.stdin.read()
+home = Path(os.environ['CODEX_HOME'])
+with (home / 'log.sqlite').open('w'):
+    print(home, flush=True)
+    release = Path(__file__).with_name('release')
+    deadline = time.monotonic() + 20
+    while not release.exists() and time.monotonic() < deadline:
+        time.sleep(0.02)
+Path(__file__).with_name('released').touch()
+""", encoding="utf-8")
+    shim = tmp_path / "codex.cmd"
+    python = getattr(sys, "_base_executable", sys.executable)
+    shim.write_text(f'@echo off\n"{python}" "{child}"\n', encoding="utf-8")
+    monkeypatch.setattr(T.shutil, "which", lambda name: str(shim))
+    if not taskkill_available:
+        real_run = subprocess.run
+
+        def run(cmd, **kwargs):
+            if cmd[0] == "taskkill":
+                raise OSError("synthetic taskkill failure")
+            return real_run(cmd, **kwargs)
+
+        monkeypatch.setattr(T.subprocess, "run", run)
+    out = tmp_path / "run"
+    etalon = {**_E, "id": "synthetic", "practice_ready": True, "scenario": "fixture", "sources": [],
+              "task": "Synthetic timeout probe."}
+    args = SimpleNamespace(etalon="synthetic", lane="codex", out=out, head="HEAD", dry_run=False, timeout_s=3)
+    try:
+        assert T.cmd_run(args, {"etalons": [etalon]}) == 0
+        assert json.loads((out / "run.json").read_text(encoding="utf-8"))["exit"] == "timeout"
+        home = Path((out / "events.jsonl").read_text(encoding="utf-8").strip())
+        assert home.name == ".codex", "the child never acquired its lock"
+        assert not (home / "auth.json").exists()
+        assert auth.read_bytes() == b'{"synthetic":true}'
+        if taskkill_available:
+            assert not home.parent.exists()
+        else:
+            assert (home / "log.sqlite").exists()
+            stderr = (out / "stderr.txt").read_text(encoding="utf-8")
+            assert "synthetic taskkill failure" in stderr and str(home.parent) in stderr
+    finally:
+        # Let a surviving fixture release its own file on RED; never kill by an unverified PID.
+        (tmp_path / "release").touch()
+        if list(tmp_path.glob("trainer-codex-*")):
+            deadline = time.monotonic() + 5
+            while not (tmp_path / "released").exists() and time.monotonic() < deadline:
+                time.sleep(0.02)
 
 
 # ---------------------------------------------------------------- #1861: bank paths live on Drive, not C:/x
