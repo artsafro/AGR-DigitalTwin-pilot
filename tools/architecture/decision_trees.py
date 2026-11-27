@@ -190,8 +190,8 @@ def render_md(trees, skeletons, cell):
     nodes = cell_nodes(trees, skeletons, cell)
     spec = skeletons["cells"][cell]
     lines = [f"# Decision tree: `{cell}`", "",
-             f"Generated from [`decision-trees.json`](../decision-trees.json) by "
-             f"`python tools/architecture/decision_trees.py --render` (#2039); do not edit by hand.",
+             "Generated from [`decision-trees.json`](../decision-trees.json) by "
+             "`python tools/architecture/decision_trees.py --render` (#2039); do not edit by hand.",
              f"Trail: `{spec['trail']}`. Stages: `skeletons.json` cell `{cell}`. AGENT = the agent decides by the "
              f"quoted rule; ARTEM = Artem decides on a picture sheet; gap = no shared step - manual.", "",
              "```mermaid", "flowchart TD"]
