@@ -306,7 +306,13 @@ def test_route_covers_the_issue_stages_and_hotspots():
     assert {"agent", "agent-dcc", "artem", "checker"} == {a["id"] for a in events["actors"]}
     assert {"parapet-roof-seam", "windows", "udim", "package"} <= {h["id"] for h in events["hotspots"]}
     contexts = mini_yaml.load(ROOT / route_map.CONTEXTS)
-    assert len(contexts["contexts"]) == 15  # #1644: distinct SINTEZ and PartsList owners
+    assert len(contexts["contexts"]) == 16  # includes the distinct site placement replay owner (#1979)
+    replay, = [c for c in contexts["contexts"] if c["id"] == "site-placement-replay"]
+    assert replay["owner"] == "src/dt_ai/placement/site.py"
+    entry, = replay["duplicates"]
+    assert (entry["at"], entry["rule"], entry["status"], entry["hash"]) == (
+        "jobs/moskovsky-sosh1200/scripts/flora_place.py::main", "site-placement", "own-duty", "0238d12270"
+    )
 
 
 @pytest.mark.parametrize("command,ok", [
