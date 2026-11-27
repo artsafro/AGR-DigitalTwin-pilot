@@ -2,7 +2,28 @@
 
 ## Кратко для Артёма
 
-(заполняется после замера; см. «Round log»)
+Проверил новый проект, которого не было в #139/#140: Обр22 корпус 2 — PDF-буклет (стр. 14-15, фасад растром,
+подписи вектором) и принятая НПМ v012, где окна есть геометрией. Идея: привязать вид к грани по ритму окон.
+Правильный ответ взят независимо — из плана этажа (стр. 36), совмещённого со стенами модели.
+
+**Результат: гипотеза опровергнута.** Версия R1 (окна = тёмные пиксели) дала 22 уверенные ошибки на 40 чистых
+случаях, в том числе один из двух длинных фасадов (2.25-2.1) отнесён не к той стороне. Причина: тёмная
+облицовка RAL 7024 на лестничных узлах читается как стекло; торцевые виды без окон не с чем сравнить, и их
+обрезки «притягиваются» к длинным граням. Проверка по ширине (V0) не ответила ни разу (пары граней одинаковые).
+
+R2 (после разбора, на тех же данных — только диагностика): убрал тёмные полосы выше 2,5 м и отказ при малом
+числе окон. Длинные фасады стали верными: 2 из 2 целых видов, 9 из 18 обрезков, ни одной ошибки. Но 4 узкие
+обрезки торцов (4,4 м у края) всё равно уверенно ушли на длинную грань. Значит, порог отрыва 0,10 сам по себе
+не защищает: если у грани нет окон, её нельзя сравнить, и метод выбирает из неполного списка.
+
+Три прогона каждой версии дали одинаковый результат байт в байт. Каждый прогон занимает около 4 с.
+
+**Рекомендация для шага «карта вид↔грань»:** ритм окон годится только (1) если окна в листе берутся как объекты
+(слой/категория окон Revit или векторные заливки стекла), а не по яркости растра, (2) если у каждой грани-
+кандидата есть сравнимый сигнал (у грани без окон оценивать совпадение «пустоты», а не исключать её),
+(3) для узкого вида с повторяющимся ритмом — отказ, если тот же рисунок встречается в нескольких местах.
+До этого — оси/ключевой план/имя вида, иначе показать 2 лучших кандидата и спросить. Сокольники не открывались
+(#2001 открыт). В продукт ничего не вносилось.
 
 ## Frozen protocol (committed before scoring)
 
@@ -59,3 +80,41 @@ PDF, G22/OBR22/Vatutino unmeasured.
   (pilot host: needs the Desktop PDF, `C:/Users/artsafro/.AGR_Project/jobs/OBR22-K02/outputs/` and Blender 4.4;
   preflight and postflight hash every input). Regression: `uv run --offline pytest -q
   docs/research/autoresearch-view-face-raster/test_score.py`.
+
+## Round log and acceptance
+
+**Hypothesis H141: `refuted`** (R1, measured, stable). **R2 (post-hoc diagnostic): refuted** under the same
+bounds. **Run status:** finished within budget. **Handoff:** OBSERVE; review of the research branch only; no
+production adoption or delivery claim.
+
+Inputs were hash-checked before and after each of the 7 runs; all matched (receipt `postflight_equal_all_runs`).
+Page scale from level marks: p14 0.141129 m/pt (60 marks), p15 0.141142 m/pt (59). The plan registration gave
+0.14119 m/pt. Views found: 4/4, widths 89.0/17.5/88.9/17.5 m vs faces 89.0/16.4 m. Model ray cast: 5206 tris,
+3564 window tris; window first hits: +Y 9072 px, -Y 7740 px, ±X 0 px (no end windows).
+
+| Variant (3 fresh runs each, cases byte-identical) | Long full c/w/a | Long crops c/w/a | Short full c/w/a | Short crops c/w/a | Clean wrong / 40 |
+|---|---:|---:|---:|---:|---:|
+| V0 width (#139 baseline) | 0/0/2 | 0/0/18 | 0/0/2 | 0/0/18 | 0 (answers none) |
+| R1 = C (frozen H141) | 1/1/0 | 8/6/4 | 0/0/2 | 0/15/3 | **22** |
+| R2 = C + tall-run removal + low-evidence abstain (post-hoc) | 2/0/0 | 9/0/9 | 0/0/2 | 0/4/14 | **4** |
+
+- R1 failure witness: `2.25-2.1/full`, NCC to its true face -Y = -0.2639 and to +Y = 0.4521 (margin 0.716):
+  three full-height RAL 7024 bands are below the 0.45 luma limit and dominate the profile.
+- R2 failure witness: `А.2-Е.2` and `Е.2-А.2` crop 0.25 at both edges (4.4 m) -> -Y with NCC 0.99, margin 0.54;
+  the ±X faces have no windows and score -1 (not comparable), so the abstain margin is computed only between long faces.
+- Mirror control (separate, all 4 exercised: changed px 236418 / 42904 / 198142 / 47450): R1 1 correct, 1 wrong
+  (same as its clean result), 2 abstain; R2 2 correct, 2 abstain. A 1D column profile cannot detect handedness:
+  a mirrored long view is still assigned (correctly here). Not evidence of handedness safety.
+- Wall time per run 3.20-4.25 s (Blender ray cast 1.33-1.51 s); budget never limiting.
+- **Not measured:** real untitled partial views, inner corners or non-axis faces (OBR22 K02 is a slab), vector-
+  window input, Revit names/keyplans as algorithms, cross-project transfer of R2, finish-callout transfer and
+  Sokolniki STOP 04 (#2001 open, held out).
+
+Receipt: [`autoresearch-view-face-raster/receipt.json`](autoresearch-view-face-raster/receipt.json) (code and
+input SHA-256, per-run result hashes, all per-case scores of R1 and R2). Evidence (7 run dirs, 2 view crops):
+`G:/Мой диск/AGR-evidence/141-view-face-raster/` + `SHA256SUMS.txt`. Replay is limited to the pilot host
+(Desktop PDF, local OBR22 outputs, Blender 4.4): `... run.py <new_dir> R1` and `... run.py <new_dir> R2`.
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --extra pdf-review pytest -q -p no:cacheprovider --basetemp C:/x/pt_t_c97df96b docs/research/autoresearch-view-face-raster/test_score.py` — 6 passed.
+
+Full suite: deferred to merge batch (rule 68).
