@@ -216,23 +216,6 @@ def matid(rb: dict, extra: dict) -> dict:
 
 # ---- UCX fit (class ucx-collisions) -------------------------------------------------------------------------------
 
-def _model_triangles(rb: dict, extra: dict | None):
-    vs, ts, off = [], [], 0
-    for m in model_meshes(rb):
-        v = np.asarray(m["face_geometry"]["vertices"], float).reshape(-1, 3)
-        if extra and extra.get("ok"):
-            t = np.asarray(extra["meshes"][m["name"]]["tris"], np.int64).reshape(-1, 3)
-        else:  # fan triangulation of the readback polygons
-            t = np.array([(p[0], p[i], p[i + 1]) for p in m["face_geometry"]["polygons"]
-                          for i in range(1, len(p) - 1)], np.int64).reshape(-1, 3)
-        vs.append(v)
-        ts.append(t + off)
-        off += len(v)
-    if not vs:
-        raise MetricError("no model mesh")
-    return np.concatenate(vs), np.concatenate(ts)
-
-
 def _pieces(rb: dict):
     out = []
     for m in ucx_meshes(rb):
@@ -322,10 +305,28 @@ def _envelope(surface: np.ndarray, r: int) -> np.ndarray:
     return solid[(slice(r + 1, -(r + 1)),) * 3] | surface
 
 
-def ucx_fit(rb: dict, extra: dict | None, max_points: int = FIT_MAX_POINTS) -> dict:
+def ucx_fit(rb: dict, extra: dict | None, max_points: int = FIT_MAX_POINTS, *, sha256: str | None = None) -> dict:
     """One-sided model -> UCX deviation [D134] and voxel volume figures. Measurement only: no R11-R13
-    zone classification (pedestrian / Ground) is made, so the shares are not a tolerance verdict."""
-    v, t = _model_triangles(rb, extra)
+    zone classification (pedestrian / Ground) is made, so the shares are not a tolerance verdict.
+    Only bound imported triangles are measured, not a fan reconstruction. The runner supplies the FBX
+    digest; a direct readback comparison uses the main readback's digest."""
+    if sha256 is None:
+        sha256 = rb.get("source_sha256")
+    if not extra or extra.get("ok") is not True:
+        _bound(extra, sha256, "extra readback")  # even a failed report must not identify a different FBX
+        detail = (extra or {}).get("error") or "imported triangles unavailable"
+        return {"reason": f"not measured: extra readback: {detail}", "model_to_ucx_max_m": None}
+    seen = set()
+    for mesh in model_meshes(rb):
+        name = mesh["name"]
+        if name in seen:
+            raise MetricError(f"duplicate model mesh {name!r}")
+        seen.add(name)
+    v, t, evidence = _strict_model_triangles(rb, extra, sha256)
+    if v is None or t is None:
+        return {"reason": f"not measured: {evidence['reason']}", "model_to_ucx_max_m": None}
+    if not len(t):
+        raise MetricError("no model triangles")
     pieces = _pieces(rb)
     if not pieces:
         return {"reason": "no UCX piece", "model_to_ucx_max_m": None}
@@ -590,8 +591,8 @@ def _bound(doc: dict | None, sha256: str | None, what: str) -> str:
     return BOUND
 
 
-def _strict_ground_triangles(rb: dict, extra: dict | None, sha256: str | None = None
-                             ) -> tuple[np.ndarray | None, np.ndarray | None, dict]:
+def _strict_model_triangles(rb: dict, extra: dict | None, sha256: str | None = None
+                            ) -> tuple[np.ndarray | None, np.ndarray | None, dict]:
     """World-free vertices and triangles of every model mesh plus their evidence, or (None, None, evidence) with
     `evidence["reason"]` when the surface cannot be measured (#1954).
 
@@ -689,7 +690,7 @@ def _strict_ground_triangles(rb: dict, extra: dict | None, sha256: str | None = 
 
 def _ground_tris(rb: dict, extra: dict | None, offset: np.ndarray, sha256: str | None = None
                  ) -> tuple[np.ndarray | None, dict]:
-    v, t, ev = _strict_ground_triangles(rb, extra, sha256)
+    v, t, ev = _strict_model_triangles(rb, extra, sha256)
     return (None if v is None else (v + offset)[t]), ev  # (n, 3, 3) world
 
 

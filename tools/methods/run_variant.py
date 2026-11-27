@@ -241,7 +241,7 @@ def build_row(*, rb: dict, extra: dict | None, output: Path, bench: dict, cls: s
         "blender": rb.get("blender"),
     }
     if cls == "ucx-collisions":
-        row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra)
+        row["class_metrics"]["ucx_fit"] = metrics.ucx_fit(rb, extra, sha256=fbx_sha256)
     if cls == "windows-glazing":
         row["class_metrics"]["windows"] = metrics.windows_glazing(rb, extra)
     if cls == "ground-terrain":
@@ -357,7 +357,7 @@ def main(argv=None) -> int:
         refs = references(bench)
         with tempfile.TemporaryDirectory(prefix="methods_") as tmp:
             fbx = fbx_from(a.output, Path(tmp))
-            fbx_sha = sha256(fbx)  # the FBX every readback of this row must be bound to (#1954)
+            fbx_sha = sha256(fbx)  # bind Ground and UCX fit readbacks to the measured FBX
             if a.readback:
                 rb = json.loads(a.readback.read_text(encoding="utf-8"))
             else:
@@ -377,6 +377,8 @@ def main(argv=None) -> int:
             row = build_row(rb=rb, extra=extra, output=a.output, bench=bench, cls=a.cls, variant=a.variant,
                             wall=wall, renders=renders, refs=refs, tile_sides=sides, ground_ref=gref,
                             source_rb=src_rb, fbx_sha256=fbx_sha)
+            if a.cls == "ucx-collisions" and sha256(fbx) != fbx_sha:
+                raise metrics.MetricError(f"{fbx.name}: FBX changed during readback or measurement")
         if built_from is not None:
             row["input"] = built_from
         if methods_only is not None:
