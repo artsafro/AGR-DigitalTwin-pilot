@@ -35,7 +35,7 @@
 <tspan x="30" dy="24">Маршрут Ground (НПМ + ВПМ) — целевой порядок D293 — короткая схема</tspan>
 </text>
 <text x="30" y="80" font-size="13" text-anchor="start" fill="#1e1e1e">
-<tspan x="30" dy="13">Редакция YAML SHA-256: 03c487aee13a06ff89fe6dc91be21d8e520bd3220debe403a18ada1c77d05c30</tspan>
+<tspan x="30" dy="13">Редакция YAML SHA-256: f329cccbd5c7883125958917d5fe6a3de1af84e0035dce2b8e6c29c40696429b</tspan>
 </text>
 <text x="555.0" y="150.0" font-size="15" text-anchor="middle" fill="#1e1e1e">
 <tspan x="555.0" dy="15">Ревизия исходников: DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников</tspan>

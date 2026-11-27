@@ -851,6 +851,155 @@ def test_1900_validate_sintez_same_input_separate_from_reports():
     assert re.search(r"^\| `validate-sintez-input` \| открыта \| .*не сверяют хеши", report, re.M)
 
 
+# ---------------------------------------------------------------- #1913 real tool handoffs vs historical/manual paths
+def test_1913_ground_builder_distinguishes_ground_cake_obj_and_historical_json_writers():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    ground_ctx = next(c for c in cmap["contexts"] if c["id"] == "ground")
+    assert ground_ctx["owner"] == "src/dt_ai/geometry/ground_site.py"
+    funcs = {f["name"]: f["contract"] for f in ground_ctx["functions"]}
+    assert "ground_cake.build_flat" in funcs["build_site"]
+    assert {"resolve_materials", "write_materials"} <= set(funcs)
+    for token in (
+        "ground_cake.build_flat",
+        "materials",
+        "ground-udim.json",
+        "tools/ground/build_ground_v015.py",
+        "jobs/VATUTINO-SITE/build_ground.py",
+        "равные меши или хеши",
+        "прямого перехода OBJ",
+    ):
+        assert token in ground_ctx["owner_ru"], token
+    assert ("ground", "ground-export") not in {(r["from"], r["to"]) for r in cmap["relations"]}
+
+    surfaces = _stage(events, "surfaces")
+    assert "src/dt_ai/geometry/ground_cake.py" in surfaces["evidence"]
+    assert "jobs/VATUTINO-SITE/ground-material-ids-v015.json" not in surfaces["evidence"]
+    relief = _stage(events, "relief")
+    assert "src/dt_ai/geometry/ground_cake.py" in relief["evidence"]
+    assert "tools/ground/build_ground_v015.py" not in relief["evidence"]
+
+    hotspots = {h["id"]: h for h in events["hotspots"]}
+    hatch = hotspots["hatch-colours"]
+    assert "jobs/VATUTINO-SITE/ground-material-ids-v015.json" in hatch["evidence"]
+    assert "историческ" in hatch["ru"] and "не вход ground_site" in hatch["ru"]
+
+    outputs = hotspots["builder-outputs"]
+    for path in (
+        "src/dt_ai/geometry/ground_site.py",
+        "src/dt_ai/geometry/ground_cake.py",
+        "tools/ground/build_ground_site.py",
+        "tools/ground/build_ground_v015.py",
+        "jobs/VATUTINO-SITE/build_ground.py",
+        "jobs/VATUTINO-SITE/ground-material-ids-v015.json",
+    ):
+        assert path in outputs["evidence"], path
+    for token in (
+        "ground_cake.build_flat",
+        "materials",
+        "ground-udim.json",
+        "build_ground_v015.py",
+        "jobs/VATUTINO-SITE/build_ground.py",
+        "равные меши или хеши",
+        "прямого перехода OBJ",
+    ):
+        assert token in outputs["ru"], token
+
+
+def test_1913_placement_and_max_npm_atlas_have_no_automatic_bridge():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    assert ("placement", "npm") not in {(r["from"], r["to"]) for r in cmap["relations"]}
+
+    placement_ctx = next(c for c in cmap["contexts"] if c["id"] == "placement")
+    for token in (".blend", "Blender", "atlas_groundel", "автоматический мост не установлен"):
+        assert token in placement_ctx["owner_ru"], token
+
+    npm_ctx = next(c for c in cmap["contexts"] if c["id"] == "npm")
+    assert npm_ctx["owner"] == "adapters/max/agr_tools/flora_atlas_max.py"
+    funcs = {f["name"]: f["contract"] for f in npm_ctx["functions"]}
+    assert "узлы сцены Max" in funcs["atlas_groundel"]
+    for token in (
+        "узлы сцены Max",
+        ".blend",
+        "dt place site",
+        "автоматический мост не установлен",
+        "ручной перенос не исключён",
+        "исторических сдач не утверждается",
+    ):
+        assert token in npm_ctx["owner_ru"], token
+
+    hotspots = {h["id"]: h for h in events["hotspots"]}
+    assert ".blend" in hotspots["obj-to-placement"]["ru"] and "atlas_groundel" in hotspots["obj-to-placement"]["ru"]
+    for token in (".blend", "узлы сцены Max", "автоматический мост не установлен", "ручной перенос не исключён"):
+        assert token in hotspots["ground-atlas"]["ru"], token
+
+
+def test_1913_project_zero_and_validator_scope_are_separated_from_xview_and_sintez():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    rels = {(r["from"], r["to"]): r["ru"] for r in cmap["relations"]}
+    assert ("dcc", "heights") not in rels
+    assert ("heights", "ground") in rels
+    assert "граница и ноль — из проекта" in rels[("heights", "ground")]
+
+    heights_ctx = next(c for c in cmap["contexts"] if c["id"] == "heights")
+    for token in ("tools/ground/project_zero.py", "не определяет ноль", "не извлекает границу"):
+        assert token in heights_ctx["owner_ru"], token
+    pz = next(h for h in events["hotspots"] if h["id"] == "project-zero")
+    assert "tools/ground/project_zero.py" in pz["evidence"]
+    assert "не извлекает границу" in pz["ru"] and "из проекта" in pz["ru"]
+
+    val_ctx = next(c for c in cmap["contexts"] if c["id"] == "validation")
+    assert val_ctx["ru"] != "Проверки Ground, xView, СИНТЕЗ"
+    assert "отдельно от xView и СИНТЕЗ" in val_ctx["ru"]
+    funcs = {f["name"]: f["contract"] for f in val_ctx["functions"]}
+    assert "add_scene" in funcs
+    assert "twinqa.scene" in funcs["add_scene"] and "V003/GND-03" in funcs["add_scene"]
+    for token in (
+        "twinqa.scene",
+        "V003/GND-03",
+        "dt qa xview",
+        "src/dt_ai/ops/xview_gate.py",
+        "не вызывает",
+        "не связывает их входы",
+    ):
+        assert token in val_ctx["owner_ru"], token
+
+    validate_stage = _stage(events, "validate")
+    assert {"src/twinqa/scene.py", "src/dt_ai/ops/xview_gate.py"} <= set(validate_stage["evidence"])
+    for token in ("twinqa.scene", "V003/GND-03", "не вызывает xView и СИНТЕЗ", "не связывает их входы"):
+        assert token in validate_stage["event_ru"], token
+
+
+def test_1913_udim_note_reconciles_1876_and_1898_surface_vs_site_validation():
+    events, maps = _routes()["ground-route"], _maps()
+    cmap = maps["ground-contexts"]
+    udim = cmap["shared_kernel"]
+    for token in (
+        "D399",
+        "1001",
+        "ground-udim.json",
+        "#1876",
+        "ground_json_to_fbx.py",
+        "сводного FBX участка",
+        "twinqa.scene",
+    ):
+        assert token in udim["owner_ru"], token
+
+    gexp = next(c for c in cmap["contexts"] if c["id"] == "ground-export")
+    funcs = {f["name"]: f["contract"] for f in gexp["functions"]}
+    assert "readback" in funcs
+    for token in ("#1876", "VPM", "сводного FBX участка"):
+        assert token in funcs["readback"], token
+    assert "#1876" in gexp["owner_ru"] and "сводного FBX участка" in gexp["owner_ru"]
+
+    hotspots = {h["id"]: h for h in events["hotspots"]}
+    for token in ("D399", "ground-udim.json", "#1876", "ground_json_to_fbx.py", "сводного FBX участка"):
+        assert token in hotspots["flat-uv"]["ru"], token
+    assert "#1876" in hotspots["obj-to-export"]["ru"] and "сводного FBX участка" in hotspots["obj-to-export"]["ru"]
+
+
 # ---------------------------------------------------------------- red boxes: resolved or explained
 @pytest.mark.parametrize("name,title", [("vpm-route", "ВПМ ОКС"), ("ground-route", "Ground")])
 def test_every_red_box_is_explained_and_resolved_ones_are_gone(name, title):
