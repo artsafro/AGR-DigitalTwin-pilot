@@ -665,6 +665,8 @@
 /docs/research/capability-roadmap.md
 /docs/research/checker-mutation-corpus.json
 /docs/research/checker-mutation-results.json
+/docs/research/cold-oks-sokolniki-2001.md
+/docs/research/cold-oks-sokolniki-2001/cold_oks_score.py
 /docs/research/conference-evals-practice.md
 /docs/research/cross-tile-1580/REPORT.md
 /docs/research/cross-tile-1580/evidence-SHA256SUMS.txt
