@@ -13,9 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 HEAD = "5b7a5a7fd00dfeedd00dfeedd00dfeedd00dfeed"
 
 
-def review(verdict="CLEAN", head=HEAD, extra=""):
+def review(verdict="CLEAN", head=HEAD, extra="", reviewer: str | None = "dt-reviewer"):
+    who = f"\nReviewer: {reviewer} (card t_x)." if reviewer else ""
     return {"body": f"## Review r1 — PR #1 (card t_x) — **{verdict}**\n\nHead `{head[:8]}`, base `187a0be3`. "
-                    f"P1/P2/P3 = {'0' if verdict == 'CLEAN' else '1'}/0/0.{extra}\n"}
+                    f"P1/P2/P3 = {'0' if verdict == 'CLEAN' else '1'}/0/0.{who}{extra}\n"}
 
 
 def pr(**kw):
@@ -61,9 +62,9 @@ def test_red_main_refused_but_waived_for_red_main_fix():
 
 
 def test_author_equals_reviewer_refused():
-    r = run(pr(comments=[review(extra="\nReviewer: dt-worker")]))
+    r = run(pr(comments=[review(reviewer="dt-worker")]))
     assert "reviewer_not_author" in failed(r) and r["would_merge"] is False
-    ok = run(pr(comments=[review(extra="\nReviewer: dt-reviewer")]))
+    ok = run(pr(comments=[review(reviewer="dt-reviewer")]))
     assert "reviewer_not_author" not in failed(ok)
 
 
@@ -122,6 +123,49 @@ def test_research_docs_auto_and_large_code_artem():
     assert run(pr(files=[{"path": "docs/research/a.md"}], additions=900))["rule"] == "research_decision_docs"
     big = run(pr(additions=500))
     assert big["bucket"] == "artem" and big["rule"] == "production_code"
+
+
+# ---- review r1 (PR #2041) P1-2..P1-5: each was fail-open (auto / would_merge True) ----
+
+@pytest.mark.parametrize("path", [
+    "src/dt_ai/geometry/foo.py", "src/dt_ai/materials/foo.py", "jobs/KPP1/hooks/stage2_build.py",
+    "jobs/KPP1/build_facade.py", "jobs/KPP1/task-a/hooks/stage3.py", "tools/export/fbx_export.py",
+    "jobs/KPP1/textures/wall.png", "jobs/KPP1/passport.json"])
+def test_r1_p1_2_model_building_code_goes_artem(path):
+    r = run(pr(files=[{"path": path}], additions=50, deletions=10))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "delivered_model", False)
+
+
+@pytest.mark.parametrize("comments", [
+    [{"body": "## Review r1: not clean, P1 later\nhead deadbeef1\nReviewer: dt-reviewer\nP1/P2/P3 = 0/0/0"}],
+    [{"body": "## Review r1 — PR #1 at deadbeef1: changes needed, P1/P2/P3 = 1/0/0\nReviewer: dt-reviewer"},
+     {"body": "## Review fixes: clean up done on head deadbeef1\nWritten by dt-worker"}],
+    [{"body": "## Review r1 — PR #1 — CLEAN at deadbeef1\nReviewer: dt-reviewer"}],  # no P1/P2/P3 count
+])
+def test_r1_p1_3_review_must_be_a_clean_verdict(comments):
+    r = run(pr(headRefOid="deadbeef1" + "0" * 31, comments=comments))
+    assert "review_clean_on_head" in failed(r) and r["would_merge"] is False
+
+
+def test_r1_p1_3_real_verdict_shapes_are_read():
+    for first in ("## Review r1 (dt-reviewer, card t_7772b586): CLEAN at 5bff6c3a",
+                  "## Review r2 — PR #2007 @ 5bff6c3a: **CLEAN**",
+                  "## Review r1 — PR #2010 @ `5bff6c3a` — **CLEAN** (P1/P2/P3 = 0/1/2)"):
+        r = run(pr(headRefOid="5bff6c3a" + "0" * 32, comments=[{"body": first + "\nP1/P2/P3 = 0/1/2\nReviewer: dt-reviewer"}]))
+        assert failed(r) == set(), (first, r["failed_preconditions"])
+
+
+def test_r1_p1_4_unknown_author_or_reviewer_fails_closed():
+    r = run(pr(body="No trace here."))
+    assert "reviewer_not_author" in failed(r) and r["would_merge"] is False
+    r = run(pr(comments=[review(reviewer=None)]))
+    assert "reviewer_not_author" in failed(r) and r["would_merge"] is False
+
+
+def test_r1_p1_5_hygiene_queue_with_large_production_code_goes_artem():
+    p = pr(files=[{"path": "src/dt_ai/cli/agr.py"}], additions=900, body="Closes #2017")
+    r = run(p, hygiene_issues={2017})
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "production_code", False)
 
 
 def test_gh_wrapper_is_read_only():

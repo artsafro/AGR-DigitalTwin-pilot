@@ -37,7 +37,11 @@ PR_FIELDS = ("number,title,body,baseRefName,headRefName,headRefOid,isDraft,merge
              "files,comments,closingIssuesReferences")
 READ_ONLY_GH = {("pr", "view"), ("pr", "list")}
 NEGATION = re.compile(r"\b(no|not|never|without|none|nor|n't)\b[^.;\n]{0,40}$", re.I)
-REVIEW_HEAD = re.compile(r"^#+ .*\b(review|ревью)\b", re.I)
+# A reviewer verdict: "## Review rN ...: CLEAN at <sha>" / "... — **CHANGES NEEDED** ...". Only comments of this shape
+# count as a review; an author's "## Review fixes: clean up ..." is not a verdict (#2038 r1 P1-3).
+VERDICT_HEAD = re.compile(r"^#+\s*Review\s+r\d+\b", re.I)
+VERDICT_CLEAN = re.compile(r"(?:[:—–\-]|\*\*|@\s*`?[0-9a-f]{7,40}`?)\s*\**\s*CLEAN\b")  # uppercase token, not "not clean"
+VERDICT_SHA = re.compile(r"(?:\bat|@|\bhead)\W{0,3}([0-9a-f]{7,40})\b", re.I)
 PROFILE = re.compile(r"\b(dt-[a-z]+(?:-[a-z]+)*)\b")
 QUOTES = "\"'`«“"
 
@@ -96,20 +100,19 @@ def author_profile(pr: dict) -> str | None:
 
 
 def last_review(comments) -> dict | None:
+    """The last reviewer VERDICT comment (VERDICT_HEAD); other comments with "review" in a heading are skipped."""
     for c in reversed(comments or []):
         body = (c.get("body") or "").strip()
         first = body.splitlines()[0] if body else ""
-        if not REVIEW_HEAD.search(first):
+        if not VERDICT_HEAD.search(first):
             continue
         text = body[:4000]
         p1 = re.search(r"P1/P2/P3\s*=\s*(\d+)", text)
-        head = re.search(r"head[^0-9a-f`\n]{0,20}`?([0-9a-f]{7,40})", text, re.I)
-        who = re.search(r"Reviewer:\s*(dt-[a-z-]+)", text) or PROFILE.search(first)
-        clean = "clean" in first.lower() and not re.search(r"changes (needed|requested)", first, re.I)
+        head = VERDICT_SHA.search(first) or VERDICT_SHA.search(text)
+        who = re.search(r"Reviewer:\s*\**\s*(dt-[a-z-]+)", text) or PROFILE.search(first)
+        clean = bool(VERDICT_CLEAN.search(first)) and not re.search(r"changes (needed|requested)", first, re.I)
         return {"clean": clean, "p1": int(p1.group(1)) if p1 else None, "head": head.group(1) if head else None,
-                "reviewer": who.group(1) if who else "dt-reviewer",
-                "reviewer_evidence": "named in review" if who else "assumed dt-reviewer (review-comment convention)",
-                "first_line": first[:160]}
+                "reviewer": who.group(1) if who else None, "first_line": first[:160]}
     return None
 
 
@@ -133,10 +136,13 @@ def _rule_hits(rule: dict, pr: dict, files: list[str], text: str, ctx: dict) -> 
             ev.append(f'card: "{_sentence(ctx["card_text"], m.start(), m.end())}"')
     if rule.get("all_paths") and files and all(_match(f, rule["all_paths"]) for f in files):
         ev.append(f"all {len(files)} file(s) under " + ", ".join(rule["all_paths"]))
-    if rule.get("max_lines"):
-        lines = (pr.get("additions") or 0) + (pr.get("deletions") or 0)
-        if lines <= ctx["max_lines"]:
-            ev.append(f"{lines} changed lines <= {ctx['max_lines']}")
+    lines = (pr.get("additions") or 0) + (pr.get("deletions") or 0)
+    if rule.get("max_lines") and lines <= ctx["max_lines"]:
+        ev.append(f"{lines} changed lines <= {ctx['max_lines']}")
+    if rule.get("over_max_lines"):  # paths AND size: both must hold
+        if lines <= ctx["max_lines"] or not any(e.startswith("paths: ") for e in ev):
+            return []
+        ev.append(f"{lines} changed lines > {ctx['max_lines']}")
     return ev
 
 
@@ -177,19 +183,24 @@ def classify(pr: dict, *, policy: dict, stop_present: bool, hygiene_issues: set[
     if rv is None:
         fails.append({"id": "review_clean_on_head", "reason": "no review comment"})
     else:
-        if not rv["clean"] or (rv["p1"] or 0) > 0:
-            fails.append({"id": "review_clean_on_head", "reason": f"last review not CLEAN: {rv['first_line']}"})
+        if not rv["clean"] or rv["p1"] != 0:
+            why = "has no P1/P2/P3 count" if rv["clean"] and rv["p1"] is None else "is not CLEAN"
+            fails.append({"id": "review_clean_on_head", "reason": f"last review verdict {why}: {rv['first_line']}"})
         elif not rv["head"] or not (head.startswith(rv["head"][:7]) or rv["head"].startswith(head[:7])):
             fails.append({"id": "review_clean_on_head",
                           "reason": f"review names head {rv['head']}, PR head is {head[:8]}"})
-        author = author_profile(pr)
-        if author and author == rv["reviewer"]:
-            fails.append({"id": "reviewer_not_author",
-                          "reason": f"reviewer {rv['reviewer']} ({rv['reviewer_evidence']}) = author {author}"})
+    author = author_profile(pr)
+    reviewer = rv["reviewer"] if rv else None
+    if not author or not reviewer:  # fail closed (#2038 r1 P1-4)
+        fails.append({"id": "reviewer_not_author", "reason": "author/reviewer profile unknown: "
+                      f"author {author or '? (no Written by / Agent trace profile in body)'}, "
+                      f"reviewer {reviewer or '? (no Reviewer: dt-* in the verdict)'}"})
+    elif author == reviewer:
+        fails.append({"id": "reviewer_not_author", "reason": f"reviewer {reviewer} = author {author}"})
     return {"pr": pr.get("number"), "title": (pr.get("title") or "")[:100], "head": head[:8], "base": base,
             "bucket": bucket, "rule": rule_id, "reasons": reasons, "failed_preconditions": fails,
             "would_merge": bucket == "auto" and not fails, "mode": policy.get("mode", "observe"),
-            "author": author_profile(pr), "reviewer": rv["reviewer"] if rv else None}
+            "author": author, "reviewer": reviewer}
 
 
 # ---- environment readers (all read-only) ----
@@ -268,10 +279,8 @@ def actual_lane(n: int, comments) -> tuple[str, str]:
             if name.startswith(("hygauto", "redfix")):
                 return "auto", f"{Path(f).name} (automatic lane)"
             return "artem", f"{Path(f).name} (batch on Artem's word)"
-    for c in reversed(comments or []):
-        if re.search(r"waits for Artem", c.get("body") or "", re.I):
-            return "artem", "review: 'Merge waits for Artem'"
-    return "unknown", "no merge record"
+    # No fallback to review phrases: "Merge waits for Artem" is reviewer boilerplate (#2038 r1 P3).
+    return "unknown", "no kpi/manual_merge_*.json record"
 
 
 def backtest(limit: int, policy: dict) -> dict:

@@ -56,9 +56,9 @@ preconditions:
   - id: mergeable
     text: "GitHub mergeable = MERGEABLE (not CONFLICTING / UNKNOWN)"
   - id: review_clean_on_head
-    text: "the LAST review comment is CLEAN (P1 = 0) and names the PR's current head sha"
+    text: "the LAST reviewer verdict ('## Review rN ...: CLEAN at <sha>', uppercase CLEAN, with P1/P2/P3 = 0/..) names the PR's current head sha; other comments are not verdicts"
   - id: reviewer_not_author
-    text: "the reviewing profile is not the authoring profile (author from the PR body 'Agent trace', reviewer from the review comment)"
+    text: "the reviewing profile is not the authoring profile (author from the PR body 'Agent trace', reviewer from the verdict 'Reviewer: dt-*' or its heading); either unknown = fail"
 
 # Rules are evaluated top-down; the FIRST match decides the bucket. `unless` lists rule ids that, when they
 # also match, skip this rule. Path rules use fnmatch globs on repo-relative paths (`*` crosses `/`).
@@ -83,13 +83,15 @@ rules:
   - id: delivered_model
     bucket: artem
     consent: artem_word
-    why: "changes a delivered model: model/geometry/texture outputs, accepted files or the library"
+    why: "changes a delivered model: model/geometry/texture outputs, the code that builds them, accepted files or the library"
     paths:
+      # outputs and accepted files
       - "jobs/*/output/*"
       - "jobs/*/outputs/*"
       - "jobs/*/delivery/*"
       - "jobs/*/accepted/*"
-      - "jobs/*/scripts/*"
+      - "jobs/*/textures/*"
+      - "jobs/*/passport.json"
       - "library/*"
       - "assets/*"
       - "*.fbx"
@@ -97,6 +99,37 @@ rules:
       - "*.blend"
       - "*.ifc"
       - "*.obj"
+      # texture images anywhere under jobs/ (`*` crosses `/`)
+      - "jobs/*.png"
+      - "jobs/*.jpg"
+      - "jobs/*.jpeg"
+      - "jobs/*.tga"
+      - "jobs/*.tif"
+      - "jobs/*.tiff"
+      - "jobs/*.exr"
+      # code that builds the models: every job script / hook / builder, geometry-material cores, DCC export tools
+      - "jobs/*.py"
+      - "jobs/*.ms"
+      - "jobs/*.mse"
+      - "src/dt_ai/geometry/*"
+      - "src/dt_ai/materials/*"
+      - "src/dt_ai/parts/*"
+      - "src/dt_ai/placement/*"
+      - "src/dt_ai/cad/*"
+      - "tools/export/*"
+      - "tools/blender/*"
+      - "tools/max/*"
+      - "tools/materials/*"
+      - "tools/ground/*"
+      - "tools/flora/*"
+      - "tools/windows/*"
+      - "tools/library/*"
+      - "tools/body_shell_blender.py"
+      - "tools/exterior_adapter_blender.py"
+      - "tools/run_body_shell.py"
+      - "tools/run_exterior.py"
+      - "tools/facades_texture_pattern.py"
+      - "tools/placement_site.py"
     text:
       - "changes? (the |a )?(delivered|accepted|delivery) (model|fbx|npm|vpm|scene|file)"
       - "(new|rebuilt|re-exported) (npm|vpm|delivery) (model|fbx|version)"
@@ -107,6 +140,7 @@ rules:
     consent: hygiene_queue
     why: "linked issue is in the hygiene queue (kpi/hygiene_autoqueue.json)"
     hygiene_issue: true
+    unless: [production_code]   # consent: "never production code" (rule 75)
   - id: agent_working_order
     bucket: artem
     consent: artem_word
@@ -157,6 +191,7 @@ rules:
     bucket: artem
     consent: artem_word
     why: "production code over the small-PR limit"
+    over_max_lines: true   # matches only when a path below is touched AND lines > max_small_lines
     paths:
       - "src/*"
       - "tools/*"
