@@ -162,7 +162,6 @@
 /jobs/TEC26-OKS/scripts/ucx_triangulate_vpm.py
 # HISTORICAL [D327] jobs/VATUTINO-SITE: delivered job; scripts kept unchanged, hidden from agent search, still scanned by duplicate_guard
 /jobs/VATUTINO-SITE/assemble_delivery.py
-/jobs/VATUTINO-SITE/build_ground.py
 /jobs/VATUTINO-SITE/build_ground_v015.py
 /jobs/VATUTINO-SITE/export_check_instances.py
 /jobs/VATUTINO-SITE/flora_a101_match.py
