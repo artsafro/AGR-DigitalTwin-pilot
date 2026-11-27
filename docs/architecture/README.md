@@ -409,6 +409,8 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-ac08-joint-gate | [research/autoresearch-ac08-joint-gate.md](../research/autoresearch-ac08-joint-gate.md) |  |
+| research/autoresearch-ac08-joint-gate-harness/receipt-r127-json | [research/autoresearch-ac08-joint-gate-harness/receipt_r127.json](../research/autoresearch-ac08-joint-gate-harness/receipt_r127.json) |  |
+| research/autoresearch-ac08-joint-gate-harness/witness-py | [research/autoresearch-ac08-joint-gate-harness/witness.py](../research/autoresearch-ac08-joint-gate-harness/witness.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
 | research/autoresearch-trainer-artifact-first | [research/autoresearch-trainer-artifact-first.md](../research/autoresearch-trainer-artifact-first.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
