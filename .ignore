@@ -34,12 +34,14 @@
 /jobs/KPP1/rerun-1230/make_textures.py
 /jobs/KPP1/rerun-1230/readback_corner_pairs.py
 /jobs/KPP1/rerun-1244/list_band_pairs.py
+/jobs/KPP1/scripts/build_kpp1.py
 /jobs/KPP1/scripts/compare_details.sh
 /jobs/KPP1/scripts/dump_source.py
 /jobs/KPP1/scripts/export_npm.py
 /jobs/KPP1/scripts/export_safety.py
 /jobs/KPP1/scripts/export_vpm.py
 /jobs/KPP1/scripts/gui_agr_check.py
+/jobs/KPP1/scripts/kpp1_windowgen.py
 /jobs/KPP1/scripts/make_npm_atlas.py
 /jobs/KPP1/scripts/make_textures.py
 /jobs/KPP1/scripts/match_ids.py
@@ -53,6 +55,9 @@
 /jobs/KPP1/scripts/readback_vpm.py
 /jobs/KPP1/scripts/render_preview.py
 /jobs/KPP1/scripts/run_all.sh
+/jobs/KPP1/scripts/run_stage.sh
+/jobs/KPP1/scripts/seal.py
+/jobs/KPP1/scripts/vpm_uv.py
 /jobs/KPP1/scripts/windowgen_stage1.py
 /jobs/KPP1/seam-1339/measure_roof_seam.py
 /jobs/KPP1/site-1255/dump_vertices.py

@@ -40,9 +40,6 @@ entrypoints:
   - owner: jobs/elv-tc-vpm/scripts/uv_tex_full_v008.py
     evidence: jobs/elv-tc-vpm/TASK.md
     match: "uv_tex_full_v008.py"
-  - owner: jobs/KPP1/scripts/build_kpp1.py
-    evidence: jobs/KPP1/scripts/run_stage.sh
-    match: "$J/scripts/build_kpp1.py"
   - owner: jobs/TEC26-OKS/scripts/build_master.py
     evidence: jobs/TEC26-OKS/AC09/run_building.sh
     match: "build_master.py"
@@ -378,8 +375,8 @@ contexts:
       - at: "jobs/KPP1/scripts/build_kpp1.py:432"
         match: "def roof("
         issue: "#1381"
-        ru: "run_stage.sh:13 -> build_kpp1.main -> roof; контур и высота плиты из roof_core.hole_plate (R6 #1352, D292), стены отверстия и шахта — локально"
-        status: wrapper
+        ru: "бывшая цепочка run_stage.sh:13 -> build_kpp1.main -> roof; контур и высота плиты из roof_core.hole_plate (R6 #1352, D292), стены отверстия и шахта — локально, исторический: вход run_stage.sh снят [D426]"
+        status: historical
   - id: body
     ru: "Корпус и геометрия"
     area: docs/domain/areas/body.md
@@ -400,9 +397,8 @@ contexts:
       - at: "jobs/KPP1/scripts/build_kpp1.py:194"
         match: "def load_spec("
         issue: "#1359"
-        ru: "сборка корпуса КПП1 целиком в скрипте задания (стадии 1–6)"
-        status: own-duty
-        why: "load_spec читает конфигурацию задания, не операция над частями; сборка и кровля живые (run_stage.sh)"
+        ru: "историческая сборка корпуса КПП1 в скрипте задания (стадии 1–6); принятый v004 строит lattice-1609 [D373, D379], вход снят [D426]"
+        status: historical
   - id: npm
     ru: "Экспорт НПМ с привязкой к мастеру"
     area: docs/domain/areas/derivation.md

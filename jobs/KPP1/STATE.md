@@ -97,7 +97,7 @@ district code.
 | Revit FBX groups + sidecars | `export_revit_groups.mjs` (RevitBridge `agr_export_fbx`, RVT not saved) | `source-v001/` |
 | Census / id match / openings | `dump_source.py`, `match_ids.py`, `extract_openings.py` | `census-v001/` |
 | VPM textures (18 UDIM x D/ERM/N) | `make_textures.py` | `textures-v001/` |
-| Build stages 1-6 | `run_stage.sh <n>` -> `build_kpp1.py` (+ `seal.py`, `vpm_uv.py`, `vpm_ucx.py`) | `build-v001/KPP1_VPM_v00N_*.blend` |
+| Build stages 1-6 (historical, retired [D426]; current body: `lattice-1609/skeleton.json` [D379]) | `run_stage.sh <n>` -> `build_kpp1.py` (+ `seal.py`, `vpm_uv.py`, `vpm_ucx.py`) | `build-v001/KPP1_VPM_v00N_*.blend` |
 | Master QA | `qa_master.py` | `build-v001/qa_master_v006.json` |
 | Everything after stage 6 | `run_all.sh <tag>` (VPM export/package, NPM atlas/export/zip, SINTEZ) | `package-*-<tag>/`, `sintez-<tag>/` |
 

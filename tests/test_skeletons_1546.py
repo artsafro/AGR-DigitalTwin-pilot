@@ -485,7 +485,8 @@ def test_historical_scripts_are_exactly_the_unreached_delivered_job_scripts(hist
     assert len(scripts) >= 150 and len(set(scripts)) == len(scripts)
     assert all(s.startswith(tuple(f"{j}/" for j in finished)) for s in scripts)
     assert not [s for s in scripts if s in chains or s in evidence]
-    assert "jobs/KPP1/scripts/build_kpp1.py" not in scripts and "jobs/KPP1/scripts/run_stage.sh" not in scripts
+    assert "jobs/KPP1/scripts/build_kpp1.py" in scripts and "jobs/KPP1/scripts/run_stage.sh" in scripts  # [D426]
+    assert "jobs/KPP1/scripts/vpm_ucx.py" not in scripts
     assert dg.ignore_problems(ROOT, scripts) == []
 
 
@@ -497,7 +498,7 @@ def test_historical_rg_from_repo_root_hides_them_and_keeps_live_scripts(hist):
     out = subprocess.run([rg, "--files", "jobs"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8").stdout
     listed = {line.replace("\\", "/") for line in out.splitlines()}
     assert not set(scripts) & listed
-    assert {"jobs/KPP1/scripts/build_kpp1.py", "jobs/VATUTINO-SITE/place_site.py"} <= listed
+    assert {"jobs/KPP1/scripts/vpm_ucx.py", "jobs/VATUTINO-SITE/place_site.py"} <= listed
     hits = subprocess.run([rg, "-l", "def ", "jobs/OBR22-K02"], cwd=ROOT, capture_output=True, text=True).stdout
     assert hits.strip() == ""
 

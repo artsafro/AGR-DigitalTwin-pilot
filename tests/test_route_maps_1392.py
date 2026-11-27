@@ -175,16 +175,16 @@ def test_1644_atlas_duplicate_reason():
 
 # ---------------------------------------------------------------- #1593 source-backed writer inventory (not a generic scanner)
 WRITERS_1593 = [
-    ("body", "jobs/KPP1/scripts/build_kpp1.py:198", "live-bypass"),
+    ("body", "jobs/KPP1/scripts/build_kpp1.py:198", "historical"),
     ("body", "jobs/PSU275/scripts/assemble_body_roof.py:62", "historical"),
     ("body", "jobs/OBR22-K02/scripts/build_exterior_surface.py:43", "historical"),
     ("roof", "jobs/PSU275/scripts/roof_wells.py:70", "historical"),
-    ("roof", "jobs/KPP1/scripts/build_kpp1.py:432", "wrapper"),
-    ("openings", "jobs/KPP1/scripts/build_kpp1.py:327", "live-bypass"),
+    ("roof", "jobs/KPP1/scripts/build_kpp1.py:432", "historical"),
+    ("openings", "jobs/KPP1/scripts/build_kpp1.py:327", "historical"),
     ("openings", "jobs/PSU275/scripts/opening_fills.py:183", "historical"),
     ("openings", "jobs/OBR22-K02/scripts/build_shell_windows.py:76", "historical"),
-    ("openings", "jobs/KPP1/scripts/kpp1_windowgen.py:75", "wrapper"),
-    ("vpm-uv", "jobs/KPP1/scripts/vpm_uv.py:6", "wrapper"),
+    ("openings", "jobs/KPP1/scripts/kpp1_windowgen.py:75", "historical"),
+    ("vpm-uv", "jobs/KPP1/scripts/vpm_uv.py:6", "historical"),
     ("vpm-uv", "jobs/TEC26-OKS/scripts/vpm_uv.py:6", "wrapper"),
 ]
 
@@ -221,7 +221,7 @@ def test_1593_owner_counts():
     text = route_map.owners_markdown(_routes()["vpm-route"], maps["vpm-contexts"], maps)
     for owner in ("src/dt_ai/ops/operations.py", "adapters/max/agr_tools/windowgen_core.py"):
         row = next(s for s in text.splitlines() if f"[`{owner}`]" in s)
-        assert "[1 — записи]" in row
+        assert "[0 — записи]" in row  # [D426]: the KPP1 build_kpp1 bypasses are historical (#2020)
     roof = next(s for s in text.splitlines() if "[`adapters/max/agr_tools/roof_core.py`]" in s)
     assert "[0 — записи]" in roof  # history and a real wrapper are not live bypasses
 
