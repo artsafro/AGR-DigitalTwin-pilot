@@ -191,14 +191,11 @@ This list does not repeat files hidden by the earlier historical data, docs or d
 
 ### `docs/experiments/`
 
-- `docs/experiments/revit-ifc-offline-intake.md` — Historical experiment report; not a current procedure.
 - `docs/experiments/scripts-logic.md` — Historical experiment report; not a current procedure.
 - `docs/experiments/tow02-hand-finish-face-diff.md` — Historical experiment report; not a current procedure.
 
 ### `docs/research/`
 
-- `docs/research/ifc-intake-src-contract.md` — Unreferenced research note; retained for provenance.
-- `docs/research/job-artifact-name-contract.md` — Unreferenced research note; retained for provenance.
 
 ### `experiments/fbxmaps-1760/`
 
@@ -215,88 +212,6 @@ This list does not repeat files hidden by the earlier historical data, docs or d
 
 ### `jobs/elv-tc-vpm/scripts/`
 
-- `jobs/elv-tc-vpm/scripts/additions_summary_v007.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/blend_info.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/build_full_v006.py` — Pre-AGR Tools ELV geometry builder snapshot.
-- `jobs/elv-tc-vpm/scripts/build_v008.py` — Pre-AGR Tools ELV geometry builder snapshot.
-- `jobs/elv-tc-vpm/scripts/check_pilot.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/clarify_blend_probe_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/clarify_booklet_pages_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/clarify_compose_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/clarify_crop_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/clarify_nakl_verts_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/clarify_openings_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/compare_fbx_geometry_v004.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/contact_renders_v002.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/contact_renders_v003.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/contact_renders_v004.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/customer_blend_ids_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_blend_inventory_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_blend_summary_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_compare_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_overlay_compose_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_overlay_render_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_register_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/customer_textures_probe_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/door_islands.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/draw_parts.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/export_check_fbx.py` — Superseded ELV export draft.
-- `jobs/elv-tc-vpm/scripts/export_tex_check_fbx.py` — Superseded ELV export draft.
-- `jobs/elv-tc-vpm/scripts/id_legend.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/light_diag.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/long_quads.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/make_parts_full_v001.py` — Superseded ELV PartsList generation.
-- `jobs/elv-tc-vpm/scripts/make_parts_full_v002.py` — Superseded ELV PartsList generation.
-- `jobs/elv-tc-vpm/scripts/make_parts_full_v003.py` — Superseded ELV PartsList generation.
-- `jobs/elv-tc-vpm/scripts/make_parts_v002.py` — Superseded ELV PartsList generation.
-- `jobs/elv-tc-vpm/scripts/make_tex_spec_v003.py` — Superseded ELV texture or UV draft.
-- `jobs/elv-tc-vpm/scripts/make_textures_full_v005.py` — Superseded ELV texture or UV draft.
-- `jobs/elv-tc-vpm/scripts/make_textures_full_v006.py` — Superseded ELV texture or UV draft.
-- `jobs/elv-tc-vpm/scripts/measure_pilot.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/open_view_max2026_v001.ms` — Superseded Max scene-opening or xView helper.
-- `jobs/elv-tc-vpm/scripts/open_view_max2026_v002.ms` — Superseded Max scene-opening or xView helper.
-- `jobs/elv-tc-vpm/scripts/open_view_max2026_v003.ms` — Superseded Max scene-opening or xView helper.
-- `jobs/elv-tc-vpm/scripts/part_probe_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pdf_revolving_door.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pdf_revolving_door_b.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pilot_boundary.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/plot_sections.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/png_colours_v007.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/probe_glass_clusters_v007.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/probe_glass_v007.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/probe_strips_v007.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_contact_sheet_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_crc_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_extract_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_find_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_idat_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_insert_find_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_layout_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_page_test_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_pages_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_pngwalk_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_probe_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/pur_zprobe_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/readback_fbx.py` — Draft FBX readback; use the shared readback for current work.
-- `jobs/elv-tc-vpm/scripts/ref_clean.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/ref_dump.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/ref_inventory_full.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/ref_render.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/ref_sections.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/render_delivery_v002.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/render_delivery_v003.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/render_full.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/render_pilot.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/render_tex.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/render_tex_full.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/si_pairs_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/side_by_side_night.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/strip_probe_v008.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/topology_breakdown_v001.py` — One-off ELV diagnostic or draft helper; retained for reproduction.
-- `jobs/elv-tc-vpm/scripts/work_readback_v004.py` — Superseded ELV export draft.
-- `jobs/elv-tc-vpm/scripts/xview_explain.py` — Superseded review contact sheet or render.
-- `jobs/elv-tc-vpm/scripts/xview_max_gate.ms` — Superseded Max scene-opening or xView helper.
-- `jobs/elv-tc-vpm/scripts/xview_max_gate_v003.ms` — Superseded Max scene-opening or xView helper.
 
 ### `jobs/ogorodnyj-proezd-zu4-3/`
 
@@ -397,7 +312,6 @@ active consumers and their inputs remain visible. Explicit pytest invocations st
 - `experiments/flora-texture-diagnosis/source-calibration-baseline-v002.json` — Frozen source calibration baseline.
 - `experiments/flora-texture-diagnosis/source-integrity-v002.json` — Earlier source-integrity receipt; the cited v003 receipt stays visible.
 - `experiments/flora-texture-diagnosis/test_calibration.py` — Historical experiment tests, still runnable by exact path.
-- `tools/research/pdf_album/dimension-geometry-evidence.json` — Frozen PDF dimension geometry research receipt.
 
 ### Batch 5b (#1934): closed-job receipts
 
