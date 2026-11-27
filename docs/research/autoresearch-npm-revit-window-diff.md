@@ -69,4 +69,41 @@ inputs hash-checked before rendering).
 
 ## Result
 
-(filled after measurement)
+Contract commit 0a8e0e17, harness + pins 9fc7a3ac (both before the first score). Run: 3 fresh rounds, 154.6 s
+wall, status complete, preflight 70/70 hashes equal, M_edge spread over rounds 0.0 on every cell.
+Receipt `autoresearch-npm-revit-window-diff-harness/receipt_r137.json`; evidence (round-1 renders, cell overlay,
+receipt) `G:/Мой диск/AGR-evidence/137-npm-revit-window-diff/` (`SHA256SUMS.txt` 42 files).
+
+**H137: REFUTED** (stable, identical in all 3 rounds). **H137b (CW held-out): REFUTED** (3/8).
+
+| cell | A (accepted) | R1 (step-4, rejected) | R2 v009 (rejected, frozen) | ΔE A / R1 / R2 |
+|---|---|---|---|---|
+| W1_f | 4.229 | 4.445 (margin 0.216 < 0.25) | **2.896** | 20.2 / 23.3 / 7.7 |
+| W1_q | 5.612 | 5.887 | **3.649** | 20.6 / 23.6 / 8.3 |
+| W2_f | 5.736 | **5.519** | **4.788** | 27.8 / 31.1 / 7.3 |
+| W2_q | 5.118 | 5.651 | **4.311** | 28.0 / 30.6 / 7.4 |
+| W3_f | 2.605 | 3.164 | **2.386** | 18.4 / 20.5 / 7.8 |
+| W3_q | 3.121 | 3.870 | 3.129 (margin 0.008) | 14.4 / 15.9 / 8.6 |
+| W4_f | 3.405 | 4.288 | **3.368** | 21.3 / 24.4 / 7.7 |
+| W4_q | 5.068 | 5.791 | **4.201** | 20.2 / 22.6 / 8.9 |
+| D1_f | 5.279 | 6.528 | 5.791 | 32.6 / 34.3 / 16.7 |
+| D1_q | 4.743 | 5.596 | 5.900 | 25.2 / 26.4 / 12.9 |
+
+- A < R1 with margin: 8/10 (W1_f ordered but under margin, W2_f reversed). A < R2: 2/10 — the flat v009 insets
+  that Artem refused score **closer** to Revit than the accepted drawn windows on all 8 window cells.
+- M_de (not gated): A < R1 10/10, A < R2 0/10 (v009 keeps the Revit pale-blue glass and grey facade; ΔE 7-17 vs 18-33).
+- CW held-out: after < before 3/8 (CF_f, CF_q, CWL_f); CW4/CWS/CWL_q within ±0.27 px or reversed.
+- Witnesses (W1_f, round 1): N0 = 0.0; P1 pattern erased +0.890 px (> +0.5); P2 shift 2/5/10 px
+  +0.323/+1.251/+2.645 (monotone); P3 brightness x0.8 −0.204 px (−4.8 %, < 10 %) while ΔE +7.40. The instrument
+  responds as frozen; the failure is in the signal, not the instrument.
+- Parity fresh vs archived renders: opaque RGB > 8 levels 0-486 px per cell (max W4_f 484/486 of 287,504 mask px),
+  alpha mismatch 0 except CF_q before (2,320, AA edge). Exercised: A, R1, CW before, CW after (fresh x3).
+  R2 and every Revit reference: frozen, **not re-rendered** (not stability evidence for those inputs).
+
+Interpretation: NPM-vs-Revit render-diff is dominated by the NPM atlas styling that BOTH Artem-accepted and
+rejected NPM states share and Revit/v009 do not (dark glass, cassette and brick joints, RAL 7016 frames).
+Like #125/#128 (NPM vs VPM on AC08), a whole-cell diff against a reference of a different style measures
+style drift, not the refused defect class (missing or wrong pane layout). Within one pipeline (A vs R1) the
+edge signal orders 8/10 at the frozen margin — too weak and with a reversal, so not a gate.
+
+Nothing kept; no improvement round (contract: calibrate first). Next targets are in the card report and the backlog.
