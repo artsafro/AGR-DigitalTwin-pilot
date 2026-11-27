@@ -94,6 +94,38 @@ def field_extent(V, F, tris, key):
     return float(pts[:, aa].min()), float(pts[:, aa].max()), float(pts[:, 2].min()), float(pts[:, 2].max())
 
 
+class PanelFieldError(ValueError):
+    """The delivered panel field cannot be measured against the drawing."""
+
+
+def checked_panel_field(V, F, keep, key, facade, drawn, binding):
+    """Verify the selected finish against the drawn width and lowest ground line [D171]."""
+    reason = f"{binding} is not the panel field of {facade}"
+    try:
+        width_m = drawn["field_width_mm"] / 1000
+        ground_m = min(p["bbox_mm"][1] for p in drawn["plinth"]) / 1000
+    except (KeyError, IndexError, TypeError, ValueError) as exc:
+        raise PanelFieldError(f"{reason}: missing or invalid drawing dimensions") from exc
+    if not (np.isfinite(width_m) and width_m > 0 and np.isfinite(ground_m)):
+        raise PanelFieldError(f"{reason}: invalid drawing dimensions")
+    V = np.asarray(V, float)
+    tris = facade_triangles(V, F, keep, key)
+    if not tris:
+        raise PanelFieldError(f"{reason}: no triangles facing {key}")
+    lo, hi, zlo, zhi = field_extent(V, F, tris, key)
+    width = hi - lo
+    if not (np.isfinite([lo, hi, zlo, zhi]).all() and hi > lo and zhi > zlo
+            and width_m - 0.010 <= width <= width_m + 0.010 and zlo >= ground_m):
+        raise PanelFieldError(f"{reason}: width {width:.6f} m (drawing {width_m:.6f} m ±0.010 m), "
+                              f"bottom {zlo:.6f} m (ground {ground_m:.6f} m)")
+    return (lo, hi, zlo, zhi), ground_m
+
+
+def unsampled_row_reason(profile, facade, row, result):
+    """Missing panel samples are an input refusal, not a measured zero-joint row."""
+    return f"{profile.upper()} {facade}, {row}: {result['reason']}"
+
+
 def interpolate_uv(V, F, UV, tris, key, s, z, eps=1e-7):
     """UV at facade points (s along the facade axis, height z) inside the given triangles; NaN where none covers."""
     _, aa = AXIS[key]

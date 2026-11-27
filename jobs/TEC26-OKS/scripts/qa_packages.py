@@ -212,9 +212,16 @@ def cut_joint_report(src_v, src_faces, expected, spec, out_v, shift, tol=2e-4):
 
 
 def facade_joint_checks(spec, vmain, nmain, vpm_tiles, atlas_img, atlas):
-    """joint_count.mesh_facade_report per spec facade for the VPM (UDIM tiles) and NPM (atlas) readback meshes."""
+    """Check each selected VPM tile and NPM region against the spec's drawing before sampling."""
     fin = spec["finishes"]
     out = {"vpm": {}, "npm": {}}
+    try:
+        root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+        drawn = load(os.path.join(root, spec["sheet"]["facades_json"]))["facades"]
+    except (KeyError, OSError, ValueError, TypeError) as exc:
+        raise joint_count.PanelFieldError(f"cannot load the spec's facade drawing: {exc}") from exc
+    vuv = [np.asarray(x, float) for x in vmain["face_uvs"]]
+    nuv = [np.asarray(x, float) for x in nmain["face_uvs"]]
 
     def vpm_tile_of(u, v):
         groups = []
@@ -231,15 +238,26 @@ def facade_joint_checks(spec, vmain, nmain, vpm_tiles, atlas_img, atlas):
 
     for name, fc in spec["facades"].items():
         t, r = fin[fc["finish"]], atlas["finishes"].get(fc["finish"])
-        vuv = [np.asarray(x, float) for x in vmain["face_uvs"]]
-        nuv = [np.asarray(x, float) for x in nmain["face_uvs"]]
+
         vkeep = lambda i, ud=t["udim"]: int(1001 + np.floor(vuv[i].mean(0)[0]) + 10 * np.floor(vuv[i].mean(0)[1])) == ud  # noqa: E731
         nkeep = (lambda i: False) if r is None else (  # noqa: E731
             lambda i, r=r: r["u0"] <= nuv[i].mean(0)[0] <= r["u0"] + r["size"] and r["v0"] <= nuv[i].mean(0)[1] <= r["v0"] + r["size"])
-        out["vpm"][name] = joint_count.mesh_facade_report(vmain["vertices"], vmain["faces"], vuv, vkeep, fc["normal"],
-                                                          fc["ribs"], vpm_tile_of, tol=0.003)
-        out["npm"][name] = joint_count.mesh_facade_report(nmain["vertices"], nmain["faces"], nuv, nkeep, fc["normal"],
-                                                          fc["ribs"], npm_tile_of, tol=0.012)
+        for tag, mesh, uv, keep, tile_of, binding, tol in (
+            ("vpm", vmain, vuv, vkeep, vpm_tile_of, f"spec UDIM {t['udim']}", 0.003),
+            ("npm", nmain, nuv, nkeep, npm_tile_of, f"atlas region {fc['finish']}", 0.012),
+        ):
+            v, f, key = mesh["vertices"], mesh["faces"], fc["normal"]
+            try:
+                field, _ = joint_count.checked_panel_field(v, f, keep, key, name, drawn.get(name, {}), binding)
+            except joint_count.PanelFieldError as exc:
+                out[tag][name] = {"ok": False, "reason": str(exc)}
+                continue
+            report = joint_count.mesh_facade_report(v, f, uv, keep, key, fc["ribs"], tile_of, tol, field=field)
+            reasons = [joint_count.unsampled_row_reason(tag, name, row, result)
+                       for row, result in report["rows"].items() if "reason" in result]
+            if reasons:
+                report["reason"] = "\n".join(reasons)
+            out[tag][name] = report
     return out
 
 
@@ -453,7 +471,15 @@ def main(argv):
         with zipfile.ZipFile(vzip) as z:
             vt = {t["udim"]: np.asarray(Image.open(io.BytesIO(z.read(f"T_{A}_Diffuse_1.{t['udim']}.png"))).convert("RGB"))
                   for t in fin.values() if f"T_{A}_Diffuse_1.{t['udim']}.png" in z.namelist()}
-        rep_f = facade_joint_checks(spec, vmain, nmain, vt, atlas_img, atlas)
+        try:
+            rep_f = facade_joint_checks(spec, vmain, nmain, vt, atlas_img, atlas)
+        except joint_count.PanelFieldError as exc:
+            print(exc, file=sys.stderr)
+            return 2
+        refusals = [r["reason"] for reports in rep_f.values() for r in reports.values() if "reason" in r]
+        if refusals:
+            print("\n".join(refusals), file=sys.stderr)
+            return 2
         for tag in ("vpm", "npm"):
             check(f"facade_joints_{tag}", all(r["ok"] for r in rep_f[tag].values()) and len(rep_f[tag]) == len(spec["facades"]),
                   rep_f[tag])

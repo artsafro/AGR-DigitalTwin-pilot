@@ -8,6 +8,7 @@ plinth [D170]."""
 import copy
 import hashlib
 import json
+import os
 import random
 import sys
 from pathlib import Path
@@ -668,8 +669,9 @@ def test_source_finish_report_fail_closed():
     assert not r["ok"] and r["wrong_finish"] == 1
 
 
-PILOT7 = Path("C:/x/tec26-oks/AC08/pilot-v007")   # superseded 0.60 m delivery: the FAILING input
-PILOT = Path("C:/x/tec26-oks/AC08/pilot-v010")    # slide 49 counts + legend + blue wall edging: the passing control
+PILOT_ROOT = Path(os.environ.get("TEC26_AC08_PILOT_ROOT", "C:/x/tec26-oks/AC08"))
+PILOT7 = PILOT_ROOT / "pilot-v007"   # superseded 0.60 m delivery: the FAILING input
+PILOT = PILOT_ROOT / "pilot-v010"    # slide 49 counts + legend + blue wall edging: the passing control
 
 
 def _qa_run(tmp_path, pilot, spec, mutate=None):
@@ -689,7 +691,7 @@ def _qa_run(tmp_path, pilot, spec, mutate=None):
                           str(pilot / "package-npm/0000_Nku_1.zip"), str(tmp_path / "n.json"),
                           str(pilot / "textures-npm/npm_atlas.json"), str(pilot / "textures-vpm"),
                           str(pilot / "textures-npm"), str(AC08 / "max-dump-008.json"), str(out)])
-    return rc, json.loads(out.read_text(encoding="utf-8"))
+    return rc, json.loads(out.read_text(encoding="utf-8")) if out.exists() else None
 
 
 def _in_region(uv, r):
@@ -730,7 +732,7 @@ def _cut_off_joint(vm, nm, atlas):
 @pytest.mark.skipif(not (PILOT / "readback/vpm.readback.json").exists(), reason="pilot outputs not on this PC")
 @pytest.mark.parametrize("variant", ["baseline", "joint_loss", "pitch_swap", "cut_off_joint", "density_750",
                                      "spec_0p6"])
-def test_qa_packages_on_pilot(tmp_path, variant):
+def test_qa_packages_on_pilot(tmp_path, variant, capsys):
     """Acceptance rows on the real pilot readbacks (v010): the delivery passes every check incl. the per-facade rib counts
     (VPM and NPM: 29 / 11 joints = 30 / 12 ribs, symmetric, no horizontal joint); mutants fail - joint loss (panels ->
     plain grey plinth), pitch swap (long facades on the 12-rib tile and vice versa: same colour, wrong count), cut
@@ -749,6 +751,15 @@ def test_qa_packages_on_pilot(tmp_path, variant):
     if variant == "cut_off_joint":
         mutate = _cut_off_joint
     rc, qa = _qa_run(tmp_path, PILOT, spec, mutate)
+    if variant in ("joint_loss", "pitch_swap"):
+        assert (rc, qa) == (2, None)
+        err = capsys.readouterr().err
+        for name, facade in SPEC["facades"].items():
+            fin = facade["finish"]
+            assert f"spec UDIM {SPEC['finishes'][fin]['udim']} is not the panel field of {name}" in err
+            assert f"atlas region {fin} is not the panel field of {name}" in err
+        return
+    assert qa is not None
     failed = qa["failed"]
     if variant == "baseline":
         assert (rc, failed) == (0, [])
@@ -762,11 +773,6 @@ def test_qa_packages_on_pilot(tmp_path, variant):
                 assert r["symmetric"] and r["no_horizontal_joints"]
             hidden = [len(row["hidden_by_other_finish"]) for row in d["2-1"]["rows"].values()]
             assert sorted(hidden) == [0, 4]                                    # the door hides 4 joints, as drawn
-    elif variant in ("joint_loss", "pitch_swap"):
-        assert rc == 1 and {"source_finish_vpm", "source_finish_npm", "facade_joints_vpm",
-                            "facade_joints_npm"} <= set(failed)
-        for tag in ("vpm", "npm"):
-            assert not any(r["ok"] for r in qa["checks"][f"facade_joints_{tag}"]["detail"].values())
     elif variant == "cut_off_joint":
         assert rc == 1 and {"cuts_at_joints_vpm", "cuts_at_joints_npm"} <= set(failed)
     else:
