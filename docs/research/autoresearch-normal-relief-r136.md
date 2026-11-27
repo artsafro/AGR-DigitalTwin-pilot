@@ -10,3 +10,21 @@
 - Negative N0 source replay must score 0 (<=1e-9 absolute). On accepted v096 the complete flat-Normal perturbation P1 must increase V136 by >=0.10, and half-strength P2 must be between accepted and P1 +0.05. Require nonzero changed in-band RGB pixel counts for P1/P2 and both clean candidates relative to their references (v096 for perturbations; S for labels), and report counts in/out of band with invariant alpha for P1/P2. N0 expected zero. Failed parity, unstable series, insufficient coverage or an unexercised required control → inconclusive. Empty checks not measured, never counted as confirmation.
 - Budget: 3 fresh runs total, 0 alternate candidates, 360 seconds for native render+score. After first paired run stop inconclusive if elapsed + 2× first-pair duration > 360 s; same replay below in a free slot. No profile/label substitution, delivered data edits, tolerance tuning, dropping checks or touching sibling work. Revalidate input manifest after the series. Native NPM/VPM calibration, independent held-out Normal pair, padding/density remain not measured in this experiment.
 - Replay from this branch: `uv run --frozen python docs/research/autoresearch-normal-relief-r136/run.py tmp/r136-NEW` (new directory in worktree; exact Windows Blender 5.1.2, #135 Drive + Desktop paths; replay limited to a machine with those pinned inputs and the #135 Git object; fetch `research/autoresearch-standing-135` if needed).
+
+## Result — H136 refuted; complete, no KEEP
+
+**Гипотеза опровергнута:** у шва отклонённая v045 хуже принятой по направлению v096 на **0.2309** при пороге **0.10**, но результат v045 **−0.1112**, не выше нуля. На этой полосе у обеих версий градиент сильнее, чем у источника: метрика разделяет конкретную пару по порядку, но не может подтвердить потерю рельефа. Вне полосы отрыв практически нулевой. Порог и знак не менялись, ничего в production не оставлено.
+
+Three fresh runs, **85.098 / 95.535 / 80.030 s** (260.663 s total); per-shot A1 parity 50/50 each, all six decoded stripe RGBA hashes stable, gap spread **0**. Pre/postflight **12/12** inputs; no clipping. Raster: 3,660 ID1 triangles, 11,900 visible seed pixels, 96.90% projected-to-opaque overlap; shared Sobel support 53,051 in band / 246,746 outside.
+
+| Variant | Median V136 in band | Off-band | RGB changed in / out | Alpha changed |
+|---|---:|---:|---:|---:|
+| v045, rejected (vs S) | −0.111157 | −0.002580 | 35,361 / 71,821 | 0 |
+| v096, visual direction accepted (vs S) | −0.342021 | −0.002596 | 27,117 / 71,876 | 0 |
+| N0, identity (vs S) | 0 | 0 | 0 / 0 (expected identity) | 0 |
+| P1, flat Normal (changes vs v096) | 2.178737 | 1.843269 | 39,986 / 135,456 | 0 |
+| P2, half strength (changes vs v096) | 0.031827 | 0.324028 | 31,907 / 87,983 | 0 |
+
+P1 and P2 controls exercised and met the frozen bounds. The displayed V136 values are all against S, including perturbations. Native cross-profile calibration, padding, density and independent held-out transfer: **not measured**. Receipt: [`receipt.json`](autoresearch-normal-relief-r136/receipt.json), SHA-256 `48baf6c0f9db40ae065fa9e34f273595a0d708cb7f333acf9392f4b62adacdf2`.
+
+Next: prioritize an exact NPM-only texture refusal paired with accepted NPM and unchanged VPM; freeze the affected element before scoring. For Normal relief, use an independently labelled second pair and test a source-registered directional Normal response rather than retuning this signed luminance threshold.

@@ -1,0 +1,239 @@
+{
+  "revision": "a0f333e9225f259a9a5ec60eb47e69f986906e31",
+  "blobs": {
+    "run.py": "693fceda629bd9ba4e8368a29d001aadc5555d8a80a3455f4c9f220e4927ae7b",
+    "render.py": "b880455c0ee904ca5fbf6fc532bb10fe1e91cf04e04d8351b71266b494e8b79a",
+    "score.py": "a66394ab7a9300882b8faef0145fcfc1c1beaa33698fb3682531ff4deb273bee",
+    "receipt_a1.json": "cdb840f6ae306dfbd17abb6a18cbdd8788a5666a1f4f42fb8c7361907edc1704"
+  },
+  "blender": "C:\\Program Files\\Blender Foundation\\Blender 5.1\\blender.exe",
+  "pins": {
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\cut-v045\\stylobate_cut_candidate_v045.blend": "38979c31de1d23086d7b67078ca5b14343cd3db51c70cf4a89b3b0dd61a7bad6",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v096\\stylobate_two_tiles_textured_v096.blend": "070f292765d09756b2d82acffe7e5a5047e16ad9847e081c74bc1d66f02fea58",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v166\\inputs\\1326_source_v001.blend": "e3fdb9193706059fd75bd42819280f140f512c6cc8a206e905b819fc3ce64a18",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\T_1326_Stylo_Diffuse.1001.png": "46b271f2fec85802b9ba54a9fba379c91545794bbd5e3c92f6e57529f0a6192e",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\cut-v014\\T_1326_Stylo_Normal.1001.png": "5c5887d426b71c786e8f9784449e36a379a9e07ae451b08eb21a32bd87d2e428",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Diffuse.1001.png": "4f5b1cd7abd46bad3465bc127a56b62dcdd640dcdf16f61f7d9731c95e93af4e",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Diffuse.1002.png": "78d5a0e6809d49c4a22fff82d9c1132745ecfa27af5e4f96cc01fde503ca83fe",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Normal.1001.png": "a594651923ea7e9f2f82cc6d726f1afb2639a50598ba87055cec55e2cccba38a",
+    "G:\\Мой диск\\AGR-evidence\\1326-stylobate-course-grid\\normal-v092\\T_1326_Stylo_Normal.1002.png": "e191115f2062ef9340354a9b4093b50f3706fb87b9c9f0fa8af044f73202d138",
+    "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_Diffuse.png": "ff846d8e4f97eb9df4f9f1b069cacc5c3f67b86c323945e7c4d379f06e0a884d",
+    "C:\\Users\\artsafro\\Desktop\\!3D viz\\!А101\\63_4BK_vlad\\build\\textures\\T_K3_StyloBrick_Normal.png": "fee4b9729673835c524130eaf562a088d5560322c0e370feb89bb1a8f93b847b"
+  },
+  "readback_sha256": "4bcf30ca1a6e079d5c33eded338a4e28de6807acbe565674b54bb202d4975a91",
+  "triangles": 3660,
+  "rounds": [
+    {
+      "round": 1,
+      "native_seconds": 72.512,
+      "seconds": 85.098,
+      "a1_parity": "50/50",
+      "a1_mismatches": [],
+      "status": "measured",
+      "counts": {
+        "visible_seed": 11900,
+        "projected_id1": 311943,
+        "opaque_overlap": 0.9690295983561099,
+        "band": 53051,
+        "off_band": 246746
+      },
+      "clipping": {
+        "S": 0.0,
+        "N0": 0.0,
+        "v045": 0.0,
+        "v096": 0.0,
+        "P1": 0.0,
+        "P2": 0.0
+      },
+      "rows": {
+        "N0": {
+          "loss": 0.0,
+          "off_band_loss": 0.0,
+          "rgb_changed_band": 0,
+          "rgb_changed_off_band": 0,
+          "alpha_changed": 0,
+          "rgba_sha256": "b1cd36cc6ada104176c44954eba9f1b53c05bd4ef896688179372e5d71a086ce"
+        },
+        "v045": {
+          "loss": -0.11115706976957514,
+          "off_band_loss": -0.002580407645826012,
+          "rgb_changed_band": 35361,
+          "rgb_changed_off_band": 71821,
+          "alpha_changed": 0,
+          "rgba_sha256": "7311f621fb89bae4271f3bf4083bd3beb86e65515cbb6885820732a674db9a10"
+        },
+        "v096": {
+          "loss": -0.3420205636923062,
+          "off_band_loss": -0.002595852306189288,
+          "rgb_changed_band": 27117,
+          "rgb_changed_off_band": 71876,
+          "alpha_changed": 0,
+          "rgba_sha256": "5c63ea1634990e3f4e19ae7aa45d699a0b127f11060f26b96963b12a38647378"
+        },
+        "P1": {
+          "loss": 2.178737240198746,
+          "off_band_loss": 1.8432685399903128,
+          "rgb_changed_band": 39986,
+          "rgb_changed_off_band": 135456,
+          "alpha_changed": 0,
+          "rgba_sha256": "21c477c762bd177eb5c0e5311776f1b10086fd5a5883ef99895ce19d291f0849"
+        },
+        "P2": {
+          "loss": 0.03182689218551395,
+          "off_band_loss": 0.3240275639788093,
+          "rgb_changed_band": 31907,
+          "rgb_changed_off_band": 87983,
+          "alpha_changed": 0,
+          "rgba_sha256": "8788eb7902cfcc54a3098218355fe1154461a197cad137f33b01431696f4bb11"
+        }
+      },
+      "source_sha256": "b1cd36cc6ada104176c44954eba9f1b53c05bd4ef896688179372e5d71a086ce"
+    },
+    {
+      "round": 2,
+      "native_seconds": 84.75,
+      "seconds": 95.535,
+      "a1_parity": "50/50",
+      "a1_mismatches": [],
+      "status": "measured",
+      "counts": {
+        "visible_seed": 11900,
+        "projected_id1": 311943,
+        "opaque_overlap": 0.9690295983561099,
+        "band": 53051,
+        "off_band": 246746
+      },
+      "clipping": {
+        "S": 0.0,
+        "N0": 0.0,
+        "v045": 0.0,
+        "v096": 0.0,
+        "P1": 0.0,
+        "P2": 0.0
+      },
+      "rows": {
+        "N0": {
+          "loss": 0.0,
+          "off_band_loss": 0.0,
+          "rgb_changed_band": 0,
+          "rgb_changed_off_band": 0,
+          "alpha_changed": 0,
+          "rgba_sha256": "b1cd36cc6ada104176c44954eba9f1b53c05bd4ef896688179372e5d71a086ce"
+        },
+        "v045": {
+          "loss": -0.11115706976957514,
+          "off_band_loss": -0.002580407645826012,
+          "rgb_changed_band": 35361,
+          "rgb_changed_off_band": 71821,
+          "alpha_changed": 0,
+          "rgba_sha256": "7311f621fb89bae4271f3bf4083bd3beb86e65515cbb6885820732a674db9a10"
+        },
+        "v096": {
+          "loss": -0.3420205636923062,
+          "off_band_loss": -0.002595852306189288,
+          "rgb_changed_band": 27117,
+          "rgb_changed_off_band": 71876,
+          "alpha_changed": 0,
+          "rgba_sha256": "5c63ea1634990e3f4e19ae7aa45d699a0b127f11060f26b96963b12a38647378"
+        },
+        "P1": {
+          "loss": 2.178737240198746,
+          "off_band_loss": 1.8432685399903128,
+          "rgb_changed_band": 39986,
+          "rgb_changed_off_band": 135456,
+          "alpha_changed": 0,
+          "rgba_sha256": "21c477c762bd177eb5c0e5311776f1b10086fd5a5883ef99895ce19d291f0849"
+        },
+        "P2": {
+          "loss": 0.03182689218551395,
+          "off_band_loss": 0.3240275639788093,
+          "rgb_changed_band": 31907,
+          "rgb_changed_off_band": 87983,
+          "alpha_changed": 0,
+          "rgba_sha256": "8788eb7902cfcc54a3098218355fe1154461a197cad137f33b01431696f4bb11"
+        }
+      },
+      "source_sha256": "b1cd36cc6ada104176c44954eba9f1b53c05bd4ef896688179372e5d71a086ce"
+    },
+    {
+      "round": 3,
+      "native_seconds": 72.362,
+      "seconds": 80.026,
+      "a1_parity": "50/50",
+      "a1_mismatches": [],
+      "status": "measured",
+      "counts": {
+        "visible_seed": 11900,
+        "projected_id1": 311943,
+        "opaque_overlap": 0.9690295983561099,
+        "band": 53051,
+        "off_band": 246746
+      },
+      "clipping": {
+        "S": 0.0,
+        "N0": 0.0,
+        "v045": 0.0,
+        "v096": 0.0,
+        "P1": 0.0,
+        "P2": 0.0
+      },
+      "rows": {
+        "N0": {
+          "loss": 0.0,
+          "off_band_loss": 0.0,
+          "rgb_changed_band": 0,
+          "rgb_changed_off_band": 0,
+          "alpha_changed": 0,
+          "rgba_sha256": "b1cd36cc6ada104176c44954eba9f1b53c05bd4ef896688179372e5d71a086ce"
+        },
+        "v045": {
+          "loss": -0.11115706976957514,
+          "off_band_loss": -0.002580407645826012,
+          "rgb_changed_band": 35361,
+          "rgb_changed_off_band": 71821,
+          "alpha_changed": 0,
+          "rgba_sha256": "7311f621fb89bae4271f3bf4083bd3beb86e65515cbb6885820732a674db9a10"
+        },
+        "v096": {
+          "loss": -0.3420205636923062,
+          "off_band_loss": -0.002595852306189288,
+          "rgb_changed_band": 27117,
+          "rgb_changed_off_band": 71876,
+          "alpha_changed": 0,
+          "rgba_sha256": "5c63ea1634990e3f4e19ae7aa45d699a0b127f11060f26b96963b12a38647378"
+        },
+        "P1": {
+          "loss": 2.178737240198746,
+          "off_band_loss": 1.8432685399903128,
+          "rgb_changed_band": 39986,
+          "rgb_changed_off_band": 135456,
+          "alpha_changed": 0,
+          "rgba_sha256": "21c477c762bd177eb5c0e5311776f1b10086fd5a5883ef99895ce19d291f0849"
+        },
+        "P2": {
+          "loss": 0.03182689218551395,
+          "off_band_loss": 0.3240275639788093,
+          "rgb_changed_band": 31907,
+          "rgb_changed_off_band": 87983,
+          "alpha_changed": 0,
+          "rgba_sha256": "8788eb7902cfcc54a3098218355fe1154461a197cad137f33b01431696f4bb11"
+        }
+      },
+      "source_sha256": "b1cd36cc6ada104176c44954eba9f1b53c05bd4ef896688179372e5d71a086ce"
+    }
+  ],
+  "wall_seconds": 260.663,
+  "result": "refuted",
+  "status": "complete",
+  "postflight": true,
+  "medians": {
+    "N0": 0.0,
+    "v045": -0.11115706976957514,
+    "v096": -0.3420205636923062,
+    "P1": 2.178737240198746,
+    "P2": 0.03182689218551395
+  },
+  "gap_median": 0.2308634939227311,
+  "gap_spread": 0.0,
+  "controls": true
+}
