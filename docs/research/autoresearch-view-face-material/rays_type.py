@@ -1,5 +1,7 @@
 """Blender headless: orthographic ray-cast Revit TYPE label maps from N horizontal directions (#149, OBSERVE).
 
+new-case: docs/research/autoresearch-view-face-material/rays_type.py - #149 Revit type-label ray cast
+
 Same frame as #139 rays.py (az = outward normal azimuth, 0=+X, 90=+Y; screen right = (-n) x Z). UCX/collision
 and >30 m outlier objects are skipped exactly as #145 rays_elv.py. Label = 1 + index into the global Revit type
 table (object name minus the trailing instance suffix); 0 = no hit. No saves, no exports.

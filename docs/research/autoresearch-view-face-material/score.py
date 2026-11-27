@@ -1,5 +1,7 @@
 """#149 OBSERVE scoring: finish-partition agreement between a view label raster and a model type raster.
 
+new-case: docs/research/autoresearch-view-face-material/score.py - #149 finish-partition scorer
+
 Research only; no design or finish authority.
 """
 import numpy as np

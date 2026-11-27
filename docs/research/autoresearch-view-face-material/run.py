@@ -1,5 +1,7 @@
 """#149 OBSERVE: finish-partition agreement (PDF fill colours vs Revit type labels) for view -> face on ELV.
 
+new-case: docs/research/autoresearch-view-face-material/run.py - #149 OBSERVE replay runner
+
 Research only; no product code, no delivery edits. Replay from the repository root (pilot host, inputs mounted):
     uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-material/run.py <new_out_dir> [--runs 3]
 Needs `git fetch origin research/autoresearch-standing-145 research/autoresearch-standing-147` (pinned bytes).

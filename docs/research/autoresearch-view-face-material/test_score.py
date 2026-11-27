@@ -1,4 +1,7 @@
-"""Unit checks for the #149 scorer (synthetic inputs only)."""
+"""Unit checks for the #149 scorer (synthetic inputs only).
+
+new-case: docs/research/autoresearch-view-face-material/test_score.py - #149 scorer unit controls
+"""
 import sys
 from pathlib import Path
 
