@@ -1,6 +1,7 @@
 {
   "_comment": "Scenario skeletons (#1546, [D324]-[D327]): per cell of docs/scenarios/scenarios.json the ordered stages, the shared command/core each stage calls, and the hook points where a job's small scripts plug in. Human view: docs/agents/SKELETONS.md (index) + docs/agents/SKELETONS-stages.md (stage tables); `trail` = the route/card a cell reads right after its block (one door, #1895). Checked by tools/architecture/skeleton_guard.py and tests/test_skeletons_1546.py. entry_defs = public function names defined in the stage owners (a job script that defines one re-implements the stage); dup_rules = duplicate_guard rules owned by the stage. gap = no shared implementation (one line); a job may fill a gap stage with a hook at point 'gap'.",
   "version": 1,
+  "decision_trees": "docs/agents/decision-trees.json",
   "job_contract": {
     "config": "skeleton.json",
     "hooks_dir": "hooks",

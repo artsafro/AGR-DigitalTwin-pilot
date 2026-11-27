@@ -96,6 +96,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | agents/codex | [agents/codex.md](../agents/codex.md) |  |
 | agents/commands | [agents/COMMANDS.md](../agents/COMMANDS.md) |  |
 | agents/dcc-offline-workflows | [agents/dcc-offline-workflows.md](../agents/dcc-offline-workflows.md) |  |
+| agents/decision-trees | [agents/decision-trees.json](../agents/decision-trees.json) | [agents/decision-trees/ground-npm.md](../agents/decision-trees/ground-npm.md), [agents/decision-trees/ground-vpm.md](../agents/decision-trees/ground-vpm.md), [agents/decision-trees/library-publish.md](../agents/decision-trees/library-publish.md), [agents/decision-trees/maf-npm-to-vpm.md](../agents/decision-trees/maf-npm-to-vpm.md), [agents/decision-trees/npm-to-vpm.md](../agents/decision-trees/npm-to-vpm.md), [agents/decision-trees/oks-npm.md](../agents/decision-trees/oks-npm.md), [agents/decision-trees/oks-npm-lite.md](../agents/decision-trees/oks-npm-lite.md), [agents/decision-trees/oks-vpm.md](../agents/decision-trees/oks-vpm.md), [agents/decision-trees/sintez-fix.md](../agents/decision-trees/sintez-fix.md), [agents/decision-trees/vpm-to-npm.md](../agents/decision-trees/vpm-to-npm.md) |
 | agents/domain | [agents/domain.md](../agents/domain.md) |  |
 | agents/examples/swarm/writers-json | [agents/examples/swarm/writers.json](../agents/examples/swarm/writers.json) |  |
 | agents/harness-inventory | [agents/harness-inventory.md](../agents/harness-inventory.md) |  |
