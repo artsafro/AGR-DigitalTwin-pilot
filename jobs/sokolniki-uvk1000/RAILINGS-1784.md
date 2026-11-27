@@ -1,6 +1,7 @@
 # Sokolniki #1784 — measured railings pilot
 
-Cell `oks-npm`; R3, standard geometry pilot, not delivery. [D384] authorizes
+Cell `oks-npm`; [R3](../../docs/procedure/node-r3-fence-railing-gates.md#shared-headless-builder),
+standard geometry pilot, not delivery. [D384] authorizes
 source-section measurements from the pinned Revit FBX; [D378] pins the receiving
 body v005. Neither the accepted native file nor the separate inset work changes.
 No connection to the active step-3 config is made while the railing set is incomplete.
@@ -65,3 +66,10 @@ is not a claim about street visibility.
 
 `SHA256SUMS.txt` SHA-256: `a2c4f0bc7a6d4d66e49aaa68043dce0067a38b701766cd5dcde5497c3b33e916`
 (31 evidence files verified against the manifest).
+
+For a core-only replay, read the four `<group>.json` inputs under `measurements/`
+in this Drive directory; `measurements/references.json` holds the extracted h1200
+source surfaces. These are retained measurements, not replacement copies of the
+original FBX or v005 body. The original input hashes above bind the historical
+native run. Do not rebuild the receiving body or extend this pilot to MGN while
+the separate railing task waits for Artem's RVT.
