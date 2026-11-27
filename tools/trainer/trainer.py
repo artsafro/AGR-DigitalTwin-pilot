@@ -3,17 +3,19 @@
 Pattern: n/a | new-case: trainer v0 - practice-run recorder and step scorer over existing checkers.
 
     uv run agr trainer check                      # etalons.json is well-formed (exit 0 / 2)
-    uv run agr trainer run ETALON --lane codex --out NEW_DIR [--timeout-s 1800] [--dry-run]
+    uv run agr trainer run ETALON --lane codex --out NEW_DIR [--timeout-s 1800] [--dry-run] [--proxy]
+    uv run agr trainer metrics RUN_DIR [--score SCORE.json] [--usd-per-mtok IN OUT]   # [#2066] per-run metrics
     uv run agr trainer score ETALON --built FILE.fbx|DIR --out NEW.json [--png NEW.png] [--vlm] [--date D]
     uv run agr trainer calibrate --out NEW_DIR    # accepted vs rejected of every scorable etalon
     uv run agr trainer ledger [--add SCORE.json --lane L --run RUN_DIR]   # headline: share passed first try
     uv run agr trainer ab ETALON --ab OLD_DIR NEW_DIR --scope INVARIANT|DOMAIN --out NEW_DIR   # [D415] A/B probe
 
-A practice run gets ONLY the task text and the source copies (never the key, rejected versions or the job's
+A practice run gets ONLY the task text and the source copies (with --proxy also the User Proxy command
+`RUN/proxy/ask.py`, tools/trainer/user_proxy.py [#2066]; never the key, rejected versions or the job's
 history: the practice dir is `git archive` + scrub + `git init` with one commit, no origin). Score steps run the existing checkers in
 order - artifact (FBX header), readback (`tools/blender/fbx_readback.py`), bounds, topology (quads), form
 (surface deviation built<->key, Blender BVH), form_v2 (`tools/qa/form_check` detector when the etalon has a
-form-check pair), vlm (form-check pair judge, both orders; only with --vlm), package (`agr validate`). Only
+form-check pair), ucx (UCX present + [D012] budget; target ucx only), vlm (form-check pair judge, both orders; only with --vlm), package (`agr validate`). Only
 `pass` counts; `not_run` / `not_measured` / `error` are non-pass, and the first non-pass step is reported.
 Exit codes: 0 scored (any verdict), 2 invalid input or alias; `run` exits 0 when the session was recorded.
 """
@@ -36,7 +38,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BANK = ROOT / "docs/trainer/etalons.json"
 LEDGER = ROOT / "docs/trainer/ledger.json"
-STEPS = ("holdout", "artifact", "readback", "bounds", "topology", "form", "form_v2", "vlm", "package")
+STEPS = ("holdout", "artifact", "readback", "bounds", "topology", "form", "form_v2", "ucx", "vlm", "package")
 STATUSES = {"pass", "fail", "not_run", "not_measured", "error", "not_applicable"}
 TOL = {"bounds_m": 0.10, "form_p95_m": 0.05, "form_max_m": 0.30, "quad_share_drop": 0.02}
 LANES = {"codex": {"model": "gpt-6.1-terra"}}
@@ -140,7 +142,12 @@ def bank_problems(data):
         for r in e.get("rejected", []):
             if not r.get("reason") or not r.get("date"):
                 out.append(f"{name}: rejected {r.get('version')} needs reason + date")
-    return out
+        if "proxy_answers" in e:
+            try:
+                proxy_pack(e)
+            except TrainerError as exc:
+                out.append(f"{name}: {exc}")
+    return out + stage_problems(data)
 
 
 def etalon(bank, eid):
@@ -162,7 +169,7 @@ def sha256(path):
 def secret_tokens(e):
     """Strings that must never reach the agent: key + rejected paths, file names and hashes, hidden repo paths."""
     toks = set()
-    for item in [e["key"], *e.get("rejected", [])]:
+    for item in [e["key"], *e.get("rejected", []), *e.get("key_aliases", [])]:
         for k in ("path", "sha256"):
             v = item.get(k)
             if v:
@@ -181,7 +188,8 @@ def scan_tokens(e):
     """Content tokens of the hidden key and rejected versions: file names, full paths (both slash forms), sha256
     and its 12-char prefix (pairs_v1.json pins by prefix). Lower-case; matched case-insensitively."""
     toks = set()
-    for item in [e["key"], *e.get("rejected", []), e.get("calibration_accepted") or {}]:
+    # key_aliases [#2066]: other copies of the key (the accepted delivery folder) that a run must not reach either.
+    for item in [e["key"], *e.get("rejected", []), e.get("calibration_accepted") or {}, *e.get("key_aliases", [])]:
         if item.get("path"):
             p = str(item["path"])
             toks |= {p, p.replace("/", "\\"), Path(p).name}
@@ -254,16 +262,24 @@ def practice_tree(root, head, dst, e):
     return scrubbed
 
 
-def task_text(e, inputs_dir, out_dir):
-    """The only prompt a practice agent receives."""
+def task_text(e, inputs_dir, out_dir, proxy=None):
+    """The only prompt a practice agent receives. proxy = RUN/proxy dir when the User Proxy [#2066] answers."""
     lines = [e["task"].strip(), "", f"Inputs (copies of the customer sources, read-only): {inputs_dir}"]
     lines += [f"- {Path(s['path']).name}  sha256 {s['sha256']}" for s in e["sources"]]
     lines += ["", f"Write every result into {out_dir} (new files only).",
-              f"Deliverable: {e.get('deliverable', 'one FBX of the result')} in that folder.",
-              "Follow AGENTS.md and docs/agents/SKELETONS.md. You run headless: nobody answers questions; when a",
-              "decision only the user can make blocks you, write the question into QUESTIONS.md in the output",
-              "folder and continue with the documented default or stop. Do not commit or push.",
-              "DCC [D389]: AutoCAD Core Console (accoreconsole, headless DWG->DXF via the skeleton's converter)",
+              f"Deliverable: {e.get('deliverable', 'one FBX of the result')} in that folder."]
+    if proxy is None:
+        lines += ["Follow AGENTS.md and docs/agents/SKELETONS.md. You run headless: nobody answers questions; when a",
+                  "decision only the user can make blocks you, write the question into QUESTIONS.md in the output",
+                  "folder and continue with the documented default or stop. Do not commit or push."]
+    else:
+        ask = (Path(proxy) / "ask.py").as_posix()
+        lines += ["Follow AGENTS.md and docs/agents/SKELETONS.md. You run without a live user. When a decision only",
+                  f"the user can make blocks you, ask it: python \"{ask}\" \"<one question>\". The reply is either an",
+                  "approved answer with its source or UNRESOLVED (nobody has decided it): then continue with the",
+                  "documented default or stop, and write the question into QUESTIONS.md in the output folder.",
+                  "Do not commit or push."]
+    lines += ["DCC [D389]: AutoCAD Core Console (accoreconsole, headless DWG->DXF via the skeleton's converter)",
               "and Blender are allowed; live 3ds Max is NOT available in a practice run.",
               "Practice gates [D391]: this is a trainer practice run (agr trainer run), not a real job. Where Gate 1",
               "(PartsList confirmation) or BM-12 (first module accepted before replication) would stop you, confirm it",
@@ -285,6 +301,178 @@ def task_text(e, inputs_dir, out_dir):
     if leaks:
         raise TrainerError(f"task text would leak the key: {sorted(leaks)}")
     return text
+
+
+# ---------------------------------------------------------------- user proxy [#2066]
+# The proxy (tools/trainer/user_proxy.py, copied as RUN/proxy/ask.py) is a separate process with only its pack.
+# The trainer builds the pack from the etalon's `proxy_answers` and refuses it unless every answer is verbatim in
+# its cited approved source and names neither the key nor the evaluator. The proxy never sees this module.
+PROXY_SRC = Path(__file__).resolve().parent / "user_proxy.py"
+EVALUATOR_WORDS = (*TOL, "form_v2", "surface_dev", "pairs_v1", "etalon", "first_failing", "held_out", "holdout")
+
+
+def _flat(s):
+    return re.sub(r"\s+", " ", str(s).replace("**", "").replace("`", "")).strip().lower()
+
+
+def _decision_rows():
+    rows = {}
+    for line in (ROOT / "docs/decisions.md").read_text(encoding="utf-8").splitlines():
+        m = re.match(r"\|\s*(D\d+)\s*\|", line)
+        if m:
+            rows[m.group(1)] = line
+    return rows
+
+
+def proxy_source_text(a, rows=None):
+    """Approved text an answer must quote verbatim: a D-row or a repo file (job decisions / fact export)."""
+    kind, src = a.get("source_kind"), str(a.get("source", ""))
+    if kind == "d_row":
+        rows = rows if rows is not None else _decision_rows()
+        if src not in rows:
+            raise TrainerError(f"proxy answer {a.get('id')}: unknown decision {src!r}")
+        return rows[src]
+    if kind in ("job_decision", "fact_export"):
+        rel = src.split("#", 1)[0]
+        f = (ROOT / rel).resolve()
+        if Path(rel).is_absolute() or ROOT.resolve() not in f.parents or not f.is_file():
+            raise TrainerError(f"proxy answer {a.get('id')}: source file {rel!r} is not a repo file")
+        return f.read_text(encoding="utf-8")
+    raise TrainerError(f"proxy answer {a.get('id')}: source_kind {kind!r} needs a source text")
+
+
+def proxy_pack(e):
+    """-> user-proxy-pack/1 for the etalon. TrainerError on an invented, leaking or evaluator-naming answer.
+    delivery_key answers quote the etalon's accepted-key record (`key.accepted`)."""
+    import user_proxy
+    rows = _decision_rows()
+    tokens = scan_tokens(e)
+    answers = []
+    for a in e.get("proxy_answers", []):
+        text = e["key"].get("accepted", "") if a.get("source_kind") == "delivery_key" else proxy_source_text(a, rows)
+        low = json.dumps(a, ensure_ascii=False).lower()
+        found = [t for t in tokens if t in low]
+        if found:
+            raise TrainerError(f"proxy answer {a.get('id')} names the key: {found[0]!r}")
+        if _flat(a.get("answer", "")) not in _flat(text):
+            raise TrainerError(f"proxy answer {a.get('id')}: not verbatim in its source {a.get('source')!r}")
+        crit = [w for w in EVALUATOR_WORDS if w.lower() in low]
+        if crit:
+            raise TrainerError(f"proxy answer {a.get('id')} names the evaluator: {crit[0]!r}")
+        answers.append({k: a[k] for k in sorted(user_proxy.ANSWER_KEYS) if k in a})
+    pack = {"schema": "user-proxy-pack/1", "task": e["id"], "answers": answers}
+    problems = user_proxy.pack_problems(pack)
+    if problems:
+        raise TrainerError("proxy pack refused: " + "; ".join(problems))
+    return pack
+
+
+def install_proxy(run_dir, e):
+    """RUN/proxy/{ask.py, pack.json}: the proxy process and its approved answers, nothing else. -> dir."""
+    d = Path(run_dir) / "proxy"
+    d.mkdir(parents=True, exist_ok=False)
+    shutil.copyfile(PROXY_SRC, d / "ask.py")
+    (d / "pack.json").write_text(json.dumps(proxy_pack(e), ensure_ascii=False, indent=1), encoding="utf-8")
+    left = leaking_files(d, scan_tokens(e))
+    if left:
+        raise TrainerError(f"proxy dir names the key: {next(iter(left))}")
+    return d
+
+
+# ---------------------------------------------------------------- stage-task set [#2066]
+STAGE_SETS = {"dev": "tuning", "holdout": "held_out"}
+
+
+def stage_tasks(bank):
+    return (bank.get("stage_tasks") or {}).get("tasks", [])
+
+
+def stage_problems(bank):
+    """dev ~75 % (split tuning) / holdout ~25 % (split held_out, at least one unfamiliar project never in dev)."""
+    tasks = stage_tasks(bank)
+    if not tasks:
+        return []
+    ents = {e.get("id"): e for e in bank.get("etalons", []) if isinstance(e, dict)}
+    out = []
+    for t in tasks:
+        tid = t.get("id")
+        if t.get("set") not in STAGE_SETS:
+            out.append(f"stage {tid}: set must be dev|holdout")
+            continue
+        e = ents.get(tid)
+        if e is None:
+            out.append(f"stage {tid}: unknown etalon")
+            continue
+        if e.get("split") != STAGE_SETS[t["set"]]:
+            out.append(f"stage {tid}: {t['set']} needs split {STAGE_SETS[t['set']]}")
+        if not e.get("practice_ready"):
+            out.append(f"stage {tid}: etalon is not practice_ready")
+        bad = [m for m in t.get("metrics", []) if m not in STEPS]
+        if bad or not t.get("metrics"):
+            out.append(f"stage {tid}: unknown metric {bad or 'none'}")
+        if not t.get("project") or not isinstance(t.get("familiar"), bool):
+            out.append(f"stage {tid}: needs project and familiar")
+    dev_projects = {t.get("project") for t in tasks if t.get("set") == "dev"}
+    if not any(t.get("set") == "holdout" and t.get("familiar") is False and t.get("project") not in dev_projects
+               for t in tasks):
+        out.append("stage set: needs an unfamiliar holdout (a project never in the dev set)")
+    return out
+
+
+# ---------------------------------------------------------------- per-run metrics [#2066]
+def _command_items(lines):
+    out = []
+    for line in lines:
+        try:
+            ev = json.loads(line)
+        except ValueError:
+            continue
+        ev = ev.get("ev", ev) if isinstance(ev, dict) else {}
+        item = ev.get("item") or {}
+        if ev.get("type") == "item.completed" and item.get("type") == "command_execution":
+            out.append(item)
+    return out
+
+
+PROXY_PACK_READ = re.compile(r"proxy[/\\]+(pack\.json|log\.jsonl)", re.I)
+
+
+def stage_metrics(run_dir, score_json=None, usd_per_mtok=None):
+    """success, quality score, human interventions, stops by class, tokens/cost, wall time, repeats/errors."""
+    run = Path(run_dir)
+    r = json.loads((run / "run.json").read_text(encoding="utf-8"))
+    ev = run / "events.jsonl"
+    items = _command_items(ev.read_text(encoding="utf-8", errors="replace").splitlines()) if ev.is_file() else []
+    cmds = [str(i.get("command", "")) for i in items]
+    counts = {}
+    for c in cmds:
+        counts[c] = counts.get(c, 0) + 1
+    failed = sum(1 for i in items if (isinstance(i.get("exit_code"), int) and i["exit_code"] != 0)
+                 or i.get("status") == "failed")
+    log_f = run / "proxy" / "log.jsonl"
+    log = [json.loads(x) for x in log_f.read_text(encoding="utf-8").splitlines() if x.strip()] \
+        if log_f.is_file() else []
+    by_group, unnecessary = {}, {}
+    for x in log:
+        by_group[x["stop_group"]] = by_group.get(x["stop_group"], 0) + 1
+        if x["stop_group"] == "unnecessary":
+            unnecessary[x["stop_class"]] = unnecessary.get(x["stop_class"], 0) + 1
+    sc = json.loads(Path(score_json).read_text(encoding="utf-8")) if score_json else None
+    tok = r.get("tokens", {})
+    cost = None
+    if usd_per_mtok:
+        cost = round((tok.get("input_tokens", 0) * usd_per_mtok[0] + tok.get("output_tokens", 0) * usd_per_mtok[1])
+                     / 1e6, 6)
+    return {"schema": "trainer-stage-metrics/1", "etalon": r.get("etalon"), "exit": r.get("exit"),
+            "success": sc["passed"] if sc else None, "quality_score": sc["score"] if sc else None,
+            "first_failing_step": sc["first_failing_step"] if sc else None,
+            "proxy": (run / "proxy").is_dir(), "stops": len(log),
+            "human_interventions": sum(x["verdict"] == "answered" for x in log),
+            "unresolved": sum(x["verdict"] == "unresolved" for x in log),
+            "stops_by_group": by_group, "unnecessary_stops": unnecessary,
+            "tokens": tok, "cost_usd": cost, "wall_s": r.get("wall_s"), "commands": len(cmds),
+            "repeated_commands": sum(1 for n in counts.values() if n > 1), "failed_commands": failed,
+            "proxy_pack_reads": sum(1 for c in cmds if PROXY_PACK_READ.search(c))}
 
 
 # #1955 (orchestrator 2026-11-26): the scorer-only held-out keys (form_v2 key + sections) live on Drive under this
@@ -536,8 +724,12 @@ def cmd_run(a, bank):
         if not Path(s["path"]).is_file():
             raise TrainerError(f"source missing: {s['path']}")
     inputs, built, wt = out / "inputs", out / "built", out / "wt"
-    text = task_text(e, inputs, built)
+    use_proxy = bool(getattr(a, "proxy", False))
+    text = task_text(e, inputs, built, proxy=out / "proxy" if use_proxy else None)
     if a.dry_run:
+        if use_proxy:
+            n = len(proxy_pack(e)["answers"])  # built and leak-checked, not written
+            print(f"[proxy: {n} approved answers; pack checked, nothing written]")
         print(text)
         return 0
     inputs.mkdir(parents=True)
@@ -551,6 +743,8 @@ def cmd_run(a, bank):
     # archive -> scrub -> git init + one commit: no shared index/history/refs with ROOT, no origin
     scrubbed = practice_tree(ROOT, head, wt, e)
     overlay = apply_overlay(wt, a.overlay, e) if getattr(a, "overlay", None) else None
+    if use_proxy:
+        install_proxy(out, e)
     (out / "prompt.txt").write_text(text, encoding="utf-8")
     cmd = ["codex", "exec", "--ephemeral", "--ignore-user-config", "--disable", "memories", "-m",
            LANES[a.lane]["model"], "-c", "model_reasoning_effort=high", "--dangerously-bypass-approvals-and-sandbox",
@@ -595,7 +789,7 @@ def cmd_run(a, bank):
     qfile = built / "QUESTIONS.md"
     questions = count_questions(qfile.read_text(encoding="utf-8")) if qfile.exists() else 0
     rec = {"schema": "trainer-run/1", "etalon": e["id"], "lane": a.lane, "model": LANES[a.lane]["model"],
-           "origin_main": head, "exit": rc, "wall_s": wall, "tokens": tok, "commands": len(cmds),
+           "origin_main": head, "proxy": use_proxy, "exit": rc, "wall_s": wall, "tokens": tok, "commands": len(cmds),
            "questions": questions, "stages_used": used, "stages_bypassed": bypassed,
            "new_code_lines_outside_hooks": code, "new_code_files": code_files,
            "built_files": sorted(p.name for p in built.iterdir()), "hidden_repo_paths": e.get("hidden_repo_paths", []),
@@ -632,6 +826,24 @@ def bounds_step(built_rb, key_rb):
         return step("error", reason="non-finite bounds")
     dev = max(abs(a - b) for a, b in zip(vals[:6], vals[6:]))
     return step("pass" if dev <= TOL["bounds_m"] else "fail", max_corner_dev_m=round(dev, 4), tol_m=TOL["bounds_m"])
+
+
+def ucx_step(built_rb, key_rb):
+    """[#2066] UCX of one body: built has UCX_ meshes and their triangles fit the [D012] budget of its model
+    triangles (reg p.36-37). The key's UCX count is reported, not gated."""
+    from twinqa.geometry.ucx_audit import ucx_triangle_limit
+
+    def split(rb):
+        ucx = [m for m in rb["meshes"] if str(m.get("name", "")).upper().startswith("UCX_")]
+        model = sum(int(m.get("triangles", 0)) for m in rb["meshes"] if m not in ucx)
+        return ucx, model
+    ucx, model = split(built_rb)
+    kucx, _ = split(key_rb)
+    tris = sum(int(m.get("triangles", 0)) for m in ucx)
+    limit = ucx_triangle_limit(model)
+    ok = bool(ucx) and tris <= limit
+    return step("pass" if ok else "fail", ucx_meshes=len(ucx), ucx_triangles=tris, ucx_limit=limit,
+                model_triangles=model, key_ucx_meshes=len(kucx))
 
 
 def quad_share(rb):
@@ -747,7 +959,11 @@ def score(e, built, out_dir, vlm=False, allow_key=False):
         except (OSError, ValueError):
             steps["form"] = step("error", reason="no form.json")
         steps["form_v2"] = form_v2_step(e, fbx, work)
+        if e.get("target") == "ucx":
+            steps["ucx"] = ucx_step(brb, krb)
         steps["vlm"] = vlm_step(e, fbx, key, work) if vlm else step("not_run", reason="pass --vlm (2 judge calls)")
+    if e.get("target") != "ucx":  # [#2066] kept out of the share so earlier scores stay comparable
+        steps["ucx"] = step("not_applicable", reason="etalon target is not ucx")
     if e.get("target") == "package":
         steps["package"] = package_step(e, zip_, work)
     else:
@@ -957,6 +1173,11 @@ def main(argv=None):
     r.add_argument("--out", required=True)
     r.add_argument("--timeout-s", type=int, default=1800)
     r.add_argument("--dry-run", action="store_true")
+    r.add_argument("--proxy", action="store_true", help="[#2066] User Proxy answers stops from approved sources")
+    mt = sub.add_parser("metrics", help="[#2066] per-run metrics: success, quality, stops by class, cost, repeats")
+    mt.add_argument("run")
+    mt.add_argument("--score")
+    mt.add_argument("--usd-per-mtok", nargs=2, type=float, metavar=("IN", "OUT"))
     s = sub.add_parser("score")
     s.add_argument("etalon")
     s.add_argument("--built", required=True)
@@ -984,10 +1205,16 @@ def main(argv=None):
         bank = load_bank(a.bank)
         if a.cmd == "check":
             print(json.dumps({"etalons": len(bank["etalons"]),
-                              "practice_ready": [e["id"] for e in bank["etalons"] if e["practice_ready"]]}))
+                              "practice_ready": [e["id"] for e in bank["etalons"] if e["practice_ready"]],
+                              "stage_tasks": {t["id"]: t["set"] for t in stage_tasks(bank)}}))
             return 0
         if a.cmd == "run":
             return cmd_run(a, bank)
+        if a.cmd == "metrics":
+            if not (Path(a.run) / "run.json").is_file():
+                raise TrainerError(f"{a.run}: no run.json (not a trainer run dir)")
+            print(json.dumps(stage_metrics(a.run, a.score, a.usd_per_mtok), ensure_ascii=False, indent=1))
+            return 0
         if a.cmd == "ab":
             import trainer_ab
             if a.lane not in LANES:

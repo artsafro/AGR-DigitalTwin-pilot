@@ -25,8 +25,11 @@ def test_bank_lists_every_named_object_and_is_valid():
                  "sokolniki-body-v005", "vatutino-ground-v015", "tec26-ac08"):
         assert want in ids
     ready = [e for e in b["etalons"] if e["practice_ready"]]
-    assert {e["id"] for e in ready} == {"kpp1-v004", "g22-k2-stage1", "63a-stage1"}
-    assert all(e["split"] == "tuning" for e in ready)
+    assert {e["id"] for e in ready} == {"kpp1-v004", "g22-k2-stage1", "63a-stage1", "kpp1-ucx-v004",
+                                        "moskovsky-ground-v002"}
+    # #2066: a held_out etalon is practice-ready only as the stage set's final holdout check.
+    holdouts = {t["id"] for t in b["stage_tasks"]["tasks"] if t["set"] == "holdout"}
+    assert all(e["split"] == "tuning" or e["id"] in holdouts for e in ready)
     assert any(e["split"] == "held_out" and e["status"] == "complete" for e in b["etalons"])
 
 
