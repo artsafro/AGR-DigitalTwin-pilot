@@ -1,0 +1,3641 @@
+{
+ "schema": "view-face-self-ambiguity/1",
+ "card": "t_7f65d2eb (#143)",
+ "status": "finished",
+ "hypothesis": "refuted",
+ "verdicts": [
+  {
+   "b1_witness": true,
+   "b2_obr_clean": true,
+   "b3_collateral": false
+  },
+  {
+   "b1_witness": true,
+   "b2_obr_clean": true,
+   "b3_collateral": false
+  },
+  {
+   "b1_witness": true,
+   "b2_obr_clean": true,
+   "b3_collateral": false
+  }
+ ],
+ "upstream": {
+  "r141": "3716f5395667c17f8be8737313952aaa6285615c",
+  "r140": "ab33b7e4249f41232501d0c05534bd2793a15358"
+ },
+ "inputs141": {
+  "pdf": "d49053aee737518bb7e4eda4407fe001b29d424f19d14b40c064cc64c856f454",
+  "model": "1cdb088043489334b3cc22865fdcc4eccae1ae2cf6919636681b1c21693a024a",
+  "footprint": "106c4a5f4d2ea66449c6595f216d517ac441f540ccf2dcfc843a91c538645019"
+ },
+ "inputs140": {
+  "kpp1.dxf": {
+   "source": "G:\\Мой диск\\AGR-evidence\\139-view-face\\inputs\\kpp1_L01.dxf",
+   "member": null,
+   "sha256": "f2b6dda8e93ad7d692efbeed78520bdb2bfd981d078c06a413f64bd687006111",
+   "source_sha256": "f2b6dda8e93ad7d692efbeed78520bdb2bfd981d078c06a413f64bd687006111"
+  },
+  "kpp1.fbx": {
+   "source": "G:\\Мой диск\\AGR-assets\\KPP1\\delivered-customer-2026-11-14\\SM_77_05_0009005_117_002.zip",
+   "member": "SM_77_05_0009005_117_002.fbx",
+   "sha256": "5286f9897dad10c12c530366e3d9aa89095e8f21c2b7708ca707307bc2117778",
+   "source_sha256": "caef3a21acdb8aee1fee9e496e26bd9f9adaeef2a17272e8189bb634aee13ecf"
+  },
+  "ac08.dxf": {
+   "source": "G:\\Мой диск\\AGR-evidence\\tec26-oks\\AC08\\evidence-v002\\ac08.dxf",
+   "member": null,
+   "sha256": "964f038e59195ebd5f28b66f981dc96ee652437b7aaae8dcbdfc76255eb71a72",
+   "source_sha256": "964f038e59195ebd5f28b66f981dc96ee652437b7aaae8dcbdfc76255eb71a72"
+  },
+  "ac08.fbx": {
+   "source": "G:\\Мой диск\\AGR-assets\\tec26\\ac08\\source\\AC08_source_geomfinal.fbx",
+   "member": null,
+   "sha256": "9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd",
+   "source_sha256": "9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd"
+  }
+ },
+ "candidate_sha256": {
+  "run.py": "82df3e4d3afaa9eb6eb416f670d4ab7098d34af462349216fd04b1f99afa6695",
+  "sa.py": "b0511063a0b058e56e367499cbbddff08f719a82c0497e352c4ab31bb9c142c9"
+ },
+ "uv_lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+ "timings_s": [
+  45.113,
+  49.394,
+  46.516
+ ],
+ "median_s": 46.516,
+ "total_s": 142.794,
+ "pair_sha256": [
+  "a575d00772ac472be442f0562b1bea302a1b4e102d99875f92417c6814dc293f",
+  "a575d00772ac472be442f0562b1bea302a1b4e102d99875f92417c6814dc293f",
+  "a575d00772ac472be442f0562b1bea302a1b4e102d99875f92417c6814dc293f"
+ ],
+ "pair1": {
+  "obr22": {
+   "R2": {
+    "cases": [
+     {
+      "id": "2.1-2.25/full",
+      "kind": "full",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.25@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.7594,
+       "sep_px": 111
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.25@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.6703,
+       "sep_px": 111
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.25@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8586,
+       "sep_px": 111
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.4@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.867,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.4@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": 0.6927,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.4@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8732,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.6@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8629,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.6@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.6@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.864,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.1-2.25/mirror",
+      "kind": "mirror",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "А.2-Е.2/full",
+      "kind": "full",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.25@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.9917,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.25@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.25@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.9925,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.4@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.4@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.4@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.6@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.6@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.6@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/mirror",
+      "kind": "mirror",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/full",
+      "kind": "full",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.25@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.25@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.25@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.4@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.4@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.4@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.6@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.6@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.6@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/mirror",
+      "kind": "mirror",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "Е.2-А.2/full",
+      "kind": "full",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.25@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.9964,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.25@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.25@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.9937,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.4@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.4@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.4@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.6@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.6@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.6@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/mirror",
+      "kind": "mirror",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     }
+    ],
+    "tally": {
+     "C/full/long": {
+      "correct": 2,
+      "wrong": 0,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "C/full/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     },
+     "C/crop/long": {
+      "correct": 9,
+      "wrong": 0,
+      "abstain": 9,
+      "not_exercised": 0
+     },
+     "C/crop/short": {
+      "correct": 0,
+      "wrong": 4,
+      "abstain": 14,
+      "not_exercised": 0
+     },
+     "C/mirror/long": {
+      "correct": 2,
+      "wrong": 0,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "C/mirror/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     },
+     "SA/full/long": {
+      "correct": 2,
+      "wrong": 0,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "SA/full/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     },
+     "SA/crop/long": {
+      "correct": 2,
+      "wrong": 0,
+      "abstain": 16,
+      "not_exercised": 0
+     },
+     "SA/crop/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 18,
+      "not_exercised": 0
+     },
+     "SA/mirror/long": {
+      "correct": 2,
+      "wrong": 0,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "SA/mirror/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     }
+    },
+    "hashes": {
+     "pdf": "d49053aee737518bb7e4eda4407fe001b29d424f19d14b40c064cc64c856f454",
+     "model": "1cdb088043489334b3cc22865fdcc4eccae1ae2cf6919636681b1c21693a024a",
+     "footprint": "106c4a5f4d2ea66449c6595f216d517ac441f540ccf2dcfc843a91c538645019"
+    }
+   },
+   "R1": {
+    "cases": [
+     {
+      "id": "2.1-2.25/full",
+      "kind": "full",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.25@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.6712,
+       "sep_px": 111
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.25@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.25@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.755,
+       "sep_px": 111
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.4@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8293,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.4@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": 0.6923,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.4@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8332,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.6@0.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8077,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.6@0.5",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.1-2.25/crop0.6@1.0",
+      "kind": "crop",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8075,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.1-2.25/mirror",
+      "kind": "mirror",
+      "view": "2.1-2.25",
+      "gt": 90,
+      "C": "correct",
+      "SA": {
+       "outcome": "correct",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "А.2-Е.2/full",
+      "kind": "full",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.25@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.991,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.25@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.7361,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.25@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.993,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.4@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.5739,
+       "sep_px": 35
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.4@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8373,
+       "sep_px": 35
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.4@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.5761,
+       "sep_px": 35
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.6@0.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.4888,
+       "sep_px": 53
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.6@0.5",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.6592,
+       "sep_px": 53
+      }
+     },
+     {
+      "id": "А.2-Е.2/crop0.6@1.0",
+      "kind": "crop",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.4912,
+       "sep_px": 53
+      }
+     },
+     {
+      "id": "А.2-Е.2/mirror",
+      "kind": "mirror",
+      "view": "А.2-Е.2",
+      "gt": 180,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/full",
+      "kind": "full",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "wrong",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.25@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.25@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.25@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.4@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.4567,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.4@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "wrong",
+       "reason": "kept",
+       "self2": 0.2281,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.4@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.4384,
+       "sep_px": 178
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.6@0.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.462,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.6@0.5",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "wrong",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.25-2.1/crop0.6@1.0",
+      "kind": "crop",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.4498,
+       "sep_px": 267
+      }
+     },
+     {
+      "id": "2.25-2.1/mirror",
+      "kind": "mirror",
+      "view": "2.25-2.1",
+      "gt": 270,
+      "C": "wrong",
+      "SA": {
+       "outcome": "wrong",
+       "reason": "kept",
+       "self2": null,
+       "sep_px": 445
+      }
+     },
+     {
+      "id": "Е.2-А.2/full",
+      "kind": "full",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.25@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.9969,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.25@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.25@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.918,
+       "sep_px": 22
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.4@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.5785,
+       "sep_px": 35
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.4@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.8454,
+       "sep_px": 35
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.4@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.6@0.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.4982,
+       "sep_px": 53
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.6@0.5",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "wrong",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "periodic",
+       "self2": 0.3007,
+       "sep_px": 53
+      }
+     },
+     {
+      "id": "Е.2-А.2/crop0.6@1.0",
+      "kind": "crop",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     },
+     {
+      "id": "Е.2-А.2/mirror",
+      "kind": "mirror",
+      "view": "Е.2-А.2",
+      "gt": 0,
+      "C": "abstain",
+      "SA": {
+       "outcome": "abstain",
+       "reason": "upstream"
+      }
+     }
+    ],
+    "tally": {
+     "C/full/long": {
+      "correct": 1,
+      "wrong": 1,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "C/full/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     },
+     "C/crop/long": {
+      "correct": 8,
+      "wrong": 6,
+      "abstain": 4,
+      "not_exercised": 0
+     },
+     "C/crop/short": {
+      "correct": 0,
+      "wrong": 15,
+      "abstain": 3,
+      "not_exercised": 0
+     },
+     "C/mirror/long": {
+      "correct": 1,
+      "wrong": 1,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "C/mirror/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     },
+     "SA/full/long": {
+      "correct": 1,
+      "wrong": 1,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "SA/full/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     },
+     "SA/crop/long": {
+      "correct": 2,
+      "wrong": 2,
+      "abstain": 14,
+      "not_exercised": 0
+     },
+     "SA/crop/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 18,
+      "not_exercised": 0
+     },
+     "SA/mirror/long": {
+      "correct": 1,
+      "wrong": 1,
+      "abstain": 0,
+      "not_exercised": 0
+     },
+     "SA/mirror/short": {
+      "correct": 0,
+      "wrong": 0,
+      "abstain": 2,
+      "not_exercised": 0
+     }
+    },
+    "hashes": {
+     "pdf": "d49053aee737518bb7e4eda4407fe001b29d424f19d14b40c064cc64c856f454",
+     "model": "1cdb088043489334b3cc22865fdcc4eccae1ae2cf6919636681b1c21693a024a",
+     "footprint": "106c4a5f4d2ea66449c6595f216d517ac441f540ccf2dcfc843a91c538645019"
+    }
+   }
+  },
+  "k140": {
+   "rows": [
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "full",
+     "A": {
+      "answer": 270,
+      "best": 270,
+      "score": 0.9189,
+      "margin": 0.147,
+      "outcome": "correct"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.519644,
+      "180": -1.0,
+      "270": 0.865992
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": null,
+      "sep_px": 162
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "mirror",
+     "A": {
+      "answer": 90,
+      "best": 90,
+      "score": 0.9215,
+      "margin": 0.1476,
+      "outcome": "wrong"
+     },
+     "B": null,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.570325,
+      "180": -1.0,
+      "270": 0.594201
+     },
+     "changed_pixels": 9562,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 1.0,
+      "margin": 0.051,
+      "outcome": "abstain"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": 0.665414,
+      "90": 0.700416,
+      "180": 0.553548,
+      "270": 0.866408
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.686626,
+      "sep_px": 41
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9948,
+      "margin": 0.0353,
+      "outcome": "abstain"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": 0.650194,
+      "90": 0.700355,
+      "180": 0.617249,
+      "270": 0.853886
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.667194,
+      "sep_px": 41
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": 270,
+      "best": 270,
+      "score": 0.993,
+      "margin": 0.1866,
+      "outcome": "correct"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": 0.659222,
+      "90": 0.710041,
+      "180": 0.62928,
+      "270": 0.866429
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "periodic",
+      "self2": 0.768612,
+      "sep_px": 41
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.9545,
+      "margin": 0.0031,
+      "outcome": "abstain"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": 0.703259,
+      "90": 0.669504,
+      "180": 0.629504,
+      "270": 0.880275
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.619449,
+      "sep_px": 65
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.995,
+      "margin": 0.0341,
+      "outcome": "abstain"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": 0.560913,
+      "90": 0.698669,
+      "180": 0.543889,
+      "270": 0.865685
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.597138,
+      "sep_px": 65
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": 270,
+      "best": 270,
+      "score": 0.9935,
+      "margin": 0.1724,
+      "outcome": "correct"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": 0.638852,
+      "90": 0.712297,
+      "180": 0.599895,
+      "270": 0.866815
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.715521,
+      "sep_px": 65
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.9293,
+      "margin": 0.0172,
+      "outcome": "abstain"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.637842,
+      "180": -1.0,
+      "270": 0.8683
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.677603,
+      "sep_px": 97
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9951,
+      "margin": 0.0335,
+      "outcome": "abstain"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.660765,
+      "180": -1.0,
+      "270": 0.870314
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": null,
+      "sep_px": 97
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "1-4",
+     "gt_az": 270,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": 270,
+      "best": 270,
+      "score": 0.9922,
+      "margin": 0.2404,
+      "outcome": "correct"
+     },
+     "B": 270,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.6207,
+      "180": -1.0,
+      "270": 0.860083
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 270,
+      "reason": "kept",
+      "self2": 0.657998,
+      "sep_px": 97
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "full",
+     "A": {
+      "answer": 90,
+      "best": 90,
+      "score": 0.9165,
+      "margin": 0.1134,
+      "outcome": "correct"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.818384,
+      "180": -1.0,
+      "270": 0.562614
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": null,
+      "sep_px": 162
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "mirror",
+     "A": {
+      "answer": 270,
+      "best": 270,
+      "score": 0.9139,
+      "margin": 0.113,
+      "outcome": "wrong"
+     },
+     "B": null,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.565519,
+      "180": -1.0,
+      "270": 0.62816
+     },
+     "changed_pixels": 7550,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": 90,
+      "best": 90,
+      "score": 0.9925,
+      "margin": 0.1666,
+      "outcome": "correct"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": 0.58341,
+      "90": 0.834468,
+      "180": 0.581087,
+      "270": 0.602778
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.609712,
+      "sep_px": 41
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9963,
+      "margin": 0.0349,
+      "outcome": "abstain"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": 0.682003,
+      "90": 0.917008,
+      "180": 0.640203,
+      "270": 0.750211
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.707274,
+      "sep_px": 41
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.9928,
+      "margin": 0.0487,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.641446,
+      "90": 0.732998,
+      "180": 0.500812,
+      "270": 0.680618
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": 90,
+      "best": 90,
+      "score": 0.9931,
+      "margin": 0.1565,
+      "outcome": "correct"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": 0.549035,
+      "90": 0.809488,
+      "180": 0.527734,
+      "270": 0.608738
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.601371,
+      "sep_px": 65
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9964,
+      "margin": 0.0338,
+      "outcome": "abstain"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": 0.69838,
+      "90": 0.923941,
+      "180": 0.614758,
+      "270": 0.762166
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.602981,
+      "sep_px": 65
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.9506,
+      "margin": 0.0046,
+      "outcome": "abstain"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": 0.585108,
+      "90": 0.799411,
+      "180": 0.495539,
+      "270": 0.650124
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.585472,
+      "sep_px": 65
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": 90,
+      "best": 90,
+      "score": 0.9924,
+      "margin": 0.226,
+      "outcome": "correct"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.842723,
+      "180": -1.0,
+      "270": 0.669105
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.609028,
+      "sep_px": 97
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9965,
+      "margin": 0.0331,
+      "outcome": "abstain"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.885899,
+      "180": -1.0,
+      "270": 0.644363
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": null,
+      "sep_px": 97
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "4-1",
+     "gt_az": 90,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9272,
+      "margin": 0.0243,
+      "outcome": "abstain"
+     },
+     "B": 90,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.837985,
+      "180": -1.0,
+      "270": 0.632149
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 90,
+      "reason": "kept",
+      "self2": 0.510736,
+      "sep_px": 97
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "full",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.6599,
+      "margin": 0.0192,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.541731,
+      "90": 0.622906,
+      "180": 0.607719,
+      "270": 0.672417
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "mirror",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.66,
+      "margin": 0.019,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.641147,
+      "90": 0.642457,
+      "180": 0.48933,
+      "270": 0.678359
+     },
+     "changed_pixels": 2572,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9587,
+      "margin": 0.0264,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.669692,
+      "90": 0.712364,
+      "180": 0.680015,
+      "270": 0.670851
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.785587,
+      "90": 0.770436,
+      "180": 0.795551,
+      "270": 0.803961
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.9601,
+      "margin": 0.0309,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.665718,
+      "90": 0.734089,
+      "180": 0.636496,
+      "270": 0.690191
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.9267,
+      "margin": 0.0016,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.654789,
+      "90": 0.692864,
+      "180": 0.717414,
+      "270": 0.679867
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9953,
+      "margin": 0.014,
+      "outcome": "abstain"
+     },
+     "B": 180,
+     "scores_B": {
+      "0": 0.652994,
+      "90": 0.680582,
+      "180": 0.853999,
+      "270": 0.750533
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 180,
+      "reason": "kept",
+      "self2": 0.703821,
+      "sep_px": 29
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.9483,
+      "margin": 0.0076,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.633291,
+      "90": 0.672328,
+      "180": 0.585782,
+      "270": 0.711783
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.925,
+      "margin": 0.0014,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.699988,
+      "90": 0.675679,
+      "180": 0.695872,
+      "270": 0.731695
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.7979,
+      "margin": 0.066,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.568034,
+      "90": 0.659464,
+      "180": 0.81527,
+      "270": 0.722955
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "В-А",
+     "gt_az": 180,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.9459,
+      "margin": 0.0003,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.568249,
+      "90": 0.68718,
+      "180": 0.552716,
+      "270": 0.703485
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "full",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.6607,
+      "margin": 0.0173,
+      "outcome": "abstain"
+     },
+     "B": 0,
+     "scores_B": {
+      "0": 0.774611,
+      "90": 0.646948,
+      "180": 0.477956,
+      "270": 0.650615
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 0,
+      "reason": "kept",
+      "self2": null,
+      "sep_px": 73
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "mirror",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.6604,
+      "margin": 0.0157,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.577999,
+      "90": 0.640613,
+      "180": 0.517185,
+      "270": 0.62408
+     },
+     "changed_pixels": 2696,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9644,
+      "margin": 0.0357,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.792642,
+      "90": 0.727896,
+      "180": 0.614808,
+      "270": 0.672195
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.877953,
+      "90": 0.748183,
+      "180": 0.782373,
+      "270": 0.822384
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.9554,
+      "margin": 0.024,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.666161,
+      "90": 0.680578,
+      "180": 0.653175,
+      "270": 0.676946
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9558,
+      "margin": 0.0155,
+      "outcome": "abstain"
+     },
+     "B": 0,
+     "scores_B": {
+      "0": 0.85051,
+      "90": 0.656071,
+      "180": 0.567223,
+      "270": 0.688
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 0,
+      "reason": "kept",
+      "self2": 0.640689,
+      "sep_px": 29
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.9921,
+      "margin": 0.0251,
+      "outcome": "abstain"
+     },
+     "B": 0,
+     "scores_B": {
+      "0": 0.92817,
+      "90": 0.753593,
+      "180": 0.735704,
+      "270": 0.73986
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 0,
+      "reason": "kept",
+      "self2": 0.820982,
+      "sep_px": 29
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.9297,
+      "margin": 0.0016,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.743067,
+      "90": 0.719486,
+      "180": 0.589324,
+      "270": 0.724407
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.9532,
+      "margin": 0.008,
+      "outcome": "abstain"
+     },
+     "B": 0,
+     "scores_B": {
+      "0": 0.849882,
+      "90": 0.657492,
+      "180": 0.608242,
+      "270": 0.644989
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 0,
+      "reason": "kept",
+      "self2": 0.668309,
+      "sep_px": 44
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 270,
+      "score": 0.7975,
+      "margin": 0.0245,
+      "outcome": "abstain"
+     },
+     "B": 0,
+     "scores_B": {
+      "0": 0.907407,
+      "90": 0.692009,
+      "180": 0.701567,
+      "270": 0.711147
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": 0,
+      "reason": "kept",
+      "self2": 0.746477,
+      "sep_px": 44
+     }
+    },
+    {
+     "fixture": "kpp1",
+     "title": "А-В",
+     "gt_az": 0,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 180,
+      "score": 0.9288,
+      "margin": 0.0015,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.767631,
+      "90": 0.694025,
+      "180": 0.554688,
+      "270": 0.678126
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "full",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0302,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.714286,
+      "90": 0.714286,
+      "180": 0.714286,
+      "270": 0.714286
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "mirror",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0302,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.714286,
+      "90": 0.714286,
+      "180": 0.714286,
+      "270": 0.714286
+     },
+     "changed_pixels": 0,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.4082,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "270": 1.0
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.4082,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "270": 1.0
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.4082,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "270": 1.0
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.378,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.917874,
+      "90": 0.917874,
+      "180": 0.917874,
+      "270": 0.917874
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.378,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.917874,
+      "90": 0.917874,
+      "180": 0.917874,
+      "270": 0.917874
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.378,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.917874,
+      "90": 0.917874,
+      "180": 0.917874,
+      "270": 0.917874
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0714,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.7875,
+      "90": 0.7875,
+      "180": 0.7875,
+      "270": 0.7875
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0714,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.7875,
+      "90": 0.7875,
+      "180": 0.7875,
+      "270": 0.7875
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "А-Б",
+     "gt_az": 180,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0714,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.7875,
+      "90": 0.7875,
+      "180": 0.7875,
+      "270": 0.7875
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "full",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.006,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.624788,
+      "180": -1.0,
+      "270": 0.624788
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "mirror",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.006,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.624788,
+      "180": -1.0,
+      "270": 0.624788
+     },
+     "changed_pixels": 0,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2774,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.790123,
+      "90": 0.790123,
+      "180": 0.790123,
+      "270": 0.790123
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2774,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.790123,
+      "90": 0.790123,
+      "180": 0.790123,
+      "270": 0.790123
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2774,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.790123,
+      "90": 0.790123,
+      "180": 0.790123,
+      "270": 0.790123
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0259,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.744361,
+      "90": 0.702913,
+      "180": 0.744361,
+      "270": 0.702913
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2041,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.713693,
+      "90": 0.713693,
+      "180": 0.713693,
+      "270": 0.713693
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0259,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.744361,
+      "90": 0.702913,
+      "180": 0.744361,
+      "270": 0.702913
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.1741,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.69589,
+      "90": 0.666667,
+      "180": 0.69589,
+      "270": 0.666667
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.1741,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.69589,
+      "90": 0.666667,
+      "180": 0.69589,
+      "270": 0.666667
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "1-2",
+     "gt_az": 90,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.1741,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.69589,
+      "90": 0.666667,
+      "180": 0.69589,
+      "270": 0.666667
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "full",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0302,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.714286,
+      "90": 0.714286,
+      "180": 0.714286,
+      "270": 0.714286
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "mirror",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0302,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.714286,
+      "90": 0.714286,
+      "180": 0.714286,
+      "270": 0.714286
+     },
+     "changed_pixels": 0,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.4082,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "270": 1.0
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.4082,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "270": 1.0
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.4082,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 1.0,
+      "90": 1.0,
+      "180": 1.0,
+      "270": 1.0
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.378,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.917874,
+      "90": 0.917874,
+      "180": 0.917874,
+      "270": 0.917874
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.378,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.917874,
+      "90": 0.917874,
+      "180": 0.917874,
+      "270": 0.917874
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.378,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.917874,
+      "90": 0.917874,
+      "180": 0.917874,
+      "270": 0.917874
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0714,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.7875,
+      "90": 0.7875,
+      "180": 0.7875,
+      "270": 0.7875
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0714,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.7875,
+      "90": 0.7875,
+      "180": 0.7875,
+      "270": 0.7875
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "Б-А",
+     "gt_az": 0,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0714,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.7875,
+      "90": 0.7875,
+      "180": 0.7875,
+      "270": 0.7875
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "full",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.0531,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.655462,
+      "180": -1.0,
+      "270": 0.655462
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "mirror",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.0531,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": -1.0,
+      "90": 0.655462,
+      "180": -1.0,
+      "270": 0.655462
+     },
+     "changed_pixels": 204,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial25@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2774,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.790123,
+      "90": 0.790123,
+      "180": 0.790123,
+      "270": 0.790123
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial25@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2774,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.790123,
+      "90": 0.790123,
+      "180": 0.790123,
+      "270": 0.790123
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial25@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.5603,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.892857,
+      "90": 0.892857,
+      "180": 0.892857,
+      "270": 0.892857
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial40@0.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.0259,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.744361,
+      "90": 0.702913,
+      "180": 0.744361,
+      "270": 0.702913
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial40@0.5",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2041,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.713693,
+      "90": 0.713693,
+      "180": 0.713693,
+      "270": 0.713693
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial40@1.0",
+     "A": {
+      "answer": null,
+      "best": 0,
+      "score": 0.2501,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.808824,
+      "90": 0.770398,
+      "180": 0.808824,
+      "270": 0.770398
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial60@0.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.1741,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.69589,
+      "90": 0.666667,
+      "180": 0.69589,
+      "270": 0.666667
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial60@0.5",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.1617,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.693042,
+      "90": 0.669444,
+      "180": 0.693042,
+      "270": 0.669444
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    },
+    {
+     "fixture": "ac08",
+     "title": "2-1",
+     "gt_az": 270,
+     "case": "partial60@1.0",
+     "A": {
+      "answer": null,
+      "best": 90,
+      "score": 0.2243,
+      "margin": 0.0,
+      "outcome": "abstain"
+     },
+     "B": null,
+     "scores_B": {
+      "0": 0.683616,
+      "90": 0.712707,
+      "180": 0.683616,
+      "270": 0.712707
+     },
+     "changed_pixels": null,
+     "SA": {
+      "pick": null,
+      "reason": "upstream"
+     }
+    }
+   ],
+   "tally": {
+    "B.kpp1.full": {
+     "correct": 3,
+     "wrong": 0,
+     "abstain": 1,
+     "not_exercised": 0
+    },
+    "B.kpp1.partial": {
+     "correct": 22,
+     "wrong": 0,
+     "abstain": 14,
+     "not_exercised": 0
+    },
+    "B.kpp1.mirror": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 4,
+     "not_exercised": 0
+    },
+    "B.ac08.full": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 4,
+     "not_exercised": 0
+    },
+    "B.ac08.partial": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 36,
+     "not_exercised": 0
+    },
+    "B.ac08.mirror": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 1,
+     "not_exercised": 3
+    },
+    "SA.kpp1.full": {
+     "correct": 3,
+     "wrong": 0,
+     "abstain": 1,
+     "not_exercised": 0
+    },
+    "SA.kpp1.partial": {
+     "correct": 21,
+     "wrong": 0,
+     "abstain": 15,
+     "not_exercised": 0
+    },
+    "SA.kpp1.mirror": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 4,
+     "not_exercised": 0
+    },
+    "SA.ac08.full": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 4,
+     "not_exercised": 0
+    },
+    "SA.ac08.partial": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 36,
+     "not_exercised": 0
+    },
+    "SA.ac08.mirror": {
+     "correct": 0,
+     "wrong": 0,
+     "abstain": 1,
+     "not_exercised": 3
+    }
+   }
+  }
+ }
+}

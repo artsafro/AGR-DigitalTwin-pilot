@@ -1,6 +1,20 @@
 # Autoresearch #143: self-ambiguity abstain for elevation view -> face (OBSERVE)
 
-**Итог:** _заполняется после замеров (см. Round log)._
+**Итог: гипотеза H143 опровергнута (refuted), прогон завершён (finished), режим OBSERVE.** Проверка
+«самонеоднозначности» (если крупный кусок вида так же хорошо ложится на тот же фасад в другом месте —
+отказаться) убрала все 4 уверенно-неверных ответа OBR22 (короткие торцевые обрезки, NCC 0,99) и на
+OBR22 R2 даёт 0 ошибок из 40. Но на периодическом фасаде OBR22 она же сняла 7 из 9 верных ответов по
+длинным обрезкам (осталось 2, порог был ≥5): верные куски так же неоднозначны по положению (разрыв
+0,0001–0,009), как и неверные (0,000). Значит, порог тут не поможет: по ритму окон одного этажа нельзя
+отличить «верный фасад, неизвестное место» от «чужой фасад с тем же ритмом». На KPP1 (2D-линии) цена
+почти нулевая: 21 из 22 верных сохранено, 0 ошибок из 80; AC08 и так отказывается всегда (не измерено).
+
+Рекомендация для общего шага OKS «лист соответствия вид↔фасад»: включить эту проверку как защитный
+фильтр (она только добавляет отказы, ни разу не создала ошибку), но не как способ ответить. Вид,
+отклонённый как «периодический», должен уходить в вопрос с двумя кандидатами или на другие признаки
+(оси, ключевой план, имя вида, соседняя геометрия угла). Для внутренних углов Сокольников это значит:
+короткий вид с повторяющимся ритмом окон автоматически не привязывается — STOP 04 станет вопросом
+с двумя кандидатами, а не исчезнет. Проверка на Сокольниках — после закрытия #2001.
 
 ## Frozen protocol (committed before any measurement)
 
@@ -64,4 +78,46 @@ Replay (repo root, pilot host: Desktop OBR22 PDF, local OBR22 outputs, G: drive 
 
 ## Round log
 
-_pending_
+**Hypothesis H143: `refuted`** (bound 3 missed on OBR22 in every pair). **Run status: `finished`**,
+3/3 pairs, byte-identical semantic payloads (pair SHA-256 `a575d00772ac472be442f0562b1bea302a1b4e102d99875f92417c6814dc293f` x3).
+Wall time 45.113 / 49.394 / 46.516 s (median 46.516 s, total 142.794 s); budget never limiting.
+Measured at candidate commit = this branch (run.py / sa.py SHA-256 in the receipt), uv.lock `ba1bb998b19d...`.
+
+Parity (every pair): #141 R1 and R2 44/44 cases each equal to the #141 receipt; #140 88/88 V1 equal to the
+#139 receipt and 88/88 B answers equal to the #140 receipt; per-offset maxima equal upstream scores
+(asserted per case).
+
+| Arm (clean cases) | correct / wrong / abstain | vs baseline |
+|---|---:|---|
+| OBR22 C/R2 long full | 2 / 0 / 0 -> SA 2 / 0 / 0 | bound 2 held (gate cannot fire) |
+| OBR22 C/R2 long crops | 9 / 0 / 9 -> SA **2** / 0 / 16 | bound >= 5 **missed** |
+| OBR22 C/R2 short full + crops | 0 / 4 / 16 -> SA 0 / **0** / 20 | witness 4/4 -> `periodic` (bound 1 held) |
+| OBR22 total (40) | 11 / 4 / 25 -> SA 4 / 0 / 36 | bound 2 held (0 wrong) |
+| KPP1 B2D full | 3 / 0 / 1 -> SA 3 / 0 / 1 | held |
+| KPP1 B2D crops | 22 / 0 / 14 -> SA 21 / 0 / 15 | bound >= 16 held (lost `1-4 partial25@1.0`) |
+| AC08 B2D full + crops | 0 / 0 / 40 -> 0 / 0 / 40 | gate never reached: **not measured** |
+| P1 perturbation: OBR22 R1 (40) | 9 / 22 / 9 -> SA 3 / 3 / 34 | direction as expected; 1 full-view wrong cannot be gated |
+
+Gate evidence on OBR22 R2 (best score - same-face second peak): the 4 wrong end crops 0.0000 (self2 0.99);
+the 7 removed correct long crops 0.0001-0.0088; the 2 kept 0.177 and no far offset. The separations
+overlap, so no TAU (pre-registered or not) separates them on this fixture: it is not a threshold problem.
+
+Injected mirrors (separate): OBR22 R2 2/0/2 -> SA 2/0/2 (all 4 exercised); R1 1/1/2 -> 1/1/2 (full-view
+length, gate cannot act); KPP1 0/0/4 both; AC08 1 exercised abstain, 3 `not_exercised`. SA never added a wrong.
+
+Repair attempts in scope: (1) first run aborted in the KPP1 leg — `face_score_all` built a negative-length
+array when the view is wider than the padded model (upstream loop is then empty and returns -1); fixed with
+`max(0, ...)`, no change to scoring. Second run is the measured series above.
+
+**Not measured:** real untitled partial views (all crops synthetic), inner corners / non-axis faces,
+Sokolniki (held out, #2001 OPEN), AC08 (always abstains upstream), G22/Vatutino/TEC26 other buildings,
+Revit names/keyplans/axes as algorithms.
+
+Receipt: [`autoresearch-view-face-self-ambiguity/receipt.json`](autoresearch-view-face-self-ambiguity/receipt.json),
+SHA-256 `44e29553ae206851bc51a3498cb60ed69fba3a8b476915d75ac33190071e919e`. Evidence (receipt, 3 pair
+payloads, run log): `G:/Мой диск/AGR-evidence/143-view-face-self-ambiguity/` + `SHA256SUMS.txt`.
+Replay limited to the pilot host (Desktop OBR22 PDF, local OBR22 outputs, G: drive, Blender 4.4).
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --extra cad --extra pdf-review pytest -q docs/research/autoresearch-view-face-self-ambiguity/test_sa.py` — 5 passed.
+
+Full suite: deferred to merge batch (rule 68).

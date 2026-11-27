@@ -53,7 +53,7 @@ def face_score_all(score_mod, view, model, occupied, slack):
     presence = np.pad(occupied.any(axis=1)[:, None] & occupied, ((pad_y, pad_y), (slack, slack)))
     hits_view = score_mod.nearby(view)
     count_view = np.count_nonzero(view)
-    out = np.full(model.shape[1] - w + 1, -1.0)
+    out = np.full(max(0, model.shape[1] - w + 1), -1.0)
     for x in range(model.shape[1] - w + 1):
         columns = slice(x, x + w)
         top = np.flatnonzero(presence[:, columns].any(axis=1))
