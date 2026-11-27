@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -15,7 +16,7 @@ sys.path.insert(0, str(ROOT / 'tests'))
 
 import maf_atlas_ids as ids_mod  # noqa: E402
 import maf_atlas_layout as lay  # noqa: E402
-from test_maf_atlas_ids import _outs, _setup, _write  # noqa: E402
+from test_maf_atlas_ids import _outs, _setup, _write, _no_temps  # noqa: E402
 
 SPEC = {'version': 'v005', 'library': {'size': 1024, 'padding_px': 16, 'slot_px': {'L': 512, 'M': 256, 'S': 128},
                                       'decal_reserve_px': 256,
@@ -158,3 +159,79 @@ def test_json_and_md_on_one_file_or_evidence_on_tiles_fail(tmp_path):
     assert lay.main(args + ['--out-md', str(tmp_path / 'LAYOUT.json')]) == 2
     assert lay.main(args + ['--evidence-dir', str(ev)]) == 2
     assert not (tmp_path / 'layout.json').exists()
+
+
+# ================================================================ #524 review round 1 regressions (PR #543)
+# (merged from test_maf_atlas_guards.py, #1963)
+
+# ---------------------------------------------------------------- P1-2 output boundary: layout CLI
+
+def _layout(tmp_path, ids_json, ev, spec=None):
+    return ['--ids', str(ids_json), '--spec', _write(tmp_path / 'spec.json', spec or SPEC),
+            '--tiles-dir', str(ev), '--site-set', 's=' + _write(tmp_path / 'set.json', POS),
+            '--out-json', str(tmp_path / 'layout.json')]
+
+
+def test_layout_spec_named_like_the_old_temp_survives_and_sentinel_kept(tmp_path):
+    ids_json, ev = _ids_run(tmp_path)
+    spec = tmp_path / 'layout.json.partial'
+    _write(spec, SPEC)
+    (tmp_path / 'layout.md.partial').write_bytes(b'SENTINEL')
+    args = _layout(tmp_path, ids_json, ev)
+    args[args.index('--spec') + 1] = str(spec)
+    before = spec.read_bytes()
+    assert lay.main(args + ['--out-md', str(tmp_path / 'layout.md')]) == 0
+    assert spec.read_bytes() == before and (tmp_path / 'layout.md.partial').read_bytes() == b'SENTINEL'
+    assert (tmp_path / 'layout.json').is_file()
+
+
+def test_layout_png_on_the_ids_input_fails_and_ids_survive(tmp_path, capsys):
+    """Reviewer witness: ids JSON named ids.png, evidence dir png/, profile file ../ids.png."""
+    ids_json, ev = _ids_run(tmp_path)
+    ids_png = tmp_path / 'ids.png'
+    ids_png.write_bytes(ids_json.read_bytes())
+    spec = json.loads(json.dumps(SPEC))
+    spec['library']['profiles']['vpm']['file'] = '../ids.png'
+    args = _layout(tmp_path, ids_png, ev, spec=spec) + ['--evidence-dir', str(tmp_path / 'png')]
+    before = ids_png.read_bytes()
+    assert lay.main(args) == 2
+    assert ids_png.read_bytes() == before and not (tmp_path / 'layout.json').exists()
+    assert not (tmp_path / 'png').exists() or not any((tmp_path / 'png').iterdir())
+    assert 'file name' in capsys.readouterr().err
+
+
+@pytest.mark.parametrize('name, msg', [('set.json', 'resolves to an input'), ('layout.json', 'same file'),
+                                       ('npm.png', 'same file')])
+def test_layout_png_target_aliases_fail_before_any_write(tmp_path, capsys, name, msg):
+    ids_json, ev = _ids_run(tmp_path)
+    spec = json.loads(json.dumps(SPEC))
+    spec['library']['profiles']['vpm']['file'] = name
+    args = _layout(tmp_path, ids_json, ev, spec=spec) + ['--evidence-dir', str(tmp_path)]
+    pos_before = (tmp_path / 'set.json').read_bytes() if (tmp_path / 'set.json').exists() else None
+    assert lay.main(args) == 2
+    assert msg in capsys.readouterr().err
+    assert not (tmp_path / 'layout.json').exists() and not (tmp_path / 'npm.png').exists()
+    if pos_before is not None:
+        assert (tmp_path / 'set.json').read_bytes() == pos_before
+
+
+def test_layout_png_on_a_tile_input_fails(tmp_path, capsys):
+    ids_json, ev = _ids_run(tmp_path)
+    tile = next((ev / 'tiles').glob('ID_01_*.png'))
+    spec = json.loads(json.dumps(SPEC))
+    spec['library']['profiles']['vpm']['file'] = tile.name
+    before = tile.read_bytes()
+    args = _layout(tmp_path, ids_json, ev, spec=spec) + ['--evidence-dir', str(ev / 'tiles')]
+    assert lay.main(args) == 2
+    assert 'resolves to an input' in capsys.readouterr().err and tile.read_bytes() == before
+
+
+def test_layout_cli_fresh_process_distinct_paths_control(tmp_path):
+    ids_json, ev = _ids_run(tmp_path)
+    args = _layout(tmp_path, ids_json, ev) + ['--evidence-dir', str(tmp_path / 'png'),
+                                               '--out-md', str(tmp_path / 'layout.md')]
+    p = subprocess.run([sys.executable, str(ROOT / 'tools' / 'library' / 'maf_atlas_layout.py'), *args],
+                       capture_output=True, text=True, encoding='utf-8')
+    assert p.returncode == 0, p.stderr
+    assert sorted(x.name for x in (tmp_path / 'png').iterdir()) == ['npm.png', 'site.png', 'vpm.png']
+    assert _no_temps(tmp_path) == []

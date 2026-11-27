@@ -362,6 +362,7 @@ Pipeline core:
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
 - Railing inset `agr railing` (#1508) — [level spline JSON → Blender headless quad candidate](../procedure/node-r3-fence-railing-gates.md#shared-headless-builder); VPM/NPM geometry, explicit NPM-only budget opacity option, no Max UI.
 - Window generator `agr window-generate` (`tools/windows/generate.py`, #1405) — shared stdlib `windowgen_core` with Max `win.generate`; new type OBJ bundles + explicit inset plans, not building assembly. KPP1 diagnostics fail on unexplained drops; [usage and measurements](../../jobs/KPP1/window-command-1405/MEASUREMENTS.md).
+- POLY63 stage 2 `uv run python tools/windows/stage2.py 63A|63B|63C ...` (#1963) — the one command for windows + capsules on an accepted tower body; 63A/63B route to their job modules, the 63C route lives in the command; shared matcher stays `stage2_plan.claim_openings` (#1714).
 - Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
 - Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
   type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
