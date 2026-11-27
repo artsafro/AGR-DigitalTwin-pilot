@@ -623,6 +623,28 @@ def test_holdout_audit_fails_recursive_reads_above_evidence(tmp_path, cmd):
     _assert_holdout_read(tmp_path, cmd)
 
 
+@pytest.mark.parametrize("cmd", [
+    pytest.param("gci -r Microsoft.PowerShell.Core\\FileSystem::G:\\", id="provider-root"),
+    pytest.param("gci -r G:roof", id="drive-relative"),
+    pytest.param("rg roof /cygdrive/g/", id="cygwin-root"),
+    pytest.param("rg roof /mnt/g", id="wsl-root"),
+])
+def test_holdout_audit_fails_drive_alias_reads(tmp_path, cmd):
+    _assert_holdout_read(tmp_path, cmd)
+
+
+@pytest.mark.parametrize("alias", [
+    "FileSystem::G:", "Microsoft.PowerShell.Core\\fIlEsYsTeM::g:",
+    "-LiteralPath:FileSystem::G:", "G:", "/cygdrive/g", "/MNT/G",
+])
+def test_holdout_audit_distinguishes_alias_reads_from_direct_bank_paths(tmp_path, alias):
+    bank_path = "/Мой диск/AGR-evidence/1855-trainer-v0/bank"
+    refused = [f'rg roof "{alias}{suffix}"' for suffix in ("", "/other", bank_path + "/..", bank_path + "X")]
+    clean = [f'rg roof "{alias}{suffix}"' for suffix in (bank_path, bank_path + "/README.md")]
+    run = _run_dir(tmp_path, clean + refused + clean)
+    assert T.key_dir_reads(run) == refused
+
+
 def _assert_holdout_read(tmp_path, cmd):
     run = _run_dir(tmp_path, ["ls inputs", cmd])
     assert T.key_dir_reads(run) == [cmd]
@@ -644,6 +666,9 @@ def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
                               "gci -Recurse C:", "cd /c && rg roof .", "rg roof C:/g/notes.txt",
                               "rg roof docs/g/notes.txt", "rg roof docs/g:/notes.txt",
                               "rg roof C:/workspace", "rg roof docs/log:/notes.txt",
+                              "gci -r FileSystem::C:\\", "rg roof C:/mnt/g/notes.txt",
+                              "rg roof /mnt/c", "rg roof /cygdrive/gg", "rg roof /mnt/g-drive",
+                              "git log -g", "rg -g '*.py' .",
                               "python tools/trainer/kit.py --keep-going"])
     assert T.key_dir_reads(run) == []
     assert T.score(e, str(run / "built"), tmp_path / "w")["steps"]["holdout"]["status"] == "pass"
