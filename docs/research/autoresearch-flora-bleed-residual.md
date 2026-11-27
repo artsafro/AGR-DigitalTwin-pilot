@@ -60,6 +60,48 @@ Replay (needs the Drive folder; inputs hash-checked):
 uv run --frozen python docs/research/autoresearch-flora-bleed-residual-harness/run.py C:/x/ev_t_b9389ba4/<new>
 ```
 
-## Result
+## Result — H133 confirmed (OBSERVE, nothing applied to production or delivered files)
 
-Pending (filled after the frozen run).
+**Итог (русский):** остаточное «посветление» принятого атласа флоры Ватутино v004 объяснено. Края вырезанных
+растений в исходных картах светлые (белая кайма внутри маски): яркость кромки 2 px **≈180** против **≈110**
+внутри, светлее в **18 из 18** видов. `bleed_rgb` заливает прозрачные пиксели цветом соседних пикселей
+растения, то есть именно этой каймой. Вариант C1 — та же заливка, но цвет берётся из внутренней части растения
+(маска, сжатая на 2 px); сами пиксели растения и прозрачность не меняются. Метрика #129 на атласе НПМ 2048:
+**43,83 → 9,69** (худшая ячейка 128, знак +13,9 → −0,4), лучше или не хуже в **18/18** ячейках, порядок
+«отклонённый v003 хуже» сохранён **18/18**. Цепочка воспроизводит принятый v004 побайтно (паритет). Это
+улучшение метрики, а не принятое Артёмом визуальное улучшение: рендера и приёмки не было. Сама светлая кайма
+видимых пикселей не исправлялась — это отдельная задача.
+
+| State | Atlas score (worst cell) | Worst cell | Signed mean there |
+|---|---:|---|---:|
+| v003 NPM delivered, rejected | 61.2935 | 128 | +18.51 |
+| v004 NPM delivered, accepted | 43.8285 | 128 | +13.93 |
+| B = production `bleed_rgb` rebuilt | **43.8285** | 128 | +13.93 |
+| C1 = interior-seeded bleed | **9.6865** | 128 | −0.40 |
+
+- **P0 parity:** B maps differ from `run-v004/maps` in 0 pixels (18/18 species); B atlas differs from delivered
+  v004 in 0 RGB and 0 opacity pixels.
+- **Gates:** (1) 9.6865 ≤ 40.83 and ≤ 39.45 — pass; (2) C1 ≤ B + 0.5 in 18/18 cells (two near-floor A101 cells
+  move 236: 3.03 → 3.39, 242: 5.12 → 3.06) — pass; (3) C1 < v003 in 18/18 — pass; (4) C1 opacity atlas = B
+  (0 pixels differ) — pass; (5) controls on C1: N0 = 9.6865, 0 changed; P1 = 65.7772 (+56.1), 2,728,056
+  changed texels, 18/18 cells up; P3 = 9.6865, 0/18 cells changed with 2,140,928 changed texels (exercised).
+- **Exercised:** every species changes 553,255–3,063,881 transparent pixels vs v003 maps under both B and C1;
+  C1 differs from v004 maps in all 18 species; erosion fallback used 0 times. No `not_exercised` input.
+- **Diagnostic (expected direction confirmed):** ring luma > interior luma in 18/18 species; partial-opacity
+  pixels in the maps 0 (all maps are binary 0/255 — the fringe is RGB, not alpha). The two A101 species
+  (`pos09_242`, `pos16_236`) have the smallest ring excess (+25, +5) and were already the low cells in #129.
+- **Clean stability:** 3 full-chain rounds byte-identical (round SHA-256 `efda449b…54ce`), status
+  `series_complete`, wall **413.31 s** (cap 1800 s), manifest preflight and postflight 86/86 rows matched.
+  Determinism of computation only.
+- **Not measured:** render-time look and Artem's visual acceptance, VPM 4096 atlas, held-out (no second labelled
+  opacity pair), the visible pale ring itself (C1 keeps plant pixels byte-equal by design).
+
+What a follow-up PR would change (OBSERVE, not done here): seed `flora_route_a.bleed_rgb` from the plant mask
+eroded by 2 px; regression = this harness's parity + the 43.83 → ≤ 40.83 bound on the pinned fixture; then a
+Blender render pair for Artem before any re-delivery.
+
+Evidence: `G:/Мой диск/AGR-evidence/133-flora-bleed-residual/` (C1 atlas PNGs + receipt, `SHA256SUMS.txt`).
+Receipt [`receipt_r133.json`](autoresearch-flora-bleed-residual-harness/receipt_r133.json) SHA-256
+`e2ac0fac3bd06a7bbf931d748702f66efbe1d12a43d62fb5915022a6fcddeab0` (Git LF bytes; Drive CRLF copy
+`b98bf719…59db`). Environment: Python 3.14.7, NumPy 2.5.3, Pillow 12.3.0 (`uv run --frozen`). Replay is limited
+to machines with the Drive folder; inputs are hash-checked by the full-manifest preflight.
