@@ -632,6 +632,27 @@ def _min_gap(pieces):
     return min(gaps) if gaps else math.inf
 
 
+def test_ucx_variant_blender_driver_loads_without_editable_install(tmp_path):
+    # Expose NumPy as Blender does, without processing the venv's editable .pth files.
+    probe = """\
+import importlib.util
+import runpy
+import sys
+
+sys.path.append(sys.argv[2])
+assert importlib.util.find_spec('twinqa') is None
+driver = runpy.run_path(sys.argv[1])
+assert driver['ub'].ucx_triangle_limit(300_000) == 15_000
+"""
+    driver = TOOLS / "ucx" / "build_variant_blender.py"
+    numpy_site = Path(np.__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, "-I", "-S", "-c", probe, str(driver), str(numpy_site)],
+        cwd=tmp_path, capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode == 0, result.stderr
+
+
 @pytest.mark.parametrize("variant", uv_.VARIANTS)
 def test_every_variant_gives_separated_closed_pieces(variant):
     v, t = _scene_arrays(((0, 0, 0), (4, 4, 3)), ((6, 0, 0), (9, 3, 6)), ((4, 0, 0), (6, 1, 1)))
