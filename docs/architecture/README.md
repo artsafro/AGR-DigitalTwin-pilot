@@ -442,6 +442,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/guard-vs-dcg-2026-11 | [research/guard-vs-dcg-2026-11.md](../research/guard-vs-dcg-2026-11.md) |  |
 | research/ifc-intake-src-contract | [research/ifc-intake-src-contract.md](../research/ifc-intake-src-contract.md) |  |
 | research/job-artifact-name-contract | [research/job-artifact-name-contract.md](../research/job-artifact-name-contract.md) |  |
+| research/job-retro-moskovsky-sosh1200-pr1979 | [research/job-retro-moskovsky-sosh1200-pr1979.md](../research/job-retro-moskovsky-sosh1200-pr1979.md) |  |
 | research/job-retro-tec26-oks-pr570 | [research/job-retro-tec26-oks-pr570.md](../research/job-retro-tec26-oks-pr570.md) |  |
 | research/job-retro-tec26-oks-pr574 | [research/job-retro-tec26-oks-pr574.md](../research/job-retro-tec26-oks-pr574.md) |  |
 | research/job-retro-vyatskaya-tow02-pr392 | [research/job-retro-vyatskaya-tow02-pr392.md](../research/job-retro-vyatskaya-tow02-pr392.md) |  |
