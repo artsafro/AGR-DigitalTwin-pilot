@@ -1,11 +1,11 @@
 """MAF material ID list v008 = v007 + IDs 34-39 of the Staropetrovskiy job [D358].
 
-New-case, job-local: `tools/library/maf_ids_version.py` takes one `add` with a spec-row move and a merge undo (v006/v007);
+New-case: `tools/library/maf_ids_version.py` takes one `add` with a spec-row move and a merge undo (v006/v007);
 v008 adds six IDs and neither moves rows nor undoes a merge. Reuses the tool's hashing, flat-tile regex and refusal
-rules; generalising the tool to a list of adds is left to Codex (backlog).
+rules without changing the older release pipeline.
 
 Usage:
-  py -3 jobs/staropetrovskiy-maf-lib/scripts/maf_ids_v008.py --change library/maf/material_ids_v008_change.json \
+  uv run python -m tools.library.maf_ids_v008 --change library/maf/material_ids_v008_change.json \
       --prev-md library/maf/material_ids_v007.md --tiles-in <v007 evidence dir> --tiles-out <new dir> \
       --out-json library/maf/material_ids_v008.json --out-md library/maf/material_ids_v008.md
 Input validation errors exit 2 before writing outputs.
@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import importlib.util
 import json
 import os
 import re
@@ -22,11 +21,7 @@ import shutil
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[3]
-_spec = importlib.util.spec_from_file_location("maf_ids_version", ROOT / "tools/library/maf_ids_version.py")
-T = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(T)
-ChangeError, sha256_file = T.ChangeError, T.sha256_file
+from .maf_ids_version import ChangeError, FLAT_RE, sha256_file
 
 
 def relocate_evidence(document: dict, markdown: str, sources: dict[str, str]) -> str:
@@ -94,7 +89,7 @@ def apply_change(prev: dict, change: dict) -> dict:
     new["approval"] = dict(change["approval"], decision=change["decision"], previous=prev["approval"])
     new["changelog"] = list(prev.get("changelog", [])) + [change["changelog"]]
     new["derived_from"] = {"path": change["from"], "version": prev["version"]}
-    new["generated_by"] = "jobs/staropetrovskiy-maf-lib/scripts/maf_ids_v008.py"
+    new["generated_by"] = "tools/library/maf_ids_v008.py"
     return new
 
 
@@ -129,7 +124,7 @@ def write_tiles(change: dict, tiles_in: str, tiles_out: str, prev: dict) -> list
     from PIL import Image
     for a in change["adds"]:  # validated before anything is written
         tile = a["tile"]
-        flat = T.FLAT_RE.search(tile["source"])
+        flat = FLAT_RE.search(tile["source"])
         if not flat or flat.group(1) != tile["flat"] or tile["flat"] != a["target"]:
             raise ChangeError(f"id {a['id']}: tile source must state (flat {a['target']})")
     for t in prev["evidence"]["tiles"]:

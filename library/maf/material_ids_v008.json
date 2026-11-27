@@ -30,7 +30,7 @@
  },
  "scope": "First working version approved 2026-10-22; corrections only from project use, each change a new version with a changelog line. Nothing reassigned in the library.",
  "match_method": "atlas cell -> id by colour distance to the id targets (mean |dRGB| <= {'solid': 18.0, 'patterned': 12.0}); the agent did not inspect the images visually - Artem verifies on the contact sheet",
- "generated_by": "jobs/staropetrovskiy-maf-lib/scripts/maf_ids_v008.py",
+ "generated_by": "tools/library/maf_ids_v008.py",
  "inputs": {
   "materials": {
    "path": "library/maf/fbx_materials.json",

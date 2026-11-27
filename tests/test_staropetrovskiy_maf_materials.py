@@ -3,14 +3,15 @@
 import hashlib
 import json
 from pathlib import Path
-import runpy
 
 import pytest
+
+from tools.library.maf_ids_v008 import ChangeError, relocate_evidence
 
 ROOT = Path(__file__).resolve().parents[1]
 MAF = ROOT / "library/maf"
 MATERIALS = ROOT / "library/materials"
-SCRIPT = ROOT / "jobs/staropetrovskiy-maf-lib/scripts/maf_ids_v008.py"
+
 KEYS = (
     "paint_ral1015", "paint_ral1002", "paint_ral8004", "concrete_beige",
     "glass_frosted_white", "glass_frosted_amber",
@@ -75,7 +76,6 @@ def test_historical_missing_map_inventory_preserves_diagnostics():
 
 @pytest.mark.parametrize("case", ["match", "wrong bytes", "absent hash", "inconsistent prior path"])
 def test_inherited_path_hash_binding(case, tmp_path):
-    module = runpy.run_path(str(SCRIPT))
     relocated = tmp_path / "atlas.png"
     relocated.write_bytes(b"synthetic atlas")
     digest = hashlib.sha256(b"synthetic atlas").hexdigest()
@@ -83,7 +83,7 @@ def test_inherited_path_hash_binding(case, tmp_path):
     document = {"input": {"path": old, "sha256": digest}, "observations": [{"path": old}]}
     sources = {digest: relocated.as_posix()}
     if case == "match":
-        md = module["relocate_evidence"](document, f"`{old}`", sources)
+        md = relocate_evidence(document, f"`{old}`", sources)
         assert md == f"`{relocated.as_posix()}`"
         assert document["input"] == {"path": relocated.as_posix(), "sha256": digest}
         assert document["observations"] == [{"path": relocated.as_posix()}]
@@ -97,5 +97,5 @@ def test_inherited_path_hash_binding(case, tmp_path):
     else:
         document["observations"][0]["sha256"] = "0" * 64
         error = "inconsistent recorded SHA256"
-    with pytest.raises(module["ChangeError"], match=error):
-        module["relocate_evidence"](document, f"`{old}`", sources)
+    with pytest.raises(ChangeError, match=error):
+        relocate_evidence(document, f"`{old}`", sources)

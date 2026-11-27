@@ -39,6 +39,6 @@ The historical [batch report](#historical-rules-and-results) is retained at
   map, not the brief's `#8E402A`. The active MAF pointer stays on v007 [D358].
 - Shared `materials_v003.json` adds the six keys at IDs 54–59. Released v001 and v002 stay byte-for-byte;
   v003 relocates the inherited Verona reference to a SHA-256-matched Drive copy.
-- The v008 change manifest pins the six job inputs and the inherited evidence relocations. The job-local
-  script regenerates metadata and copied/generated tiles in a new directory; it does not read or write
-  model geometry. See its `--help` for arguments.
+- The v008 change manifest pins the six job inputs and the inherited evidence relocations.
+  `uv run python -m tools.library.maf_ids_v008 --help` describes the metadata and tile replay;
+  it writes to a new directory and does not read or write model geometry.
