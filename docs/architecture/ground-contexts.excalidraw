@@ -81,7 +81,7 @@
    "x": 955.0,
    "y": 110,
    "width": 470,
-   "height": 317.5,
+   "height": 370.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#ffec99",
@@ -123,7 +123,7 @@
    "x": 963.0,
    "y": 120.0,
    "width": 454,
-   "height": 297.5,
+   "height": 350.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -143,13 +143,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Общее ядро: номер тайла UDIM\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); Ground передаёт в udim_of_cell\nплотный индекс покрытия с 1001 независимо от рабочих ID и\nпишет таблицу ground-udim.json / .md [D399]; опциональный\nVPM readback поверхности Ground в ground_json_to_fbx.py\n(#1876) сверяет тайлы по материалам с переданным\nJSON-эталоном и явным export_meta.json — отдельно от\nвалидации итогового сводного FBX участка в agr validate\n--scene (V008 в twinqa.scene); дубли формулы охраняет\nкарта НПМ (contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError\nudim_of_cell: целые (столбец, ряд) -> номер тайла",
+   "text": "Общее ядро: номер тайла UDIM\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); Ground передаёт в udim_of_cell\nплотный индекс покрытия с 1001 независимо от рабочих ID и\nпишет таблицу ground-udim.json / .md [D399]; опциональный\nVPM readback поверхности Ground в ground_json_to_fbx.py\n(#1876) сверяет тайлы по материалам с переданным\nJSON-эталоном и явным export_meta.json и берёт из ядра\nтолько udim_of_cell и FACE_TOL — правило грань → ячейка\n(нижняя граница + FACE_TOL, отказ при пересечении тайла)\nлокальное, не face_tile (#1930); отдельно от валидации\nитогового сводного FBX участка в agr validate --scene\n(V008 в twinqa.scene); дубли формулы охраняет карта НПМ\n(contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError\nudim_of_cell: целые (столбец, ряд) -> номер тайла",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e5fc34e422e7f3b2",
-   "originalText": "Общее ядро: номер тайла UDIM\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); Ground передаёт в udim_of_cell\nплотный индекс покрытия с 1001 независимо от рабочих ID и\nпишет таблицу ground-udim.json / .md [D399]; опциональный\nVPM readback поверхности Ground в ground_json_to_fbx.py\n(#1876) сверяет тайлы по материалам с переданным\nJSON-эталоном и явным export_meta.json — отдельно от\nвалидации итогового сводного FBX участка в agr validate\n--scene (V008 в twinqa.scene); дубли формулы охраняет\nкарта НПМ (contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError\nudim_of_cell: целые (столбец, ряд) -> номер тайла",
+   "originalText": "Общее ядро: номер тайла UDIM\nВладелец: adapters/max/agr_tools/udimtile_core.py\nодна функция UDIM (#1337); Ground передаёт в udim_of_cell\nплотный индекс покрытия с 1001 независимо от рабочих ID и\nпишет таблицу ground-udim.json / .md [D399]; опциональный\nVPM readback поверхности Ground в ground_json_to_fbx.py\n(#1876) сверяет тайлы по материалам с переданным\nJSON-эталоном и явным export_meta.json и берёт из ядра\nтолько udim_of_cell и FACE_TOL — правило грань → ячейка\n(нижняя граница + FACE_TOL, отказ при пересечении тайла)\nлокальное, не face_tile (#1930); отдельно от валидации\nитогового сводного FBX участка в agr validate --scene\n(V008 в twinqa.scene); дубли формулы охраняет карта НПМ\n(contexts.yaml)\n\nudim_tile: u, v -> номер тайла 1001 + ⌊u⌋ + 10·⌊v⌋; вне\nобласти — UdimDomainError\nface_tile: углы UV грани -> тайл грани; угол в чужом\nтайле — UdimCrossTileError\nudim_of_cell: целые (столбец, ряд) -> номер тайла",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -157,7 +157,7 @@
    "id": "e8b8779b8f489e86",
    "type": "rectangle",
    "x": 40.0,
-   "y": 487.5,
+   "y": 540.0,
    "width": 470,
    "height": 212.5,
    "angle": 0,
@@ -191,7 +191,7 @@
    "id": "ed4e9eac2280ec03",
    "type": "text",
    "x": 48.0,
-   "y": 497.5,
+   "y": 550.0,
    "width": 454,
    "height": 192.5,
    "angle": 0,
@@ -227,7 +227,7 @@
    "id": "eb4da33cf7db574a",
    "type": "rectangle",
    "x": 650.0,
-   "y": 487.5,
+   "y": 540.0,
    "width": 470,
    "height": 265.0,
    "angle": 0,
@@ -265,7 +265,7 @@
    "id": "e6321df6a0ab0d98",
    "type": "text",
    "x": 658.0,
-   "y": 497.5,
+   "y": 550.0,
    "width": 454,
    "height": 245.0,
    "angle": 0,
@@ -301,7 +301,7 @@
    "id": "e6d720b192cc3ebb",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 487.5,
+   "y": 540.0,
    "width": 470,
    "height": 615.0,
    "angle": 0,
@@ -343,7 +343,7 @@
    "id": "e594a5e4af19e3bb",
    "type": "text",
    "x": 1268.0,
-   "y": 497.5,
+   "y": 550.0,
    "width": 454,
    "height": 595.0,
    "angle": 0,
@@ -379,7 +379,7 @@
    "id": "e3b32b4a8117835a",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 487.5,
+   "y": 540.0,
    "width": 470,
    "height": 177.5,
    "angle": 0,
@@ -413,7 +413,7 @@
    "id": "e235e3fa5de9ad90",
    "type": "text",
    "x": 1878.0,
-   "y": 497.5,
+   "y": 550.0,
    "width": 454,
    "height": 157.5,
    "angle": 0,
@@ -449,7 +449,7 @@
    "id": "e99c9ff8d7aad5df",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 679.0,
+   "y": 731.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -483,7 +483,7 @@
    "id": "e6464ee46504a376",
    "type": "text",
    "x": 1878.0,
-   "y": 689.0,
+   "y": 741.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -519,7 +519,7 @@
    "id": "ebefb8015300e481",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1162.5,
+   "y": 1215.0,
    "width": 470,
    "height": 247.5,
    "angle": 0,
@@ -553,7 +553,7 @@
    "id": "ee52b2029f7668ad",
    "type": "text",
    "x": 1268.0,
-   "y": 1172.5,
+   "y": 1225.0,
    "width": 454,
    "height": 227.5,
    "angle": 0,
@@ -589,9 +589,9 @@
    "id": "e1aaee826150be1a",
    "type": "rectangle",
    "x": 650.0,
-   "y": 1162.5,
+   "y": 1215.0,
    "width": 470,
-   "height": 405.0,
+   "height": 475.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -613,6 +613,10 @@
     {
      "type": "text",
      "id": "edec5de9abb756a8"
+    },
+    {
+     "type": "arrow",
+     "id": "e5eebcc6a205d125"
     }
    ],
    "updated": 1,
@@ -623,9 +627,9 @@
    "id": "edec5de9abb756a8",
    "type": "text",
    "x": 658.0,
-   "y": 1172.5,
+   "y": 1225.0,
    "width": 454,
-   "height": 385.0,
+   "height": 455.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -645,13 +649,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (src/dt_ai/placement/site.py,\nD329): на профиль master JSON + (offset или readback) +\n(FBX или mesh); OBJ сборщика напрямую не подключён. Выход\n— сцены Blender (.blend через\ntools/blender/placement_instance.py) и отчёты; Max\natlas_groundel принимает узлы сцены Max, общий\nавтоматический мост не установлен (ручной перенос не\nисключён). Одобренные исключения (exceptions ->\napply_ground_exceptions в scene.py) привязаны к снимку\nточки и sha256 Ground и пишутся в results.json; новый\nпромах вне Ground (engine_report.json) останавливает\nстрогий прогон в make_plan (выход 1) до инстансирования.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом (point_outside_ground\n/ point_over_ground_hole)\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
+   "text": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (src/dt_ai/placement/site.py,\nD329): на профиль master JSON + (offset или readback) +\n(FBX или mesh); OBJ сборщика напрямую не подключён. Вход\nreadback (#1930): из JSON readback берётся только\nplacement_offset — в отчёт пишутся хеши мастера и FBX и\nсам offset, но не путь и не хеш readback, связь readback\nс этим FBX и мастером не проверяется (дефекты readback —\n#1921). Выход — сцены Blender (.blend через\ntools/blender/placement_instance.py) и отчёты; Max\natlas_groundel принимает узлы сцены Max, общий\nавтоматический мост не установлен (ручной перенос не\nисключён). Одобренные исключения (exceptions ->\napply_ground_exceptions в scene.py) привязаны к снимку\nточки и sha256 Ground и пишутся в results.json; новый\nпромах вне Ground (engine_report.json) останавливает\nстрогий прогон в make_plan (выход 1) до инстансирования.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом (point_outside_ground\n/ point_over_ground_hole)\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "e1aaee826150be1a",
-   "originalText": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (src/dt_ai/placement/site.py,\nD329): на профиль master JSON + (offset или readback) +\n(FBX или mesh); OBJ сборщика напрямую не подключён. Выход\n— сцены Blender (.blend через\ntools/blender/placement_instance.py) и отчёты; Max\natlas_groundel принимает узлы сцены Max, общий\nавтоматический мост не установлен (ручной перенос не\nисключён). Одобренные исключения (exceptions ->\napply_ground_exceptions в scene.py) привязаны к снимку\nточки и sha256 Ground и пишутся в results.json; новый\nпромах вне Ground (engine_report.json) останавливает\nстрогий прогон в make_plan (выход 1) до инстансирования.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом (point_outside_ground\n/ point_over_ground_hole)\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
+   "originalText": "Расстановка МАФ и Флоры\nВладелец: src/dt_ai/placement/engine.py\nagr place / dt place site (src/dt_ai/placement/site.py,\nD329): на профиль master JSON + (offset или readback) +\n(FBX или mesh); OBJ сборщика напрямую не подключён. Вход\nreadback (#1930): из JSON readback берётся только\nplacement_offset — в отчёт пишутся хеши мастера и FBX и\nсам offset, но не путь и не хеш readback, связь readback\nс этим FBX и мастером не проверяется (дефекты readback —\n#1921). Выход — сцены Blender (.blend через\ntools/blender/placement_instance.py) и отчёты; Max\natlas_groundel принимает узлы сцены Max, общий\nавтоматический мост не установлен (ручной перенос не\nисключён). Одобренные исключения (exceptions ->\napply_ground_exceptions в scene.py) привязаны к снимку\nточки и sha256 Ground и пишутся в results.json; новый\nпромах вне Ground (engine_report.json) останавливает\nстрогий прогон в make_plan (выход 1) до инстансирования.\n\nplace: точки, вершины и треугольники Ground, библиотека,\nseed -> экземпляр или отказ с кодом (point_outside_ground\n/ point_over_ground_hole)\nbottom_face_verdict: нижняя грань в мире -> удалить / на\nпроверку (D095, D096)\nreport_json: отчёт -> строгий JSON: тот же seed и вход ->\nте же байты",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -659,7 +663,7 @@
    "id": "ec200d9f38e404b3",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1627.5,
+   "y": 1750.0,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -693,7 +697,7 @@
    "id": "e5ab4a0c3613fa92",
    "type": "text",
    "x": 1878.0,
-   "y": 1637.5,
+   "y": 1760.0,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -729,7 +733,7 @@
    "id": "e60d41a03d1639d1",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 1836.5,
+   "y": 1959.0,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -763,7 +767,7 @@
    "id": "ed13348e89d7b0b7",
    "type": "text",
    "x": 1878.0,
-   "y": 1846.5,
+   "y": 1969.0,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -799,9 +803,9 @@
    "id": "ef92cdfbed336437",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 1627.5,
+   "y": 1750.0,
    "width": 470,
-   "height": 422.5,
+   "height": 457.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "#b2f2bb",
@@ -831,6 +835,10 @@
     {
      "type": "arrow",
      "id": "ece9d6a9b10a4b1a"
+    },
+    {
+     "type": "arrow",
+     "id": "e5eebcc6a205d125"
     }
    ],
    "updated": 1,
@@ -841,9 +849,9 @@
    "id": "ea61552795c00c21",
    "type": "text",
    "x": 1268.0,
-   "y": 1637.5,
+   "y": 1760.0,
    "width": 454,
-   "height": 402.5,
+   "height": 437.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -863,13 +871,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "Helper экспорта поверхности Ground (отдельно от сводного\nэкспорта участка и ZIP)\nВладелец: tools/blender/ground_json_to_fbx.py\nhelper Blender выгружает только поверхность Ground из\nJSON-мастера, не OBJ сборщика и не сводный экспорт\nучастка после расстановки МАФ и Флоры; канонического\nсборщика участка нет (исторический\njobs/VATUTINO-SITE/assemble_delivery.py — только\nсвидетельство триангулированного FBX сдачи, не маршрут и\nне D366); D366 отдельно требует нетриангулированный\nрабочий FBX рядом с пакетом (вне ZIP); опциональный\nreadback (#1876) сверяет VPM UDIM поверхности Ground по\nматериалам с переданным JSON-эталоном и явным\nexport_meta.json — отдельно от валидации итогового\nсводного FBX участка в agr validate\n\nbuild: JSON-мастер поверхности Ground, адрес -> FBX\nповерхности Ground и метаданные экспорта (не сводный\nэкспорт участка и не рабочий FBX D366)\nreadback: FBX поверхности Ground, эталонный JSON-мастер\n-> опциональный readback (при явном VPM export_meta.json\n— по-материальная сверка UDIM с эталоном, #1876; отдельно\nот валидации итогового сводного FBX участка)",
+   "text": "Helper экспорта поверхности Ground (отдельно от сводного\nэкспорта участка и ZIP)\nВладелец: tools/blender/ground_json_to_fbx.py\nhelper Blender выгружает только поверхность Ground из\nJSON-мастера, не OBJ сборщика и не сводный экспорт\nучастка после расстановки МАФ и Флоры; канонического\nсборщика участка нет (исторический\njobs/VATUTINO-SITE/assemble_delivery.py — только\nсвидетельство триангулированного FBX сдачи, не маршрут и\nне D366); D366 отдельно требует нетриангулированный\nрабочий FBX рядом с пакетом (вне ZIP); опциональный\nreadback (#1876) сверяет VPM UDIM поверхности Ground по\nматериалам с переданным JSON-эталоном и явным\nexport_meta.json — отдельно от валидации итогового\nсводного FBX участка в agr validate\n\nbuild: JSON-мастер поверхности Ground, адрес -> FBX\nповерхности Ground и метаданные экспорта (не сводный\nэкспорт участка и не рабочий FBX D366)\nreadback: FBX поверхности Ground, эталонный JSON-мастер\n-> опциональный readback (при явном VPM export_meta.json\n— по-материальная сверка UDIM с эталоном через\nudim_of_cell и FACE_TOL ядра и локальное правило грань →\nячейка, #1876; placement_offset в отчёте; отдельно от\nвалидации итогового сводного FBX участка)",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "left",
    "verticalAlign": "middle",
    "containerId": "ef92cdfbed336437",
-   "originalText": "Helper экспорта поверхности Ground (отдельно от сводного\nэкспорта участка и ZIP)\nВладелец: tools/blender/ground_json_to_fbx.py\nhelper Blender выгружает только поверхность Ground из\nJSON-мастера, не OBJ сборщика и не сводный экспорт\nучастка после расстановки МАФ и Флоры; канонического\nсборщика участка нет (исторический\njobs/VATUTINO-SITE/assemble_delivery.py — только\nсвидетельство триангулированного FBX сдачи, не маршрут и\nне D366); D366 отдельно требует нетриангулированный\nрабочий FBX рядом с пакетом (вне ZIP); опциональный\nreadback (#1876) сверяет VPM UDIM поверхности Ground по\nматериалам с переданным JSON-эталоном и явным\nexport_meta.json — отдельно от валидации итогового\nсводного FBX участка в agr validate\n\nbuild: JSON-мастер поверхности Ground, адрес -> FBX\nповерхности Ground и метаданные экспорта (не сводный\nэкспорт участка и не рабочий FBX D366)\nreadback: FBX поверхности Ground, эталонный JSON-мастер\n-> опциональный readback (при явном VPM export_meta.json\n— по-материальная сверка UDIM с эталоном, #1876; отдельно\nот валидации итогового сводного FBX участка)",
+   "originalText": "Helper экспорта поверхности Ground (отдельно от сводного\nэкспорта участка и ZIP)\nВладелец: tools/blender/ground_json_to_fbx.py\nhelper Blender выгружает только поверхность Ground из\nJSON-мастера, не OBJ сборщика и не сводный экспорт\nучастка после расстановки МАФ и Флоры; канонического\nсборщика участка нет (исторический\njobs/VATUTINO-SITE/assemble_delivery.py — только\nсвидетельство триангулированного FBX сдачи, не маршрут и\nне D366); D366 отдельно требует нетриангулированный\nрабочий FBX рядом с пакетом (вне ZIP); опциональный\nreadback (#1876) сверяет VPM UDIM поверхности Ground по\nматериалам с переданным JSON-эталоном и явным\nexport_meta.json — отдельно от валидации итогового\nсводного FBX участка в agr validate\n\nbuild: JSON-мастер поверхности Ground, адрес -> FBX\nповерхности Ground и метаданные экспорта (не сводный\nэкспорт участка и не рабочий FBX D366)\nreadback: FBX поверхности Ground, эталонный JSON-мастер\n-> опциональный readback (при явном VPM export_meta.json\n— по-материальная сверка UDIM с эталоном через\nudim_of_cell и FACE_TOL ядра и локальное правило грань →\nячейка, #1876; placement_offset в отчёте; отдельно от\nвалидации итогового сводного FBX участка)",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -877,7 +885,7 @@
    "id": "e89f7e0e63e2fdf9",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 2110.0,
+   "y": 2267.5,
    "width": 470,
    "height": 195.0,
    "angle": 0,
@@ -901,6 +909,10 @@
     {
      "type": "text",
      "id": "ef7093cdc86ed328"
+    },
+    {
+     "type": "arrow",
+     "id": "e6ac71e480e93dd3"
     }
    ],
    "updated": 1,
@@ -911,7 +923,7 @@
    "id": "ef7093cdc86ed328",
    "type": "text",
    "x": 1878.0,
-   "y": 2120.0,
+   "y": 2277.5,
    "width": 454,
    "height": 175.0,
    "angle": 0,
@@ -947,7 +959,7 @@
    "id": "ed319371ca8c4f40",
    "type": "rectangle",
    "x": 1870.0,
-   "y": 2319.0,
+   "y": 2476.5,
    "width": 470,
    "height": 35.0,
    "angle": 0,
@@ -981,7 +993,7 @@
    "id": "e7ce9eed157c440c",
    "type": "text",
    "x": 1878.0,
-   "y": 2329.0,
+   "y": 2486.5,
    "width": 454,
    "height": 15.0,
    "angle": 0,
@@ -1017,7 +1029,7 @@
    "id": "e1648b9a5855f96c",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 2110.0,
+   "y": 2267.5,
    "width": 470,
    "height": 317.5,
    "angle": 0,
@@ -1048,7 +1060,11 @@
     },
     {
      "type": "arrow",
-     "id": "ed2a004e58f5be5c"
+     "id": "e1604c8d882fa176"
+    },
+    {
+     "type": "arrow",
+     "id": "e6ac71e480e93dd3"
     }
    ],
    "updated": 1,
@@ -1059,7 +1075,7 @@
    "id": "e55a50708fc05498",
    "type": "text",
    "x": 1268.0,
-   "y": 2120.0,
+   "y": 2277.5,
    "width": 454,
    "height": 297.5,
    "angle": 0,
@@ -1095,7 +1111,7 @@
    "id": "e7b912642e1534e2",
    "type": "rectangle",
    "x": 1260.0,
-   "y": 2487.5,
+   "y": 2645.0,
    "width": 470,
    "height": 615.0,
    "angle": 0,
@@ -1122,7 +1138,7 @@
     },
     {
      "type": "arrow",
-     "id": "ed2a004e58f5be5c"
+     "id": "e1604c8d882fa176"
     }
    ],
    "updated": 1,
@@ -1133,7 +1149,7 @@
    "id": "e3212abb34fd11e1",
    "type": "text",
    "x": 1268.0,
-   "y": 2497.5,
+   "y": 2655.0,
    "width": 454,
    "height": 595.0,
    "angle": 0,
@@ -1169,7 +1185,7 @@
    "id": "e894e55bebb4e908",
    "type": "arrow",
    "x": 1120.0,
-   "y": 620.0,
+   "y": 672.5,
    "width": 630.0,
    "height": 327.5,
    "angle": 0,
@@ -1241,7 +1257,7 @@
    "id": "e8e1cd87a06dc51b",
    "type": "text",
    "x": 1435.0,
-   "y": 423.75,
+   "y": 476.25,
    "width": 120,
    "height": 87.5,
    "angle": 0,
@@ -1277,9 +1293,9 @@
    "id": "e072a256e1114918",
    "type": "arrow",
    "x": 1425.0,
-   "y": 268.75,
+   "y": 295.0,
    "width": 325.0,
-   "height": 526.25,
+   "height": 552.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1315,19 +1331,19 @@
     ],
     [
      20.0,
-     198.75
+     225.0
     ],
     [
      325.0,
-     198.75
+     225.0
     ],
     [
      325.0,
-     526.25
+     552.5
     ],
     [
      305.0,
-     526.25
+     552.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1349,7 +1365,7 @@
    "id": "ebeb6b9e51e65bf1",
    "type": "text",
    "x": 1690.0,
-   "y": 596.25,
+   "y": 648.75,
    "width": 120,
    "height": 70.0,
    "angle": 0,
@@ -1385,9 +1401,9 @@
    "id": "e2fb7c8f9af212b6",
    "type": "arrow",
    "x": 1425.0,
-   "y": 268.75,
+   "y": 295.0,
    "width": 325.0,
-   "height": 1570.0,
+   "height": 1683.75,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1423,19 +1439,19 @@
     ],
     [
      20.0,
-     198.75
+     225.0
     ],
     [
      325.0,
-     198.75
+     225.0
     ],
     [
      325.0,
-     1570.0
+     1683.75
     ],
     [
      305.0,
-     1570.0
+     1683.75
     ]
    ],
    "lastCommittedPoint": null,
@@ -1457,9 +1473,9 @@
    "id": "ed08ab0fd06cdcfe",
    "type": "text",
    "x": 1690.0,
-   "y": 1412.0,
+   "y": 1464.5,
    "width": 120,
-   "height": 87.5,
+   "height": 157.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1479,13 +1495,13 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "опциональная\nпо-материальная\nсверка VPM при\nreadback FBX\n(#1876)",
+   "text": "readback VPM\n(#1876): из\nядра только\nudim_of_cell и\nFACE_TOL;\nправило грань →\nячейка\nлокальное, не\nface_tile",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
    "containerId": "e2fb7c8f9af212b6",
-   "originalText": "опциональная\nпо-материальная\nсверка VPM при\nreadback FBX\n(#1876)",
+   "originalText": "readback VPM\n(#1876): из\nядра только\nudim_of_cell и\nFACE_TOL;\nправило грань →\nячейка\nлокальное, не\nface_tile",
    "autoResize": true,
    "lineHeight": 1.25
   },
@@ -1493,9 +1509,9 @@
    "id": "ece9d6a9b10a4b1a",
    "type": "arrow",
    "x": 1730.0,
-   "y": 1838.75,
+   "y": 1978.75,
    "width": 20.0,
-   "height": 430.0,
+   "height": 447.5,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1531,11 +1547,11 @@
     ],
     [
      20.0,
-     430.0
+     447.5
     ],
     [
      0.0,
-     430.0
+     447.5
     ]
    ],
    "lastCommittedPoint": null,
@@ -1557,9 +1573,9 @@
    "id": "ed0e09716a39511c",
    "type": "text",
    "x": 1690.0,
-   "y": 2010.0,
+   "y": 2045.0,
    "width": 120,
-   "height": 87.5,
+   "height": 315.0,
    "angle": 0,
    "strokeColor": "#1e1e1e",
    "backgroundColor": "transparent",
@@ -1579,21 +1595,129 @@
    "updated": 1,
    "link": null,
    "locked": false,
-   "text": "FBX поверхности\nGround\n(отдельно от\nсводного\nучастка)",
+   "text": "FBX поверхности\n— лишь часть\nвхода agr\npackage-vpm:\nещё export_meta\n(адрес, Z,\nSHA-256) и\nT_<A>_*.png;\nGeoJSON — с\n--object и\nисточниковым\nпревью (helper\nпишет thumbnail\nunknown);\n--no-geojson —\nбез GeoJSON; не\nсводный FBX\nучастка",
    "fontSize": 14,
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
    "containerId": "ece9d6a9b10a4b1a",
-   "originalText": "FBX поверхности\nGround\n(отдельно от\nсводного\nучастка)",
+   "originalText": "FBX поверхности\n— лишь часть\nвхода agr\npackage-vpm:\nещё export_meta\n(адрес, Z,\nSHA-256) и\nT_<A>_*.png;\nGeoJSON — с\n--object и\nисточниковым\nпревью (helper\nпишет thumbnail\nunknown);\n--no-geojson —\nбез GeoJSON; не\nсводный FBX\nучастка",
    "autoResize": true,
    "lineHeight": 1.25
   },
   {
-   "id": "ed2a004e58f5be5c",
+   "id": "e5eebcc6a205d125",
    "type": "arrow",
    "x": 1730.0,
-   "y": 2268.75,
+   "y": 1978.75,
+   "width": 630.0,
+   "height": 526.25,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1607590170,
+   "version": 1,
+   "versionNonce": 1582687444,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e8c730f97a2c6bd5"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     -268.75
+    ],
+    [
+     -490.0,
+     -268.75
+    ],
+    [
+     -490.0,
+     -526.25
+    ],
+    [
+     -610.0,
+     -526.25
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "ef92cdfbed336437",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e1aaee826150be1a",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e8c730f97a2c6bd5",
+   "type": "text",
+   "x": 1435.0,
+   "y": 1578.75,
+   "width": 120,
+   "height": 262.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 688958345,
+   "version": 1,
+   "versionNonce": 330211567,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "опционально:\nFBX поверхности\n+ readback.json\n(placement_offs\net) вместе с\nJSON-мастером;\nхеши мастера и\nFBX пишутся,\nфайл readback\nне хешируется и\nне сверяется с\nFBX; OBJ\nсборщика\nJSON-мастер не\nпишет",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e5eebcc6a205d125",
+   "originalText": "опционально:\nFBX поверхности\n+ readback.json\n(placement_offs\net) вместе с\nJSON-мастером;\nхеши мастера и\nFBX пишутся,\nфайл readback\nне хешируется и\nне сверяется с\nFBX; OBJ\nсборщика\nJSON-мастер не\nпишет",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e1604c8d882fa176",
+   "type": "arrow",
+   "x": 1730.0,
+   "y": 2426.25,
    "width": 20.0,
    "height": 526.25,
    "angle": 0,
@@ -1607,14 +1731,14 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 472568738,
+   "seed": 495887704,
    "version": 1,
-   "versionNonce": 1343130629,
+   "versionNonce": 1635596984,
    "isDeleted": false,
    "boundElements": [
     {
      "type": "text",
-     "id": "e47dc3eeb171bcec"
+     "id": "e9e619527c57941d"
     }
    ],
    "updated": 1,
@@ -1654,10 +1778,10 @@
    }
   },
   {
-   "id": "e47dc3eeb171bcec",
+   "id": "e9e619527c57941d",
    "type": "text",
    "x": 1690.0,
-   "y": 2523.12,
+   "y": 2680.62,
    "width": 120,
    "height": 17.5,
    "angle": 0,
@@ -1671,9 +1795,9 @@
    "groupIds": [],
    "frameId": null,
    "roundness": null,
-   "seed": 1704474758,
+   "seed": 866633627,
    "version": 1,
-   "versionNonce": 159246938,
+   "versionNonce": 1759562190,
    "isDeleted": false,
    "boundElements": null,
    "updated": 1,
@@ -1684,8 +1808,116 @@
    "fontFamily": 2,
    "textAlign": "center",
    "verticalAlign": "middle",
-   "containerId": "ed2a004e58f5be5c",
+   "containerId": "e1604c8d882fa176",
    "originalText": "ZIP / FBX сдачи",
+   "autoResize": true,
+   "lineHeight": 1.25
+  },
+  {
+   "id": "e6ac71e480e93dd3",
+   "type": "arrow",
+   "x": 1730.0,
+   "y": 2426.25,
+   "width": 630.0,
+   "height": 166.5,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 1568044551,
+   "version": 1,
+   "versionNonce": 479878357,
+   "isDeleted": false,
+   "boundElements": [
+    {
+     "type": "text",
+     "id": "e6e34029319948b1"
+    }
+   ],
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "points": [
+    [
+     0.0,
+     0.0
+    ],
+    [
+     20.0,
+     0.0
+    ],
+    [
+     20.0,
+     105.25
+    ],
+    [
+     630.0,
+     105.25
+    ],
+    [
+     630.0,
+     -61.25
+    ],
+    [
+     610.0,
+     -61.25
+    ]
+   ],
+   "lastCommittedPoint": null,
+   "startArrowhead": null,
+   "endArrowhead": "arrow",
+   "elbowed": false,
+   "startBinding": {
+    "elementId": "e1648b9a5855f96c",
+    "focus": 0,
+    "gap": 4
+   },
+   "endBinding": {
+    "elementId": "e89f7e0e63e2fdf9",
+    "focus": 0,
+    "gap": 4
+   }
+  },
+  {
+   "id": "e6e34029319948b1",
+   "type": "text",
+   "x": 1748.0,
+   "y": 2496.5,
+   "width": 120,
+   "height": 70.0,
+   "angle": 0,
+   "strokeColor": "#1e1e1e",
+   "backgroundColor": "transparent",
+   "fillStyle": "solid",
+   "strokeWidth": 1,
+   "strokeStyle": "solid",
+   "roughness": 0,
+   "opacity": 100,
+   "groupIds": [],
+   "frameId": null,
+   "roundness": null,
+   "seed": 306711154,
+   "version": 1,
+   "versionNonce": 1564638067,
+   "isDeleted": false,
+   "boundElements": null,
+   "updated": 1,
+   "link": null,
+   "locked": false,
+   "text": "те же ZIP (agr\nchecker; хеши с\nagr validate не\nсверяются)",
+   "fontSize": 14,
+   "fontFamily": 2,
+   "textAlign": "center",
+   "verticalAlign": "middle",
+   "containerId": "e6ac71e480e93dd3",
+   "originalText": "те же ZIP (agr\nchecker; хеши с\nagr validate не\nсверяются)",
    "autoResize": true,
    "lineHeight": 1.25
   }

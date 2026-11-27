@@ -34,59 +34,89 @@ def _hints(problems):
     return [p for p in problems if HINT in p]
 
 
+def _check(events, contexts, cmap):
+    """What `route_map.py --check` evaluates per map: stage/owner coverage, then the #1930 relation hints."""
+    return route_map.route_coverage(events, contexts, cmap) + route_map.relation_hints(cmap)
+
+
+def test_route_coverage_contract_is_unchanged():
+    events, contexts, cmap = _synthetic([])
+    assert route_map.route_coverage(events, contexts, cmap) == []   # hints live only in relation_hints
+
+
 # ---------------------------------------------------------------- checker controls
 def test_linked_control_has_no_relation_warning():
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b"), ("c", "b")])
-    assert route_map.route_coverage(events, contexts, cmap) == []
+    assert _check(events, contexts, cmap) == []
 
 
 def test_accidental_isolation_warns_once_per_node_and_stays_a_warning():
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b")])
     for _ in range(2):   # repeat: same input, same single warning
-        problems = route_map.route_coverage(events, contexts, cmap)
+        problems = _check(events, contexts, cmap)
         assert problems == [f"WARNING: context map: context 'c' {HINT}"]
     # no relations at all: every node (kernel included) is a hint, none an error
     events, contexts, cmap = _synthetic([])
-    problems = route_map.route_coverage(events, contexts, cmap)
+    problems = _check(events, contexts, cmap)
     assert sorted(problems) == sorted(f"WARNING: context map: context {c!r} {HINT}" for c in "kabc")
     cmap.pop("relations")
-    assert len(_hints(route_map.route_coverage(events, contexts, cmap))) == 4
+    assert len(_hints(_check(events, contexts, cmap))) == 4
 
 
 def test_documented_isolation_is_silent():
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b")], c={"isolated_ru": "ручной шаг без передачи"})
-    assert route_map.route_coverage(events, contexts, cmap) == []
+    assert _check(events, contexts, cmap) == []
 
 
 def test_self_loop_counts_as_incident():
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b"), ("c", "c")])
-    assert route_map.route_coverage(events, contexts, cmap) == []
+    assert _check(events, contexts, cmap) == []
+
+
+def test_generated_probe_hint_iff_unlinked_and_unexplained():
+    """Seeded brute force: 400 random relation sets x random isolation notes over k, a, b, c."""
+    import random
+    rng = random.Random(1930)
+    nodes = "kabc"
+    for _ in range(400):
+        rels = [(rng.choice(nodes), rng.choice(nodes)) for _ in range(rng.randint(0, 4))]
+        incident = {e for r in rels for e in r}
+        notes = {n: {"isolated_ru": "намеренно"} for n in nodes if n not in incident and rng.random() < 0.5}
+        events, contexts, cmap = _synthetic(rels, **notes)
+        expected = sorted(f"WARNING: context map: context {n!r} {HINT}"
+                          for n in nodes if n not in incident and n not in notes)
+        assert sorted(_check(events, contexts, cmap)) == expected
+        linked = sorted(incident)
+        if linked:   # a note on any linked node turns the same input into a schema error
+            stale = {**notes, linked[0]: {"isolated_ru": "устарело"}}
+            with pytest.raises(route_map.SchemaError, match="stale"):
+                _check(*_synthetic(rels, **stale))
 
 
 @pytest.mark.parametrize("value", ["", "   ", "no cyrillic", None, [], float("nan"), float("inf"), 1])
 def test_bad_isolation_explanation_is_a_schema_error(value):
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b")], c={"isolated_ru": value})
     with pytest.raises(route_map.SchemaError, match="isolated_ru"):
-        route_map.route_coverage(events, contexts, cmap)
+        _check(events, contexts, cmap)
 
 
 def test_stale_isolation_explanation_on_a_linked_node_is_a_schema_error():
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b"), ("b", "c")], b={"isolated_ru": "устарело"})
     with pytest.raises(route_map.SchemaError, match="context b: isolated_ru .*relation"):
-        route_map.route_coverage(events, contexts, cmap)
+        _check(events, contexts, cmap)
 
 
 def test_schema_and_owner_errors_are_preserved_next_to_the_hint():
     events, contexts, cmap = _synthetic([("k", "a"), ("a", "b")])
     cmap["contexts"][1]["owner"] = "other.py"           # owner mismatch stays a problem (not a WARNING)
-    problems = route_map.route_coverage(events, contexts, cmap)
+    problems = _check(events, contexts, cmap)
     assert "context map: 'b' owner other.py differs from the route's b.py" in problems
     assert _hints(problems) == [f"WARNING: context map: context 'c' {HINT}"]
     events["stages"].append({"id": "t", "context": "missing"})   # stage coverage stays a problem
-    assert "context map: stage context 'missing' is missing" in route_map.route_coverage(events, contexts, cmap)
+    assert "context map: stage context 'missing' is missing" in _check(events, contexts, cmap)
     events, contexts, cmap = _synthetic([("k", "ghost")])   # unknown relation end stays a schema error
     with pytest.raises(route_map.SchemaError, match="unknown context 'ghost'"):
-        route_map.route_coverage(events, contexts, cmap)
+        _check(events, contexts, cmap)
 
 
 def test_isolation_explanation_is_not_inherited_through_ref():
@@ -127,7 +157,7 @@ def test_ground_map_has_no_unexplained_isolated_node():
     events = route_map.load_routes(ROOT)["ground-route"]
     cmap = _ground()
     contexts = route_map.load_context_maps(ROOT)["contexts"]
-    assert _hints(route_map.route_coverage(events, contexts, cmap)) == []
+    assert _hints(_check(events, contexts, cmap)) == []
     incident = {e for r in cmap["relations"] for e in (r["from"], r["to"])}
     documented = {c["id"] for c in cmap["contexts"] if "isolated_ru" in c}
     assert documented == {"dcc", "uv-atlas", "npm", "ucx"}
@@ -151,8 +181,9 @@ def test_ground_export_to_placement_names_readback_and_its_limits():
 
 def test_udim_core_attribution_is_only_udim_of_cell_and_face_tol():
     label = _rel(_ground(), "udim", "ground-export")
-    assert "udim_of_cell" in label and "FACE_TOL" in label and "локальн" in label
-    assert not re.search(r"\b(face_tile|udim_tile)\b", label)
+    assert "udim_of_cell" in label and "FACE_TOL" in label and "локальн" in label and "не face_tile" in label
+    assert "udim_tile" not in label.replace("udim_of_cell", "")
+    assert re.findall(r"\bface_tile\b", label) == ["face_tile"]   # only in the negation
 
 
 def test_removed_1915_handoffs_stay_removed():
