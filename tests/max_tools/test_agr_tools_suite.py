@@ -850,6 +850,45 @@ def test_block_accents_contrast_against_window_and_base(theme, window, base, tex
         model.block_accent(212, (160, 160, 160), (60, 60, 60), (255, 255, 255))  # unreachable -> error
 
 
+@pytest.mark.parametrize('surface', ['canonical', 'plan', 'guide', 'tooltip', 'macro'])
+def test_maf_clearance_is_a_diagnostic_not_a_regulatory_check(surface):
+    tool = 'place.maf_checks'
+    suite = roadmap.load_file(SUITE)
+    action = model.action(tool)
+    if surface == 'canonical':
+        row = next(row for row in suite['rows'] if row['id'] == tool)
+        assert row['mode'] == 'read'
+        assert row['reqs'] == '-'
+        text = row['does_ru']
+    elif surface in ('plan', 'guide'):
+        path = SUITE.with_suffix('.md') if surface == 'plan' else ROOT / 'docs/agr-tools/GUIDE.md'
+        text, = [line for line in path.read_text(encoding='utf-8').splitlines()
+                 if line.startswith('| ') and f'(`{tool}`)' in line]
+        assert ' | - | ' in text
+    elif surface == 'tooltip':
+        text = model.tooltip(action)
+        assert action.reqs == ('-',)
+    else:
+        macro = (PKG / 'agr_tools.mcr').read_text(encoding='utf-8-sig')
+        text, = [line for line in macro.splitlines() if line.startswith(f'macroScript {action.macro} ')]
+        assert f'(on execute do python.Execute "agr_tools_runtime.ui(\'{tool}\')")' in macro
+        assert 'Треб.: -"' in text
+    assert 'NPM-2.3-6.b' not in text and 'NPM-2.5-12' not in text
+    for detail in ('без запроса зазора', 'MAF-23', 'AABB-предфильтр', 'лучи вниз',
+                   'пересечения', '0 м по умолчанию', 'gap_m через опции',
+                   'D095', '0,10 м', 'удаление нижних граней'):
+        assert detail in text
+
+
+@pytest.mark.parametrize('tool, clause', [('qa.tris', 'NPM-2.3-6.b'), ('atlas.groundel', 'NPM-2.5-12')])
+def test_maf_clearance_does_not_displace_legitimate_requirement_mappings(tool, clause):
+    suite = roadmap.load_file(SUITE)
+    row = next(row for row in suite['rows'] if row['id'] == tool)
+    assert clause in row['reqs'].split()
+    action = next(action for action in model.ACTIONS if model.row_of(action.id) == tool)
+    assert clause in action.reqs
+
+
 def test_guide_regeneration_gives_no_diff():
     proc = subprocess.run([sys.executable, str(ROOT / 'tools/max/build_agr_guide.py'), '--check'],
                           capture_output=True, text=True)
