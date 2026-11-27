@@ -82,5 +82,6 @@ python docs/research/autoresearch-atlas-alpha-bleed-harness/replay.py C:/x/ev_t_
 
 Environment: Python 3.14.7, NumPy 2.5.3, Pillow 12.3.0 via `uv run --no-project --with numpy --with pillow`.
 Receipt [`receipt_r129.json`](autoresearch-atlas-alpha-bleed-harness/receipt_r129.json) SHA-256
-`43bcf0ae59c245282d0159f6abe4b5200a9925aecc7cab9b6ce71cf54151f7e9`. Replay is limited to machines with the
+`18464ac0b68c1d8b20cf2d350e0a9525f478f71d8057a463328ebfbde7a1c858` (Git LF bytes; the CRLF working copy
+written on Windows is `43bcf0ae…f7e9`). Replay is limited to machines with the
 Drive folder; inputs are pinned by hash in `replay.py`.
