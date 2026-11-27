@@ -1,0 +1,12 @@
+{
+  "scenario": "library-publish",
+  "config": {
+    "batch": "G:/Мой диск/AGR-evidence/1743-library-mafs-b3/mafs-b3-2026-11-26",
+    "kind": "maf",
+    "identity": "jobs/mafs-b3/identity.json",
+    "assets_root": "G:/Мой диск/AGR-assets",
+    "evidence": "G:/Мой диск/AGR-evidence/1743-library-publish/mafs-b3-2026-11-26",
+    "issue": "1743"
+  },
+  "hooks": []
+}

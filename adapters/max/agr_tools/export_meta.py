@@ -79,6 +79,32 @@ def export_records(pkg, address_path=None, *, excluded_files=(), profile=None, i
     return out
 
 
+def split_by_profile(records, profile):
+    """(accepted, excluded) export records for one delivery profile (#1844).
+
+    A record without a profile or with 'unknown' (pre-profile exporters) stays accepted, as export_records(profile=)
+    already allowed; a record declaring another profile is never binding evidence, even with a matching hash.
+    excluded rows name the record, its profile and every FBX it claims, so the caller can report them.
+    """
+    accepted, excluded = [], []
+    for label, meta in records:
+        if meta.get('profile') in (None, 'unknown', profile):
+            accepted.append((label, meta))
+            continue
+        files = set(meta.get('fbx_records', {})) | set(meta.get('exported_sha256', {})) | set(meta.get('exported_files', []))
+        excluded.append({'record': label, 'profile': meta['profile'], 'files': sorted(files)})
+    return accepted, excluded
+
+
+def wrong_profile_problems(members, excluded, profile):
+    """One problem per archive member claimed by a record of another profile (#1844); never resolved by choice."""
+    names = {m['name'].casefold(): m['name'] for m in members}
+    return [f"{names[f.casefold()]}: recorded in {row['record']} with profile {row['profile']!r}; a "
+            f"{row['profile']} export record is not {profile.upper()} binding evidence even when its SHA-256 matches "
+            f"(#1844); re-export with an explicit {profile} profile"
+            for row in excluded for f in row['files'] if f.casefold() in names]
+
+
 def export_binding(pkg, members, records, *, excluded_files=(), include_file=None):
     """Compare planned FBX with export records within the caller's archive scope.
 
@@ -313,8 +339,62 @@ def write_meta(path, meta):
         fh.write(text)
 
 
+DELIVERY_PROFILES = ('npm', 'vpm')
+
+
+def pop_profile_option(argv):
+    """Remove one `--profile npm|vpm` (or `--profile=...`) from positional exporter args -> (rest, profile|None)."""
+    rest, profile, i = [], None, 0
+    while i < len(argv):
+        arg = argv[i]
+        if arg == '--profile' or arg.startswith('--profile='):
+            if profile is not None:
+                raise ValueError('--profile given more than once')
+            if arg == '--profile':
+                if i + 1 >= len(argv):
+                    raise ValueError('--profile needs a value: npm or vpm')
+                value, i = argv[i + 1], i + 2
+            else:
+                value, i = arg.split('=', 1)[1], i + 1
+            if value not in DELIVERY_PROFILES:
+                raise ValueError(f'--profile must be npm or vpm, got {value!r}')
+            profile = value
+            continue
+        rest.append(arg)
+        i += 1
+    return rest, profile
+
+
+def resolve_export_profile(explicit, fbx, *, legacy_default, source):
+    """Delivery profile for an exporter's record -> (profile, provenance) (#1844).
+
+    explicit: the caller's npm/vpm choice. Authoritative metadata, when present, is the canonical package record
+    <FBX dir>/export_meta.json (the address record package_npm reads first); a declared npm/vpm there that differs
+    from the profile to be written is refused, never resolved by choice. legacy_default is what the exporter wrote
+    before it took a profile; it is used only without an explicit choice and says so in the provenance. The
+    profile is never guessed from the file name, UV or triangle counts.
+    """
+    if explicit is not None and explicit not in DELIVERY_PROFILES:
+        raise ValueError(f'export profile must be npm or vpm, got {explicit!r}')
+    if explicit is None and legacy_default not in DELIVERY_PROFILES:
+        raise ValueError(f'no explicit export profile and no legacy_default (got {legacy_default!r})')
+    chosen = explicit if explicit is not None else legacy_default
+    canonical = Path(fbx).resolve().parent / 'export_meta.json'
+    declared = load_meta(canonical).get('profile') if os.path.lexists(canonical) else None
+    if declared in DELIVERY_PROFILES and declared != chosen:
+        how = 'explicit' if explicit is not None else 'legacy default (no --profile)'
+        raise ValueError(f'export profile {chosen!r} ({how}) contradicts {canonical} profile {declared!r}; '
+                         'pass the matching --profile or export into another folder')
+    why = (f'{source}: explicit exporter profile argument' if explicit is not None else
+           f'{source}: legacy default {chosen!r} of an exporter call without a --profile argument (#1844); '
+           'pass --profile npm|vpm')
+    if declared == chosen:
+        why += f'; matches {canonical.name} profile'
+    return chosen, why
+
+
 def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unknown', metadata_path=None, address=None,
-                  profile=None, master=None, master_sha256=None):
+                  profile=None, master=None, master_sha256=None, profile_provenance=None):
     """Record only caller measurements and filename facts; never infer a legal address/datum.
 
     Per-FBX sidecars allow several exports in one directory without overwriting metadata.
@@ -353,6 +433,10 @@ def record_export(fbx, *, source, top: float | str = 'unknown', thumbnail='unkno
         record['provenance']['address'] = f'{source}: explicit exporter address argument (naming token, not legal-address approval)'
     if profile is not None:
         record['provenance']['profile'] = f'{source}: explicit exporter profile argument'
+    if profile_provenance is not None:  # resolve_export_profile: explicit vs legacy default, package-record check
+        if profile is None:
+            raise ValueError('profile_provenance needs an explicit profile')
+        record['provenance']['profile'] = str(profile_provenance)
     if master_hash is not None:
         record['master_sha256'] = master_hash
         record['provenance']['master_sha256'] = f'{master}: SHA-256 of the master file at export time (#1505)'

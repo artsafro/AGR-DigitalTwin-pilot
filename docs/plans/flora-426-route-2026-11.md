@@ -1,5 +1,7 @@
 # Block #426 Flora — route, 2026-11 (route A chosen, recorded [D232])
 
+Status: done (2026-11-24)
+
 Artem 2026-11-09 «давай блоки продолжим». Route **A is chosen** (Artem 2026-11-09 «принимаю рекомендации»,
 recorded [D232]): new NPM "star" objects [D102] from approved / new map pairs for the 17 Vatutino positions + Ива,
 VPM = shell of the star, one 2048 site atlas, placement v007, all 4,915 plants (~30k tris). The implementation goes

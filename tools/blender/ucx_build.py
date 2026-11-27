@@ -25,6 +25,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT / "src") not in sys.path:  # ucx_build imports the stdlib [D012] owner twinqa.geometry.ucx_audit (#1962)
+    sys.path.insert(0, str(ROOT / "src"))
 
 
 def _load(name, rel):

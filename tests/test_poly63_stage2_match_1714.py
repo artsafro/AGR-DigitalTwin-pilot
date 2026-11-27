@@ -17,8 +17,7 @@ import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-HOOKS_A = ROOT / "jobs" / "POLY63-A" / "stage2-1619" / "hooks"
-HOOK_C = ROOT / "jobs" / "POLY63-C" / "hooks" / "stage2_63c.py"
+HOOK_C = ROOT / "tools" / "windows" / "stage2.py"   # the one stage-2 command; 63C route (#1963)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 
@@ -31,7 +30,7 @@ def _load(path, name):
 
 fx = _load(Path(__file__).resolve().parent / "test_poly63a_stage2_1619.py", "poly63a_fixture_1714")
 s2 = fx.s2
-c63 = _load(HOOK_C, "stage2_63c_1714")
+c63 = _load(HOOK_C, "stage2_command_1714")
 NAME = "Окн_Окн_1 Ств Комфорт Комфорт ОК-10-19"
 
 
@@ -71,8 +70,8 @@ def _run(tower, tmp, monkeypatch):
         return out, lambda: s2.main([str(tmp / "body.npz"), str(tmp / "crop.npz"), str(out), "--band", "0", "3.15"])
     monkeypatch.setattr(c63, "OPENINGS", 1)
     std = ROOT / "library" / "windows" / "standard.json"
-    return out, lambda: c63.build(str(HOOKS_A), str(tmp / "body.npz"), str(tmp / "crop.npz"), str(tmp / "types.csv"),
-                                  str(tmp / "floor.json"), str(std), str(out))
+    return out, lambda: c63.build_63c(str(tmp / "body.npz"), str(tmp / "crop.npz"), str(tmp / "types.csv"),
+                                      str(tmp / "floor.json"), str(std), str(out))
 
 
 @pytest.mark.parametrize("tower", ["63A", "63C"])
@@ -193,4 +192,4 @@ def test_duplicate_guard_one_owner_for_the_matcher():
     owner = (ROOT / dg.RULES[rule]).read_text(encoding="utf-8")
     assert [f.rule for f in dg.scan_text(owner, "jobs/POLY63-C/hooks/x.py")].count(rule) == 2
     hook = HOOK_C.read_text(encoding="utf-8")
-    assert [f for f in dg.scan_text(hook, "jobs/POLY63-C/hooks/stage2_63c.py") if f.rule == rule] == []
+    assert [f for f in dg.scan_text(hook, "tools/windows/stage2.py") if f.rule == rule] == []

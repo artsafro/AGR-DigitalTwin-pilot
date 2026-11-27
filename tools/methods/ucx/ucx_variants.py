@@ -49,6 +49,9 @@ def _load_builder():
     name = "dt_ai_ucx_build_for_methods"
     if name in sys.modules:
         return sys.modules[name]
+    src = ROOT / "src"
+    if str(src) not in sys.path:  # Blender needs the shared twinqa budget owner without an editable install.
+        sys.path.insert(0, str(src))
     spec = importlib.util.spec_from_file_location(name, ROOT / "src/dt_ai/geometry/ucx_build.py")
     mod = importlib.util.module_from_spec(spec)
     sys.modules[name] = mod

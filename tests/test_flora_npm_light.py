@@ -12,6 +12,15 @@ from pathlib import Path
 import pytest
 
 
+def test_light_builder_uses_the_sealed_v003_scene():
+    from runpy import run_path
+
+    repo = Path(__file__).resolve().parents[1]
+    builder = run_path(str(repo / 'tools/flora/build_flora_npm_light.py'))
+    assert builder['SOURCE'] == Path('G:/Мой диск/AGR-assets/flora/v003/flora-library-v003.max')
+    assert builder['OUTPUT'].parent != builder['SOURCE'].parent
+
+
 def catalogue():
     result = json.loads(Path('library/flora/catalogue.json').read_text(encoding='utf-8'))
     for row in result['species']:

@@ -1,5 +1,12 @@
 # План: AGR Tools как полный набор для 3ds Max (#853)
 
+Status: superseded by docs/plans/agr-tools-1.x.md (2026-11-24)
+
+> **Historical plan (#1869).** Current AGR Tools scope (frozen 1.1.x [D393]) is owned by
+> `docs/agr-tools/OVERVIEW.md`; the 1.0/1.1 execution record is `docs/plans/agr-tools-1.x.md`; the button registry
+> is `docs/plans/agr-tools-suite.json`. The MCP parts below (§8 and the `agr-mcp` mentions) are historical: the
+> current MCP owner is `src/agr_mcp/README.md` with the `agr-mcp` entry in `docs/agents/CAPABILITIES.md` [D394].
+
 Статус: исследование, план и макет. Ничего не реализовано. Реализация идёт отдельными версиями (одна версия = одна
 issue) после «да» Артёма.
 

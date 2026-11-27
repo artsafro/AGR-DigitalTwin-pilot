@@ -80,14 +80,18 @@ def test_ground_min_corner_parity_including_closed_borders():
 
 
 def test_ground_blender_readback_cell_parity():
+    """Exercise the reader's actual containment/tile function offline, including its inclusive tolerance."""
     owner = _load("adapters/max/agr_tools/udimtile_core.py")
+    ns = _slice(LIVE[1], "_ground_face_tile", lambda n: isinstance(n, ast.FunctionDef),
+                {"_udimtile": owner, "math": math})
+    tile = ns["_ground_face_tile"]
     for j in range(12):
         for i in range(10):
-            ns = {"_udimtile": owner, "tiles": set(), "tu": i, "tv": j}
-            _slice(LIVE[1], "readback", lambda n: isinstance(n, ast.Expr) and
-                   isinstance(n.value, ast.Call) and isinstance(n.value.func, ast.Attribute) and
-                   isinstance(n.value.func.value, ast.Name) and n.value.func.value.id == "tiles", ns)
-            assert ns["tiles"] == {_old_tile(i, j)}
+            assert tile([(i, j), (i + 1, j), (i, j + 1)]) == _old_tile(i, j)
+    threshold = 1 + 1e-6  # Existing reader tolerance, not derived from the implementation under test.
+    assert tile([(0, 0), (threshold, 0), (0, 1)]) == 1001
+    with pytest.raises(owner.UdimCrossTileError):
+        tile([(0, 0), (math.nextafter(threshold, math.inf), 0), (0, 1)])
 
 
 def test_flora_and_windows_inverse_parity_and_bpy_readback():

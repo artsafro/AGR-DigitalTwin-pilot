@@ -127,7 +127,9 @@ def test_cli_single_failure_without_advisories_exit_1_keeps_diagnostics(tmp_path
     spec, _ = make_spec(tmp_path)
     assert cli.run(spec, tmp_path / "out") == 1
     out = tmp_path / "out"
-    assert sorted(p.name for p in out.iterdir()) == ["SM_SYN_Ground.obj", "ground-flat.obj", "ground-report.json"]
+    assert sorted(p.name for p in out.iterdir()) == ["SM_SYN_Ground.obj", "ground-flat.obj", "ground-report.json",
+                                                   "ground-udim.json", "ground-udim.md"]
+    assert json.loads((out / "ground-udim.json").read_text(encoding="utf-8"))["geometry_status"] == "fail"
     rep = json.loads((out / "ground-report.json").read_text(encoding="utf-8"))
     assert rep["geometry_status"] == "fail" and rep["passed"] is False
     assert rep["findings"] == ["relief: 1 samples over 0.01 m"] and rep["advisories"] == []

@@ -29,6 +29,8 @@ ROOT = Path(__file__).resolve().parents[2]
 GAP_DEFAULT_M = 0.003
 LIMIT_DEFAULT_M = 1.0  # D134 remaining OKS; pass limit=0.3 for a pedestrian-reachable body
 SAMPLE_M = 0.25
+if str(ROOT / "src") not in sys.path:  # ucx_build imports the stdlib [D012] owner twinqa.geometry.ucx_audit (#1962)
+    sys.path.insert(0, str(ROOT / "src"))
 
 
 def _load(name, rel):

@@ -20,8 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SNAP_DIFF_PY = ROOT / "tools" / "methods" / "body" / "snap_diff.py"
 CONTOURS_PY = ROOT / "tools" / "methods" / "body" / "contours.py"
 TOW02_SOURCE = Path(r"C:/x/t_ad9bc345/in/contours.json")
-TOW02_CACHED_CANDIDATES = (Path(r"C:/x/t_ad9bc345/snapped_contours.json"),
-                           Path("G:/Мой диск/AGR-evidence/t_ad9bc345-body-gn-z0-snap/snapped_contours.json"))
+TOW02_CACHED = Path("G:/Мой диск/AGR-evidence/t_ad9bc345-body-gn-z0-snap/snapped_contours.json")
 TOW02_SOURCE_SHA256 = "92a83fc90efd039126f8b86b57ff7fae1002bea72868d7193e27b2904535152e"
 TOW02_CACHED_SHA256 = "21bbc3e2422c409ed2a24b9fbede247274340589b3837ab83172f92d7fecc532"
 SQUARE = [{"exterior": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]], "holes": []}]
@@ -177,13 +176,12 @@ def test_cli_fresh_process_exit_codes(tmp_path):
 
 
 def test_tow02_cached_file_differs_only_in_bands_3_8_9_10():
-    cached_path = next((p for p in TOW02_CACHED_CANDIDATES if p.is_file()), None)
-    if not TOW02_SOURCE.is_file() or cached_path is None:
-        pytest.skip("TOW02 contours / cached snapped_contours.json not on this machine")
+    if not TOW02_SOURCE.is_file() or not TOW02_CACHED.is_file():
+        pytest.skip(f"TOW02 requires its provisioned contours or sealed Drive snapshot: {TOW02_SOURCE}, {TOW02_CACHED}")
     assert hashlib.sha256(TOW02_SOURCE.read_bytes()).hexdigest() == TOW02_SOURCE_SHA256
-    assert hashlib.sha256(cached_path.read_bytes()).hexdigest() == TOW02_CACHED_SHA256
+    assert hashlib.sha256(TOW02_CACHED.read_bytes()).hexdigest() == TOW02_CACHED_SHA256
     report = snap_diff().diff_snapped(json.loads(TOW02_SOURCE.read_text(encoding="utf-8")),
-                                      json.loads(cached_path.read_text(encoding="utf-8")))
+                                      json.loads(TOW02_CACHED.read_text(encoding="utf-8")))
     assert {r["band"]: r["reason"] for r in report["bands"] if r["reason"] != "equal"} == {
         3: "probe_kept_nominal", 8: "probe_single_pass", 9: "probe_kept_nominal", 10: "probe_single_pass"}
     assert all(r["parent"] == r["band"] - 1 for r in report["bands"][1:])

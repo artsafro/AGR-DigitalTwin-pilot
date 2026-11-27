@@ -42,7 +42,7 @@ KASATKINO_MAPS = Path("C:/Users/artsafro/Desktop/!3D viz/NTR/32_Kasatkino/flora_
 GROUND_ZIP = Path("G:/Мой диск/AGR-evidence/371-ground-v015-route-a-20261104/session-v001.zip")
 GROUND_ZIP_SHA = "7441764b82ce799684b400a6dd90fcd7a61991ff575f3fbb00d77cef1fef52bb"
 GROUND_PREFIX = "artefacts/ground-v015-dcc-v001/textured/"
-ADAPTER = Path("C:/x/t_d94665f2/paving_ground_inputs_v4.json")
+ADAPTER = Path("G:/Мой диск/AGR-evidence/1146-flora-star/run-v003/inputs/paving_ground_inputs_v4.json")
 ATLAS_ADDRESS = "VATUTINO"
 # [D246]: NPM keeps the single 2048 atlas [D232]; VPM gets its own 4096 atlas (texel ~2x). profile -> (run subdir, px)
 ATLAS_PROFILES = {"npm": ("atlas", 2048), "vpm": ("atlas-vpm", 4096)}

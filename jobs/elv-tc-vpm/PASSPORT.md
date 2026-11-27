@@ -112,5 +112,5 @@
 - Materials: only unambiguous matches to library/materials/materials_v002.json are listed (cassette RAL 7024, interior, glass). Delivery IDs 1, 3-33 (RAL 7021 / 1001 / 5024 / 7040 / 9005, wood #C1AE93, glows) have no library entry; UDIM tiles 1001-1015 live in the job texture spec.
 - Part roles mapped by hand: doors, gates and curtain walls -> window; flashings, ribs, railings, joints, cover strips -> decor.
 - Openings: no OPEN_<nnn> markers (doors and windows placed from library types ELV-01..21 by the job scripts).
-- Delivery v005 is the current candidate, accepted by the user 2026-11-05; passed=false until the stage 9 blockers clear.
+- Delivery v005 is the current candidate, accepted by the user 2026-11-05 (geometry accepted, not delivered [#1441]); passed=false until the stage 9 blockers clear.
 - Parts file: the `history` key fails the parts schema (open since v002).

@@ -188,6 +188,17 @@ def test_udim_gap_fails(tmp_path):
     assert st["V008"].status == "fail"
 
 
+@pytest.mark.parametrize("second, expected", [(1003, "fail"), (1002, "pass")])
+def test_ground_archive_udim_sequence(tmp_path, second, expected):
+    stem = f"{STEM}_Ground"
+    files = {f"{stem}.fbx": fbx()}
+    for tile in (1001, second):
+        for role, colour in (("Diffuse", (120, 110, 100)), ("ERM", (0, 170, 0)), ("Normal", (128, 128, 255))):
+            files[f"T_Test_K_1_Ground_{role}_1.{tile}.png"] = png(colour)
+    _, st = run(tmp_path, files, name=f"{stem}.zip", profile="vpm")
+    assert [f.status for f in st["V008"].findings if f.name == "UDIM sequence"] == [expected]
+
+
 def test_unsafe_zip_path_fails(tmp_path):
     files = good_files()
     files["../evil.txt"] = b"x"

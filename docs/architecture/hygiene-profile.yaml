@@ -1,0 +1,75 @@
+# repo-hygiene profile of the AGR pilot (#1950). The pilot owns this file and every pilot path in it;
+# repo-hygiene is pinned in tools/hygiene/hygiene.py and runs through scripts/hygiene.sh / scripts/hygiene.ps1.
+# Based on repo-hygiene profiles/3d.yaml + profiles/agr.yaml @ 095c3dda (inlined: `extends` only takes a sibling).
+# Checks a pilot guard already owns are left out here on purpose (one owner each, see tools/hygiene/README.md):
+#   doc ownership + plan status -> tools/architecture/search_noise.py --check-docs (no `ownership` / `plans`)
+#   .ignore generated blocks     -> search_noise.py + duplicate_guard.py (no `noise.hide/history/manage_block`)
+#   job code / route job code    -> skeleton_guard.py + tests/test_live_route_imports.py (no `jobs`)
+#   trail commands               -> tests/test_trail_commands_1895.py (no `trail`)
+name: agr
+version: 3
+assets:
+  max_bytes: 10485760  # 10 MiB per file; larger assets stay outside Git (COORDINATION_RULES 57).
+  suffixes: ['.fbx', '.max', '.blend', '.png', '.zip', '.7z', '.exr', '.tif', '.tiff', '.jpg', '.jpeg', '.dwg', '.rvt']
+acceptance: ['**/model-acceptance.yaml', '**/model-acceptance.json']
+entries: [AGENTS.md, CLAUDE.md, GEMINI.md, README.md, GLOSSARY.md, docs/PROJECT_STATE.md]
+routes: ['routes/**']
+scenarios: ['docs/scenarios/**']
+skills: ['.agents/skills/**/SKILL.md']
+harness:
+  # Keep always-loaded files short; detailed procedures belong in skills or docs.
+  always_on_max_bytes: 4096
+live_roots: ['src/**', 'tools/**', 'adapters/**', 'schemas/**', 'standards/**']
+exclude_consumers: ['docs/ARCHIVE.md', '.ignore', '.gitignore', '.rgignore']
+decisions: [docs/decisions.md, docs/decisions-detail.md]
+noise:
+  # Only the live-consumer check of explicit archive rows; the pilot generates .ignore itself.
+  archive: {file: docs/ARCHIVE.md, heading: '## Hidden from search (still in the tree)'}
+  closure_leaves: [docs/ARCHIVE.md, docs/architecture/contexts.yaml, docs/architecture/search-noise.yaml, docs/architecture/README.md]
+# Signature subset of tools/architecture/duplicate_guard.py (RULES / GUARDED), which stays the whole-repo owner;
+# this copy powers the fast per-file hook. contexts.yaml keeps the rule-tagged exceptions and call chains.
+operations:
+  udim-tile:
+    owner: adapters/max/agr_tools/udimtile_core.py
+    scope: &guarded ['jobs/**', 'tools/**', 'src/**']
+    definitions: [udim_tile, udim_of_cell, tile_origin, face_tile]
+    ast_patterns:
+      - [BinOp, '\b1001\s*\+\s*[^\n]*\*\s*10\b']
+      - [Call, '\bdivmod\([^,]+\s*-\s*1001,\s*10\)']
+  delivery-zip:
+    owner: adapters/max/agr_tools/package_core.py
+    scope: *guarded
+    writers: {zipfile.ZipFile: zip-mode, shutil.make_archive: archive-format}
+  blender-launch:
+    owner: src/dt_ai/core/blender_runner.py
+    scope: *guarded
+    ast_patterns:
+      - [List, '(?s)(?=.*[\x27\x22](?:--background|-b)[\x27\x22])(?=.*[\x27\x22](?:--python|-P|--python-expr|--python-text)[\x27\x22])']
+  sintez-checker:
+    owner: tools/blender/sintez_checker.py
+    scope: *guarded
+    calls: [calculate_all_checks, '*.calculate_all_checks']
+  master-qa:
+    owner: tools/blender/qa_master.py
+    scope: *guarded
+    definitions: [world_bm]
+  vpm-uv:
+    owner: tools/blender/vpm_uv.py
+    scope: *guarded
+    definitions: [pack_uv, texel_cut]
+  seam-seal:
+    owner: tools/blender/seam_seal.py
+    scope: *guarded
+    definitions: [seal, ring_split, t_junctions]
+  site-placement:
+    owner: src/dt_ai/placement/site.py
+    scope: *guarded
+    calls: [dt_ai.placement.engine.place, engine.place]
+  window-generator:
+    owner: adapters/max/agr_tools/windowgen_core.py
+    scope: *guarded
+    definitions: [build_type, assign_glass]
+  poly63-window-match:
+    owner: jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py
+    scope: *guarded
+    definitions: [claim_openings, match_openings]

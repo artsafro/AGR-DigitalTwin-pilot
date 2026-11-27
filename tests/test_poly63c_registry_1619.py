@@ -7,13 +7,14 @@ import numpy as np
 
 import pytest
 
-HOOK = Path(__file__).resolve().parents[1] / 'jobs/POLY63-C/hooks/stage2_63c.py'
+ROOT = Path(__file__).resolve().parents[1]
+HOOK = ROOT / 'tools' / 'windows' / 'stage2.py'  # the one stage-2 command; 63C route (#1963)
 FAMILY = 'Окн_Окн_2 Ств Комфорт'
 TYPE = 'Комфорт ОК-17-19'
 
 
 def _stage2_plan():
-    spec = importlib.util.spec_from_file_location('stage2_plan_63c_reg', HOOK.parents[2] / 'POLY63-A/stage2-1619/hooks/stage2_plan.py')
+    spec = importlib.util.spec_from_file_location('stage2_plan_63c_reg', ROOT / 'jobs/POLY63-A/stage2-1619/hooks/stage2_plan.py')
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod

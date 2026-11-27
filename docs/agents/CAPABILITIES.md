@@ -190,7 +190,8 @@ substitute ad-hoc scripting.
   handshake lists 25 tools). Talks to the RevitBridge ("Cursor Bridge") add-in in
   `%AppData%\Autodesk\Revit\Addins\2025` over a named pipe — no TCP port.
 - Registered for Codex and Antigravity (`.codex/config.toml`, `.agents/mcp_config.json`) from the
-  `tools` path. Codex exported FBX from a QA fixture over the pipe (2026-10-06).
+  `tools` path. One server list (#1962): `.codex/config.toml` owns it, `tools/mcp/sync_config.py` generates the
+  Antigravity JSON (`--check` in `tests/test_mcp_config_sync_1962.py`). Codex exported FBX from a QA fixture over the pipe (2026-10-06).
 - Mutating tools (`open_document`, `export_fbx*`, `agr_export_fbx`, `load/unload/reload/repath`
   links) need explicit task authorization and versioned outputs.
 - Sources are Revit 2022 files — open upgraded **copies**, never save over `data/sources/revit/*.rvt`.
@@ -361,6 +362,7 @@ Pipeline core:
 - Build by source modules `src/dt_ai/geometry/from_source.py`, `tools/qa/run_from_source.py` — EXPERIMENTAL [D079].
 - Railing inset `agr railing` (#1508) — [level spline JSON → Blender headless quad candidate](../procedure/node-r3-fence-railing-gates.md#shared-headless-builder); VPM/NPM geometry, explicit NPM-only budget opacity option, no Max UI.
 - Window generator `agr window-generate` (`tools/windows/generate.py`, #1405) — shared stdlib `windowgen_core` with Max `win.generate`; new type OBJ bundles + explicit inset plans, not building assembly. KPP1 diagnostics fail on unexplained drops; [usage and measurements](../../jobs/KPP1/window-command-1405/MEASUREMENTS.md).
+- POLY63 stage 2 `uv run python tools/windows/stage2.py 63A|63B|63C ...` (#1963) — the one command for windows + capsules on an accepted tower body; 63A/63B route to their job modules, the 63C route lives in the command; shared matcher stays `stage2_plan.claim_openings` (#1714).
 - Window type list `library/windows/window_types.json` (`tools/library/build_window_types.py`) — WORKING, 67 entries.
 - Window library preview `tools/library/window_library_preview.py` (Blender, headless) — WORKING (2026-11-05): every
   type laid out flat by role (frame, `panes_m` glass, `opaque_m` leaves, label, red = unconfirmed) into a new `.blend`
@@ -450,7 +452,8 @@ Shared derivation `dt derive` (NPM<->VPM, #1106; one implementation per step ins
   <master.blend> <spec> <atlas dir> <new out> [prefix] [--address --index --pivot x,y --keep-quads]`
   (`tools/derive/export_npm.py`), `dt derive package <pkg dir> <textures> [--object object.json] [--no-geojson]`
   (`tools/derive/package_vpm.py`; per-job name / H_RELIEF / glass in `object.json`, not in code); FBX readback parity
-  `tools/derive/fbx_parity.py`. Texture painters still come from `jobs/TEC26-OKS/scripts` (`--recipe-dir`).
+  `tools/derive/fbx_parity.py`. Finish validation, painting and export preflight live in `tools/derive/`.
+  A procedural spec with `kpp_palette` takes explicit `--kpp-spec KPP.json`; this is data, not job code.
 - WORKING (2026-11-09, Blender 5.1): replayed on TEC26 AC08 pilot-v010 (accepted recipe) and AC09 build-v001 against the
   job scripts: atlas PNG + JSON byte-identical (also to the recorded accepted outputs), VPM ZIP byte-identical (also
   to the recorded ZIPs), NPM FBX readback-identical (geometry, UV, materials, embedded pixels; FBX bytes differ only

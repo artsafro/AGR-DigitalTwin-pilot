@@ -7,7 +7,7 @@ preview repairs in `preview-v002`, and contact sheet
 This folder holds only text: `catalogue.json` (every entry, paths to its files), `catalogue.md` (table),
 `contact_sheet.html` (local image grid linking external previews/assets), and `audit.json` (verification evidence).
 Status: technical audit only, not identification (T-MAF-1) and not user acceptance.
-The active material ID list is v005 (`material_ids.json` points at `material_ids_v005.json`), approved as the first working version [D181]. Nothing in the library scenes is reassigned.
+The active material ID list is v007 (`material_ids.json` points at `material_ids_v007.json`) [D240]; v005 is the first working version [D181]. Nothing in the library scenes is reassigned.
 
 ## Inputs (read only, worked on copies)
 
