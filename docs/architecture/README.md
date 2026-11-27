@@ -434,6 +434,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/flora-texture-diagnosis | [research/flora-texture-diagnosis.md](../research/flora-texture-diagnosis.md) |  |
 | research/geojson-d220-customer-files | [research/geojson-d220-customer-files.md](../research/geojson-d220-customer-files.md) |  |
 | research/geojson-overflow-caller-exposure | [research/geojson-overflow-caller-exposure.md](../research/geojson-overflow-caller-exposure.md) |  |
+| research/ground-npm-atlas-fbx-roundtrip | [research/ground-npm-atlas-fbx-roundtrip.md](../research/ground-npm-atlas-fbx-roundtrip.md) |  |
 | research/ground-site-moskovsky-gap-evidence | [research/ground-site-moskovsky-gap-evidence.md](../research/ground-site-moskovsky-gap-evidence.md) |  |
 | research/guard-vs-dcg-2026-11 | [research/guard-vs-dcg-2026-11.md](../research/guard-vs-dcg-2026-11.md) |  |
 | research/ifc-intake-src-contract | [research/ifc-intake-src-contract.md](../research/ifc-intake-src-contract.md) |  |
