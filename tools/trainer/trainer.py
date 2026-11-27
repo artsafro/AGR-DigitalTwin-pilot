@@ -496,6 +496,33 @@ def _windows_skill_config():
     return ["-c", f"skills.config=[{entries}]"]
 
 
+def _run_windows_codex(cmd, *, input, stdout, stderr, timeout, env):
+    # A seekable stdin keeps the timeout independent of whether the launcher reads the prompt.
+    with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as prompt:
+        prompt.write(input)
+        prompt.seek(0)
+        with subprocess.Popen(cmd, stdin=prompt, stdout=stdout, stderr=stderr, env=env) as child:
+            try:
+                return child.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                # npm's .CMD launches descendants. Kill the tree while its root still exists.
+                try:
+                    cleanup = subprocess.run(["taskkill", "/PID", str(child.pid), "/T", "/F"], timeout=10,
+                                             stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
+                                             encoding="oem", errors="replace")
+                    if cleanup.returncode:
+                        print(f"Trainer: taskkill exited {cleanup.returncode}; child tree cleanup unverified: "
+                              f"{cleanup.stderr.strip()}", file=stderr)
+                except (OSError, subprocess.TimeoutExpired) as error:
+                    print(f"Trainer: child tree cleanup failed: {error}", file=stderr)
+                try:
+                    child.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.wait()
+                raise
+
+
 def cmd_run(a, bank):
     e = etalon(bank, a.etalon)
     if not e["practice_ready"]:
@@ -533,7 +560,8 @@ def cmd_run(a, bank):
     # --ignore-user-config does not suppress home skill discovery. Redirect both POSIX and
     # Windows homes for the child only, leaving the practice repository's own skills in place.
     auth = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex") / "auth.json"
-    with tempfile.TemporaryDirectory(prefix="trainer-codex-") as private:
+    # Windows sharing violations must not mask the exit receipt. Report any surviving directory below.
+    with tempfile.TemporaryDirectory(prefix="trainer-codex-", ignore_cleanup_errors=os.name == "nt") as private:
         home = Path(private).resolve()
         codex_home = home / ".codex"
         codex_home.mkdir()
@@ -544,12 +572,20 @@ def cmd_run(a, bank):
         with (out / "events.jsonl").open("w", encoding="utf-8") as ev, \
                 (out / "stderr.txt").open("w", encoding="utf-8") as er:
             try:
-                p = subprocess.run(cmd if os.name != "nt" else [shutil.which("codex") or "codex", *cmd[1:]],
-                                   input=text, stdout=ev, stderr=er, text=True, encoding="utf-8",
-                                   timeout=a.timeout_s, env=env)
-                rc = p.returncode
+                if os.name == "nt":
+                    rc = _run_windows_codex([shutil.which("codex") or "codex", *cmd[1:]], input=text,
+                                            stdout=ev, stderr=er, timeout=a.timeout_s, env=env)
+                else:
+                    rc = subprocess.run(cmd, input=text, stdout=ev, stderr=er, text=True, encoding="utf-8",
+                                        timeout=a.timeout_s, env=env).returncode
             except subprocess.TimeoutExpired:
                 rc = "timeout"
+    if home.exists():
+        message = f"Trainer: temporary Codex home cleanup incomplete; inspect and remove {home}"
+        with (out / "stderr.txt").open("a", encoding="utf-8") as er:
+            print(message, file=er)
+        if rc != "timeout":
+            raise TrainerError(message)
     wall = round(time.time() - t0, 1)
     tok, cmds, msgs = parse_events((out / "events.jsonl").read_text(encoding="utf-8", errors="replace").splitlines())
     scen = json.loads((ROOT / "docs/agents/skeletons.json").read_text(encoding="utf-8"))["cells"].get(
