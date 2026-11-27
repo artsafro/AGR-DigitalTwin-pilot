@@ -199,6 +199,41 @@ def _flat_blocks(a, rect, min_cell, solid_tol):
     return [(b, False) for b in blocks] + ([(rect, True)] if covered < 0.9 * w * h else [])
 
 
+def colour_regions(rgb, bounds, *, tolerance=6, min_pixels=64, max_colours=12):
+    """Partition a facade leaf into connected, measured palette regions and unknown pixels.
+
+    RGB8 L-infinity distances are measured at native atlas resolution. A pixel
+    is assigned only if exactly one supported swatch is strictly within the
+    tolerance. Textural variation, blended boundaries and weak swatches are
+    not filled by nearest-colour extrapolation.
+    """
+    if type(tolerance) is not int or not 0 < tolerance < 128:
+        raise ValueError('colour tolerance must be an integer in 1..127 RGB levels')
+    if type(min_pixels) is not int or min_pixels < 1 or type(max_colours) is not int or max_colours < 2:
+        raise ValueError('invalid palette support or limit')
+    x0, y0, x1, y1 = bounds
+    data = rgb[y0:y1, x0:x1].astype(np.int16)
+    values, count = np.unique(data.reshape(-1, 3), return_counts=True, axis=0)
+    swatches = []
+    for i in np.argsort(-count, kind='stable'):
+        if count[i] < min_pixels:
+            break
+        c = values[i]
+        if any(np.max(np.abs(c - s)) < 2 * tolerance for s in swatches):
+            continue
+        if len(swatches) == max_colours:
+            return np.zeros(data.shape[:2], dtype=np.uint8), []
+        swatches.append(c)
+    labels = np.zeros(data.shape[:2], dtype=np.uint8)
+    hits = np.zeros_like(labels, dtype=np.int32)
+    for i, c in enumerate(swatches, 1):
+        near = np.max(np.abs(data - c), axis=2) < tolerance
+        hits += near
+        labels[near] = i
+    labels[hits != 1] = 0
+    return labels, [_hex(c) for c in swatches]
+
+
 def segment(path: str, *, work: int = 512, min_cell: int = 8, edge_t: float = 10.0,
             line_share: float = 0.9, mat_diff: float = 8.0, solid_tol: float = 6.0,
             solid_share: float = 0.85, profile: str = 'maf', uv_bounds_px=None) -> dict:
