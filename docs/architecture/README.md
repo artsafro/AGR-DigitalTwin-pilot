@@ -409,6 +409,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
 | research/agent-step-waste-1273/measure-py | [research/agent-step-waste-1273/measure.py](../research/agent-step-waste-1273/measure.py) |  |
 | research/autoresearch-pdf-dimensions | [research/autoresearch-pdf-dimensions.md](../research/autoresearch-pdf-dimensions.md) |  |
+| research/autoresearch-trainer-artifact-first | [research/autoresearch-trainer-artifact-first.md](../research/autoresearch-trainer-artifact-first.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
@@ -491,6 +492,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/telegram-3dsmax-chat-2026-11 | [research/telegram-3dsmax-chat-2026-11.md](../research/telegram-3dsmax-chat-2026-11.md) |  |
 | research/toolchain-smoke-2026-10-15 | [research/toolchain-smoke-2026-10-15.md](../research/toolchain-smoke-2026-10-15.md) |  |
 | research/tow02-hand-finish-face-diff | [research/tow02-hand-finish-face-diff.md](../research/tow02-hand-finish-face-diff.md) |  |
+| research/trainer-artifact-first-r95/analyze-py | [research/trainer-artifact-first-r95/analyze.py](../research/trainer-artifact-first-r95/analyze.py) |  |
+| research/trainer-artifact-first-r95/make-bank-py | [research/trainer-artifact-first-r95/make_bank.py](../research/trainer-artifact-first-r95/make_bank.py) |  |
+| research/trainer-artifact-first-r95/receipt-json | [research/trainer-artifact-first-r95/receipt.json](../research/trainer-artifact-first-r95/receipt.json) |  |
+| research/trainer-artifact-first-r95/series-py | [research/trainer-artifact-first-r95/series.py](../research/trainer-artifact-first-r95/series.py) |  |
 | research/trainer-tower-id-r87/calib-json | [research/trainer-tower-id-r87/calib.json](../research/trainer-tower-id-r87/calib.json) |  |
 | research/trainer-tower-id-r87/make-bank-py | [research/trainer-tower-id-r87/make_bank.py](../research/trainer-tower-id-r87/make_bank.py) |  |
 | research/trainer-tower-id-r87/result-json | [research/trainer-tower-id-r87/result.json](../research/trainer-tower-id-r87/result.json) |  |
