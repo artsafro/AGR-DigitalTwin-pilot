@@ -59,7 +59,8 @@ def test_seal_rows_left_the_map_and_the_roof_row_is_a_wrapper():
     rows = _rows()
     assert not any(r.rel == SHIM for r in rows), [r.at for r in rows if r.rel == SHIM]
     roof = [r for r in rows if r.rel == BUILD and r.context == "roof"]
-    assert {(r.at, r.status) for r in roof} == {(BUILD + ":432", "wrapper")}  # same row in both route maps (#1593)
+    # same row in both route maps (#1593); build_kpp1.py is retired, its rows are historical [D426, #2029]
+    assert {(r.at, r.status) for r in roof} == {(BUILD + ":432", "historical")}
     assert guard.calls_owner(ROOT, roof[0])
     step = [r for r in rows if r.status == "live-bypass" and r.step == "#1381"]
     assert step == []
