@@ -1,0 +1,599 @@
+{
+  "status": "series_complete",
+  "hypothesis": "confirmed",
+  "rounds": [
+    {
+      "labels": {
+        "pilot-v007": {
+          "clean": 0.8877,
+          "footprint_pixels": 219720,
+          "arms": {
+            "npm_only": {
+              "score": 24.119,
+              "delta": 23.2313,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 0
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "vpm_only": {
+              "score": 24.119,
+              "delta": 23.2313,
+              "changed_rgb": {
+                "npm": 0,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "both": {
+              "score": 0.8646,
+              "delta": -0.0231,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            }
+          },
+          "ratio": 0.0009943481423768793,
+          "decoded_rgba_sha256": {
+            "npm_east.png": "8929006307f8ddba96c4a90a3a50b678b9f5d4cec565c30a15003a5c81132387",
+            "npm_iso.png": "1cc1a0eaec4b6c69c42ba4acd830baa9478caaa18744929571840f7fc0d99738",
+            "npm_north.png": "5a6df64d4864b9faa4e46b851fece67246ef2dbb78ea4f0af12409d52d4dab8c",
+            "npm_south.png": "abe8f36b69f143d0e768178d94e91ed4a4328437ac3d4b594558544223ef2c1a",
+            "npm_west.png": "b95b03902ef65afe00d5745711cc65a2252326a1470bd7581127c600fb8022a5",
+            "vpm_east.png": "ea716d0f01fd66c9372d4bbcb38e10f35cebf415087f39d9ae24bdf1981d2f6e",
+            "vpm_iso.png": "384a4344f89c2c8ec40fc358ae2a4a4dbd3452ab06f323b0cda24cc1cbf30637",
+            "vpm_north.png": "67d3e85999a1eddb9c55aa5db1e7aaae7f1d72af5da9dcdda58eadcdaf4060ac",
+            "vpm_south.png": "af336d2b9ae1c4f6d12183eb7bf60c7eb063276f991c7510c190778a0811cec1",
+            "vpm_west.png": "e1b21a2ebe9414e4d0f20ab1bd229405d47b17dcc73986d09fbac3fc6daee0d4"
+          }
+        },
+        "pilot-v010": {
+          "clean": 1.698,
+          "footprint_pixels": 219720,
+          "arms": {
+            "npm_only": {
+              "score": 25.6222,
+              "delta": 23.9242,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 0
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "vpm_only": {
+              "score": 25.6222,
+              "delta": 23.9242,
+              "changed_rgb": {
+                "npm": 0,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "both": {
+              "score": 1.6142,
+              "delta": -0.0838,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            }
+          },
+          "ratio": 0.0035027294538584365,
+          "decoded_rgba_sha256": {
+            "npm_east.png": "3db779a7dff854c5f91a99a05185499a469928bb8b6cd1e8b7eccab04acec108",
+            "npm_iso.png": "3a78fec49efd2850863b7cf89b28169fe4ca9f96a4d0682cc3f8d579e82def7f",
+            "npm_north.png": "7f5810410ed994d36108bf561f16b4974ac02c0866b5b82ccd7ac11818151324",
+            "npm_south.png": "2babdef48b840678ad3e5fe91408e7d487dc5b5a6a2017ec02bb2e6fdc48e733",
+            "npm_west.png": "3d9892c7cb41f2da4ab8fff2e672d9cc43b962664f2eb433b804d0fe74a3d7e3",
+            "vpm_east.png": "9018302302bbba91c77237e5a6485ed972c67cbd91b16ab870fdaf068de22c15",
+            "vpm_iso.png": "e169d0c0aa998093150352e9ef9637ae00f3568215b8d528cd669e7845dfb6ba",
+            "vpm_north.png": "c2de7e986fb4685dbc88d569c370cca45baf31e015edd25af6aa5108c32f9827",
+            "vpm_south.png": "1605c13f620303b4a393876302dc6381db64b19b5e1f456a641f8f7c0df469ec",
+            "vpm_west.png": "aa4c7813ceea054f3dce799533cb32c161be43e383a890af62b9823873c5a211"
+          }
+        }
+      },
+      "seconds": 7.672230100026354,
+      "native_seconds": 43.60906739998609
+    },
+    {
+      "labels": {
+        "pilot-v007": {
+          "clean": 0.8877,
+          "footprint_pixels": 219720,
+          "arms": {
+            "npm_only": {
+              "score": 24.119,
+              "delta": 23.2313,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 0
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "vpm_only": {
+              "score": 24.119,
+              "delta": 23.2313,
+              "changed_rgb": {
+                "npm": 0,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "both": {
+              "score": 0.8646,
+              "delta": -0.0231,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            }
+          },
+          "ratio": 0.0009943481423768793,
+          "decoded_rgba_sha256": {
+            "npm_east.png": "8929006307f8ddba96c4a90a3a50b678b9f5d4cec565c30a15003a5c81132387",
+            "npm_iso.png": "1cc1a0eaec4b6c69c42ba4acd830baa9478caaa18744929571840f7fc0d99738",
+            "npm_north.png": "5a6df64d4864b9faa4e46b851fece67246ef2dbb78ea4f0af12409d52d4dab8c",
+            "npm_south.png": "abe8f36b69f143d0e768178d94e91ed4a4328437ac3d4b594558544223ef2c1a",
+            "npm_west.png": "b95b03902ef65afe00d5745711cc65a2252326a1470bd7581127c600fb8022a5",
+            "vpm_east.png": "ea716d0f01fd66c9372d4bbcb38e10f35cebf415087f39d9ae24bdf1981d2f6e",
+            "vpm_iso.png": "384a4344f89c2c8ec40fc358ae2a4a4dbd3452ab06f323b0cda24cc1cbf30637",
+            "vpm_north.png": "67d3e85999a1eddb9c55aa5db1e7aaae7f1d72af5da9dcdda58eadcdaf4060ac",
+            "vpm_south.png": "af336d2b9ae1c4f6d12183eb7bf60c7eb063276f991c7510c190778a0811cec1",
+            "vpm_west.png": "e1b21a2ebe9414e4d0f20ab1bd229405d47b17dcc73986d09fbac3fc6daee0d4"
+          }
+        },
+        "pilot-v010": {
+          "clean": 1.698,
+          "footprint_pixels": 219720,
+          "arms": {
+            "npm_only": {
+              "score": 25.6222,
+              "delta": 23.9242,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 0
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "vpm_only": {
+              "score": 25.6222,
+              "delta": 23.9242,
+              "changed_rgb": {
+                "npm": 0,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "both": {
+              "score": 1.6142,
+              "delta": -0.0838,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            }
+          },
+          "ratio": 0.0035027294538584365,
+          "decoded_rgba_sha256": {
+            "npm_east.png": "3db779a7dff854c5f91a99a05185499a469928bb8b6cd1e8b7eccab04acec108",
+            "npm_iso.png": "3a78fec49efd2850863b7cf89b28169fe4ca9f96a4d0682cc3f8d579e82def7f",
+            "npm_north.png": "7f5810410ed994d36108bf561f16b4974ac02c0866b5b82ccd7ac11818151324",
+            "npm_south.png": "2babdef48b840678ad3e5fe91408e7d487dc5b5a6a2017ec02bb2e6fdc48e733",
+            "npm_west.png": "3d9892c7cb41f2da4ab8fff2e672d9cc43b962664f2eb433b804d0fe74a3d7e3",
+            "vpm_east.png": "9018302302bbba91c77237e5a6485ed972c67cbd91b16ab870fdaf068de22c15",
+            "vpm_iso.png": "e169d0c0aa998093150352e9ef9637ae00f3568215b8d528cd669e7845dfb6ba",
+            "vpm_north.png": "c2de7e986fb4685dbc88d569c370cca45baf31e015edd25af6aa5108c32f9827",
+            "vpm_south.png": "1605c13f620303b4a393876302dc6381db64b19b5e1f456a641f8f7c0df469ec",
+            "vpm_west.png": "aa4c7813ceea054f3dce799533cb32c161be43e383a890af62b9823873c5a211"
+          }
+        }
+      },
+      "seconds": 10.1675570999505,
+      "native_seconds": 39.4319586000056
+    },
+    {
+      "labels": {
+        "pilot-v007": {
+          "clean": 0.8877,
+          "footprint_pixels": 219720,
+          "arms": {
+            "npm_only": {
+              "score": 24.119,
+              "delta": 23.2313,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 0
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "vpm_only": {
+              "score": 24.119,
+              "delta": 23.2313,
+              "changed_rgb": {
+                "npm": 0,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "both": {
+              "score": 0.8646,
+              "delta": -0.0231,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            }
+          },
+          "ratio": 0.0009943481423768793,
+          "decoded_rgba_sha256": {
+            "npm_east.png": "8929006307f8ddba96c4a90a3a50b678b9f5d4cec565c30a15003a5c81132387",
+            "npm_iso.png": "1cc1a0eaec4b6c69c42ba4acd830baa9478caaa18744929571840f7fc0d99738",
+            "npm_north.png": "5a6df64d4864b9faa4e46b851fece67246ef2dbb78ea4f0af12409d52d4dab8c",
+            "npm_south.png": "abe8f36b69f143d0e768178d94e91ed4a4328437ac3d4b594558544223ef2c1a",
+            "npm_west.png": "b95b03902ef65afe00d5745711cc65a2252326a1470bd7581127c600fb8022a5",
+            "vpm_east.png": "ea716d0f01fd66c9372d4bbcb38e10f35cebf415087f39d9ae24bdf1981d2f6e",
+            "vpm_iso.png": "384a4344f89c2c8ec40fc358ae2a4a4dbd3452ab06f323b0cda24cc1cbf30637",
+            "vpm_north.png": "67d3e85999a1eddb9c55aa5db1e7aaae7f1d72af5da9dcdda58eadcdaf4060ac",
+            "vpm_south.png": "af336d2b9ae1c4f6d12183eb7bf60c7eb063276f991c7510c190778a0811cec1",
+            "vpm_west.png": "e1b21a2ebe9414e4d0f20ab1bd229405d47b17dcc73986d09fbac3fc6daee0d4"
+          }
+        },
+        "pilot-v010": {
+          "clean": 1.698,
+          "footprint_pixels": 219720,
+          "arms": {
+            "npm_only": {
+              "score": 25.6222,
+              "delta": 23.9242,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 0
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "vpm_only": {
+              "score": 25.6222,
+              "delta": 23.9242,
+              "changed_rgb": {
+                "npm": 0,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            },
+            "both": {
+              "score": 1.6142,
+              "delta": -0.0838,
+              "changed_rgb": {
+                "npm": 219720,
+                "vpm": 219720
+              },
+              "untouched_views": {
+                "east": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "north": {
+                  "npm": 0,
+                  "vpm": 0
+                },
+                "west": {
+                  "npm": 0,
+                  "vpm": 0
+                }
+              }
+            }
+          },
+          "ratio": 0.0035027294538584365,
+          "decoded_rgba_sha256": {
+            "npm_east.png": "3db779a7dff854c5f91a99a05185499a469928bb8b6cd1e8b7eccab04acec108",
+            "npm_iso.png": "3a78fec49efd2850863b7cf89b28169fe4ca9f96a4d0682cc3f8d579e82def7f",
+            "npm_north.png": "7f5810410ed994d36108bf561f16b4974ac02c0866b5b82ccd7ac11818151324",
+            "npm_south.png": "2babdef48b840678ad3e5fe91408e7d487dc5b5a6a2017ec02bb2e6fdc48e733",
+            "npm_west.png": "3d9892c7cb41f2da4ab8fff2e672d9cc43b962664f2eb433b804d0fe74a3d7e3",
+            "vpm_east.png": "9018302302bbba91c77237e5a6485ed972c67cbd91b16ab870fdaf068de22c15",
+            "vpm_iso.png": "e169d0c0aa998093150352e9ef9637ae00f3568215b8d528cd669e7845dfb6ba",
+            "vpm_north.png": "c2de7e986fb4685dbc88d569c370cca45baf31e015edd25af6aa5108c32f9827",
+            "vpm_south.png": "1605c13f620303b4a393876302dc6381db64b19b5e1f456a641f8f7c0df469ec",
+            "vpm_west.png": "aa4c7813ceea054f3dce799533cb32c161be43e383a890af62b9823873c5a211"
+          }
+        }
+      },
+      "seconds": 12.135318000044208,
+      "native_seconds": 36.636559499951545
+    }
+  ],
+  "reference": "5c15100ee5631e2f5d75e697e14e1977a6361f3d",
+  "measured_head": "c891188aabf2830580d2f424d48c686338bf02bc",
+  "versions": {
+    "python": "3.14.9",
+    "numpy": "2.5.4",
+    "pillow": "13.0.0"
+  },
+  "scorer_sha256": "4ad3ba410b592ce28d9d597ebc55e370a30ed27472bdf8af8c3bb3158042be04",
+  "zip_sha256": {
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\SM_Nku_1.zip": "271ee11bf78200ef883814a4ac108ef289098d0f106da01e8d9fc57da888c295",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v007\\0000_Nku_1.zip": "0d1fa6c036bb553459dd0e9baec8be4ace8bc61d5acea6aab585d713f2292d0f",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\SM_Nku_1.zip": "2fe983791566477e297aeefa09f04a1b7d176312c3fce1a8c9f1cf26138013bb",
+    "G:\\Мой диск\\AGR-evidence\\559-tec26-oks-ac08-pilot-v010\\0000_Nku_1.zip": "8f0cb8b7e922850eab15198d0bd40cf2ca1e2bfed12e9c4912173b4aef565ab3"
+  },
+  "staged_sha256": {
+    "pilot-v007/vpm/SM_Nku_1.fbx": "f7888e817a650b8af13ef8b0edfaac03171ad57f372d1d1e278be1e2fce9739b",
+    "pilot-v007/vpm/T_Nku_1_Diffuse_1.1001.png": "2c5a22644b872a909fa5bf301be3e86dd2dd25dbd4b43a74a4da77a9b993b9ef",
+    "pilot-v007/vpm/T_Nku_1_Diffuse_1.1002.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+    "pilot-v007/vpm/T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+    "pilot-v007/vpm/T_Nku_1_Diffuse_1.1004.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+    "pilot-v007/vpm/T_Nku_1_ERM_1.1001.png": "54b733cf7883bb0cfe6b747640ba5313678737ae36400231ce788fa1630c83c0",
+    "pilot-v007/vpm/T_Nku_1_ERM_1.1002.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+    "pilot-v007/vpm/T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+    "pilot-v007/vpm/T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+    "pilot-v007/vpm/T_Nku_1_Normal_1.1001.png": "2ba6701da704dceb3dedf851af2e7565d8ff5e3725f5b8880508f38f5332d672",
+    "pilot-v007/vpm/T_Nku_1_Normal_1.1002.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "pilot-v007/vpm/T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "pilot-v007/vpm/T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "pilot-v007/npm/0000_Nku_1_01.fbx": "456132ee2167f507415cc971b3ddc2093c9cd74441432252027e5b26bb0af932",
+    "pilot-v010/vpm/SM_Nku_1.fbx": "ca4715a446db660d2c82766d4be8547fac954c4fab1363ef171bde4b99a4277b",
+    "pilot-v010/vpm/T_Nku_1_Diffuse_1.1001.png": "c356199df61a2fc67001296b9bad469efcd4699d5bb44418dd3362b5d1d092a3",
+    "pilot-v010/vpm/T_Nku_1_Diffuse_1.1002.png": "0b3c7e3b9dd1a45fe1bf228222431f5ec21d061a8aaa0d398232d775c6e52879",
+    "pilot-v010/vpm/T_Nku_1_Diffuse_1.1003.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+    "pilot-v010/vpm/T_Nku_1_Diffuse_1.1004.png": "1d978c478b119565a77a2b503ce8b1f09d95425156ccd83c90021459dc14c4a2",
+    "pilot-v010/vpm/T_Nku_1_Diffuse_1.1005.png": "765b8504bfb70793698a541cfd88cf839a0c5bbf6cb3cb3b76cb52bacd382969",
+    "pilot-v010/vpm/T_Nku_1_ERM_1.1001.png": "3f272369ec17df44c25e6a4a32ddaf598342c9f6d46561fc4e1a5e4e7d4bc41c",
+    "pilot-v010/vpm/T_Nku_1_ERM_1.1002.png": "5857f277740d4fae6656748a432a84716ac0a55149ae6dcb3b83561d5591f23b",
+    "pilot-v010/vpm/T_Nku_1_ERM_1.1003.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+    "pilot-v010/vpm/T_Nku_1_ERM_1.1004.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+    "pilot-v010/vpm/T_Nku_1_ERM_1.1005.png": "b2a0e8cfac427c45c7dd81953b8fb25d957706ddbd9184012b1a113bdd153921",
+    "pilot-v010/vpm/T_Nku_1_Normal_1.1001.png": "ac607fb10c6af8f976ffe94090990177dddbd53ab8b4c1176db24b845d088ba1",
+    "pilot-v010/vpm/T_Nku_1_Normal_1.1002.png": "b8c353401651291411bb5ceae32fc609df7780a09e9c7ebedd143248da328596",
+    "pilot-v010/vpm/T_Nku_1_Normal_1.1003.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "pilot-v010/vpm/T_Nku_1_Normal_1.1004.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "pilot-v010/vpm/T_Nku_1_Normal_1.1005.png": "7617614592a2c8fb502a2bfaa43d4450b63f84171d6c3b6e2c6871742624644c",
+    "pilot-v010/npm/0000_Nku_1_01.fbx": "7eb0544231e5148a60a9a8760f2ccc16828130b002691d205a30e5e233597a52"
+  },
+  "input_parity": true,
+  "native_status": "series_complete",
+  "native_seconds": 120.67357449996052,
+  "labels": {
+    "pilot-v007": {
+      "median": 0.0009943481423768793,
+      "min": 0.0009943481423768793,
+      "max": 0.0009943481423768793,
+      "spread": 0.0
+    },
+    "pilot-v010": {
+      "median": 0.0035027294538584365,
+      "min": 0.0035027294538584365,
+      "max": 0.0035027294538584365,
+      "spread": 0.0
+    }
+  },
+  "seconds": 151.31618249998428
+}

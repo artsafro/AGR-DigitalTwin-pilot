@@ -14,3 +14,22 @@ python docs/research/autoresearch-npm-vpm-common-mode-r132/replay.py tmp/r132-NE
 ```
 
 Limited replay: exact Drive archives and Blender 5.1 on Windows plus the Git objects from `origin/research/autoresearch-standing-{125,127,128}`. All image witnesses are in memory; no customer files are edited.
+
+## Result — H132 confirmed for this synthetic intervention; OBSERVE, no PR
+
+**Итог:** одинаковые тёмные полосы в обоих профилях не подняли балл ни на одной из двух версий AC08. В трёх свежих парах полосы только в НПМ или только в ВПМ подняли p95 ячеек южного фасада на **23,23–23,92 ΔE**; те же полосы в обоих профилях слегка **снизили** балл. Render-diff пригоден для наблюдения за расхождением профилей, но не для приёмки общих дефектов текстуры. Пакеты и производственный код не менялись.
+
+| AC08 | Clean south p95 | NPM only | VPM only | Both | Median R132 | Spread |
+|---|---:|---:|---:|---:|---:|---:|
+| [v007 rejected](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/559#issuecomment-6341991856) | 0.8877 | 24.1190 | 24.1190 | 0.8646 | 0.000994 | 0 |
+| [v010 visual reference](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/559#issuecomment-6345392389) | 1.6980 | 25.6222 | 25.6222 | 1.6142 | 0.003503 | 0 |
+
+**Clean:** unchanged #128 whole-case max 0.8974 vs 1.8381 ΔE (reverse ordering, not rescued by this result). In all six fresh render sets, cameras, clean and historical-control score rows, and 60 decoded RGBA hashes matched #128. Original ZIP and staged file hash parity passed. `series_complete`; 151.32 s wall, native 120.67 s; native pairs 43.61 / 39.43 / 36.64 s; witness pairs 7.67 / 10.17 / 12.14 s.
+
+**Injected:** each targeted input changed 219,720 RGB pixels, each untargeted input 0; alpha, datum and RGB outside the footprint were unchanged. Both-profile signed shifts were −0.0231 and −0.0838 ΔE. Untargeted profiles and other facades are `not_exercised` for the image intervention; no native texture, UV, padding or density perturbation was measured.
+
+**Not measured:** 0/3 eligible external pairs. #1817 KPP1 v004 has both profiles but no paired texture refusal; Vatutino MAF v005 has both profiles but no exact texture-rejection pair bound by #1499; the November 20 Staropetrovskiy set has both ZIPs, November 24 only VPM, and #1500 remains open without a reviewed two-profile pair for T02. No held-out package ordering is inferred. #1947 owns atlas/master validation, #1969 Ground atlas/assembly, #559 the drawing-based comparison; none were changed. Trainer remains parked by the focus override.
+
+Measured head `c891188aabf2830580d2f424d48c686338bf02bc`; [receipt](autoresearch-npm-vpm-common-mode-r132/receipt.json) SHA-256 (Git bytes) `da18dbbbdb2eedd4fa68edf37a414ec6ec4a853edf5af4a757f71557809d4c30`.
+
+Affected tests: `uv run --frozen pytest -q tests/test_facades_texture_pattern.py tests/test_npm_atlas_udim.py tests/test_npm_atlas_padding.py` — 123 passed. Pilot guard: `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — duplicate guard green and 567 passed. Full suite: deferred to merge batch (rule 68).
