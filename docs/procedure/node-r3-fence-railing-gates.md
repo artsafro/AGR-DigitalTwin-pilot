@@ -37,7 +37,24 @@ considered hard corners. Between anchors, `ceil(run_length / max_step)` bays are
 spaced equally by developed polyline length. Unlike Vertex CL normalization,
 this does not move the input points or require CAD vertex positions to coincide
 with post axes. Add samples as needed on curved geometry and mark its true corners.
-Non-level/ambiguous paths, reversals, thin segments and unusable dimensions fail.
+Non-level/ambiguous paths, reversals, thin segments and unusable dimensions fail
+in this legacy spline mode.
+
+### Source-measured flights and handrails
+
+For inclined or individually measured members [D425], use the same command
+with `--type posts_handrail` and geometry representation. Replace the whole
+spline document with `{"measured_members": [...]}`. Each entry has `role`
+(`post` or `top_rail`) and ordered `sections`, each with `center` (XYZ metres)
+and `offsets` (ordered XYZ metre offsets in the model frame). Rims must be
+planar, strictly convex around the center and have 3–64 corresponding corners.
+Order each rim so its normal points along the member; corresponding rim edges
+must turn by less than 90° between stations. This makes a capped solid and
+does not fit, fill gaps in, or copy a source triangle mesh. Do not use it to
+invent missing cap/profile geometry. Record source element bindings, compare
+the native readback in both directions and report maximum deviation in mm.
+Measured mode does not generate or redistribute posts, infer a shared height,
+or accept opacity. The existing level-spline path and output are unchanged.
 
 The new native copy is an inset candidate, not a delivery; stdout and scene
 property `agr_railing` report the source hash, post centres, spacing and triangle
