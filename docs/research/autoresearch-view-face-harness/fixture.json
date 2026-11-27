@@ -1,0 +1,46 @@
+{
+  "schema": "view-face-fixture/1",
+  "card": "t_8845bd2c (#139)",
+  "note": "Frozen before scoring. GT = facade title convention (left axis -> right axis as seen from outside) mapped to the model frame; KPP1 plan->model frame is translation-only (plan-contours frame_shift_m), AC08 normals from the accepted jobs/TEC26-OKS/AC08/vpm_textures.json. Sokolniki is held out (#2001).",
+  "res_m": 0.1,
+  "fixtures": {
+    "kpp1": {
+      "dxf": "C:/x/kpp1/r1209/dxf/L01.dxf",
+      "dxf_sha256": "f2b6dda8e93ad7d692efbeed78520bdb2bfd981d078c06a413f64bd687006111",
+      "layout": "Model",
+      "unit_m": 0.001,
+      "views": "auto_gap_x",
+      "gap_mm": 3000,
+      "exclude_layers": "DIMS|TEXT|IDEN|NOTE|GRID|^G-|ANNO|SYMB|THIN|GENF",
+      "model": "C:/x/ev_t_8845bd2c/kpp1m/SM_77_05_0009005_117_002.fbx",
+      "model_sha256": "5286f9897dad10c12c530366e3d9aa89095e8f21c2b7708ca707307bc2117778",
+      "model_origin": "G:/Мой диск/AGR-assets/KPP1/delivered-customer-2026-11-14/SM_77_05_0009005_117_002.zip (accepted delivery)",
+      "faces_az": [0, 90, 180, 270],
+      "gt_by_axis_x_mm": {"1-4": [0, 27000, 270], "4-1": [43955, 70955, 90], "В-А": [81848, 92848, 180], "А-В": [102956, 113956, 0]},
+      "gt_derivation": "L03 plan: axes 1->4 along +x, А->В along +y; L01 axis bubbles give left/right axis per view; right = (-n) x Z"
+    },
+    "ac08": {
+      "dxf": "G:/Мой диск/AGR-evidence/tec26-oks/AC08/evidence-v002/ac08.dxf",
+      "dxf_sha256": "964f038e59195ebd5f28b66f981dc96ee652437b7aaae8dcbdfc76255eb71a72",
+      "layout": "Model",
+      "unit_m": 0.001,
+      "views": "given_boxes",
+      "exclude_layers": "РАЗМЕР|ОСИ|СИМВОЛ|НЕПЕЧАТ|ТАБЛИЦ|ПОМЕЩ|text|POZ|площадь|so_dim",
+      "boxes_mm": {"А-Б": [61321.1, 6312.7, 2438.0, 2591.0], "1-2": [69657.8, 6312.7, 6058.0, 2591.0], "Б-А": [61321.1, -995.6, 2438.0, 2591.0], "2-1": [69657.8, -995.6, 6058.0, 2591.0]},
+      "box_margin_mm": 300,
+      "model": "G:/Мой диск/AGR-assets/tec26/ac08/source/AC08_source_geomfinal.fbx",
+      "model_sha256": "9cae468e714118c501dfffa77531aabecd88662c4e34d0be57274d446bb3e5fd",
+      "faces_az": [0, 90, 180, 270],
+      "gt_az": {"1-2": 90, "2-1": 270, "А-Б": 180, "Б-А": 0},
+      "gt_derivation": "jobs/TEC26-OKS/AC08/vpm_textures.json facades.normal (accepted pilot). Source box is symmetric: within-pair abstain is the correct behaviour (abstain control)."
+    }
+  },
+  "partials": {"synthetic": true, "fractions": [0.25, 0.4, 0.6], "positions": [0.0, 0.5, 1.0]},
+  "variants": {
+    "V0": "width only: nearest face width (full-view assumption), abstain if two faces within 3 %",
+    "V1": "roofline only: NCC of top profile (relative to view max), slide over face",
+    "V2": "rhythm only: NCC of vertical-edge column density, slide over face",
+    "V3": "V1+V2 mean (proposed)"
+  },
+  "decision": {"tau_margin": 0.10, "min_score": 0.30, "width_slack_m": 0.6}
+}
