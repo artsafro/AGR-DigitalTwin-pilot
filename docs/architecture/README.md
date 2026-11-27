@@ -102,6 +102,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | agents/issue-tracker | [agents/issue-tracker.md](../agents/issue-tracker.md) |  |
 | agents/job-scripts-baseline-txt | [agents/job_scripts_baseline.txt](../agents/job_scripts_baseline.txt) |  |
 | agents/kanban | [agents/KANBAN.md](../agents/KANBAN.md) |  |
+| agents/merge-policy | [agents/MERGE_POLICY.yaml](../agents/MERGE_POLICY.yaml) | [agents/MERGE_POLICY.md](../agents/MERGE_POLICY.md), [agents/STEWARD_NOTE.md](../agents/STEWARD_NOTE.md) |
 | agents/naming | [agents/NAMING.md](../agents/NAMING.md) |  |
 | agents/review-checklist | [agents/REVIEW_CHECKLIST.md](../agents/REVIEW_CHECKLIST.md) |  |
 | agents/roles | [agents/ROLES.md](../agents/ROLES.md) |  |
