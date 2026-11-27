@@ -406,6 +406,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | qa/evidence/issue-111/verification-json | [qa/evidence/issue-111/verification.json](../qa/evidence/issue-111/verification.json) |  |
 | research/3dsmax-scripting | [research/3dsmax-scripting.md](../research/3dsmax-scripting.md) |  |
 | research/ac08-kernel-ops-752 | [research/ac08-kernel-ops-752.md](../research/ac08-kernel-ops-752.md) |  |
+| research/agent-first-audit-2068 | [research/agent-first-audit-2068.md](../research/agent-first-audit-2068.md) |  |
 | research/agent-harness-practices | [research/agent-harness-practices.md](../research/agent-harness-practices.md) |  |
 | research/agent-step-waste-1273 | [research/agent-step-waste-1273.md](../research/agent-step-waste-1273.md) |  |
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
