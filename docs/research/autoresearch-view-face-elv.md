@@ -130,7 +130,8 @@ uv run --offline --extra pdf-review python docs/research/autoresearch-view-face-
 python docs/research/autoresearch-view-face-elv/posthoc.py <new_dir>/receipt.json
 ```
 
-Receipt: `autoresearch-view-face-elv/receipt.json`. Evidence (staged hash-identical PDF/FBX inputs, all pair JSONs,
+Receipt: `autoresearch-view-face-elv/receipt.json` (SHA-256 as committed, LF: `539e946200b711e69a8f9377d51159d6320ee540825cd1c4ef141c3b742482bc`;
+evidence copy `run1/receipt.json`, CRLF as written on Windows: `372a8f672ffbb0e09ff1d36cb1c70813b79f7ec5148fd59a8b49573b778c547a`). Evidence (staged hash-identical PDF/FBX inputs, all pair JSONs,
 ray npz, logs, view/model edge previews, GT contact sheet `sheet_main.png`):
 `G:/Мой диск/AGR-evidence/145-view-face-elv/` + `SHA256SUMS.txt`. Replay is limited to the pilot host (owner's
 named folder or the evidence copies; Blender 4.4 pinned by SHA-256).
