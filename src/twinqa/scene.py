@@ -26,6 +26,9 @@ from twinqa.geometry.ucx_audit import (
     BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, is_closed, is_convex,
     sat_separation, surface_distance, weld,
 )
+from twinqa.geometry.ucx_audit import (  # noqa: F401 - [D012] re-export, owner ucx_audit (#1962)
+    UCX_CAP, UCX_SHARE, UCX_SMALL_LIMIT, UCX_SMALL_MODEL, ucx_triangle_limit,
+)
 from twinqa.clearance import BAND_EDGE_TOL_M, co_directional_distribution, co_directional_pairs
 from twinqa.report import Finding, signed_margin
 from twinqa.naming import mesh_name_findings
@@ -42,19 +45,11 @@ UNIT_PAGES = [4, 24]
 # VPM OKS aims at the NPM limit; above it, windows go to atlas textures on planes.
 PROJECT_TRIANGLE_TARGET = 150_000
 PIVOT_CENTRE_TOL_PCT, PIVOT_SHARED_TOL_M = 10, 0.001  # SINTEZ AGR Checker 2.9.4a / 2.9.5
-UCX_SMALL_MODEL, UCX_SMALL_LIMIT, UCX_SHARE, UCX_CAP = 50_000, 15_000, 0.05, 100_000
+# [D012] UCX budget: owner twinqa.geometry.ucx_audit (#1962); UCX_* and ucx_triangle_limit re-exported here.
 # float32 FBX coordinates near 100 m carry ~1e-5 m noise, same value as ucx_audit.BAND_TOL_M;
 # it is numerical precision, not a permitted overlap.
 OVERLAP_EPS_M = 1e-5
 _DEGENERATE_VOLUME_M3 = 1e-9
-
-
-def ucx_triangle_limit(model_triangles: int) -> int:
-    """UCX budget (reg p.36-37 §13.7-13.8) as SINTEZ AGR Checker v1.6.1 (conflict #3, decided):
-    < 50 000 -> 15 000; else ceil(5 %) capped at 100 000."""
-    if model_triangles < UCX_SMALL_MODEL:
-        return UCX_SMALL_LIMIT
-    return min(math.ceil(model_triangles * UCX_SHARE), UCX_CAP)
 
 
 def find_blender() -> str | None:
