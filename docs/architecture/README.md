@@ -415,6 +415,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
+| research/autoresearch-view-face-plane-span | [Plane-span contract](../research/autoresearch-view-face-plane-span.md) | [Round log](../research/autoresearch-view-face-plane-span/result.md) |
+| research/autoresearch-view-face-plane-span/receipt | [Replay receipt](../research/autoresearch-view-face-plane-span/receipt.json) | |
+| research/autoresearch-view-face-plane-span/runner | [Replay runner](../research/autoresearch-view-face-plane-span/run.py) | |
+| research/autoresearch-view-face-plane-span/tests | [Research controls](../research/autoresearch-view-face-plane-span/test_span.py) | |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
