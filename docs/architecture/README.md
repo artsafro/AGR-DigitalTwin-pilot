@@ -422,6 +422,12 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
 | research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
 | research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
+| research/autoresearch-view-face-wall | [research/autoresearch-view-face-wall.md](../research/autoresearch-view-face-wall.md) |  |
+| research/autoresearch-view-face-wall/rays-wall-py | [research/autoresearch-view-face-wall/rays_wall.py](../research/autoresearch-view-face-wall/rays_wall.py) |  |
+| research/autoresearch-view-face-wall/receipt-json | [research/autoresearch-view-face-wall/receipt.json](../research/autoresearch-view-face-wall/receipt.json) |  |
+| research/autoresearch-view-face-wall/run-py | [research/autoresearch-view-face-wall/run.py](../research/autoresearch-view-face-wall/run.py) |  |
+| research/autoresearch-view-face-wall/test-wall-py | [research/autoresearch-view-face-wall/test_wall.py](../research/autoresearch-view-face-wall/test_wall.py) |  |
+| research/autoresearch-view-face-wall/wall-py | [research/autoresearch-view-face-wall/wall.py](../research/autoresearch-view-face-wall/wall.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
