@@ -41,3 +41,34 @@ def test_unique_offset_on_second_wall():
     assert (start, w0, w1) == (4, 1, 1)
     assert WL.outcome(90, 90, w1, 1) == 'correct' and WL.outcome(90, 90, None, 1) == 'abstain'
     assert WL.outcome(0, 90, 1, 1) == 'wrong'
+
+
+def _row(case, w, nontrivial=False, w0=None):
+    return dict(case=case, W0=w if w0 is None else w0, W1=w, nontrivial=nontrivial)
+
+
+def _verdict(rows):
+    nt = (lambda r: bool(r['nontrivial']))
+    return WL.verdict(rows, WL.summarize(rows, 'W1'), WL.summarize(rows, 'W1', nt))
+
+
+def _base():
+    return [_row('full', 'correct')] + [_row('partial25@0.0', 'correct') for _ in range(30)]
+
+
+def test_nontrivial_all_abstained_is_inconclusive():  # #2075
+    rows = _base() + [_row('partial40@0.0', 'abstain', nontrivial=True) for _ in range(5)]
+    hyp, checks, gate = _verdict(rows)
+    assert all(checks.values())
+    assert gate['nontrivial_crops_exercised'] == 0
+    assert gate['nontrivial_crops_abstained'] == 5
+    assert hyp == 'inconclusive'
+
+
+def test_nontrivial_answered_counts_toward_confirmed():  # #2075
+    rows = _base() + [_row('partial40@0.0', 'correct', nontrivial=True) for _ in range(5)]
+    rows.append(_row('partial40@0.5', 'abstain', nontrivial=True))
+    hyp, _, gate = _verdict(rows)
+    assert gate['nontrivial_crops_exercised'] == 5
+    assert gate['nontrivial_abstain_rate'] == round(1 / 6, 4)
+    assert hyp == 'confirmed'

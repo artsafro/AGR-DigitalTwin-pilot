@@ -4,6 +4,8 @@ new-case: docs/research/autoresearch-view-face-wall/wall.py - #153 wall-level vi
 
 Research only; no design or finish authority. `uncertainty` comes from the pinned #149 score.py.
 """
+from collections import Counter
+
 import numpy as np
 
 
@@ -83,3 +85,44 @@ def outcome(side_pick, gt_az, wall_pick, gt_wall):
     if side_pick is None or wall_pick is None:
         return 'abstain'
     return 'correct' if side_pick == gt_az and wall_pick == gt_wall else 'wrong'
+
+
+def group(row):
+    if row['case'] == 'mirror':
+        return 'mirror'
+    if row['case'].startswith('partial'):
+        return 'synthetic_crop'
+    return row['case']
+
+
+def summarize(rows, key, only=None):
+    out = {}
+    for name in ('full', 'synthetic_crop', 'fragment', 'fragment_top_cut', 'mirror'):
+        c = Counter(r[key] for r in rows if group(r) == name and (only is None or only(r)))
+        answered = c['correct'] + c['wrong']
+        out[name] = dict(correct=c['correct'], wrong=c['wrong'], abstain=c['abstain'],
+                         not_exercised=c['not_exercised'],
+                         accuracy=round(c['correct'] / answered, 4) if answered else None)
+    return out
+
+
+def verdict(rows, w1, w1_nt):
+    fired = sum(1 for r in rows if r['W0'] in ('correct', 'wrong') and r['W1'] == 'abstain')
+    # #2075: a nontrivial crop is exercised only when W1 answers; D/W1 abstentions do not measure the wall.
+    nt_rows = [r for r in rows if group(r) == 'synthetic_crop' and r['nontrivial']]
+    nt_ex = sum(1 for r in nt_rows if r['W1'] in ('correct', 'wrong'))
+    nt_ab = sum(1 for r in nt_rows if r['W1'] == 'abstain')
+    checks = dict(full_wrong_0=w1['full']['wrong'] == 0,
+                  fragment_wrong_0=w1['fragment']['wrong'] + w1['fragment_top_cut']['wrong'] == 0,
+                  crop_wrong_le1=w1['synthetic_crop']['wrong'] <= 1,
+                  crop_correct_ge30=w1['synthetic_crop']['correct'] >= 30,
+                  nontrivial_wrong_0=w1_nt['synthetic_crop']['wrong'] == 0)
+    if not all(checks.values()):
+        hyp = 'refuted'
+    elif nt_ex < 5:
+        hyp = 'inconclusive'
+    else:
+        hyp = 'confirmed'
+    return hyp, checks, dict(gate_fired_rows=fired, gate_measured=fired > 0, nontrivial_crops=len(nt_rows),
+                             nontrivial_crops_exercised=nt_ex, nontrivial_crops_abstained=nt_ab,
+                             nontrivial_abstain_rate=round(nt_ab / len(nt_rows), 4) if nt_rows else None)

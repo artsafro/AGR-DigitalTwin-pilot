@@ -186,42 +186,6 @@ def measure(out, run, fx, r145, r149):
     return rows, parity, stats
 
 
-def group(row):
-    if row['case'] == 'mirror':
-        return 'mirror'
-    if row['case'].startswith('partial'):
-        return 'synthetic_crop'
-    return row['case']
-
-
-def summarize(rows, key, only=None):
-    out = {}
-    for name in ('full', 'synthetic_crop', 'fragment', 'fragment_top_cut', 'mirror'):
-        c = Counter(r[key] for r in rows if group(r) == name and (only is None or only(r)))
-        answered = c['correct'] + c['wrong']
-        out[name] = dict(correct=c['correct'], wrong=c['wrong'], abstain=c['abstain'],
-                         not_exercised=c['not_exercised'],
-                         accuracy=round(c['correct'] / answered, 4) if answered else None)
-    return out
-
-
-def verdict(rows, w1, w1_nt):
-    fired = sum(1 for r in rows if r['W0'] in ('correct', 'wrong') and r['W1'] == 'abstain')
-    nt_ex = sum(1 for r in rows if group(r) == 'synthetic_crop' and r['nontrivial'])
-    checks = dict(full_wrong_0=w1['full']['wrong'] == 0,
-                  fragment_wrong_0=w1['fragment']['wrong'] + w1['fragment_top_cut']['wrong'] == 0,
-                  crop_wrong_le1=w1['synthetic_crop']['wrong'] <= 1,
-                  crop_correct_ge30=w1['synthetic_crop']['correct'] >= 30,
-                  nontrivial_wrong_0=w1_nt['synthetic_crop']['wrong'] == 0)
-    if not all(checks.values()):
-        hyp = 'refuted'
-    elif nt_ex < 5:
-        hyp = 'inconclusive'
-    else:
-        hyp = 'confirmed'
-    return hyp, checks, dict(gate_fired_rows=fired, gate_measured=fired > 0, nontrivial_crops_exercised=nt_ex)
-
-
 def side_parity(rows):
     ref = json.loads((EV149 / 'run-1.json').read_text(encoding='utf-8'))
     a = [(r['view'], r['case'], r['pick'], r['side']) for r in rows]
@@ -259,21 +223,22 @@ def main():
     identical = all(k == keyed[0] for k in keyed)
     rows = runs[0]
     sp_ok, sp_n = side_parity(rows)
-    w0, w1 = summarize(rows, 'W0'), summarize(rows, 'W1')
+    w0, w1 = WL.summarize(rows, 'W0'), WL.summarize(rows, 'W1')
     nt = (lambda r: bool(r['nontrivial']))
-    w0_nt, w1_nt = summarize(rows, 'W0', nt), summarize(rows, 'W1', nt)
-    hyp, checks, gate = verdict(rows, w1, w1_nt)
+    w0_nt, w1_nt = WL.summarize(rows, 'W0', nt), WL.summarize(rows, 'W1', nt)
+    hyp, checks, gate = WL.verdict(rows, w1, w1_nt)
     if status == 'finished' and not (identical and all(parity.values()) and sp_ok):
         status = 'parity_failed'
     ws = sorted(walls)
-    receipt = dict(card='t_ebb8205e (#153)', status=status, hypothesis=hyp, checks=checks, gate=gate,
+    receipt = dict(card='t_ebb8205e (#153); t_2acb7a29 (#2075)', status=status, hypothesis=hyp,
+                   checks=checks, gate=gate,
                    tau_loc=TAU_LOC, plane_gap_m=PLANE_GAP_M, tol_m=TOL_M, width_tol_m=WIDTH_TOL_M,
                    type_parity_149={str(k): v for k, v in parity.items()}, side_parity_149=sp_ok,
                    side_parity_rows=sp_n, pins=pins, blender_sha256=EXE_HASH, uv_lock_sha256=sha('uv.lock'),
                    runs=len(runs), run_wall_s=walls, median_s=ws[len(ws) // 2], min_s=ws[0], max_s=ws[-1],
                    total_wall_s=round(monotonic() - t0, 3), runs_identical=identical,
                    run_content_sha256=[hashlib.sha256(k.encode()).hexdigest() for k in keyed],
-                   face_stats=stats, summary_side=summarize(rows, 'side'), summary_W0=w0, summary_W1=w1,
+                   face_stats=stats, summary_side=WL.summarize(rows, 'side'), summary_W0=w0, summary_W1=w1,
                    summary_W0_nontrivial=w0_nt, summary_W1_nontrivial=w1_nt, rows=rows)
     (out / 'receipt.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=1), encoding='utf-8')
     print(json.dumps(dict(status=status, hypothesis=hyp, checks=checks, gate=gate, W0=w0, W1=w1,
