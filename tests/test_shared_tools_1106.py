@@ -254,6 +254,49 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     assert "T_Other_Diffuse_1.1001.png" not in names and len(names) == 4
 
 
+@pytest.mark.parametrize('address,foreign', [
+    ('Nku_1', 'Other'), ('Nku_1', 'Nku_1_Annex'),
+    ('Nku_1_Ground', 'Nku_1'), ('Nku_1_Ground', 'Nku_1_Annex_Ground'),
+])
+def test_package_refuses_foreign_staged_png_before_writes(tmp_path, address, foreign):
+    pkg = make_pkg(tmp_path / 'p', address)
+    tex = make_tex(tmp_path / 'tex', address)
+    (pkg / f'T_{address}_Diffuse_1.1002.png').write_bytes(b'local staged map')
+    offending = f'T_{foreign}_Diffuse_1.1002.png'
+    (pkg / offending).write_bytes(b'foreign staged map')
+    before = snapshot(tmp_path)
+    for _ in range(2):
+        r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
+        print(f'{offending}: exit={r.returncode}; {r.stderr.strip()}; '
+              f'new files={sorted(set(snapshot(tmp_path)) - set(before))}')
+        assert r.returncode == 1 and 'foreign' in r.stderr and offending in r.stderr
+        assert snapshot(tmp_path) == before
+
+
+def test_package_keeps_matching_staged_png_and_non_png_member(tmp_path):
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    decoy = 'T_Nku_1_Annex_Diffuse_1.1002.png'
+    (tex / decoy).write_bytes(b'different address with a common prefix')
+    staged = 'T_Nku_1_Diffuse_1.1002.png'
+    (pkg / staged).write_bytes(b'local staged map')
+    non_png = 'T_Other_Diffuse_1.1002.txt'
+    (pkg / non_png).write_bytes(b'unrelated non-PNG member')
+    before = snapshot(tmp_path)
+    r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
+    assert r.returncode == 0, r.stderr
+    with zipfile.ZipFile(pkg.parent / 'SM_Nku_1.zip') as archive:
+        print(f'package members: {archive.namelist()}')
+        assert set(archive.namelist()) == {
+            'SM_Nku_1.fbx', staged, non_png,
+            *(f'T_Nku_1_{kind}_1.1001.png' for kind in ('Diffuse', 'ERM', 'Normal')),
+        }
+        assert archive.read(staged) == b'local staged map'
+        assert archive.read(non_png) == b'unrelated non-PNG member'
+    after = snapshot(tmp_path)
+    assert {path: after[path] for path in before} == before
+
+
 @pytest.mark.parametrize('case,diagnostic', [
     ('changed', 'file changed after export'), ('legacy', 'records no exported FBX'),
     ('no_metadata', 'export_meta.json'), ('extra', 'SM_Extra.fbx: FBX in the package is not recorded'),
