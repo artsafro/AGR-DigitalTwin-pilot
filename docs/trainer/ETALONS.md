@@ -183,7 +183,7 @@ holdout = `held_out` и хотя бы один holdout по незнакомом
 | g22-k2-stage1 | dev | G22 | тело + проёмы одного корпуса | holdout, artifact, readback, bounds, topology, form, form_v2 | 0 |
 | 63a-stage1 | dev | POLY63 | линии + проёмы фасадов типовых этажей одной башни | holdout, artifact, readback, bounds, topology, form | 0 |
 | kpp1-ucx-v004 | dev | KPP1 | UCX одного тела | holdout, artifact, readback, bounds, form, ucx | 3 (D012, D098, D134) |
-| moskovsky-ground-v002 | holdout | moskovsky-sosh1200 (незнакомый) | геометрия Ground одного участка | holdout, artifact, readback, bounds, form | 7 (решения работы 2026-11-26) |
+| moskovsky-ground-v002 | holdout | moskovsky-sosh1200 (незнакомый) | геометрия Ground одного участка | holdout, artifact, readback, bounds, form | 7 (решения работы в `jobs/moskovsky-sosh1200/TASK.md`) |
 
 - Шаг `ucx` (только для `target: ucx`; у остальных эталонов он `not_applicable`, прежние оценки сравнимы)
   проходит, только если выполнено всё: UCX есть и укладывается в бюджет [D012]; каждый UCX замкнут и выпуклый

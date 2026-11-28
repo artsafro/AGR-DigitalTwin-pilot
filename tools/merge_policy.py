@@ -153,7 +153,8 @@ def _rule_hits(rule: dict, pr: dict, files: list[str], text: str, ctx: dict) -> 
     return ev
 
 
-def classify(pr: dict, *, policy: dict, stop_present: bool, hygiene_issues: set[int], card_text: str = "") -> dict:
+def classify(pr: dict, *, policy: dict, stop_present: bool, hygiene_issues: set[int], card_text: str | None = None) -> dict:
+    """Classify with checked card text (empty if no match), or None if unchecked."""
     files = [f["path"] if isinstance(f, dict) else f for f in pr.get("files") or []]
     text = "\n".join([pr.get("title") or "", pr.get("body") or "", card_text or ""])
     ctx = {"hygiene_issues": set(hygiene_issues), "card_text": card_text, "max_lines": policy["max_small_lines"]}
@@ -176,6 +177,10 @@ def classify(pr: dict, *, policy: dict, stop_present: bool, hygiene_issues: set[
                  "evidence": v} for k, v in matched.items() if k != rule_id]
 
     fails = []
+    if bucket == "auto" and decided and decided.get("consent") == "small_prs" and card_text is None:
+        bucket = "artem"
+        reasons[0].update(bucket=bucket, why="card not checked", consent=None)
+        fails.append({"id": "card_checked", "reason": "card not checked"})
     if stop_present and rule_id != "red_main_fix":
         fails.append({"id": "main_green", "reason": "STOP_AUTOMERGE present: main red or paused"})
     base = pr.get("baseRefName")
@@ -207,7 +212,7 @@ def classify(pr: dict, *, policy: dict, stop_present: bool, hygiene_issues: set[
     return {"pr": pr.get("number"), "title": (pr.get("title") or "")[:100], "head": head[:8], "base": base,
             "bucket": bucket, "rule": rule_id, "reasons": reasons, "failed_preconditions": fails,
             "would_merge": bucket == "auto" and not fails, "mode": policy.get("mode", "observe"),
-            "author": author, "reviewer": reviewer}
+            "author": author, "reviewer": reviewer, "card_checked": card_text is not None}
 
 
 # ---- environment readers (all read-only) ----
@@ -232,10 +237,10 @@ def _hermes() -> str:
 
 def kanban_cards() -> dict | None:
     """branch -> card, via `hermes kanban list` (read-only). None = lookup unavailable (e.g. inside a worker,
-    where Hermes refuses board access): the user-decision rule then cannot fire and the row says so."""
+    where Hermes refuses board access)."""
     try:
         out = subprocess.run([_hermes(), "kanban", "--board", "agr-pilot", "list", "--json"], capture_output=True,
-                             text=True, encoding="utf-8", errors="replace", timeout=120).stdout
+                             text=True, encoding="utf-8", errors="replace", timeout=120, check=True).stdout
         if "[" not in out:
             return None
         cards = json.loads(out[out.find("["):])
@@ -244,14 +249,18 @@ def kanban_cards() -> dict | None:
     return {c["branch_name"]: c for c in cards if c.get("branch_name")}
 
 
-def card_text(card: dict | None) -> str:
-    if not card:
+def lookup_card_text(cards: dict | None, branch: str | None) -> str | None:
+    if cards is None:
+        return None
+    card = cards.get(branch)
+    if card is None:
         return ""
     try:
-        return subprocess.run([_hermes(), "kanban", "--board", "agr-pilot", "show", card["id"]], capture_output=True,
-                              text=True, encoding="utf-8", errors="replace", timeout=120).stdout
+        out = subprocess.run([_hermes(), "kanban", "--board", "agr-pilot", "show", card["id"]], capture_output=True,
+                             text=True, encoding="utf-8", errors="replace", timeout=120, check=True).stdout
     except (OSError, subprocess.SubprocessError):
-        return ""
+        return None
+    return out if out.strip() else None
 
 
 def observe(prs, *, log_path, policy, stop_present: bool, hygiene_issues: set[int], cards: dict | None) -> list[dict]:
@@ -263,8 +272,8 @@ def observe(prs, *, log_path, policy, stop_present: bool, hygiene_issues: set[in
     rows = []
     for p in sorted(prs, key=lambda x: x["number"]):
         res = classify(p, policy=policy, stop_present=stop_present, hygiene_issues=hygiene_issues,
-                       card_text=card_text(cards.get(p.get("headRefName"))) if cards else "")
-        rows.append({"ts": ts, **res, "card_checked": cards is not None})
+                       card_text=lookup_card_text(cards, p.get("headRefName")))
+        rows.append({"ts": ts, **res})
     with log.open("a", encoding="utf-8") as fh:
         for r in rows:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
@@ -308,7 +317,7 @@ def _print_classify(res: dict) -> None:
     print(f"PR #{res['pr']} {res['title']}\nbucket: {res['bucket']} (rule {res['rule']}), would merge: "
           f"{res['would_merge']} [mode {res['mode']}: nothing is merged]")
     if res.get("card_checked") is False:
-        print("  note: Kanban card lookup unavailable - user-decision rule not checked")
+        print("  note: Kanban card not checked")
     for r in res["reasons"]:
         tag = "also" if r.get("also_matched") else "why"
         print(f"  {tag}: {r['rule']} -> {r['bucket']}: " + "; ".join(r["evidence"]))
@@ -336,9 +345,8 @@ def main(argv=None) -> int:
     if a.cmd == "classify":
         p = gh_json("pr", "view", str(a.pr), "-R", pol["repo"], "--json", PR_FIELDS)
         cards = None if a.no_card else kanban_cards()
-        txt = card_text(cards.get(p.get("headRefName"))) if cards else ""
-        res = classify(p, policy=pol, stop_present=stop_present(pol), hygiene_issues=hygiene_issues(pol), card_text=txt)
-        res["card_checked"] = cards is not None
+        res = classify(p, policy=pol, stop_present=stop_present(pol), hygiene_issues=hygiene_issues(pol),
+                       card_text=lookup_card_text(cards, p.get("headRefName")))
         print(json.dumps(res, ensure_ascii=False, indent=1)) if a.json else _print_classify(res)
     elif a.cmd == "observe":
         prs = gh_json("pr", "list", "-R", pol["repo"], "--state", "open", "--limit", "200", "--json", PR_FIELDS)
@@ -346,7 +354,7 @@ def main(argv=None) -> int:
                        hygiene_issues=hygiene_issues(pol), cards=None if a.no_card else kanban_cards())
         print(f"observe: {len(rows)} open PR(s) -> {a.log or pol['observe_log']}; would merge: "
               + (", ".join(f"#{r['pr']}" for r in rows if r["would_merge"]) or "none")
-              + ("" if rows and rows[0]["card_checked"] else "; Kanban card lookup unavailable (user-decision rule not checked)"))
+              + ("; some Kanban cards not checked" if any(not r["card_checked"] for r in rows) else ""))
     else:
         res = backtest(a.limit, pol)
         if a.json:
