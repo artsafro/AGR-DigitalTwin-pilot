@@ -2,7 +2,13 @@
 
 ## Резюме (по-русски)
 
-См. раздел «Round result» ниже; русское резюме дописывается после измерения.
+Гипотеза H153 (стена, а не только сторона: сторону выбирает D из #149, стену - плоскость глубины под лучшим
+сдвигом, отказ если почти-лучшие сдвиги попадают на разные стены): **НЕ ОПРЕДЕЛЕНО**. На ELV каждая сторона
+фактически одна стена; внутренних углов/пристроек в выборке всего 2 кадра, оба D отклонил; правило отказа ни разу
+не сработало. Ошибок нет: полные фасады 6/0/1, синтетические фрагменты 39/0/23, реальный фрагмент p23 верно
+(ошибка 0,97 м). Побочный результат: D указывает место фрагмента на фасаде с точностью до 1,2 м во всех 48
+случаях - периодичности, сломавшей #143/#144, здесь нет. Для шага OKS: печатать сторону + интервал на фасаде;
+стену во внутреннем углу пока не утверждать. Sokolniki не открывался (#2001 открыт).
 
 ## Frozen contract (committed before any scoring)
 
@@ -58,4 +64,36 @@
 
 ## Round result
 
-(filled after measurement)
+**H153: INCONCLUSIVE** (re-entrant walls not exercised on ELV; the W1 gate never fired). Review readiness is
+separate: harness, parity and receipt are complete.
+
+- **Run.** Measured revision `a2c194f3e3da15e0e625fd1c1ac5df255a607e43`; three fresh runs (ray cast + scoring)
+  63.897 / 63.921 / 63.937 s (median 63.921 s, spread 0.040 s), rows byte-identical (`6c7c97bb...` x3).
+  Parity: type labels identical to #149 r1b `types-1.npz` on all 4 sides; D side outcomes identical to #149
+  r1b `run-1.json` on 80/80 rows; profile max == `face_score` on every answered row.
+- **Wall structure (frozen 1.0 m gap).** ELV is one wall per side for practical purposes: az 0 270/276 columns
+  on the dominant plane, az 90 442/444, az 270 397/444; az 180 splits into 30 depth clusters (dominant 154/276
+  columns) - the annex/recess side. Only **2** synthetic crops are `nontrivial` (GT wall != dominant): both
+  `p19 A-I partial25/40@0.0`, both abstained by D. Bound "nontrivial exercised >= 5" not met -> inconclusive.
+- **W0 = W1** (correct / wrong / abstain / not_exercised): full 6/0/1/0, synthetic crops 39/0/23/1, real
+  fragments 1/0/0/1 (p23 D-G correct, axis error 0.97 m; p24 8-9 not exercised: label `9` found twice on the
+  p18 reference band), top-cut 0/0/1, mirrors 2/1/4 (known #149 p19 10-1 mirror side error). All other bounds
+  met (full 0 wrong, fragments 0 wrong, crops 0 wrong, 39 >= 30).
+- **Gate.** Near sets (U within 0.05 of best) had 1-10 offsets on 50 of the 51 side-answered rows and 46 on one;
+  every near set stayed on one wall, so W1 never abstained where W0 answered: **gate not measured**.
+- **Secondary (not a keep criterion): within-side localisation by D is not periodic.** On 48 answered rows with
+  GT, the best offset lands within 1.0 m of the GT start on 44 and within 1.2 m on all 48 (the 4 at 1.2 m are
+  `p18/p21 I-A mirror` and `partial25@0.5`; the GT itself carries the +-0.6 m full-view alignment slack). This
+  contrasts with the edge cues (#143/#144), where correct and wrong offsets tied.
+- **Not measured:** re-entrant / annex walls as separate answers (2 rows, both D-abstained), the W1 gate,
+  p24 8-9 localisation, column-reversed model control, any second pair, Sokolniki (#2001 still open, not opened).
+
+**Recommendation for the shared OKS step 'view<->face map sheet'.** Keep the side answer from D with its
+abstain rule, and add per answered view the D best offset as a bay interval (print "covers model u = a..b m,
++-1.2 m" with the depth plane under it). Do not yet claim wall identity in re-entrant corners: on the only
+eligible pair those walls were not exercised. The W1 same-wall check costs nothing and should stay as a
+reported field, not a trusted gate, until a pair with >= 5 real re-entrant views is measured.
+
+Replay artifacts: [receipt](autoresearch-view-face-wall/receipt.json); all run outputs, label/depth npz and
+Blender logs under `G:/Мой диск/AGR-evidence/153-view-face-wall/` + `SHA256SUMS.txt` (15 files, verified).
+ELV inputs are the #145 sealed copies (hashes in the pinned #145 fixture). Replay limited to the pilot host.
