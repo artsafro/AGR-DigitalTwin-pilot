@@ -209,9 +209,9 @@ def test_install_proxy_writes_only_the_proxy_and_its_pack(tmp_path):
 def test_task_text_with_proxy_names_the_ask_command_not_the_pack():
     e = entries()["moskovsky-ground-v002"]
     plain = T.task_text(e, Path("i"), Path("o"))
-    text = T.task_text(e, Path("i"), Path("o"), proxy=Path("C:/x/run/proxy"))
+    text = T.task_text(e, Path("i"), Path("o"), proxy=Path("D:/run/proxy"))
     assert "nobody answers questions" in plain and "ask.py" not in plain
-    assert "C:/x/run/proxy/ask.py" in text.replace("\\", "/") and "nobody answers questions" not in text
+    assert "D:/run/proxy/ask.py" in text.replace("\\", "/") and "nobody answers questions" not in text
     assert "pack.json" not in text and "UNRESOLVED" in text
     for a in e["proxy_answers"]:
         assert a["answer"] not in text
@@ -325,7 +325,7 @@ def test_run_metrics_cover_the_approved_columns(tmp_path):
     cmds = [_ev({"type": "command_execution", "command": "ls", "exit_code": 0}),
             _ev({"type": "command_execution", "command": "python build.py", "exit_code": 1}),
             _ev({"type": "command_execution", "command": "python build.py", "exit_code": 1}),
-            _ev({"type": "command_execution", "command": "cat C:/x/run/proxy/pack.json", "exit_code": 0}),
+            _ev({"type": "command_execution", "command": "cat D:/run/proxy/pack.json", "exit_code": 0}),
             json.dumps({"type": "turn.completed", "usage": {"input_tokens": 1000, "output_tokens": 50}})]
     (run / "events.jsonl").write_text("\n".join(cmds) + "\n", encoding="utf-8")
     log = [{"verdict": "answered", "stop_class": "answer_in_repo", "stop_group": "unnecessary"},
