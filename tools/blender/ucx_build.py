@@ -11,6 +11,8 @@ the Ground collision during a Main rebuild) are kept unchanged; a UCX that names
 build. The source file is never written. The output FBX holds every non-UCX mesh of the input, the kept
 UCX and the new pieces named UCX_SM_<Address>_<Target>_NNN (no materials, no UV, identity transforms); a
 JSON report is written next to it (`<out>.ucx_build.json`).
+An identified Ground FBX also gets a new export record. Placement is carried
+only from a matching input receipt and a preserved render frame on readback.
 
 Exit 0 built; 3 built but a one-sided Ground deviation (vertical or uncovered strip) exceeds
 `tol` (report and FBX written, not a pass); reverse footprint overhang is diagnostic only [D134];
@@ -23,8 +25,11 @@ import importlib.util
 import json
 import sys
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 if str(ROOT / "src") not in sys.path:  # ucx_build imports the stdlib [D012] owner twinqa.geometry.ucx_audit (#1962)
     sys.path.insert(0, str(ROOT / "src"))
 
@@ -125,17 +130,29 @@ def main():
         print(f"UCX_BUILD refused: no input file {src}", file=sys.stderr)
         return 4
     target = args[2]
+    from tools.blender import ground_fbx_provenance as prov
+
+    ground_fbx = target == 'Ground' and src.suffix.lower() == '.fbx'
+    outputs = [out, rep_path]
+    if ground_fbx:
+        outputs.extend(prov.sidecar(out, suffix) for suffix in (prov.EXPORT, prov.PLACEMENT))
+    try:
+        prov.refuse_outputs([src, *(prov.sidecar(src, s) for s in (prov.EXPORT, prov.PLACEMENT))], outputs)
+    except (OSError, ValueError) as exc:
+        print(f'UCX_BUILD refused: {exc}; nothing written', file=sys.stderr)
+        return 4
     import bpy
 
     report = {"source": src.name, "target": target, "blender": bpy.app.version_string, "ok": False,
               "options": opts, "scope": "UCX build; checks: tools/blender/ucx_audit.py + validator V010/V012"}
     code = 2
     try:
+        evidence = prov.GroundEvidence(src) if ground_fbx else None
         if src.suffix.lower() == ".blend":
             bpy.ops.wm.open_mainfile(filepath=str(src))
         else:
             bpy.ops.wm.read_factory_settings(use_empty=True)
-            bpy.ops.import_scene.fbx(filepath=str(src))
+            prov.require_finished(bpy.ops.import_scene.fbx(filepath=str(src)), 'FBX input import')
         meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
         all_ucx = [o for o in meshes if o.name.upper().startswith("UCX")]
         model = [o for o in meshes if o not in all_ucx]
@@ -144,6 +161,8 @@ def main():
         main_name, extra_names, address = ub.select_inputs(list(by_name), target, opts.pop("object", None),
                                                            opts.pop("with", None))
         main_obj, extra = by_name[main_name], [by_name[n] for n in extra_names]
+        capture = (evidence.capture(main_obj, prov.render_top(model))
+                   if evidence and prov.ground_object(model) is main_obj else None)
         replace, keep = ub.ucx_replace_plan([o.name for o in all_ucx], [main_name] + extra_names, list(by_name))
         old_ucx = [o for o in all_ucx if o.name in set(replace)]
         kept_ucx = [o for o in all_ucx if o.name in set(keep)]
@@ -183,17 +202,44 @@ def main():
         for o in model + kept_ucx + objs:
             o.select_set(True)
         out.parent.mkdir(parents=True, exist_ok=True)
-        bpy.ops.export_scene.fbx(filepath=str(out), use_selection=True, object_types={"MESH"},
-                                 axis_forward="Y", axis_up="Z", apply_unit_scale=True,
-                                 apply_scale_options="FBX_SCALE_UNITS", global_scale=1.0,
-                                 bake_space_transform=False, use_mesh_modifiers=False, mesh_smooth_type="SMOOTH_GROUP",
-                                 use_triangles=False, use_custom_props=False, add_leaf_bones=False,
-                                 bake_anim=False, path_mode="STRIP", embed_textures=False)
-        report["ok"] = True
+        with TemporaryDirectory(prefix='.ucx-build-', dir=out.parent) as folder:
+            staged = Path(folder) / out.name
+            status = bpy.ops.export_scene.fbx(
+                filepath=str(staged), use_selection=True, object_types={"MESH"},
+                axis_forward="Y", axis_up="Z", apply_unit_scale=True,
+                apply_scale_options="FBX_SCALE_UNITS", global_scale=1.0,
+                bake_space_transform=False, use_mesh_modifiers=False, mesh_smooth_type="SMOOTH_GROUP",
+                use_triangles=False, use_custom_props=False, add_leaf_bones=False,
+                bake_anim=False, path_mode="STRIP", embed_textures=False)
+            prov.require_finished(status, 'UCX FBX export')
+            pairs = []
+            if evidence and capture is not None:
+                reason, top = evidence.readback_placement(capture, staged, out, bpy)
+                report['placement'] = {'status': 'preserved'} if reason is None else {'status': 'unknown', 'reason': reason}
+                if reason is None:
+                    pairs.append((prov.sidecar(staged, prov.PLACEMENT), prov.sidecar(out, prov.PLACEMENT)))
+                profile, why = evidence.inherited_profile(main_name[3:])
+                meta = prov.export_meta.record_export(staged, source=f'{src}; UCX build', top=top,
+                                                      address=main_name[3:], profile=profile, profile_provenance=why,
+                                                      master=src, master_sha256=evidence.digest)
+                pairs.append((meta, prov.sidecar(out, prov.EXPORT)))
+            report['ok'] = True
+            staged_report = Path(folder) / rep_path.name
+            staged_report.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding='utf-8')
+            if evidence:
+                evidence.assert_unchanged()
+            prov.refuse_outputs([src], outputs)
+            prov.publish([*pairs, (staged_report, rep_path), (staged, out)])
         code = 0 if res.within_tol else 3
     except Exception as exc:  # report, never hide
+        report['ok'] = False
+        report.pop('placement', None)
         report["error"] = f"{type(exc).__name__}: {exc}"
-    rep_path.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
+        try:
+            with rep_path.open('x', encoding='utf-8') as fh:
+                json.dump(report, fh, ensure_ascii=False, indent=1)
+        except OSError as report_error:
+            print(f'UCX_BUILD could not write failure report: {report_error}', file=sys.stderr)
     print("UCX_BUILD", code, report.get("pieces"), report.get("error", ""))
     return code
 
