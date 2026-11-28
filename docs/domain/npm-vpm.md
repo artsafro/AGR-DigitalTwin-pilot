@@ -36,6 +36,9 @@ UCX gap checks; [D163] leaves UKEP verification to the applicant (missing file: 
 - Split OKS into several FBX (<= 20) ONLY when one FBX exceeds triangle limit; split only by indivisible units (free-standing building, section, korpus, structure, stylobate); translucent parts split accordingly; numbering continues across FBX (not reset). reg p.7 §2.1-2.4, p.14 fig.3.
 - Triangle limits: OKS + its usable roof <= 150 000 per FBX; Ground + GroundEl + Flora total <= 180 000. reg p.7 §3.6.
 - GeoJSON and UCX are NOT part of NPM package per App.1; add only if separate customer spec requires. local: standards/NPM_STANDARD.yaml#not_in_this_standard; local: docs/agr/READINESS_REPORT.md#2 (project decision: do not transfer VPM rules to NPM).
+  Confirmed for Sokolniki [D438]. On an NPM ZIP, `agr validate --npm-require-ucx-geojson --scene` optionally
+  checks presence (one nonempty `{stem}.geojson` and `UCX_` meshes per FBX), not VPM conformity or the
+  customer's content rules. Do not select it without a spec calling for both.
 - Texture sets: 1 set per OKS; +1 extra set allowed if usable roof exists (may also hold facades). reg p.9 §5.11.
 - Coordinates: geometry placed in Moscow coordinate system and heights per project; arbitrary/conditional coords or missing heights forbidden; object rotations after reset = OKS rotation in plan. reg p.10 §8.
 

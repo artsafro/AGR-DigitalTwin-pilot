@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 import validate_package as vp
-from test_validator import PROFILES, STEM, good_files
+from test_validator import PROFILES, STEM, fbx, good_files
 from twinqa.scene import find_blender, readback, scene_findings, ucx_triangle_limit
 
 
@@ -62,6 +62,29 @@ def rb(*meshes, other=(), units=None):
 
 def statuses(found, stage):
     return {f.name: f.status for f in found[stage]}
+
+
+def test_npm_customer_addendum_ucx_is_measured_per_fbx(tmp_path, monkeypatch):
+    target = tmp_path / '0000_Test.zip'
+    with zipfile.ZipFile(target, 'w') as archive:
+        for suffix in ('01', '02', 'Ground'):
+            archive.writestr(f'0000_Test_{suffix}.fbx', fbx())
+        archive.writestr('0000_Test.geojson', '{}')  # presence only, not schema validation
+
+    def read(path):
+        if path.stem.endswith('_Ground'):
+            raise RuntimeError('unreadable fixture')
+        return rb(mesh(UCX)) if path.stem.endswith('_01') else rb(mesh())
+
+    monkeypatch.setattr(vp, 'readback', read)
+    report = vp.validate(target, 'npm', PROFILES, scene=True, require_ucx_geojson=True).to_dict()
+    v001 = next(s for s in report['stages'] if s['id'] == 'V001')
+    checks = {(f['name'], f['evidence']): f['status'] for f in v001['findings']}
+    assert checks[('customer GeoJSON presence', '0000_Test.geojson')] == 'pass'
+    assert checks[('customer UCX presence', '0000_Test_01.fbx')] == 'pass'
+    assert checks[('customer UCX presence', '0000_Test_02.fbx')] == 'fail'
+    assert checks[('customer UCX presence', '0000_Test_Ground.fbx')] == 'not_run'
+    assert not any(f['name'] == 'foreign files' for f in v001['findings'])
 
 
 @pytest.mark.parametrize("tiles, expected", [((1001, 1002, 1003), "pass"), ((1001, 1003), "fail"),
