@@ -47,7 +47,8 @@
 - **Outcome per row.** `correct` (side + wall right), `wrong` (side wrong, or side right and wall wrong),
   `abstain` (D abstains or W1 gate), `not_exercised` (no GT). Abstain rate reported per cohort.
 - **Bounds (all must hold for CONFIRMED).** W1: full wall-wrong 0; real fragments wall-wrong 0; synthetic crops
-  wall-wrong <= 1 and wall-correct >= 30; nontrivial exercised crops >= 5 with W1 wrong 0 on them (fewer than 5
+  wall-wrong <= 1 and wall-correct >= 30; nontrivial exercised crops (W1 answered `correct`/`wrong`; D or W1
+  abstentions do not count, #2075) >= 5 with W1 wrong 0 on them (fewer than 5
   -> hypothesis `inconclusive`: re-entrant walls not measured). W1 gate must fire (abstain where W0 answers) on at
   least one row, else the gate is `not measured`. Expected direction: W1 wrong <= W0 wrong, W1 correct <= W0.
 - **Parity.** Type labels byte-identical to `G:/Мой диск/AGR-evidence/149-view-face-material/r1b/types-1.npz`;
@@ -74,7 +75,15 @@ separate: harness, parity and receipt are complete.
 - **Wall structure (frozen 1.0 m gap).** ELV is one wall per side for practical purposes: az 0 270/276 columns
   on the dominant plane, az 90 442/444, az 270 397/444; az 180 splits into 30 depth clusters (dominant 154/276
   columns) - the annex/recess side. Only **2** synthetic crops are `nontrivial` (GT wall != dominant): both
-  `p19 A-I partial25/40@0.0`, both abstained by D. Bound "nontrivial exercised >= 5" not met -> inconclusive.
+  `p19 A-I partial25/40@0.0`, both abstained by D, so **0** nontrivial crops are exercised (abstain rate on
+  nontrivial rows 2/2 = 1.0). Bound "nontrivial exercised >= 5" not met -> inconclusive.
+- **Count fix (#2075).** The first receipt (revision `a2c194f3`) reported `nontrivial_crops_exercised = 2`
+  because the count included D-abstained rows; on a pair where D abstains on every re-entrant view that would
+  have returned `confirmed` vacuously. Rerun at `5d0c4adb` (count = W1 answered only, plus
+  `nontrivial_crops`, `nontrivial_crops_abstained`, `nontrivial_abstain_rate` in the gate): rows byte-identical
+  to the first receipt (`6c7c97bb...` x3), verdict unchanged, gate now `nontrivial_crops 2, exercised 0,
+  abstained 2, abstain_rate 1.0`. Wall 87.73 / 99.364 / 99.526 s (median 99.364 s; host shared with other
+  workers, not a code change - scoring code is unchanged). Regression rows in `test_wall.py`.
 - **W0 = W1** (correct / wrong / abstain / not_exercised): full 6/0/1/0, synthetic crops 39/0/23/1, real
   fragments 1/0/0/1 (p23 D-G correct, axis error 0.97 m; p24 8-9 not exercised: label `9` found twice on the
   p18 reference band), top-cut 0/0/1, mirrors 2/1/4 (known #149 p19 10-1 mirror side error). All other bounds
@@ -95,5 +104,7 @@ eligible pair those walls were not exercised. The W1 same-wall check costs nothi
 reported field, not a trusted gate, until a pair with >= 5 real re-entrant views is measured.
 
 Replay artifacts: [receipt](autoresearch-view-face-wall/receipt.json); all run outputs, label/depth npz and
-Blender logs under `G:/Мой диск/AGR-evidence/153-view-face-wall/` + `SHA256SUMS.txt` (15 files, verified).
+Blender logs under `G:/Мой диск/AGR-evidence/153-view-face-wall/` + `SHA256SUMS.txt` (15 files, verified);
+the #2075 rerun under `.../153-view-face-wall/r2075/` + `SHA256SUMS.txt` (10 files, verified; the committed
+receipt is that rerun).
 ELV inputs are the #145 sealed copies (hashes in the pinned #145 fixture). Replay limited to the pilot host.

@@ -1,5 +1,5 @@
 {
- "card": "t_ebb8205e (#153)",
+ "card": "t_ebb8205e (#153); t_2acb7a29 (#2075)",
  "status": "finished",
  "hypothesis": "inconclusive",
  "checks": {
@@ -12,7 +12,10 @@
  "gate": {
   "gate_fired_rows": 0,
   "gate_measured": false,
-  "nontrivial_crops_exercised": 2
+  "nontrivial_crops": 2,
+  "nontrivial_crops_exercised": 0,
+  "nontrivial_crops_abstained": 2,
+  "nontrivial_abstain_rate": 1.0
  },
  "tau_loc": 0.05,
  "plane_gap_m": 1.0,
@@ -34,21 +37,21 @@
   "pdf": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
   "fbx": "7ccf502d9dc1494daa885e650dd8b2b7e261c7b90b262ee157c188ec3a78b961",
   "rays_wall.py": "4b7355b2fdf04ba1d09ad73e154bb3754167acb8d68485e9f15ea97cb9c436cb",
-  "wall.py": "a6bc49729370e5df8cdb042e435da821d73218dfcfd00b078f6cce2818f7656d",
-  "run.py": "788c7fd7844fa4db92ac1d394736f132715555463d7a99b894c061458ed5c944"
+  "wall.py": "89485a73ff3ff182b8f00997ab0911cef5d0303bd2160a024f95a3243d41d92d",
+  "run.py": "fc310dc4da3840841ab1da12b555f385e037fade544d7f61e7f7a13b7eb569d7"
  },
  "blender_sha256": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5",
  "uv_lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
  "runs": 3,
  "run_wall_s": [
-  63.897,
-  63.921,
-  63.937
+  87.73,
+  99.364,
+  99.526
  ],
- "median_s": 63.921,
- "min_s": 63.897,
- "max_s": 63.937,
- "total_wall_s": 192.436,
+ "median_s": 99.364,
+ "min_s": 87.73,
+ "max_s": 99.526,
+ "total_wall_s": 288.068,
  "runs_identical": true,
  "run_content_sha256": [
   "6c7c97bbd3ab4cce6c774ee317f252962d731ff1ec38266657bb2a1d0ac3404f",
