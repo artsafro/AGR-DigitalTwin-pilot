@@ -20,3 +20,23 @@ Pre-scoring grid clarification: the pinned native rays are 0.2 m/pixel; repeat e
 | Uniquely matching asymmetric upper contour, another shifted-up central peak and a too-short candidate | Choose matching side; no answer on identical profiles or absent view | `test_asymmetric_profile`, `test_profile_abstains` |
 | Same mark/geometry, conflict, absent mark and absent geometry | Agreement only; absent/conflict abstain, including azimuth 0 as a valid answer | `test_agreement` |
 | Four p5–p8 fresh pairs, original and altered marks | Frozen bounds above; no silent no-op successes | `receipt.json` and paired ledgers |
+
+## Result: H154 refuted; series complete
+
+The agreement gate stopped all four wrong-opposite-mark proposals but also withheld two of four correct clean side proposals, missing the preregistered minimum of three. This is a one-album calibration, not a transfer pass.
+
+| Cohort | A: registered keyplan only | B: keyplan and roofline agree |
+| --- | ---: | ---: |
+| Four native full views | 4 / 0 / 0 | 2 / 0 / 2 |
+| Four opposite-only marks | 0 / 4 / 0 | 0 / 0 / 4 |
+| Masked, moved inside, or two opposed marks (four each) | 0 / 0 / 12 | 0 / 0 / 12 |
+
+Counts are correct / wrong / abstain. In B, clean all-view accuracy 2/4, answered accuracy 2/2, abstention 2/4. The accepted p5 and p6 passed (roofline lead 0.783 and 0.767 m). On p7, the best model roof cost 2.273 m exceeded the 2 m cutoff; on p8 the best was 1.518 m, but led the runner-up by only 0.288 m. Their drawing profiles spanned 72.9 and 69.9 m versus 60.6 m model profiles. Adjacent stage geometry is a candidate explanation, not a measured cause. On p7/p8 the opposite-only negatives abstained because the roofline had no proposal even before the mark swap; only p5/p6 exercise a veto on conflicting, independently available proposals.
+
+All 16 injected states changed real mark segments (7–16 each per add/remove operation). All 20 clean/injected row-states changed positions on reversal (202–1044), with identical A (and therefore B) decisions and coverages. A's decisions, scores and row-state controls matched all four #152 reference rows exactly. No rejected delivery was scored. No native unmarked or inner-wall view was added to the real denominator.
+
+Measured head `41f464db1a66847ed4625bcf9b538be0ceaac2c1`; three fresh PDF extraction pairs took 6.43464 / 7.03524 / 6.86676 s (median 6.86676 s; spread 0.60060 s). Their canonical ledgers were byte-identical and all pinned inputs rehashed unchanged. [Receipt](autoresearch-view-face-corroboration/receipt.json) SHA-256 `ef8eec5f09d3fa0d72eb8ff73bb45c10b60485b2d236257f9a9548c6ef37f288`. Sealed ledgers and staged upstream blobs: `G:/Мой диск/AGR-evidence/154-view-face-corroboration/`; 9/9 mounted-copy hashes verified, `SHA256SUMS.txt` SHA-256 `b4579b7223b887573303e58a2dedc19c0b7966d105e947a4672cad58745a2aa1` (cloud synchronization not measured).
+
+## OKS trail recommendation (not implemented)
+
+Keep a registered mark as a **side proposal**. Show the sheet/ROI, registered frame, alternate sides, competing geometric scores and reason for abstention. Do not make this roofline gate the general corroborator and do not transfer finish callouts from keyplan marks alone. For a partial or corner view, require evidence that identifies the **physical wall and bay interval**, e.g. an independently registered return wall or opening pattern; otherwise ask which wall is shown. Next: preregister actual stage boundary clipping on p7/p8 and test loss on p5/p6; then seek a second independently registered marked album with labelled partials. Revisit Sokolniki only after #2001 closes. No product change retained.

@@ -1,0 +1,471 @@
+{
+  "A": {
+    "ambiguous": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "clean": {
+      "abstain": 0,
+      "answered_accuracy": 1.0,
+      "correct": 4,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "interior": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "masked": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "opposite_only": {
+      "abstain": 0,
+      "answered_accuracy": 0.0,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 4
+    }
+  },
+  "A_parity": true,
+  "B": {
+    "ambiguous": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "clean": {
+      "abstain": 2,
+      "answered_accuracy": 1.0,
+      "correct": 2,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "interior": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "masked": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "opposite_only": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    }
+  },
+  "checks": {
+    "clean_wrong_0": true,
+    "correct_ge3": false,
+    "exercises": true,
+    "other_negative_controls": true,
+    "reject_wrong_mark": true,
+    "retain_p5": true,
+    "reversal": true,
+    "wrong_mark_trigger": true
+  },
+  "elapsed_s": 20.33666,
+  "hypothesis": "refuted",
+  "immutable_blobs": {
+    "key_fixture.json": [
+      "1045328d5585137af697d5991cde293dc31c8325",
+      "keyplan/fixture.json"
+    ],
+    "key_receipt.json": [
+      "1045328d5585137af697d5991cde293dc31c8325",
+      "keyplan/receipt.json"
+    ],
+    "keyplan.py": [
+      "1045328d5585137af697d5991cde293dc31c8325",
+      "keyplan/run_keyplan.py"
+    ],
+    "linework.py": [
+      "640b3678fb18ac2e5811742116a92e96ef236ab6",
+      "elv/run.py"
+    ],
+    "views.json": [
+      "4a6c6b776ea4c16bf9b33b16be82465521f88d34",
+      "transfer/fixture.json"
+    ]
+  },
+  "input_parity": true,
+  "median_s": 6.86676,
+  "pair_sha256": [
+    "c1723aa7a07640e09a2ed4e30a4d34e1d77df2480693ff8b48506ddad42d934d",
+    "c1723aa7a07640e09a2ed4e30a4d34e1d77df2480693ff8b48506ddad42d934d",
+    "c1723aa7a07640e09a2ed4e30a4d34e1d77df2480693ff8b48506ddad42d934d"
+  ],
+  "pins": {
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_169a1c63\\docs\\research\\autoresearch-view-face-corroboration\\run.py": "2f8d4ff71d90246f749c52281349e276ba5a8270549d7cf770839ecb7f0e6448",
+    "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\151-view-face-transfer\\inputs\\\u0410\u0420.2_ \u0424\u0430\u0441\u0430\u0434\u044b_29.07.2026.pdf": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0",
+    "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\151-view-face-transfer\\r1\\types-1.npz": "66105de78c7b5ecdaed5015a47ca4937ab35e130485c50de6a467cc580630a7a",
+    "tmp\\ar154-r1\\key_fixture.json": "69203d21612ae3eb69879402b3d2c01536aadd5e52bac41a66de291a3fc7dcbc",
+    "tmp\\ar154-r1\\key_receipt.json": "df864b184879e9e013a2a8471c5c68cf762c00f43c0e68afb7d4c8f82d7ecd8a",
+    "tmp\\ar154-r1\\keyplan.py": "7e684ffa4eb1251819c4685eb849afc5dbadd12960f46189eef26b0769cd6672",
+    "tmp\\ar154-r1\\linework.py": "49d852790d062298766882449948e3adf4c708dd6b82e774caa5f8efc399e2f0",
+    "tmp\\ar154-r1\\views.json": "8d4689d2dcdd7ec72d9e965b8e552c8fc4fe6656999205a2ff9abf2a66252518",
+    "uv.lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+  },
+  "revision": "41f464db1a66847ed4625bcf9b538be0ceaac2c1",
+  "rows": [
+    {
+      "cost_m": {
+        "0": null,
+        "90": 0.759599795,
+        "180": null,
+        "270": 1.542770844
+      },
+      "expected": 90,
+      "kind": "full",
+      "model_width_cols": {
+        "0": 606,
+        "90": 1470,
+        "180": 606,
+        "270": 1470
+      },
+      "profile_observed_cols": 1513,
+      "profile_width_cols": 1513,
+      "project": "olimpijsky",
+      "raw_red_segments": 521,
+      "registered": true,
+      "roof": 90,
+      "scale_pt_per_m": 18.89587518823056,
+      "states": {
+        "ambiguous": {
+          "B": null,
+          "added": 16,
+          "az": null,
+          "coverage": {
+            "bottom": 0.660144484186747,
+            "top": 0.660144484186747
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 536
+        },
+        "clean": {
+          "B": 90,
+          "added": 0,
+          "az": 90,
+          "coverage": {
+            "top": 0.660144484186747
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 520
+        },
+        "interior": {
+          "B": null,
+          "added": 16,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 16,
+          "reversal_parity": true,
+          "reversed_positions": 520
+        },
+        "masked": {
+          "B": null,
+          "added": 0,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 16,
+          "reversal_parity": true,
+          "reversed_positions": 504
+        },
+        "opposite_only": {
+          "B": null,
+          "added": 16,
+          "az": 270,
+          "coverage": {
+            "bottom": 0.660144484186747
+          },
+          "exercised": true,
+          "removed": 16,
+          "reversal_parity": true,
+          "reversed_positions": 520
+        }
+      },
+      "view": "p5 228.8-86.8"
+    },
+    {
+      "cost_m": {
+        "0": null,
+        "90": 1.64668428,
+        "180": null,
+        "270": 0.880068027
+      },
+      "expected": 270,
+      "kind": "full",
+      "model_width_cols": {
+        "0": 606,
+        "90": 1470,
+        "180": 606,
+        "270": 1470
+      },
+      "profile_observed_cols": 1564,
+      "profile_width_cols": 1568,
+      "project": "olimpijsky",
+      "raw_red_segments": 1028,
+      "registered": true,
+      "roof": 270,
+      "scale_pt_per_m": 18.89587518823056,
+      "states": {
+        "ambiguous": {
+          "B": null,
+          "added": 16,
+          "az": null,
+          "coverage": {
+            "bottom": 0.660144484186747,
+            "top": 0.660144484186747
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 1044
+        },
+        "clean": {
+          "B": 270,
+          "added": 0,
+          "az": 270,
+          "coverage": {
+            "bottom": 0.660144484186747
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 1028
+        },
+        "interior": {
+          "B": null,
+          "added": 16,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 16,
+          "reversal_parity": true,
+          "reversed_positions": 1028
+        },
+        "masked": {
+          "B": null,
+          "added": 0,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 16,
+          "reversal_parity": true,
+          "reversed_positions": 1012
+        },
+        "opposite_only": {
+          "B": null,
+          "added": 16,
+          "az": 90,
+          "coverage": {
+            "top": 0.660144484186747
+          },
+          "exercised": true,
+          "removed": 16,
+          "reversal_parity": true,
+          "reversed_positions": 1028
+        }
+      },
+      "view": "p6 86.8-228.8"
+    },
+    {
+      "cost_m": {
+        "0": 2.292388869,
+        "90": null,
+        "180": 2.273400673,
+        "270": null
+      },
+      "expected": 180,
+      "kind": "full",
+      "model_width_cols": {
+        "0": 606,
+        "90": 1470,
+        "180": 606,
+        "270": 1470
+      },
+      "profile_observed_cols": 729,
+      "profile_width_cols": 729,
+      "project": "olimpijsky",
+      "raw_red_segments": 379,
+      "registered": true,
+      "roof": null,
+      "scale_pt_per_m": 18.895876818940838,
+      "states": {
+        "ambiguous": {
+          "B": null,
+          "added": 7,
+          "az": null,
+          "coverage": {
+            "left": 0.6608479817708334,
+            "right": 0.6608479817708334
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 386
+        },
+        "clean": {
+          "B": null,
+          "added": 0,
+          "az": 180,
+          "coverage": {
+            "left": 0.6608479817708334
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 378
+        },
+        "interior": {
+          "B": null,
+          "added": 7,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 7,
+          "reversal_parity": true,
+          "reversed_positions": 378
+        },
+        "masked": {
+          "B": null,
+          "added": 0,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 7,
+          "reversal_parity": true,
+          "reversed_positions": 372
+        },
+        "opposite_only": {
+          "B": null,
+          "added": 7,
+          "az": 0,
+          "coverage": {
+            "right": 0.6608479817708334
+          },
+          "exercised": true,
+          "removed": 7,
+          "reversal_parity": true,
+          "reversed_positions": 378
+        }
+      },
+      "view": "p7 952.9-890"
+    },
+    {
+      "cost_m": {
+        "0": 1.517656917,
+        "90": null,
+        "180": 1.805740524,
+        "270": null
+      },
+      "expected": 0,
+      "kind": "full",
+      "model_width_cols": {
+        "0": 606,
+        "90": 1470,
+        "180": 606,
+        "270": 1470
+      },
+      "profile_observed_cols": 699,
+      "profile_width_cols": 699,
+      "project": "olimpijsky",
+      "raw_red_segments": 210,
+      "registered": true,
+      "roof": null,
+      "scale_pt_per_m": 18.895878682609734,
+      "states": {
+        "ambiguous": {
+          "B": null,
+          "added": 7,
+          "az": null,
+          "coverage": {
+            "left": 0.6608479817708334,
+            "right": 0.6608479817708334
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 216
+        },
+        "clean": {
+          "B": null,
+          "added": 0,
+          "az": 0,
+          "coverage": {
+            "right": 0.6608479817708334
+          },
+          "exercised": true,
+          "removed": 0,
+          "reversal_parity": true,
+          "reversed_positions": 210
+        },
+        "interior": {
+          "B": null,
+          "added": 7,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 7,
+          "reversal_parity": true,
+          "reversed_positions": 210
+        },
+        "masked": {
+          "B": null,
+          "added": 0,
+          "az": null,
+          "coverage": {},
+          "exercised": true,
+          "removed": 7,
+          "reversal_parity": true,
+          "reversed_positions": 202
+        },
+        "opposite_only": {
+          "B": null,
+          "added": 7,
+          "az": 180,
+          "coverage": {
+            "left": 0.6608479817708334
+          },
+          "exercised": true,
+          "removed": 7,
+          "reversal_parity": true,
+          "reversed_positions": 210
+        }
+      },
+      "view": "p8 890-952.9"
+    }
+  ],
+  "run_status": "complete",
+  "spread_s": 0.6006,
+  "wall_s": [
+    6.43464,
+    7.03524,
+    6.86676
+  ]
+}

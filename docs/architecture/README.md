@@ -416,6 +416,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
+| research/autoresearch-view-face-corroboration | [research/autoresearch-view-face-corroboration.md](../research/autoresearch-view-face-corroboration.md) |  |
+| research/autoresearch-view-face-corroboration/receipt-json | [research/autoresearch-view-face-corroboration/receipt.json](../research/autoresearch-view-face-corroboration/receipt.json) |  |
+| research/autoresearch-view-face-corroboration/run-py | [research/autoresearch-view-face-corroboration/run.py](../research/autoresearch-view-face-corroboration/run.py) |  |
+| research/autoresearch-view-face-corroboration/test-run-py | [research/autoresearch-view-face-corroboration/test_run.py](../research/autoresearch-view-face-corroboration/test_run.py) |  |
 | research/autoresearch-view-face-elv | [research/autoresearch-view-face-elv.md](../research/autoresearch-view-face-elv.md) |  |
 | research/autoresearch-view-face-elv/fixture-json | [research/autoresearch-view-face-elv/fixture.json](../research/autoresearch-view-face-elv/fixture.json) |  |
 | research/autoresearch-view-face-elv/posthoc-py | [research/autoresearch-view-face-elv/posthoc.py](../research/autoresearch-view-face-elv/posthoc.py) |  |
