@@ -258,13 +258,26 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     ('Nku_1', 'Other'), ('Nku_1', 'Nku_1_Annex'),
     ('Nku_1_Ground', 'Nku_1'), ('Nku_1_Ground', 'Nku_1_Annex_Ground'),
 ])
-def test_package_refuses_foreign_staged_png_before_writes(tmp_path, address, foreign):
+def test_package_refuses_foreign_staged_png_before_writes(tmp_path, monkeypatch, address, foreign):
+    from tools.derive import package_vpm
+
     pkg = make_pkg(tmp_path / 'p', address)
     tex = make_tex(tmp_path / 'tex', address)
     (pkg / f'T_{address}_Diffuse_1.1002.png').write_bytes(b'local staged map')
     offending = f'T_{foreign}_Diffuse_1.1002.png'
     (pkg / offending).write_bytes(b'foreign staged map')
     before = snapshot(tmp_path)
+
+    def read_only_open(path, mode='r', **kwargs):
+        assert mode in ('r', 'rb'), f'opened output before refusal: {path}'
+        return open(path, mode, **kwargs)
+
+    monkeypatch.setattr(package_vpm, 'open', read_only_open, raising=False)
+    monkeypatch.setattr(package_vpm.package_core, '_write_zip',
+                        lambda *args, **kwargs: pytest.fail('called ZIP writer before refusal'))
+    with pytest.raises(ValueError, match=f'foreign VPM texture {offending}'):
+        package_vpm.main([str(pkg), str(tex), '--no-geojson'])
+
     for _ in range(2):
         r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
         print(f'{offending}: exit={r.returncode}; {r.stderr.strip()}; '
