@@ -1,0 +1,759 @@
+{
+  "status": "finished",
+  "hypothesis": "refuted",
+  "tally": {
+    "correct": 1,
+    "wrong": 1,
+    "abstain": 3
+  },
+  "pairs": [
+    {
+      "index": 1,
+      "wall_s": 13.379,
+      "rows_sha256": "1e1e5d8b345cfb5007ced4f24c2c00e4398fb486d7a388d60b310e566516fd0e",
+      "b_minus_a_post_render_s": -0.303
+    },
+    {
+      "index": 2,
+      "wall_s": 12.23,
+      "rows_sha256": "1e1e5d8b345cfb5007ced4f24c2c00e4398fb486d7a388d60b310e566516fd0e",
+      "b_minus_a_post_render_s": 0.319
+    },
+    {
+      "index": 3,
+      "wall_s": 12.051,
+      "rows_sha256": "1e1e5d8b345cfb5007ced4f24c2c00e4398fb486d7a388d60b310e566516fd0e",
+      "b_minus_a_post_render_s": 0.41
+    }
+  ],
+  "rows": [
+    {
+      "view": "p15 A'-K (7 boxes)",
+      "gt": [
+        330
+      ],
+      "inner": false,
+      "kind": "full",
+      "anchors": [
+        [
+          396.1,
+          0
+        ],
+        [
+          304.66,
+          12.9
+        ]
+      ],
+      "outcome": "wrong",
+      "baseline": "wrong",
+      "baseline_answer": 0,
+      "baseline_width_m": 73.36,
+      "width_m": 74.21,
+      "states": {
+        "clean": {
+          "answer": 0,
+          "value": 0.6987,
+          "margin": 0.152,
+          "top": 0,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.6987,
+            "60": 0.314,
+            "90": 0.391,
+            "150": 0.2191,
+            "180": 0.2924,
+            "240": 0.253,
+            "270": 0.3379,
+            "330": 0.5467
+          }
+        },
+        "mirror": {
+          "answer": 0,
+          "value": 0.6899,
+          "margin": 0.1442,
+          "top": 0,
+          "changed_cells": 8328,
+          "exercised": true,
+          "scores": {
+            "0": 0.6899,
+            "60": 0.3189,
+            "90": 0.3771,
+            "150": 0.2179,
+            "180": 0.2565,
+            "240": 0.2619,
+            "270": 0.3065,
+            "330": 0.5456
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 9924,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": 0,
+          "value": 0.5971,
+          "margin": 0.1427,
+          "top": 0,
+          "changed_cells": 7803,
+          "exercised": true,
+          "scores": {
+            "0": 0.5971,
+            "60": 0.2919,
+            "90": 0.3581,
+            "150": 0.1967,
+            "180": 0.2268,
+            "240": 0.2329,
+            "270": 0.2781,
+            "330": 0.4544
+          }
+        }
+      }
+    },
+    {
+      "view": "p14 4'-1 (truss glazed block)",
+      "gt": [
+        90
+      ],
+      "inner": false,
+      "kind": "full",
+      "anchors": [
+        [
+          412.36,
+          0
+        ],
+        [
+          320.98,
+          12.9
+        ]
+      ],
+      "outcome": "correct",
+      "baseline": "abstain",
+      "baseline_answer": null,
+      "baseline_width_m": 91.62,
+      "width_m": 92.75,
+      "states": {
+        "clean": {
+          "answer": 90,
+          "value": 0.6405,
+          "margin": 0.1131,
+          "top": 90,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.2582,
+            "60": 0.5275,
+            "90": 0.6405,
+            "150": 0.3376,
+            "180": 0.1858,
+            "240": 0.3643,
+            "270": 0.2567,
+            "330": 0.2751
+          }
+        },
+        "mirror": {
+          "answer": null,
+          "value": 0.4859,
+          "margin": 0.0085,
+          "top": 60,
+          "changed_cells": 10190,
+          "exercised": true,
+          "scores": {
+            "0": 0.3335,
+            "60": 0.4859,
+            "90": 0.4774,
+            "150": 0.2689,
+            "180": 0.1697,
+            "240": 0.3279,
+            "270": 0.2026,
+            "330": 0.28
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 9756,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": null,
+          "value": 0.5706,
+          "margin": 0.0846,
+          "top": 90,
+          "changed_cells": 8725,
+          "exercised": true,
+          "scores": {
+            "0": 0.2689,
+            "60": 0.4859,
+            "90": 0.5706,
+            "150": 0.3352,
+            "180": 0.1611,
+            "240": 0.3163,
+            "270": 0.1975,
+            "330": 0.267
+          }
+        }
+      }
+    },
+    {
+      "view": "p14 1-4' (courtyard, developed)",
+      "gt": [
+        240,
+        270
+      ],
+      "inner": true,
+      "kind": "full",
+      "anchors": [
+        [
+          212.32,
+          0
+        ],
+        [
+          120.82,
+          12.9
+        ]
+      ],
+      "outcome": "abstain",
+      "baseline": "abstain",
+      "baseline_answer": null,
+      "baseline_width_m": 83.43,
+      "width_m": 84.34,
+      "states": {
+        "clean": {
+          "answer": null,
+          "value": 0.4034,
+          "margin": 0.0247,
+          "top": 240,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.1978,
+            "60": 0.3034,
+            "90": 0.256,
+            "150": 0.1088,
+            "180": 0.3045,
+            "240": 0.4034,
+            "270": 0.3787,
+            "330": 0.196
+          }
+        },
+        "mirror": {
+          "answer": null,
+          "value": 0.3295,
+          "margin": 0.0535,
+          "top": 240,
+          "changed_cells": 9906,
+          "exercised": true,
+          "scores": {
+            "0": 0.1827,
+            "60": 0.2392,
+            "90": 0.2367,
+            "150": 0.2414,
+            "180": 0.276,
+            "240": 0.3295,
+            "270": 0.1777,
+            "330": 0.2036
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 7976,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": null,
+          "value": 0.4112,
+          "margin": 0.0793,
+          "top": 240,
+          "changed_cells": 7309,
+          "exercised": true,
+          "scores": {
+            "0": 0.2424,
+            "60": 0.3122,
+            "90": 0.2803,
+            "150": 0.1063,
+            "180": 0.2914,
+            "240": 0.4112,
+            "270": 0.3319,
+            "330": 0.2347
+          }
+        }
+      }
+    },
+    {
+      "view": "p16 fragment 1 (box bay)",
+      "gt": [
+        330
+      ],
+      "inner": false,
+      "kind": "fragment",
+      "anchors": [
+        [
+          337.36,
+          0
+        ],
+        [
+          81.4,
+          12.9
+        ]
+      ],
+      "outcome": "abstain",
+      "baseline": "abstain",
+      "baseline_answer": null,
+      "baseline_width_m": 10.72,
+      "width_m": 10.75,
+      "states": {
+        "clean": {
+          "answer": null,
+          "value": 0.68,
+          "margin": 0.0033,
+          "top": 0,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.68,
+            "60": 0.5141,
+            "90": 0.4305,
+            "150": 0.3756,
+            "180": 0.4063,
+            "240": 0.3705,
+            "270": 0.6259,
+            "330": 0.6767
+          }
+        },
+        "mirror": {
+          "answer": null,
+          "value": 0.6908,
+          "margin": 0.0241,
+          "top": 0,
+          "changed_cells": 1770,
+          "exercised": true,
+          "scores": {
+            "0": 0.6908,
+            "60": 0.5405,
+            "90": 0.4629,
+            "150": 0.3643,
+            "180": 0.3988,
+            "240": 0.3658,
+            "270": 0.603,
+            "330": 0.6667
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 2067,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": null,
+          "value": 0.5333,
+          "margin": 0.001,
+          "top": 0,
+          "changed_cells": 1776,
+          "exercised": true,
+          "scores": {
+            "0": 0.5333,
+            "60": 0.4013,
+            "90": 0.4313,
+            "150": 0.4094,
+            "180": 0.3075,
+            "240": 0.3606,
+            "270": 0.5054,
+            "330": 0.5323
+          }
+        }
+      }
+    },
+    {
+      "view": "p17 fragment 2 (curved stair)",
+      "gt": [
+        240,
+        270
+      ],
+      "inner": true,
+      "kind": "fragment",
+      "anchors": [
+        [
+          328.42,
+          0
+        ],
+        [
+          167.68,
+          8.1
+        ]
+      ],
+      "outcome": "abstain",
+      "baseline": "abstain",
+      "baseline_answer": null,
+      "baseline_width_m": 10.92,
+      "width_m": 10.95,
+      "states": {
+        "clean": {
+          "answer": null,
+          "value": 0.3558,
+          "margin": 0.0036,
+          "top": 240,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.2427,
+            "60": 0.2185,
+            "90": 0.2419,
+            "150": 0.2608,
+            "180": 0.2636,
+            "240": 0.3558,
+            "270": 0.3522,
+            "330": 0.247
+          }
+        },
+        "mirror": {
+          "answer": null,
+          "value": 0.382,
+          "margin": 0.0358,
+          "top": 270,
+          "changed_cells": 1958,
+          "exercised": true,
+          "scores": {
+            "0": 0.2495,
+            "60": 0.2561,
+            "90": 0.2628,
+            "150": 0.2491,
+            "180": 0.2545,
+            "240": 0.3461,
+            "270": 0.382,
+            "330": 0.2495
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 2233,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": null,
+          "value": 0.3303,
+          "margin": 0.0032,
+          "top": 90,
+          "changed_cells": 1426,
+          "exercised": true,
+          "scores": {
+            "0": 0.2788,
+            "60": 0.3271,
+            "90": 0.3303,
+            "150": 0.2916,
+            "180": 0.2958,
+            "240": 0.3036,
+            "270": 0.3054,
+            "330": 0.2855
+          }
+        }
+      }
+    },
+    {
+      "view": "p15 K-A",
+      "gt": null,
+      "inner": false,
+      "kind": "full",
+      "anchors": [
+        [
+          194.62,
+          0
+        ],
+        [
+          116.98,
+          11
+        ]
+      ],
+      "outcome": "diagnostic",
+      "baseline": "diagnostic",
+      "baseline_answer": 180,
+      "baseline_width_m": 54.91,
+      "width_m": 55.79,
+      "states": {
+        "clean": {
+          "answer": 180,
+          "value": 0.5939,
+          "margin": 0.2295,
+          "top": 180,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.3138,
+            "60": 0.2519,
+            "90": 0.3449,
+            "150": 0.3387,
+            "180": 0.5939,
+            "240": 0.1522,
+            "270": 0.3643,
+            "330": 0.3391
+          }
+        },
+        "mirror": {
+          "answer": null,
+          "value": 0.3889,
+          "margin": 0.0166,
+          "top": 180,
+          "changed_cells": 6362,
+          "exercised": true,
+          "scores": {
+            "0": 0.3723,
+            "60": 0.2787,
+            "90": 0.2581,
+            "150": 0.3277,
+            "180": 0.3889,
+            "240": 0.2886,
+            "270": 0.2977,
+            "330": 0.3169
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 4348,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": 180,
+          "value": 0.457,
+          "margin": 0.1259,
+          "top": 180,
+          "changed_cells": 4152,
+          "exercised": true,
+          "scores": {
+            "0": 0.297,
+            "60": 0.182,
+            "90": 0.2586,
+            "150": 0.2571,
+            "180": 0.457,
+            "240": 0.1307,
+            "270": 0.3311,
+            "330": 0.3216
+          }
+        }
+      }
+    },
+    {
+      "view": "p15 A-G",
+      "gt": null,
+      "inner": false,
+      "kind": "full",
+      "anchors": [
+        [
+          190.66,
+          0.75
+        ],
+        [
+          103.48,
+          12.9
+        ]
+      ],
+      "outcome": "diagnostic",
+      "baseline": "diagnostic",
+      "baseline_answer": null,
+      "baseline_width_m": 27.16,
+      "width_m": 27.07,
+      "states": {
+        "clean": {
+          "answer": null,
+          "value": 0.5399,
+          "margin": 0.0605,
+          "top": 270,
+          "changed_cells": 0,
+          "exercised": true,
+          "scores": {
+            "0": 0.4555,
+            "60": 0.4794,
+            "90": 0.4562,
+            "150": 0.267,
+            "180": 0.3663,
+            "240": 0.3449,
+            "270": 0.5399,
+            "330": 0.387
+          }
+        },
+        "mirror": {
+          "answer": null,
+          "value": 0.5193,
+          "margin": 0.0133,
+          "top": 90,
+          "changed_cells": 3992,
+          "exercised": true,
+          "scores": {
+            "0": 0.3651,
+            "60": 0.4885,
+            "90": 0.5193,
+            "150": 0.506,
+            "180": 0.3881,
+            "240": 0.3923,
+            "270": 0.3898,
+            "330": 0.3761
+          }
+        },
+        "blank": {
+          "answer": null,
+          "value": 0.0,
+          "margin": 0.0,
+          "top": 0,
+          "changed_cells": 2771,
+          "exercised": true,
+          "scores": {
+            "0": 0.0,
+            "60": 0.0,
+            "90": 0.0,
+            "150": 0.0,
+            "180": 0.0,
+            "240": 0.0,
+            "270": 0.0,
+            "330": 0.0
+          }
+        },
+        "missing": {
+          "answer": null,
+          "changed_anchors": 2,
+          "changed_cells": null
+        },
+        "shift": {
+          "answer": null,
+          "value": 0.4374,
+          "margin": 0.0229,
+          "top": 330,
+          "changed_cells": 2350,
+          "exercised": true,
+          "scores": {
+            "0": 0.4145,
+            "60": 0.3913,
+            "90": 0.3828,
+            "150": 0.2003,
+            "180": 0.2721,
+            "240": 0.2755,
+            "270": 0.3853,
+            "330": 0.4374
+          }
+        }
+      }
+    }
+  ],
+  "median_s": 12.23,
+  "spread_s": 1.328,
+  "controls_pass": true,
+  "inputs": {
+    "pdf": "785e4015993482945b704de3ab2fdbfe40307300d222abded319808e3a069131",
+    "model": "6ab64e6b8de3b838b352f4d4ebfb560af0648be10699fe252cf21eba3e9bea62"
+  },
+  "upstream_pins": {
+    "run.py": "978ad7d4ccffa01e90d726b56533ab3a914578ebd84f449265c16dd67bb9c5bf",
+    "fixture.json": "9ce8c9eba842de0d299ccc098a80ccee625fe7d68991f68f0ee64cec3630157e",
+    "receipt.json": "74a596fde4dddce0fb01604eb319f1ddd9bab688fe5e15371f7eb7cee40b9741",
+    "blender": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"
+  },
+  "upstream_rev": "f4a7f22b107826d5e054f11a5e336c63aed81667",
+  "baseline_rows_sha256": "f12096449b2fd7c0e25c308b646b7acd19b79576813b82cd4fb778528c863b6d",
+  "runner_sha256": "9492c08cf15f7a69414752a9a946963079be661dcb1cb59392a1895891b60f54"
+}

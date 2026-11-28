@@ -1,5 +1,7 @@
 # H162 — Silikatny: datum registration before wall matching (OBSERVE)
 
+Масштаб по высотным отметкам помог на одном из пяти видов, но не устранил уверенную ошибку и не разрешил ни одного из двух видов внутреннего угла. **H162 опровергнута**; перенос отделки по этому сигналу не разрешать. Сокольники не открывались (#2001 открыт).
+
 ## Frozen contract
 
 H162 isolates the scale/vertical-registration confound reported in #161 before changing the candidate set. A = exact #161 bounding-box scale. B = same drawn glass extraction, native model direction masks, grid, overlap, NCC and decision thresholds; replace only the PDF transform with manually transcribed geometry-bound levels. Keep all directions (including the 30° neighbour and opposite), fixed clips and held-out policy. No production code; no deliveries changed. This tests direction labels, NOT physical wall or bay identity. In particular the developed courtyard row allows two directions and cannot license an assignment to a single wall.
@@ -21,3 +23,23 @@ Anchors: physical PDF page, absolute PDF Y points manually transcribed from vect
 Score clean placement correct/wrong/abstain on the five scored views; primary metric answered accuracy `correct/(correct+wrong)` (undefined at zero answers), publish abstain rate `abstain/5` and inner/fragment rows separately. **Confirmation threshold:** no wrong, at least three correct, including at least one inner, plus parity and negative controls. Active positive witness A'-K must turn #161's wrong direction 0 into correct 330; publish delta versus the frozen wrong row. No confirmation of transfer without this and all bounds. No KEEP/OKS deployment even if confirmed; this is an oracle scale ablation. Historical wrong #161 assignment is the rejected mapping control, not a rejected delivered model (none identified). Blank and missing-anchor states must abstain on all seven, with real changes counted per view. Mirror and incorrect datum shift `+0.75 m` report changed cells and proposals; expected reduced support for the true direction but no acceptance bound (ambiguous motif); a no-op is `not_exercised`. Candidate-order reversal must not change any verdict.
 
 Replay (write into fresh ignored worktree dir): `uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-datum/run.py .venv/ar162-replay`. Three fresh paired runs with fresh shared native renders and fresh PDF reads, exact #161 row hash (`f1209644…6b6d`, exact verified from pinned receipt) and byte-identical new rows across runs. Median wall time and range of three; additionally publish observed B−A scorer time spread, not a performance claim. One new variant, zero retunes and no follow-up candidate in this round; stop inconclusive on parity failure, missing inputs or if 3 runs do not fit 180 s after first full pair (plus preparation), no partial confirmation. No threshold or guard weakening, no GT/clip edits, no replacing drawing/model, no opening held-out outputs, no synthetic-to-real extrapolation. Not measured: wall/bay localization, native Revit re-export, rejected deliveries, automatic datum detection, user finish transfer, #2001.
+
+## Round log — refuted (branch-only, no product change)
+
+Contract `c7940cea`; measured runner `d98acf95`. Three fresh paired reads/renders, status `finished`, wall 13.379 / 12.230 / 12.051 s (median 12.230 s; range 1.328 s). B−A post-render elapsed −0.303 / +0.319 / +0.410 s (median +0.319 s; range 0.713 s; B includes one more perturbation, not a performance comparison). Exact historical baseline rows 3/3; byte-identical B rows 3/3; candidate-order reversal passed in every scored state, including diagnostics. The two input assets and Blender hashes matched before and after the pairs. [Receipt](autoresearch-view-face-datum/receipt.json) SHA-256 `06669d58b0ee009addbd88261aac6ddb0625f947bb84512c7873e48f59e91889`.
+
+| View | Known direction(s) | A answer | B answer or best unaccepted | B margin | A → B width (m) |
+|---|---|---|---|---:|---:|
+| A'-K | 330 | 0 (wrong) | 0 (wrong) | 0.1520 | 73.36 → 74.21 |
+| 4'-1 | 90 | abstain | 90 (correct) | 0.1131 | 91.62 → 92.75 |
+| 1-4', inner developed | 240 or 270 | abstain | abstain (240) | 0.0247 | 83.43 → 84.34 |
+| Fragment 1 | 330 | abstain | abstain (0) | 0.0033 | 10.72 → 10.75 |
+| Fragment 2, inner stair | 240 or 270 | abstain | abstain (240) | 0.0036 | 10.92 → 10.95 |
+
+Clean A → B: **0/1/4 → 1/1/3** (correct/wrong/abstain); answered accuracy 0/1 → 1/2; abstain rate 4/5 → 3/5; both inner views and both fragments abstained. The wrong A'-K decision survives registration, including mirroring and the deliberate Z shift. These measured scale changes (~1% for the three full scored views) do not support the earlier ~8% estimate for the exact scored crops. K-A and A-G stay diagnostic, without inferred truth.
+
+Injected controls: blank removed 2,067–9,924 cells per row and missing removed two anchors per row; both abstained 7/7. Mirror changed 1,770–10,190 cells and abstained 6/7; shift changed 1,426–8,725 cells and abstained 5/7 (one persistent wrong, one unscored). The corrected 4'-1 is an active clean control: both mirror and shift vetoed its clean answer. No no-op perturbations. Collection RED: missing research runner (`FileNotFoundError`), then 3 affected unit tests passed.
+
+**Recommendation for the shared OKS step (not implemented):** use independently paired drawing datum marks for scale, not for identity. Do not accept a view-to-face match from direction-level NCC alone; for ambiguous/untitled views print candidate walls and the reason for abstention, and do not transfer finishes. Next, compare frontal wall-segment-clipped candidates with the same datum transform and freeze wall-identity truth from independent plan/section registration. Use the A'-K neighbour and opposite wall as hard negatives and score developed multi-wall views and bay/interval separately. Blind Sokolniki transfer remains gated by #2001.
+
+Full suite: deferred to merge batch (rule 68).
