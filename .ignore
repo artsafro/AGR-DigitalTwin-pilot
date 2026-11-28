@@ -661,6 +661,11 @@
 /docs/research/autoresearch-view-face-elv/posthoc.py
 /docs/research/autoresearch-view-face-elv/receipt.json
 /docs/research/autoresearch-view-face-elv/run.py
+/docs/research/autoresearch-view-face-material.md
+/docs/research/autoresearch-view-face-material/rays_type.py
+/docs/research/autoresearch-view-face-material/receipt.json
+/docs/research/autoresearch-view-face-material/run.py
+/docs/research/autoresearch-view-face-material/score.py
 /docs/research/bim-autocad-agr.md
 /docs/research/bim-revit-agr.md
 /docs/research/body-gn-duplicate-introduction-stage.md
