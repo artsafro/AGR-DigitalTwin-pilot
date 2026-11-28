@@ -14,6 +14,7 @@ never (no automation may merge). Preconditions are reported separately and never
 observe: one JSON line per open PR appended to a log OUTSIDE the repo - what it WOULD do; nothing merges.
 backtest: classifies recently merged PRs and compares with the lane that actually merged them
 (kpi/manual_merge_*.json: hygauto*/redfix* = automatic lane, other batches = Artem's word).
+Rows routed to Artem solely by the unchecked-card guard are reported separately, not scored.
 """
 from __future__ import annotations
 
@@ -86,6 +87,23 @@ def _text_hits(patterns, text: str) -> list[str]:
     return hits
 
 
+RECEIPT_VOID = re.compile(r"(none|n/?a|no|not|skipped)\b|-", re.I)
+
+
+def _receipt_lines(labels, text: str) -> list[str]:
+    """Receipt lines `<label>: <value>` that open a line (after "- ", "* ", "| ", "**"); a free mention,
+    an empty value or a void one (none / n/a / no / not / skipped / "-") is not a receipt (#2071 r2)."""
+    hits = []
+    for label in labels or ():
+        pat = rf"^[ \t]*(?:[-*|>][ \t]*)*(?:\*\*)?(?:{label})(?:\*\*)?[ \t]*:(?:\*\*)?(.*)$"
+        for m in re.finditer(pat, text, re.I | re.M):
+            value = m.group(1).strip().strip("|*").strip()
+            if value and not RECEIPT_VOID.match(value):
+                hits.append(m.group(0).strip())
+                break
+    return hits
+
+
 def linked_issues(pr: dict) -> set[int]:
     nums = {i["number"] for i in pr.get("closingIssuesReferences") or [] if i.get("number")}
     nums |= {int(x) for x in re.findall(r"(?:Refs|Closes|Fixes|Resolves)\s+(?:[\w.-]+/[\w.-]+)?#(\d+)",
@@ -150,6 +168,11 @@ def _rule_hits(rule: dict, pr: dict, files: list[str], text: str, ctx: dict) -> 
         if lines <= ctx["max_lines"] or not any(e.startswith("paths: ") for e in ev):
             return []
         ev.append(f"{lines} changed lines > {ctx['max_lines']}")
+    if ev and rule.get("exempt_receipt"):  # D432 (#2071): a labelled receipt line in the PR lifts it
+        pr_text = "\n".join([pr.get("title") or "", pr.get("body") or ""])
+        if _receipt_lines(rule["exempt_receipt"], pr_text):
+            return []
+        ev.append("no trainer A/B receipt or 'regression test only' marker in the PR title/body")
     return ev
 
 
@@ -305,12 +328,16 @@ def backtest(limit: int, policy: dict) -> dict:
     for p in prs:
         res = classify(p, policy=policy, stop_present=False, hygiene_issues=hyg)
         lane, src = actual_lane(p["number"], p.get("comments"))
+        # A historical replay has no card evidence. Exclude only rows where the guard changed the lane.
+        card_unknown = any(f["id"] == "card_checked" for f in res["failed_preconditions"])
         policy_lane = "auto" if res["bucket"] == "auto" else "artem"  # never is a stricter artem
         rows.append({"pr": p["number"], "title": res["title"][:60], "bucket": res["bucket"], "rule": res["rule"],
-                     "actual": lane, "source": src, "agree": None if lane == "unknown" else policy_lane == lane})
+                     "actual": lane, "source": src, "card_unknown": card_unknown,
+                     "agree": None if card_unknown or lane == "unknown" else policy_lane == lane})
     known = [r for r in rows if r["agree"] is not None]
     pct = round(100 * sum(r["agree"] for r in known) / len(known)) if known else None
-    return {"rows": rows, "agreement_pct": pct, "known": len(known)}
+    return {"rows": rows, "agreement_pct": pct, "known": len(known),
+            "card_unknown": sum(r["card_unknown"] for r in rows)}
 
 
 def _print_classify(res: dict) -> None:
@@ -362,9 +389,16 @@ def main(argv=None) -> int:
         else:
             print("| PR | policy bucket (rule) | actual | source | agree |\n|---|---|---|---|---|")
             for r in res["rows"]:
-                ag = "n/a" if r["agree"] is None else ("yes" if r["agree"] else "NO")
+                if r["card_unknown"]:
+                    ag = "card-unknown"
+                else:
+                    ag = "n/a" if r["agree"] is None else ("yes" if r["agree"] else "NO")
                 print(f"| #{r['pr']} {r['title']} | {r['bucket']} ({r['rule']}) | {r['actual']} | {r['source']} | {ag} |")
-            print(f"agreement: {res['agreement_pct']}% of {res['known']} PRs with a known merge lane")
+            if res["known"]:
+                print(f"agreement: {res['agreement_pct']}% of {res['known']} comparable PRs")
+            else:
+                print("agreement: n/a (no comparable PRs)")
+            print(f"card-unknown: {res['card_unknown']} PR(s) excluded from agreement")
     return 0
 
 

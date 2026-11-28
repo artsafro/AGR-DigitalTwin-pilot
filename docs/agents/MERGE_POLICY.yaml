@@ -162,7 +162,9 @@ rules:
   - id: agent_working_order
     bucket: artem
     consent: artem_word
-    why: "changes how agents work: hooks, skeleton contract, review rules, agent instructions, trails"
+    # D432: a process change (instruction, skill, tool, memory, architecture) not measured against the
+    # trainer baseline merges only on Artem's word.
+    why: "changes how agents work: hooks, skeleton contract, review rules, agent instructions, trails (unmeasured process change, D432)"
     paths:
       - "AGENTS.md"
       - "*/AGENTS.md"
@@ -185,6 +187,23 @@ rules:
       - "review (rules|checklist|protocol)"
       - "skeleton contract"
       - "changes how agents work"
+  - id: unmeasured_process_change
+    bucket: artem
+    consent: artem_word
+    # D432 (#2071): a tool / skill / memory / architecture change merges by itself only with a trainer A/B
+    # receipt or as an obvious bug fix proven by a regression test. `exempt_receipt` labels must open a
+    # line of the PR title / body (after optional "- ", "* ", "| ") followed by ":" and a real value;
+    # an empty value or one starting with none / n/a / no / not / skipped / "-" does not exempt, nor
+    # does a free mention in prose (review r2 of PR #2070).
+    why: "process change (tool, skill, memory, architecture) without a trainer baseline comparison (D432)"
+    paths:
+      - "tools/*"
+      - "src/*"
+      - "scripts/*"
+      - "adapters/*"
+    exempt_receipt:
+      - "trainer a/b"
+      - "regression test only \\(bug fix\\)"
   - id: user_decision_on_card
     bucket: artem
     consent: artem_word
