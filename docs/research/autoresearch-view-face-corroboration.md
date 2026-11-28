@@ -11,6 +11,8 @@
 - Replay from the measured branch: `git fetch origin research/autoresearch-standing-151 research/autoresearch-standing-152`, then `uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-corroboration/run.py tmp/ar154-NEW`. Read-only mounted input root `G:/Мой диск/AGR-evidence`: #151 PDF `151-view-face-transfer/inputs/АР.2_ Фасады_29.07.2026.pdf` SHA-256 `cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0`; `151-view-face-transfer/r1/types-1.npz` SHA-256 `66105de78c7b5ecdaed5015a47ca4937ab35e130485c50de6a467cc580630a7a`. Hash manifest pre/post checks; historical executable/fixtures/receipt by immutable blob and #145 `640b3678fb18ac2e5811742116a92e96ef236ab6`. `uv.lock` SHA-256 `ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea`. Replay limited to hosts with the mounted hash-matching assets. Paired ledgers publish outside Git; compact receipt on this branch.
 - Forbidden: editing originals, deliveries or other cards' files, retuning, weakening tests, counting rereads of a frozen decision as stability, or transferring finishes. Not measured: untitled *partial* or inner-corner views, DWG/raster, registration or ROI discovery, automatic wall/bay identity, other buildings, or Sokolniki STOP 04.
 
+Pre-scoring grid clarification: the pinned native rays are 0.2 m/pixel; repeat each binary hit cell 2×2 on the common 0.1 m grid (no interpolated detail). Profile costs and all bounds above remain frozen. Costs are serialized to nine decimals; use that precision for tie/margin comparisons.
+
 ## Acceptance table (research only)
 
 | Witness | Expected | Verification |
