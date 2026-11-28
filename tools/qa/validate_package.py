@@ -13,6 +13,8 @@ Manual stages (V015-V017) always need a signed review.
 --master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
 with --scene and no --master that part of V003 stays not_run. An explicit `--master role=PATH` that neither the build
 manifest compared nor the quad check read is a V001 not_run `master_role_unused` naming the role and why (#1810).
+`--scene --master ground=WORK.fbx` (#1919, [D366]): V003 "ground work quads" with the D312 face rule only, apart from
+the OKS "master quads" and the delivered-FBX checks; an unread Ground is a V003 not_run `ground_work_unread`.
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
@@ -39,11 +41,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from adapters.max.agr_tools import build_manifest  # noqa: E402  (#1423 delivery set consistency)
+from adapters.max.agr_tools.package_core import ADDRESS  # noqa: E402  (#1919 the one package address grammar)
 
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
 from twinqa.fbx_header import check_fbx_header  # noqa: E402
 from twinqa.geojson import geojson_findings  # noqa: E402
-from twinqa.master import master_findings  # noqa: E402
+from twinqa.master import ground_work_findings, master_findings  # noqa: E402
 from twinqa.io import digest, json_bytes  # noqa: E402
 from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
 from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
@@ -70,19 +73,24 @@ def load_z_meta(path: Path):
     return payload
 
 
-STEM = re.compile(r"^[A-Za-z0-9_]+$")
-NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>[A-Za-z0-9_]+)$")
-VPM_STEM = re.compile(r"^SM_[A-Za-z0-9_]+$")
+# Profile hints only (lab L04, #908): which profile an archive name points at, kept as loose as before so a
+# misspelt name still gets its profile's findings. The name itself is judged in V012 against the shared
+# grammar `package_core.ADDRESS` (#1919), never against these hints.
+_NPM_HINT = re.compile(r"^[0-9]{4}_[A-Za-z0-9_]+$")
+_VPM_HINT = re.compile(r"^SM_[A-Za-z0-9_]+$")
+NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>" + ADDRESS + r")$")
+VPM_ARCHIVE = re.compile(r"^SM_(?P<address>" + ADDRESS + r")$")
 SCENE_NOTE = "needs the FBX scene: run tools/blender readback"
 
 
 def profile_from_name(name: str) -> str | None:
     """Profile from the archive/FBX name grammar (lab L04, #908): NPM `{code4}_{Address}[...]`, VPM `SM_{Address}[...]`.
-    None when the name matches neither; only then is the profile guessed from the content."""
+    None when the name matches neither; only then is the profile guessed from the content. Loose on purpose
+    (#1919): `0000_A__B` still selects NPM so its V012 reports the malformed address."""
     stem = Path(name).stem
-    if NPM_ARCHIVE.match(stem):
+    if _NPM_HINT.match(stem):
         return "npm"
-    if VPM_STEM.match(stem):
+    if _VPM_HINT.match(stem):
         return "vpm"
     return None
 
@@ -346,8 +354,10 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
         v1.findings.append(finding("fail", "PNG count", str(len(pngs)), f"{lo}..{hi}", pages))
 
     v12, npages = st["V012"], st["V012"].source_pdf_pages
-    if not STEM.match(stem) or not stem.startswith("SM_") or len(stem) > profile["naming"]["max_characters"]:
-        v12.findings.append(finding("fail", "archive name", stem, "SM_{Address}[_Ground], A-Z a-z 0-9 _", npages))
+    if not VPM_ARCHIVE.match(stem) or len(stem) > profile["naming"]["max_characters"]:
+        v12.findings.append(finding("fail", "archive name", stem,
+                                    "SM_{Address}[_Ground]; Address = A-Z a-z 0-9 words joined by single _ "
+                                    "(package_core.ADDRESS)", npages))
     elif ground:
         v12.findings.append(finding("pass", "archive name", stem, "SM_{Address}_Ground", npages))
     else:
@@ -397,7 +407,8 @@ def validate_npm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
     m = NPM_ARCHIVE.match(stem)
     v12 = st["V012"]
     if not m:
-        v12.findings.append(finding("fail", "archive name", stem, "{territory_code_4}_{Address}", v12.source_pdf_pages))
+        v12.findings.append(finding("fail", "archive name", stem, "{territory_code_4}_{Address}; Address = A-Z a-z 0-9 "
+                                    "words joined by single _ (package_core.ADDRESS)", v12.source_pdf_pages))
     else:
         ground_name, part = f"{stem}_Ground.fbx", re.compile(rf"^{re.escape(stem)}_(0[1-9]|1[0-9]|20)\.fbx$")
         if ground_name not in fbx:
@@ -557,20 +568,68 @@ def _same_file(a, b) -> bool:
     return os.path.normcase(str(Path(a).resolve())) == os.path.normcase(str(Path(b).resolve()))
 
 
-def add_unused_roles(st: dict[str, Stage], master, compared: str | None, read: Path | None, oks_reason: str | None,
+GROUND_WORK = "Ground work FBX topology: quads wherever possible; triangles allowed and reported; no n-gons [D312]"
+
+
+def add_ground_work(st: dict[str, Stage], kind: str, ground, target: Path, oks: Path | None, scene: bool,
+                    notes: list[str]) -> tuple[Path | None, str | None]:
+    """#1919 ([D366], [D312]): V003 'ground work quads' from an explicit `--master ground=PATH` work FBX readback.
+
+    Separate from the delivered-FBX scene checks and from the OKS 'master quads' result; only the shared D312 face
+    rule runs (no facade checks). Returns (the file read, None) or (None, why Ground was not read); an unread Ground
+    gets a V003 not_run `ground_work_unread` naming what was not checked - never a pass, never a first-file pick.
+    No ground role: nothing is added (unnamed/OKS behaviour unchanged)."""
+    if ground is None:
+        return None, None
+    paths = ground if isinstance(ground, list) else [ground]
+    names = ", ".join(Path(p).name for p in paths)
+    path = Path(paths[0])
+    if "V003" not in st:
+        return None, f"the {str(kind).upper()} profile has no V003 work-mesh check"
+    if not scene:
+        reason = "the Ground work-mesh check runs only with --scene on a ZIP or FBX"
+    elif len(paths) != 1:
+        reason = "several Ground sources: the Ground work-mesh check takes one work FBX and never picks one [D332]"
+    elif path.suffix.lower() != ".fbx":
+        reason = f"{path.name} is not an FBX work file"
+    elif not path.is_file():
+        reason = f"{path.name} does not exist"
+    elif _same_file(path, target):
+        reason = f"{path.name} is the validated package itself, not a work FBX"
+    elif oks is not None and _same_file(path, oks):
+        reason = f"{path.name} is also the OKS master; one file is not read as two roles"
+    else:
+        try:
+            rb = readback(path)
+        except (OSError, RuntimeError) as exc:
+            reason = f"{path.name}: readback failed ({exc})"
+        else:
+            st["V003"].findings.extend(ground_work_findings(rb, path))
+            notes.append(f"ground work readback: {path.name} in Blender {rb.get('blender')}")
+            return path, None
+    st["V003"].findings.append(finding(
+        "not_run", "ground work quads", f"--master ground={names} not read: {reason}; Ground work-mesh topology "
+        "(triangles per object, n-gons) not checked", GROUND_WORK, [8, 29], "DER-03, [D366], [D312]",
+        data={"code": "ground_work_unread", "role": "ground", "reason": reason, "paths": [str(p) for p in paths]}))
+    notes.append(f"ground work not read: {reason}")
+    return None, reason
+
+
+def add_unused_roles(st: dict[str, Stage], master, compared: str | None, read: list, reasons: dict,
                      notes: list[str]):
     """#1810: one V001 not_run `master_role_unused` per explicit --master role that no check used; never fail/pass.
 
-    compared: None = the build manifest compared every given role, else why it did not; read: the file the V003 quad
-    check took (a role whose every source is that file, under any spelling, was used); oks_reason: why the oks input
-    was not read. Hashing a file is not a use. An unkeyed path is not a role and keeps its note."""
+    compared: None = the build manifest compared every given role, else why it did not; read: the files the V003
+    work-mesh checks took (OKS quad master, Ground work FBX #1919; a role whose every source is one of them, under
+    any spelling, was used); reasons: {role: why its input was not read}. Hashing a file is not a use. An unkeyed
+    path is not a role and keeps its note."""
     if compared is None or not isinstance(master, dict) or "V001" not in st:
         return
     for role in sorted(master):
         paths = master[role] if isinstance(master[role], list) else [master[role]]
-        if read is not None and all(_same_file(p, read) for p in paths):
-            continue  # the independent OKS quad check used this input
-        reason = compared + (f"; {oks_reason}" if role == "oks" and oks_reason else "")
+        if any(r is not None and all(_same_file(p, r) for p in paths) for r in read):
+            continue  # an independent V003 work-mesh check used this input
+        reason = compared + (f"; {reasons[role]}" if reasons.get(role) else "")
         names = ", ".join(Path(p).name for p in paths)
         st["V001"].findings.append(finding(
             "not_run", "master role", f"--master {role}={names} unused: {reason}",
@@ -719,7 +778,9 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     elif quad is not None:
         notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
         oks_reason = "the quad master check runs only with --scene on a ZIP or FBX"
-    add_unused_roles(st, master, compared, read, oks_reason, notes)
+    ground_read, ground_reason = add_ground_work(st, kind, master.get("ground") if isinstance(master, dict) else None,
+                                                 target, quad, scene_readback, notes)
+    add_unused_roles(st, master, compared, [read, ground_read], {"oks": oks_reason, "ground": ground_reason}, notes)
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:

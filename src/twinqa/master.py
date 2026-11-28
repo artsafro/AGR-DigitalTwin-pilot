@@ -9,6 +9,8 @@ Generalises the quad and quad-size part of the job-local `jobs/KPP1/scripts/qa_m
   `dt_ai.ops.inv_texel.VPM` (the kernel invariant texel_ready), never typed in here; its aspect ratio
   default (orchestrator default, no decision) is not applied. Degenerate faces fail: they cannot be unwrapped.
 NPM has no size gate (inv_texel NPM-OKS is report-only); only the quad rule applies.
+Ground work FBX ([D366], #1919): `ground_work_findings` runs only the shared D312 face rule as V003 'ground work
+quads'; the facade checks (decor embed, edge loops, VPM quad size) are OKS-master only.
 Findings go to stage V003 (DER-03 is listed there). Pure Python + numpy, no Blender.
 """
 from twinqa.look import decor_embed_findings, edge_loop_findings
@@ -22,18 +24,25 @@ def _f(status, name, observed, expected, src, data=None):
     return Finding(name, status, observed, expected, list(PAGES), f"{src}; {EVIDENCE}", [], data=dict(data or {}))
 
 
-def master_findings(rb: dict, kind: str) -> list[Finding]:
-    """V003 findings for a master/work FBX readback (tools/blender/fbx_readback.py format)."""
-    from dt_ai.ops.inv_texel import VPM, face_metrics
-    import numpy as np
+TOPOLOGY_EXPECTED = "quads wherever possible; triangles allowed and reported; no n-gons [D312]"
 
-    src = rb.get("source", "master.fbx").replace("\\", "/").rsplit("/", 1)[-1]
+
+def _src(rb: dict) -> str:
+    return rb.get("source", "master.fbx").replace("\\", "/").rsplit("/", 1)[-1]
+
+
+def _topology(rb: dict, name: str, data: dict | None = None):
+    """Shared D312 work-mesh topology of one readback: (findings, meshes); meshes is None after a fail-closed finding.
+
+    `name` keeps the OKS and Ground results apart in one report (#1919); the face rule itself is
+    adapters/max/agr_tools/master_topology_core.py, never restated here."""
+    src = _src(rb)
     if not rb.get("readback_ok"):
-        return [_f("fail", "master quads", f"{src}: {rb.get('error', 'readback failed')}",
-                   "readable quad master FBX", src)]
+        return [_f("fail", name, f"{src}: {rb.get('error', 'readback failed')}",
+                   "readable quad master FBX", src, data)], None
     meshes = [m for m in rb.get("meshes", []) if not m["name"].upper().startswith("UCX_")]
     if not meshes:
-        return [_f("fail", "master quads", f"{src}: no render mesh", "quad master meshes", src)]
+        return [_f("fail", name, f"{src}: no render mesh", "quad master meshes", src, data)], None
     import importlib.util
     from pathlib import Path
 
@@ -64,17 +73,37 @@ def master_findings(rb: dict, kind: str) -> list[Finding]:
             objects.append({"name": m["name"], "face_degrees": degrees})
         topology = core.check(objects)
     except (ValueError, TypeError, OverflowError) as exc:
-        return [_f("fail", "master quads", f"{src}: {exc}",
-                   "complete master polygons; quads preferred, triangles reported, no n-gons [D312]", src)]
+        return [_f("fail", name, f"{src}: {exc}",
+                   "complete master polygons; quads preferred, triangles reported, no n-gons [D312]", src,
+                   data)], None
     rows = topology["objects"]
     # A histogram alone has no source face order; never invent n-gon face identities.
     for m, row in zip(meshes, rows):
         if (m.get("face_geometry") or {}).get("polygons") is None:
             row.pop("ngon_face_ids")
     shown = rows if any(r["triangles"] or r["ngons"] for r in rows) else "all quads"
-    out = [_f(topology["status"], "master quads", f"{src}: {shown}",
-              "quads wherever possible; triangles allowed and reported; no n-gons [D312]", src,
-              {"objects": rows})]
+    return [_f(topology["status"], name, f"{src}: {shown}", TOPOLOGY_EXPECTED, src,
+               {**(data or {}), "objects": rows})], meshes
+
+
+def ground_work_findings(rb: dict, source) -> list[Finding]:
+    """V003 'ground work quads' for an explicit Ground work FBX readback ([D366], [D312], #1919).
+
+    Only the shared D312 face rule: triangles allowed and reported per object, n-gons fail. The facade checks of
+    the OKS master (decor embed, edge loops, VPM 4 m quad size) are not run on Ground. `source` is the input path
+    the readback read, recorded so the report names the file this result came from."""
+    return _topology(rb, "ground work quads", {"role": "ground", "input": str(source)})[0]
+
+
+def master_findings(rb: dict, kind: str) -> list[Finding]:
+    """V003 findings for a master/work FBX readback (tools/blender/fbx_readback.py format)."""
+    from dt_ai.ops.inv_texel import VPM, face_metrics
+    import numpy as np
+
+    src = _src(rb)
+    out, meshes = _topology(rb, "master quads")
+    if meshes is None:
+        return out
     out.extend(decor_embed_findings(meshes, src))
     out.extend(edge_loop_findings(meshes, src))
     if kind != "vpm":
