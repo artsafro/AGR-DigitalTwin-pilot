@@ -1,0 +1,232 @@
+{
+ "schema": "view-face-arrow-fixture/1",
+ "card": "t_436d52d6 (#155)",
+ "note": "Frozen before any reader score. Savelovskaya UVK1000 (Weltbau, same sheet template as the held-out Sokolniki: raster-printed Revit sheets, untitled elevations, per-view keyplan icon = grey plan + red triangle arrow + thin red line). 4 issued albums, each with its own Revit FBX. GT per arrow = the view it belongs to (by layout) matched BY EYE to orthographic renders of the album's own FBX (az 0/90/180/270), using geometry/finish features only (curved corner elements, ornament/arch positions, low framed block, big-window short face), never the keyplan. az = outward normal azimuth in the FBX frame, 0 = +X, 90 = +Y. Arrow keys = arrow bbox centre at 1 pt/px (zoom 1 raster), matched within 20 pt.",
+ "root": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/8_Савеловская/",
+ "albums": {
+  "B3": {
+   "pdf": "new/2026-11-18 Береста/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В3.pdf",
+   "pdf_sha256": "fc216fd1df037919f5a5dae7bd8d1d6fbb480ba9afd38d4d8e4402d3a6c31339",
+   "fbx": "new/2026-11-18 Береста/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В3.fbx",
+   "arrows": [
+    [
+     1,
+     [
+      1537,
+      691
+     ],
+     "p1 lower short",
+     0
+    ],
+    [
+     1,
+     [
+      169,
+      173
+     ],
+     "p1 upper long",
+     270
+    ],
+    [
+     2,
+     [
+      1456,
+      762
+     ],
+     "p2 lower long",
+     90
+    ],
+    [
+     2,
+     [
+      195,
+      278
+     ],
+     "p2 upper short",
+     180
+    ]
+   ],
+   "fbx_sha256": "8787cf371d3dd4e059c05be7d088e5594f50cd08b561ae7e859863e106f180c3"
+  },
+  "B41": {
+   "pdf": "new/2026-11-18 Цветные арки/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В4-1.pdf",
+   "fbx": "new/2026-11-18 Цветные арки/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В4-1.fbx",
+   "arrows": [
+    [
+     1,
+     [
+      213,
+      194
+     ],
+     "p1 upper long",
+     270
+    ],
+    [
+     1,
+     [
+      1461,
+      706
+     ],
+     "p1 lower short",
+     0
+    ],
+    [
+     2,
+     [
+      278,
+      708
+     ],
+     "p2 lower short",
+     180
+    ],
+    [
+     2,
+     [
+      351,
+      417
+     ],
+     "p2 upper long",
+     90
+    ]
+   ],
+   "pdf_sha256": "758ede94fc11a8e547a76ef76c4f7db3027bb4fcec5e216a16329db4f3ec8d8a",
+   "fbx_sha256": "7be8cce6e3769ad2d346d7a1217206d38aa1befb365de7abe3554773bcb109a8"
+  },
+  "B42": {
+   "pdf": "new/26-11-18 Белые арки/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В4-2.pdf",
+   "fbx": "new/26-11-18 Белые арки/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В4-2.fbx",
+   "arrows": [
+    [
+     1,
+     [
+      213,
+      194
+     ],
+     "p1 upper long",
+     270
+    ],
+    [
+     1,
+     [
+      1461,
+      706
+     ],
+     "p1 lower short",
+     0
+    ],
+    [
+     2,
+     [
+      278,
+      708
+     ],
+     "p2 lower short",
+     180
+    ],
+    [
+     2,
+     [
+      1529,
+      417
+     ],
+     "p2 upper long",
+     90
+    ]
+   ],
+   "pdf_sha256": "ee44569fd93b10bc98fff230fd591b02619127ed272061773cda87d0a741f5c7",
+   "fbx_sha256": "9dc888117c8566f14382ad418ba926207d07e52fe2cd511040f93e5e2fd616c4"
+  },
+  "V3": {
+   "pdf": "САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Фасад вариант 3.pdf",
+   "fbx": "САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Фасад вариант 3.fbx",
+   "arrows": [
+    [
+     1,
+     [
+      213,
+      194
+     ],
+     "p1 upper long",
+     270
+    ],
+    [
+     1,
+     [
+      1461,
+      706
+     ],
+     "p1 lower short",
+     0
+    ],
+    [
+     2,
+     [
+      278,
+      708
+     ],
+     "p2 lower short",
+     180
+    ],
+    [
+     2,
+     [
+      1529,
+      417
+     ],
+     "p2 upper long",
+     90
+    ]
+   ],
+   "pdf_sha256": "e8a4344a8d2aa01c1614a1f4eb4c48739bde8f6d9da9fcfe6e1bcd3420507c43",
+   "fbx_sha256": "362eae5d64155c6d671239d2cfc69c2180be3f1bfa7e892f786f1d9337bc55cc"
+  }
+ },
+ "control_no_arrow": {
+  "pdf": "G:/Мой диск/AGR-evidence/151-view-face-transfer/inputs/АР.2_ Фасады_29.07.2026.pdf",
+  "sha256": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0",
+  "pages": [
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ "params": {
+  "zoom": 3,
+  "red": [
+   200,
+   80,
+   80
+  ],
+  "grey": [
+   190,
+   225,
+   6
+  ],
+  "tri_area_px": [
+   800,
+   6000
+  ],
+  "tri_fill": [
+   0.35,
+   0.7
+  ],
+  "tri_aspect": [
+   1.5,
+   2.6
+  ],
+  "line_min_len_px": 60,
+  "line_max_thick_px": 6,
+  "line_max_gap_px": 90,
+  "icon_min_area_px": 3000,
+  "icon_max_dist_px": 600,
+  "fp_res_m": 0.25,
+  "fp_min_above_ground_m": 3.0,
+  "fp_ground_pct": 5,
+  "reg_aspect_tol": 1.2,
+  "reg_min_iou": 0.75,
+  "reg_min_margin": 0.05,
+  "outer_wall_depth_m": 2.0,
+  "inner_depth_tol_m": 2.0
+ }
+}
