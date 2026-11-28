@@ -12,7 +12,8 @@ DCC в тренировочном прогоне [D389]: AutoCAD Core Console (h
 
 ```
 uv run agr trainer check
-uv run agr trainer run ETALON --lane codex --out NEW_DIR [--timeout-s 1800] [--dry-run]
+uv run agr trainer run ETALON --lane codex --out NEW_DIR [--timeout-s 1800] [--dry-run] [--proxy]
+uv run agr trainer metrics RUN_DIR [--score SCORE.json] [--usd-per-mtok IN OUT]
 uv run agr trainer score ETALON --built NEW_DIR/built --out NEW.json --png NEW.png [--vlm]
 uv run agr trainer calibrate --out NEW_DIR
 uv run agr trainer ledger --add NEW.json --lane codex --run NEW_DIR --date YYYY-MM-DD
@@ -130,8 +131,79 @@ DWG or reuse accepted assets from a previous run.
 | sokolniki-body-v005 | Сокольники УВК 1000 | oks-vpm | incomplete | нет | held_out | v005 [D378] | v006/v007 в PR #1833 |
 | vatutino-ground-v015 | Ватутино, Ground | ground-vpm | incomplete | нет | held_out | v015 | — |
 | tec26-ac08 | TEC26 AC08 | oks-vpm | incomplete | нет | held_out | v007/v010 | — |
+| kpp1-ucx-v004 | КПП-1, UCX одного тела | oks-vpm | complete | да | tuning | основной FBX принятого VPM-пакета [D382] | — |
+| moskovsky-ground-v002 | Школа 1200, пос. Московский, Ground | ground-npm | complete | да (только финальная проверка) | held_out | геометрия v002, принята 2026-11-26 | — |
 
 У incomplete-эталонов в `etalons.json` указано поле `missing`: каких путей, хешей или цитат не хватает.
+
+## User Proxy и короткие стадийные задачи (#2066)
+
+План Артёма от 2026-11-27: «Не агент ради архитектуры, а архитектура ради эффективности агента».
+
+**User Proxy и оценщик — разные роли.** Proxy — отдельный процесс `tools/trainer/user_proxy.py`. В прогоне с
+`--proxy` он лежит в `RUN/proxy/ask.py` рядом со своим `pack.json`. Агент получает в задаче одну команду:
+`python RUN/proxy/ask.py "<вопрос>"`. Proxy отвечает, только если вопрос совпал ровно с одним одобренным ответом.
+Ответ выдаётся дословно, со ссылкой на источник. Если совпадений нет или их несколько, proxy пишет `UNRESOLVED`.
+Агент тогда берёт документированное значение по умолчанию или останавливается. Каждый вопрос попадает в
+`RUN/proxy/log.jsonl` вместе с классом остановки.
+
+Как держится изоляция (тесты — `tests/tools/test_user_proxy.py`):
+- proxy не импортирует trainer и не читает банк, ключ и критерии оценки;
+- пакет собирает trainer (`proxy_pack`) из поля `proxy_answers` эталона. Пакет отклоняется, если ответа нет
+  дословно в его источнике: D-строке, файле решений работы или экспорте фактов. Отклоняется он и тогда, когда
+  ответ называет ключ, его хеш, папку принятой сдачи (`key_aliases`) или слова оценщика (допуски, шаги);
+- `ask.py` сам отклоняет пакет с полями ключа или оценки (`key`, `sha256`, `tolerances`, `steps`, `score`). Он же
+  отклоняет ответы с подсказкой метода: пути `tools/`, `src/`, `.py`, команды `agr …`;
+- чтение `pack.json` или `log.jsonl` командой агента считается в метрике `proxy_pack_reads`;
+- совпадение — только целыми словами (`curb*` — префикс слова), в каждой группе не меньше 2 разных терминов.
+  Одно общее слово (`gap`, `distance`) пакет не пропускает: вопрос «What distance unit does the master use?»
+  остаётся UNRESOLVED.
+- ответ K1 (формула бюджета UCX [D012]) совпадает с критерием шага `ucx`: это публичное правило регламента
+  (`answer_in_repo`), а не скрытый критерий;
+- без совпадения класс остановки — тот, что указал агент (`--class`), иначе `unclassified`; поэтому
+  `unnecessary_stops` — самооценка агента, смотреть её вместе с числом `unclassified`.
+
+Классы остановок (`--class`; если ответ найден, класс берётся из пакета):
+
+| класс | группа |
+|---|---|
+| `missing_source_data` — нет исходных данных | обоснованная |
+| `customer_decision` — нужно решение заказчика или архитектора | обоснованная |
+| `irreversible_sanction` — нужна санкция на необратимую операцию | обоснованная |
+| `answer_in_repo` — ответ уже есть в репо | лишняя |
+| `allowed_technical_choice` — агент не уверен в техническом выборе, который ему разрешён | лишняя |
+| `tool_broken` — инструмент сломался, пути восстановления нет | проблема harness |
+| `instructions_contradict` — инструкции противоречат друг другу | проблема контекста |
+
+**Стадийные задачи** — блок `stage_tasks` в `etalons.json`. Проверка `bank_problems` требует dev = `tuning`,
+holdout = `held_out` и хотя бы один holdout по незнакомому проекту, которого нет в dev.
+
+| id | набор | проект | стадия | метрики оценщика | ответов proxy |
+|---|---|---|---|---|---|
+| g22-k2-stage1 | dev | G22 | тело + проёмы одного корпуса | holdout, artifact, readback, bounds, topology, form, form_v2 | 0 |
+| 63a-stage1 | dev | POLY63 | линии + проёмы фасадов типовых этажей одной башни | holdout, artifact, readback, bounds, topology, form | 0 |
+| kpp1-ucx-v004 | dev | KPP1 | UCX одного тела | holdout, artifact, readback, bounds, form, ucx | 3 (D012, D098, D134) |
+| moskovsky-ground-v002 | holdout | moskovsky-sosh1200 (незнакомый) | геометрия Ground одного участка | holdout, artifact, readback, bounds, form | 7 (решения работы 2026-11-26) |
+
+- Шаг `ucx` (только для `target: ucx`; у остальных эталонов он `not_applicable`, прежние оценки сравнимы)
+  проходит, только если выполнено всё: UCX есть и укладывается в бюджет [D012]; каждый UCX замкнут и выпуклый
+  (`ucx_audit.is_closed` / `is_convex`); доля точек поверхности модели в пределах R13 (1 м, модель -> UCX
+  [D134]) не ниже доли у ключа минус 0,02; IoU объёма UCX с UCX ключа не ниже 0,80 (`UCX_TOL` в trainer).
+  Калибровка на ключе kpp1-ucx-v004 (readback, 35 407 точек): ключ сам с собой — pass (доля 0,9508, IoU 1,0);
+  один бокс по габариту — fail (IoU 0,729); бокс 1 м в центре — fail (IoU 0,0004); бокс за 500 м — fail
+  (IoU 0); ключ без одного UCX — fail (доля 0,903, IoU 0,869).
+- Ключ `kpp1-ucx-v004` — член `SM_Kpp_1.fbx` принятого VPM ZIP, извлечённый байт в байт. Лежит в
+  `1855-trainer-v0/bank/kpp1-ucx-v004/` (`PROVENANCE.txt`, строка в `bank/SHA256SUMS.txt`).
+- Holdout запускается один раз, как финальная проверка изменения. Подбирать что-либо по нему нельзя.
+- Метрики прогона: `agr trainer metrics RUN [--score S.json] [--usd-per-mtok IN OUT]`. Это успех, балл качества,
+  вмешательства человека (ответы proxy), `UNRESOLVED`, остановки по группам и лишние остановки по классам,
+  токены и цена, время, повторённые и упавшие команды.
+- Очевидные исправления (баг, уязвимость, битая ссылка) проверяются регрессионным тестом, а не экспериментом.
+  Три повтора — предварительный замер, а не статистическое доказательство.
+
+Пробные запуски (dry run) 2026-11-27, `agr trainer run <id> --out C:/x/ev_t_f2b55bfe/run-<id> --dry-run --proxy`:
+у всех exit 0, папка прогона не создана. Пакет proxy собран и проверен: g22 — 0 ответов, 63a — 0, kpp1-ucx — 3,
+moskovsky — 7. Текст задачи называет `ask.py` и не называет ключ.
 
 ## Калибровка: принятая версия выше отклонённой
 
