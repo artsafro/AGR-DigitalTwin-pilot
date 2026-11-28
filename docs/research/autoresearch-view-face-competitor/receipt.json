@@ -1,0 +1,342 @@
+{
+ "blender_sha256": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5",
+ "candidate": {
+  "checks": {
+   "all_other_clean_verdicts_unchanged": true,
+   "blank": true,
+   "injected_competitor_removal": true,
+   "known_exclusion_removed": true,
+   "native_bounds": true,
+   "singleton_collateral": true
+  },
+  "injected": {
+   "answer": null,
+   "removed": [
+    "W01",
+    "W04",
+    "W06",
+    "W07",
+    "W08",
+    "W09",
+    "W13",
+    "W16",
+    "W17",
+    "W18"
+   ],
+   "restored": "W19",
+   "singleton": [
+    "W19"
+   ]
+  },
+  "totals": {
+   "a": {
+    "abstain": 3,
+    "correct": 2,
+    "wrong": 0
+   },
+   "b": {
+    "abstain": 4,
+    "correct": 1,
+    "wrong": 0
+   }
+  },
+  "views": {
+   "p14 1-4' (courtyard, developed)": {
+    "eligible": [],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 7976,
+      "exercised": true
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 9906,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 11677,
+      "exercised": true
+     }
+    },
+    "truth": null
+   },
+   "p14 4'-1 (truss glazed block)": {
+    "eligible": [],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 9756,
+      "exercised": true
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 10190,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 12007,
+      "exercised": true
+     }
+    },
+    "truth": null
+   },
+   "p15 A'-K (7 boxes)": {
+    "eligible": [
+     "W19"
+    ],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 9924,
+      "exercised": true
+     },
+     "clean": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 8328,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 8980,
+      "exercised": true
+     }
+    },
+    "truth": [
+     "W19"
+    ]
+   },
+   "p15 A-G": {
+    "eligible": [
+     "W07",
+     "W08",
+     "W13",
+     "W17",
+     "W19"
+    ],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 2771,
+      "exercised": true
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 3992,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 3473,
+      "exercised": true
+     }
+    },
+    "truth": null
+   },
+   "p15 K-A": {
+    "eligible": [
+     "W19"
+    ],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 4348,
+      "exercised": true
+     },
+     "clean": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 6362,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 5938,
+      "exercised": true
+     }
+    },
+    "truth": null
+   },
+   "p16 fragment 1 (box bay)": {
+    "eligible": [
+     "W01",
+     "W04",
+     "W06",
+     "W07",
+     "W08",
+     "W09",
+     "W13",
+     "W16",
+     "W17",
+     "W18",
+     "W19"
+    ],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 2067,
+      "exercised": true
+     },
+     "clean": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 1770,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 1928,
+      "exercised": true
+     }
+    },
+    "truth": [
+     "W19"
+    ]
+   },
+   "p17 fragment 2 (curved stair)": {
+    "eligible": [
+     "W01",
+     "W04",
+     "W06",
+     "W07",
+     "W08",
+     "W09",
+     "W13",
+     "W16",
+     "W17",
+     "W18",
+     "W19"
+    ],
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 2233,
+      "exercised": true
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "exercised": true
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 1958,
+      "exercised": true
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 1975,
+      "exercised": true
+     }
+    },
+    "truth": null
+   }
+  }
+ },
+ "candidate_sha256": "ba5517c880eb9ded822bc5628aad3845215712f5b1ef373b8d1e0cb3be0767c0",
+ "hypothesis": "confirmed",
+ "inputs": {
+  "model": "6ab64e6b8de3b838b352f4d4ebfb560af0648be10699fe252cf21eba3e9bea62",
+  "pdf": "785e4015993482945b704de3ab2fdbfe40307300d222abded319808e3a069131"
+ },
+ "lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+ "median_s": 15.925,
+ "pairs": [
+  {
+   "baseline_sha256": "5cedce6e622d06b092a0b7be146623feee51a23a83b2ea0a6d79d03849709aca",
+   "candidate_sha256": "ad12ca22b9c33cbaa5057d40313c424ed9e07fb7753416e6185e68f8fcf31621",
+   "index": 1,
+   "native": {
+    "render_s": 8.36,
+    "wall_s": 15.321
+   },
+   "wall_s": 15.687
+  },
+  {
+   "baseline_sha256": "5cedce6e622d06b092a0b7be146623feee51a23a83b2ea0a6d79d03849709aca",
+   "candidate_sha256": "ad12ca22b9c33cbaa5057d40313c424ed9e07fb7753416e6185e68f8fcf31621",
+   "index": 2,
+   "native": {
+    "render_s": 8.604,
+    "wall_s": 15.569
+   },
+   "wall_s": 15.925
+  },
+  {
+   "baseline_sha256": "5cedce6e622d06b092a0b7be146623feee51a23a83b2ea0a6d79d03849709aca",
+   "candidate_sha256": "ad12ca22b9c33cbaa5057d40313c424ed9e07fb7753416e6185e68f8fcf31621",
+   "index": 3,
+   "native": {
+    "render_s": 8.905,
+    "wall_s": 16.276
+   },
+   "wall_s": 16.699
+  }
+ ],
+ "spread_s": 1.012,
+ "stage_pins": {
+  "blender_walls.py": "a3784cff27cda3af53f097f93f729ffde81ecb5fb722cd4afc3e4987278993ef",
+  "params.json": "358579f55b2dca837c64a7b00c33caccabbd7487c7ae3323e8fa9e2441c8794d",
+  "run.py": "0a26eb893d36d7912d0991ccc7a400b9f82311dc969f874a64bd6165a9a25fa2"
+ },
+ "status": "finished",
+ "upstream": "56f608b577090a8f82cf4e2df2c722879199e378"
+}

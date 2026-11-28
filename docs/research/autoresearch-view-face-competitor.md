@@ -1,5 +1,11 @@
 # H164 — require an eligible wall competitor (OBSERVE)
 
+## Кратко для Артёма
+
+**H164 подтверждена только на Силикатном.** Если подходящая по ширине стена одна, отказ вместо ответа убрал ложное назначение К–А → W19, но снял и верное А′–К → W19. Верный ответ по реальному фрагменту 1 сохранился: там было 11 подходящих стен. На пяти исходных контрольных видах: **2 верных / 0 неверных / 3 отказа → 1 / 0 / 4**. К–А — отдельная проверка ложного назначения, его правильную стену не определяли.
+
+Для карты «вид ↔ грань» не считать единственную подходящую стену доказательством. Если нет соперника, нужен независимый признак (оси на плане или разрез); иначе — вопрос. Это предохранитель, а не решение для внутренних углов. Сокольники не открывал; код рабочего маршрута не менял.
+
 ## Frozen contract
 
 Standing #164, `t_1efe82f1`. Continue the #163 Silikatny wall-segment benchmark, not the finish-partition work (#2073/#2074) or wall-exercise scorer repair (#2075). Readiness 2026-11-28_0836 leaves the cold OKS result open. #2001 is OPEN: no Sokolniki inputs or key opened. Atlas, form and trainer targets remain parked.
@@ -26,3 +32,24 @@ Standing #164, `t_1efe82f1`. Continue the #163 Silikatny wall-segment benchmark,
 git fetch origin research/autoresearch-standing-161 research/autoresearch-standing-162 research/autoresearch-standing-163
 uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-competitor/run.py tmp/ar164-replay
 ```
+
+## Round log
+
+**Hypothesis: confirmed. Run status: finished. Adoption readiness: no.** Three fresh paired Blender + PDF runs took 15.687 / 15.925 / 16.699 s including hash checks (median 15.925 s; spread 1.012 s). Original #163 wall table, masks' scoring output and all state decisions matched the pinned baseline digest in every pair. B's result digest matched across all pairs. The fixture is the original Silikatny render context, not a sample of adjudicated accepted/rejected delivery packages.
+
+| Real view | Eligible walls | A | B | Interpretation |
+|---|---:|---|---|---|
+| p15 K-A | 1 | W19 | abstain | Exclusion witness: W19 is wrong; true wall not graded |
+| p15 A'-K | 1 | W19 | abstain | One correct singleton lost |
+| p16 fragment 1 | 11 | W19 | W19 | Correct competing-wall match retained |
+| p14 4'-1; p14 1-4'; p17 fragment 2 | 0 / 0 / 11 | abstain | abstain | No new native inner-view match |
+| p15 A-G | 5 | abstain | abstain | Diagnostic only |
+
+Answered accuracy on the five originally graded views: 2/2 → 1/1; abstention: 3/5 → 4/5; correct coverage: 2/5 → 1/5. The K-A exclusion has one false assertion in A and none in B; it is not included in those denominators.
+
+- **Injected:** seven blank masks changed 2,067–9,924 cells and already abstained in A; not veto activations. Mirror and shuffle changed pixels on all seven views (1,770–10,190 and 1,928–12,007 changes respectively); on those states B vetoed A'-K only, while retaining fragment 1. Removing all ten alternative eligible IDs on the clean fragment 1 made B abstain; reversing/restoring the full set recovered W19. This is a policy injection, not modified native geometry. Per-input counts and state decisions are in the receipt.
+- **Not measured:** physical wall of K-A, face interval for fragment 1, curved and multi-wall candidates, accepted/rejected delivery calibration, other projects, finished-material transfer or removal of STOP 04. A competing wall is necessary for this score-only rule, not sufficient for production use. In particular, the shuffle retaining fragment 1 does not demonstrate bay-order or finish localisation.
+
+Receipt: [receipt.json](autoresearch-view-face-competitor/receipt.json), SHA-256 `68e6cb2b02f1703140a706c6e1c22c37f8b522c2bf40006eef45178a2114e144`. Complete pair readbacks and 60 derived wall renders: `G:/Мой диск/AGR-evidence/164-view-face-competitor/` (76 entries verified, `SHA256SUMS.txt` SHA-256 `e232e199fadc153e45d93bc2517e3d54b5d9d99614ef742792813a089402db9a`). Replay limited to a host with the exact owner folder inputs and Blender executable (the derived evidence folder does not hold the original OBJ/PDF). The prior A is regenerated, not taken from the evidence folder.
+
+Regression RED on the legacy pass-through: 1 failed, 2 passed (singleton wrongly returned W19). The research variant is branch-only; no PR or production changes. Full suite: deferred to merge batch (rule 68).
