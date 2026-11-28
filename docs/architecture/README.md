@@ -422,6 +422,10 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
 | research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
 | research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
+| research/autoresearch-view-face-span | [research/autoresearch-view-face-span.md](../research/autoresearch-view-face-span.md) |  |
+| research/autoresearch-view-face-span/receipt-json | [research/autoresearch-view-face-span/receipt.json](../research/autoresearch-view-face-span/receipt.json) |  |
+| research/autoresearch-view-face-span/run-py | [research/autoresearch-view-face-span/run.py](../research/autoresearch-view-face-span/run.py) |  |
+| research/autoresearch-view-face-span/test-run-py | [research/autoresearch-view-face-span/test_run.py](../research/autoresearch-view-face-span/test_run.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
