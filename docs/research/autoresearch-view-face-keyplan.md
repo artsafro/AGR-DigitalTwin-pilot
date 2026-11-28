@@ -18,3 +18,33 @@
 | Registered gray box, fragmented red vector segments spanning top, duplicate strokes and a green decoy | Correct top side, independent of order; duplicates do not inflate coverage | `test_registered_vector_mark`, `test_duplicate_short_stroke_is_not_coverage` |
 | Same page: no registration, mark removed, centre shift, two opposite marks | Refuse each; wrong opposite-only documents trust boundary | `test_ablation_and_altered_mark`, `test_unregistered` |
 | Real control and prior wrong witness, all 14 clean views | Frozen bounds, both PDF digests unchanged; three canonical paired extractions | `receipt.json` |
+
+## Round result
+
+H152 **confirmed on one marked album only**. Scored revision `088cfe653eb14208c8132b0c2272a4269e414bfe`;
+three fresh extractions: 1.8782 / 1.8690 / 1.7987 s (median 1.8690 s, spread 0.0795 s), all canonical rows
+byte-identical, both PDFs unchanged. Ablation A: 0 correct, 0 wrong, 14 abstentions. B: 4 correct, 0 wrong,
+10 abstentions (4/14 all-view yield, 4/4 answered accuracy, 10/14 abstention). Olimpijsky full: 4/0/0;
+ELV full: 0/0/7; ELV fragments: 0/0/3 (correct/wrong/abstain). The p8 historical D error did not recur:
+B returned azimuth 0°, the labelled side, while p5 returned 90°. p5/p6/p7/p8 mark coverages were
+66.01% / 66.01% / 66.08% / 66.08%; the ablation removed 16/16/7/7 real segments, respectively.
+
+- **Injected**: mask, interior shift and two-opposite-marks each produced 4/4 refusals. Single wrong opposite
+  mark produced 4/4 wrong answers, a direct limitation, not evidence of a native wrong keyplan. Reversing
+  segment order changed positions in 35/70 row-states; 0 coverage/answer changes in those 35. The other 35
+  reversals and the four perturbations on each of the ten ELV views were not exercised.
+- **Not measured**: other marked albums (G22/KPP1/AC08/OBR22/Vatutino), automatically finding/associating or
+  registering a plan, DWG/raster sources, physical wall/bay identity, native wrong markers, finish transfer or
+  STOP 04. #2001 still open; no Sokolniki input or accepted output used. This is a proposal mechanism, not a pass.
+
+**Recommendation for the shared OKS step:** given an explicitly associated, model-registered plan and a trusted mark,
+show a side proposal with sheet/page, mark and registration evidence. Require independent title/axis or geometry
+corroboration before transferring finish callouts; without a unique mark, registered frame or corroboration,
+keep the case unresolved. Never promote a side to a specific wall in a re-entrant corner. Next, measure transfer
+on an independently registered marked album and test explicit footprint-edge/return-wall linkage on labelled
+real fragments. Do not implement this step in production based on this round.
+
+Replay artifacts: [receipt](autoresearch-view-face-keyplan/receipt.json), SHA-256
+`df864b184879e9e013a2a8471c5c68cf762c00f43c0e68afb7d4c8f82d7ecd8a`; paired rows and preview crops under
+`G:/Мой диск/AGR-evidence/152-view-face-keyplan/` + `SHA256SUMS.txt`. The two already sealed input PDFs remain
+in the #145/#151 evidence directories; replay accepts a relocated evidence root with the same relative layout.

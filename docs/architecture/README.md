@@ -422,6 +422,11 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
 | research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
 | research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
+| research/autoresearch-view-face-keyplan | [research/autoresearch-view-face-keyplan.md](../research/autoresearch-view-face-keyplan.md) |  |
+| research/autoresearch-view-face-keyplan/fixture-json | [research/autoresearch-view-face-keyplan/fixture.json](../research/autoresearch-view-face-keyplan/fixture.json) |  |
+| research/autoresearch-view-face-keyplan/receipt-json | [research/autoresearch-view-face-keyplan/receipt.json](../research/autoresearch-view-face-keyplan/receipt.json) |  |
+| research/autoresearch-view-face-keyplan/run-keyplan-py | [research/autoresearch-view-face-keyplan/run_keyplan.py](../research/autoresearch-view-face-keyplan/run_keyplan.py) |  |
+| research/autoresearch-view-face-keyplan/test-keyplan-py | [research/autoresearch-view-face-keyplan/test_keyplan.py](../research/autoresearch-view-face-keyplan/test_keyplan.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
