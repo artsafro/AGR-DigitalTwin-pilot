@@ -1,0 +1,34 @@
+{
+ "azimuths": [
+  0,
+  90,
+  180,
+  270
+ ],
+ "band_z": [
+  0.0,
+  16.4
+ ],
+ "vertical_nz": 0.2,
+ "min_face_area": 0.05,
+ "sky_elev_deg": 45,
+ "sky_ray_m": 300,
+ "az_tol_deg": 12,
+ "plane_gap_m": 1.0,
+ "u_gap_m": 4.0,
+ "min_wall_area": 10.0,
+ "min_wall_len": 4.0,
+ "render_res_m": 0.1,
+ "lateral_margin_m": 1.0,
+ "depth_front_m": 5.0,
+ "depth_back_m": 3.0,
+ "fit_tol": 0.1,
+ "tau": 0.3,
+ "delta": 0.1,
+ "max_world_z": 30.0,
+ "facade_regex": "^(Базовая стена|Системная панель|\\(WN\\)-RD|Окно )",
+ "glass_regex": "^(Системная панель (С остекление|Стемалит|\\(CP\\)_Glass)|\\(WN\\)-RD|Окно )",
+ "hidden_regex": "^Перекрытие",
+ "grid_m": 0.25,
+ "min_overlap": 0.8
+}
