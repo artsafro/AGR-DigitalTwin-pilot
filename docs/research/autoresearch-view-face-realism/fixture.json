@@ -1,0 +1,20 @@
+{
+ "card": "t_1ad521cd (#159)",
+ "note": "Frozen before measuring. Views/boxes/scales/gt_az from #145 and #151 fixtures (unchanged); walls from #157 evidence (unchanged). Sokolniki absent (#2001 open).",
+ "upstream": {
+  "r145_run.py": {"rev": "e49d791c3a52203cbf88d7bc0305ec619bf95575", "path": "docs/research/autoresearch-view-face-elv/run.py"},
+  "elv_fixture.json": {"rev": "e49d791c3a52203cbf88d7bc0305ec619bf95575", "path": "docs/research/autoresearch-view-face-elv/fixture.json"},
+  "olimpijsky_fixture.json": {"rev": "4a6c6b776ea4c16bf9b33b16be82465521f88d34", "path": "docs/research/autoresearch-view-face-transfer/fixture.json"},
+  "r157_score.py": {"rev": "9acdeb0d2f9fabcb578ebe3088823d0b1068c20a", "path": "docs/research/autoresearch-view-face-signature/score.py"}
+ },
+ "inputs": {
+  "elv_pdf": {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/ЭЛВ_ИД_АГР_45-4-25-С_Буклет АГР от 27.01.2025 (1) (1).pdf", "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"},
+  "olimpijsky_pdf": {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/АР.2_ Фасады_29.07.2026.pdf", "sha256": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0"},
+  "elv_walls": {"path": "G:/Мой диск/AGR-evidence/157-view-face-signature/elv.fwd.json", "sha256": "ac816566965b9ed863a0e82cec65e07e3c6575eb957869947aa7557e8215dca8"},
+  "olimpijsky_walls": {"path": "G:/Мой диск/AGR-evidence/157-view-face-signature/olimpijsky.fwd.json", "sha256": "3d9e8b9224c774e4ea6643861ef62ed00153e9e43b8307dbf912e978cddc93c6"}
+ },
+ "albums": [
+  {"name": "elv", "fixture": "elv_fixture.json", "walls": "elv_walls"},
+  {"name": "olimpijsky", "fixture": "olimpijsky_fixture.json", "walls": "olimpijsky_walls"}
+ ]
+}
