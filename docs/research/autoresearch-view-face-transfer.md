@@ -82,8 +82,8 @@ Measured at contract commit `afb974f862885bf681c0aa143bc5459aa60edd5c` (runner u
 `uv run --offline --locked`, Blender 4.4 `fd21f4b9...`. Status `finished`; three fresh runs (import + ray cast +
 scoring each), row JSON byte-identical (`4305f98d...2636` x3); wall 240.965 / 205.637 / 198.174 s (run 1 includes
 the invariance re-score), median 205.637 s, total 645.9 s; loaded workstation. Model: 1 667 525 tris, 116 types,
-38-61 labels visible per face. Receipt: [`receipt.json`](autoresearch-view-face-transfer/receipt.json) (SHA-256
-`dba5d8784ad25421e751b20c6d0f84c7700761eee437802b379872283a7fcca2`); evidence
+38-61 labels visible per face. Receipt: [`receipt.json`](autoresearch-view-face-transfer/receipt.json) (runner-written SHA-256
+`dba5d8784ad25421e751b20c6d0f84c7700761eee437802b379872283a7fcca2`; Git LF `da62bd3072fb6ee4cfa919c7c5962738b87fe315388d41ba24b847828a83d971`); evidence
 `G:/Мой диск/AGR-evidence/151-view-face-transfer/` + `SHA256SUMS.txt` (inputs, run JSON, label npz, Blender logs,
 probe scripts).
 
