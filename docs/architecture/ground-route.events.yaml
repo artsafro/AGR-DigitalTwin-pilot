@@ -127,7 +127,7 @@ stages:
     rules:
       - D097
       - D129
-      - D021
+      - D320
       - D293
     evidence:
       - docs/domain/areas/ground-surface.md

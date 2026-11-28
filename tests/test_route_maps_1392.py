@@ -686,8 +686,13 @@ def _ground_event_board_text():
 
 def test_1946_quads_cites_general_ground_rules():
     quads = _stage(_routes()["ground-route"], "quads")
-    assert {"D097", "D129", "D021", "D293"} <= set(quads["rules"])
-    assert {"D157", "D192", "D193"}.isdisjoint(quads["rules"])
+    assert {"D097", "D129", "D293", "D320"} <= set(quads["rules"])
+    assert {"D021", "D157", "D192", "D193"}.isdisjoint(quads["rules"])
+    report_row, = (
+        line for line in REPORT.read_text(encoding="utf-8").splitlines()
+        if line.startswith("| `quads` |")
+    )
+    assert "D320" in report_row and "D021" not in report_row
     assert not any("VATUTINO" in path for path in quads["evidence"])
     assert "docs/domain/areas/ground-surface.md" in quads["evidence"]
     assert not quads.get("commands")

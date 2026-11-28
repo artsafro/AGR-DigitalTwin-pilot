@@ -2,7 +2,7 @@
 
 Сгенерировано route_map.py из тех же YAML, что короткая схема; не редактировать вручную.
 
-Редакция YAML SHA-256: `13bb61140be80cd1b4c21c416213606fb6acb4552bd78eba35909b2630f52650`.
+Редакция YAML SHA-256: `6f7f88c6c45470b562806ca87eb5fb636f5de3d90bc2e2cb0080e75fa23ddfe7`.
 
 Ревизия исходников: DWG / ПЗУ / PDF и рельеф: ревизия, SHA-256 и проектный ноль в реестре исходников.
 
@@ -109,7 +109,7 @@
 | Исходники получены: DWG, ПЗУ, PDF и, если есть, 3D-рельеф; легенда и штриховки прочитаны | D186, D218, D293 | [`docs/procedure/node-r5-ground.md`](../../docs/procedure/node-r5-ground.md); [`jobs/silikatniy-uvk-pzu-viz/LESSONS.md`](../../jobs/silikatniy-uvk-pzu-viz/LESSONS.md); [`tools/source/inspect_ground_dxf.py`](../../tools/source/inspect_ground_dxf.py);  |
 | Граница участка и нулевая отметка: из проекта или агент уточняет | D279, D018, D135, D293 | [`docs/research/placement-heights-1330.md`](../../docs/research/placement-heights-1330.md); [`src/dt_ai/core/heights.py`](../../src/dt_ai/core/heights.py); [`tools/ground/project_zero.py`](../../tools/ground/project_zero.py);  |
 | Плоский Ground: покрытия разбиты по штриховкам → ID материалов | D218, D030, D293 | [`jobs/VATUTINO-SITE/ground-parts.md`](../../jobs/VATUTINO-SITE/ground-parts.md); [`jobs/silikatniy-uvk-pzu-viz/LESSONS.md`](../../jobs/silikatniy-uvk-pzu-viz/LESSONS.md); [`src/dt_ai/geometry/ground_site.py`](../../src/dt_ai/geometry/ground_site.py); [`src/dt_ai/geometry/ground_cake.py`](../../src/dt_ai/geometry/ground_cake.py);  |
-| Плоский Ground: швы и вставки, преобладают квады, треугольники только где неизбежны; размер квадов по текселю профиля, бюджет НПМ по D097 | D097, D129, D021, D293 | [`docs/domain/areas/ground-surface.md`](../../docs/domain/areas/ground-surface.md);  |
+| Плоский Ground: швы и вставки, преобладают квады, треугольники только где неизбежны; размер квадов по текселю профиля, бюджет НПМ по D097 | D097, D129, D320, D293 | [`docs/domain/areas/ground-surface.md`](../../docs/domain/areas/ground-surface.md);  |
 | Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM подряд с 1001 | D097, D160, D210, D293, D399 | [`jobs/VATUTINO-SITE/ground-textures.md`](../../jobs/VATUTINO-SITE/ground-textures.md); [`jobs/VATUTINO-SITE/ground-v015-texel-contract-checkpoint.md`](../../jobs/VATUTINO-SITE/ground-v015-texel-contract-checkpoint.md);  |
 | Рельеф: плоский Ground спроецирован на рельеф | D293, D153, D154 | [`jobs/VATUTINO-SITE/relief-constraints.md`](../../jobs/VATUTINO-SITE/relief-constraints.md); [`tools/ground/build_ground_site.py`](../../tools/ground/build_ground_site.py); [`src/dt_ai/geometry/ground_cake.py`](../../src/dt_ai/geometry/ground_cake.py); [`jobs/kasatkino-ground/LESSONS.md`](../../jobs/kasatkino-ground/LESSONS.md);  |
 | После проекции: правка текстур и UV, юбка ≥ 1 м вниз по внешнему контуру | D293, D251 | [`docs/domain/areas/ground-surface.md`](../../docs/domain/areas/ground-surface.md); [`docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md`](../../docs/research/vatutino-ground-v015-outer-skirt-gap-20-edges.md);  |
