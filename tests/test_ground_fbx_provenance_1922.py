@@ -66,7 +66,9 @@ def pipeline(tmp_path, monkeypatch):
     state = NS(export_count=0, on_export=lambda: None, on_import=lambda _: None, result=result, mesh=mesh,
                export_status={'FINISHED'})
 
-    def load(filepath):
+    def load(filepath, *, use_image_search=None):
+        if use_image_search is not None:
+            assert use_image_search is False
         path = Path(filepath)
         assert path.is_file()
         state.on_import(path)
