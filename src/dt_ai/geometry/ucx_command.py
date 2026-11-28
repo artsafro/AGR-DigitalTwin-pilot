@@ -282,6 +282,9 @@ def _check(a: dict, report: dict, build: dict, readback, first: dict) -> tuple[i
 
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if "--simplify-report" in argv:  # #2097 OBSERVE report on an existing FBX, own module (no build, no refusal)
+        from dt_ai.geometry import ucx_simplify
+        return ucx_simplify.main([x for x in argv if x != "--simplify-report"])
     if argv in (["--help"], ["-h"]):
         print(__doc__)
         return 0

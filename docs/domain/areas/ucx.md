@@ -66,6 +66,14 @@ incomplete walls; it is not a walkthrough or a delivery gate. An unavailable obs
 multiple disconnected shells as advisory `review` because Unreal may build one hull over them.
 The existing V010 shape check is independent and unchanged.
 
+`agr ucx FBX REPORT.json Main|Ground --simplify-report` (#2097, OBSERVE, [research](../../research/ucx-skill-pack-codex-2097.md)):
+the two simplification passes of the Codex skill pack on an existing FBX (render mesh + UCX), never a refusal.
+Exact clipping of full source triangles by each convex body (control margin 10 mm) lists `delete` (no coverage, or
+zero unique coverage, deleted one at a time), `absorb_rebuild` (`merge` across a seam, `plane_shift` of a neighbour
+face <= 0.30 m Main / 0.10 m Ground) and `keep` with the measured reason, plus the ported checks of
+`twinqa.geometry.ucx_seams` (seam gap over the whole facing face, source surface showing through an open seam,
+winding, slivers). A hypothesis list for a rebuild, not a gate.
+
 `agr ucx MODEL OUT Main --resolve [--gap-m M]` (#1540): MODEL already holds its UCX (a delivered archive). The
 Blender driver `tools/blender/ucx_resolve.py` runs `ucx10_core.resolve`: every pair of UCX pieces under the gap
 (any family; default 3 mm, [D098] band) gets its SMALLER convex piece cut by the plane of one face of the larger
