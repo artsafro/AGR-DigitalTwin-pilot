@@ -1,0 +1,1750 @@
+{
+ "card": "t_436d52d6 (#155)",
+ "control": [
+  {
+   "outcome": "abstain_ok",
+   "page": 5,
+   "triangles": 0
+  },
+  {
+   "outcome": "abstain_ok",
+   "page": 6,
+   "triangles": 0
+  },
+  {
+   "outcome": "abstain_ok",
+   "page": 7,
+   "triangles": 0
+  },
+  {
+   "outcome": "abstain_ok",
+   "page": 8,
+   "triangles": 0
+  }
+ ],
+ "head": "6a44665bac9627ab6369ef64ea95c18555553567",
+ "median_s": 105.708,
+ "models": {
+  "B3": {
+   "fill": 0.7941,
+   "ground_m": -0.01,
+   "gt_inner_depth_m": {
+    "0": 77.0,
+    "180": 3.75,
+    "270": 5.75,
+    "90": 7.0
+   },
+   "shape": [
+    231,
+    638
+   ],
+   "tris": 1009546
+  },
+  "B41": {
+   "fill": 0.8081,
+   "ground_m": -0.0,
+   "gt_inner_depth_m": {
+    "0": 121.75,
+    "180": 4.0,
+    "270": 5.0,
+    "90": 6.5
+   },
+   "shape": [
+    227,
+    636
+   ],
+   "tris": 1031986
+  },
+  "B42": {
+   "fill": 0.8107,
+   "ground_m": -0.0,
+   "gt_inner_depth_m": {
+    "0": 122.25,
+    "180": 3.75,
+    "270": 5.0,
+    "90": 6.25
+   },
+   "shape": [
+    226,
+    636
+   ],
+   "tris": 1027044
+  },
+  "V3": {
+   "fill": 0.8093,
+   "ground_m": -0.0,
+   "gt_inner_depth_m": {
+    "0": 122.0,
+    "180": 3.5,
+    "270": 5.0,
+    "90": 6.25
+   },
+   "shape": [
+    226,
+    635
+   ],
+   "tris": 1984340
+  }
+ },
+ "pins": {
+  "B3.fbx": "8787cf371d3dd4e059c05be7d088e5594f50cd08b561ae7e859863e106f180c3",
+  "B3.pdf": "fc216fd1df037919f5a5dae7bd8d1d6fbb480ba9afd38d4d8e4402d3a6c31339",
+  "B41.fbx": "7be8cce6e3769ad2d346d7a1217206d38aa1befb365de7abe3554773bcb109a8",
+  "B41.pdf": "758ede94fc11a8e547a76ef76c4f7db3027bb4fcec5e216a16329db4f3ec8d8a",
+  "B42.fbx": "9dc888117c8566f14382ad418ba926207d07e52fe2cd511040f93e5e2fd616c4",
+  "B42.pdf": "ee44569fd93b10bc98fff230fd591b02619127ed272061773cda87d0a741f5c7",
+  "V3.fbx": "362eae5d64155c6d671239d2cfc69c2180be3f1bfa7e892f786f1d9337bc55cc",
+  "V3.pdf": "e8a4344a8d2aa01c1614a1f4eb4c48739bde8f6d9da9fcfe6e1bcd3420507c43",
+  "blender": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5",
+  "fixture.json": "81df3a6575741718a1f1bc9e16aad8465ad586fcc862449600fffd4c3351c697",
+  "run.py": "e0462948839df6b9fe779e1531b9414836ac27d8547e5c666fda65d53245a9fb",
+  "uv.lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+ },
+ "rows": [
+  {
+   "album": "B3",
+   "gt_az": 0,
+   "states": {
+    "clean": {
+     "az": 0,
+     "best_iou": 0.933842,
+     "changed_px": 0,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.189438,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 0,
+     "best_iou": 0.933842,
+     "changed_px": 2483,
+     "depth_m": 0.75,
+     "line": true,
+     "margin": 0.189438,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 0,
+     "best_iou": 0.933842,
+     "changed_px": 323705,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.189438,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53910,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 0,
+     "best_iou": 0.933842,
+     "changed_px": 323705,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.189438,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.801628,
+     "changed_px": 14116,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.00248,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      2
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 lower short"
+  },
+  {
+   "album": "B3",
+   "gt_az": 270,
+   "states": {
+    "clean": {
+     "az": 270,
+     "best_iou": 0.931656,
+     "changed_px": 0,
+     "depth_m": 0.75,
+     "line": true,
+     "margin": 0.174245,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": null,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "not_exercised",
+     "reversal_parity": null,
+     "status": null,
+     "transform": null,
+     "wall": null
+    },
+    "mirrored": {
+     "az": 270,
+     "best_iou": 0.931656,
+     "changed_px": 165135,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.174245,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53899,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 270,
+     "best_iou": 0.931656,
+     "changed_px": 165135,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.174245,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.794142,
+     "changed_px": 13503,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.0,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 upper long"
+  },
+  {
+   "album": "B3",
+   "gt_az": 90,
+   "states": {
+    "clean": {
+     "az": 90,
+     "best_iou": 0.932044,
+     "changed_px": 0,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.174252,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "inner": {
+     "az": 90,
+     "best_iou": 0.932044,
+     "changed_px": 2415,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.174252,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "mirrored": {
+     "az": 90,
+     "best_iou": 0.932044,
+     "changed_px": 174570,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.174252,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "inner"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 54066,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 90,
+     "best_iou": 0.932044,
+     "changed_px": 174570,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.174252,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "inner"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.800857,
+     "changed_px": 13571,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000123,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 lower long"
+  },
+  {
+   "album": "B3",
+   "gt_az": 180,
+   "states": {
+    "clean": {
+     "az": 180,
+     "best_iou": 0.933253,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.188737,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 180,
+     "best_iou": 0.933253,
+     "changed_px": 2490,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.188737,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 180,
+     "best_iou": 0.933253,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.188737,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 54381,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 180,
+     "best_iou": 0.933253,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.188737,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.794142,
+     "changed_px": 13923,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.0,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 upper short"
+  },
+  {
+   "album": "B41",
+   "gt_az": 270,
+   "states": {
+    "clean": {
+     "az": 270,
+     "best_iou": 0.956301,
+     "changed_px": 0,
+     "depth_m": 1.25,
+     "line": true,
+     "margin": 0.195998,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": null,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "not_exercised",
+     "reversal_parity": null,
+     "status": null,
+     "transform": null,
+     "wall": null
+    },
+    "mirrored": {
+     "az": 270,
+     "best_iou": 0.956301,
+     "changed_px": 165640,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.195998,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 54031,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 270,
+     "best_iou": 0.956301,
+     "changed_px": 165640,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.195998,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.810346,
+     "changed_px": 13862,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000818,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 upper long"
+  },
+  {
+   "album": "B41",
+   "gt_az": 0,
+   "states": {
+    "clean": {
+     "az": 0,
+     "best_iou": 0.955405,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.210489,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 0,
+     "best_iou": 0.955405,
+     "changed_px": 2896,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.210489,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 0,
+     "best_iou": 0.955405,
+     "changed_px": 323705,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.210489,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53739,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 0,
+     "best_iou": 0.955405,
+     "changed_px": 323705,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.210489,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.809694,
+     "changed_px": 13607,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000578,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      2
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 lower short"
+  },
+  {
+   "album": "B41",
+   "gt_az": 180,
+   "states": {
+    "clean": {
+     "az": 180,
+     "best_iou": 0.953872,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.206582,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 180,
+     "best_iou": 0.953872,
+     "changed_px": 2490,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.206582,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 180,
+     "best_iou": 0.953872,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.206582,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53994,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 180,
+     "best_iou": 0.953872,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.206582,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.807535,
+     "changed_px": 13732,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000602,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 lower short"
+  },
+  {
+   "album": "B41",
+   "gt_az": 90,
+   "states": {
+    "clean": {
+     "az": 90,
+     "best_iou": 0.952727,
+     "changed_px": 0,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.194978,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "inner": {
+     "az": 90,
+     "best_iou": 0.952727,
+     "changed_px": 2848,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.194978,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "mirrored": {
+     "az": 90,
+     "best_iou": 0.952727,
+     "changed_px": 174225,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.194978,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "inner"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53772,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 90,
+     "best_iou": 0.952727,
+     "changed_px": 174225,
+     "depth_m": 3.75,
+     "line": true,
+     "margin": 0.194978,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "inner"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.807522,
+     "changed_px": 13574,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.0,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 upper long"
+  },
+  {
+   "album": "B42",
+   "gt_az": 270,
+   "states": {
+    "clean": {
+     "az": 270,
+     "best_iou": 0.960747,
+     "changed_px": 0,
+     "depth_m": 0.75,
+     "line": true,
+     "margin": 0.199692,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": null,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "not_exercised",
+     "reversal_parity": null,
+     "status": null,
+     "transform": null,
+     "wall": null
+    },
+    "mirrored": {
+     "az": 270,
+     "best_iou": 0.960747,
+     "changed_px": 165640,
+     "depth_m": 0.25,
+     "line": true,
+     "margin": 0.199692,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 54031,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 270,
+     "best_iou": 0.960747,
+     "changed_px": 165640,
+     "depth_m": 0.25,
+     "line": true,
+     "margin": 0.199692,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.812668,
+     "changed_px": 13862,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000595,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 upper long"
+  },
+  {
+   "album": "B42",
+   "gt_az": 0,
+   "states": {
+    "clean": {
+     "az": 0,
+     "best_iou": 0.953984,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.204314,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 0,
+     "best_iou": 0.953984,
+     "changed_px": 2896,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.204314,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 0,
+     "best_iou": 0.953984,
+     "changed_px": 323705,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.204314,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53739,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 0,
+     "best_iou": 0.953984,
+     "changed_px": 323705,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.204314,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.811667,
+     "changed_px": 13607,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000253,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      2
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 lower short"
+  },
+  {
+   "album": "B42",
+   "gt_az": 180,
+   "states": {
+    "clean": {
+     "az": 180,
+     "best_iou": 0.953442,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.202311,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 180,
+     "best_iou": 0.953442,
+     "changed_px": 2490,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.202311,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 180,
+     "best_iou": 0.953442,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.202311,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53994,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 180,
+     "best_iou": 0.953442,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.202311,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.809775,
+     "changed_px": 13732,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000277,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 lower short"
+  },
+  {
+   "album": "B42",
+   "gt_az": 90,
+   "states": {
+    "clean": {
+     "az": 90,
+     "best_iou": 0.952305,
+     "changed_px": 0,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.189837,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "inner": {
+     "az": 90,
+     "best_iou": 0.952305,
+     "changed_px": 2848,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.189837,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "mirrored": {
+     "az": 90,
+     "best_iou": 0.952305,
+     "changed_px": 174225,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.189837,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "inner"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53772,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 90,
+     "best_iou": 0.952305,
+     "changed_px": 174225,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.189837,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "inner"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.809763,
+     "changed_px": 13585,
+     "depth_m": null,
+     "line": true,
+     "margin": 1.3e-05,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      2
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 upper long"
+  },
+  {
+   "album": "V3",
+   "gt_az": 270,
+   "states": {
+    "clean": {
+     "az": 270,
+     "best_iou": 0.95544,
+     "changed_px": 0,
+     "depth_m": 0.75,
+     "line": true,
+     "margin": 0.197264,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": null,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "not_exercised",
+     "reversal_parity": null,
+     "status": null,
+     "transform": null,
+     "wall": null
+    },
+    "mirrored": {
+     "az": 270,
+     "best_iou": 0.95544,
+     "changed_px": 165640,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.197264,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 54031,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 270,
+     "best_iou": 0.95544,
+     "changed_px": 165640,
+     "depth_m": 0.5,
+     "line": true,
+     "margin": 0.197264,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.811199,
+     "changed_px": 13862,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000493,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 upper long"
+  },
+  {
+   "album": "V3",
+   "gt_az": 0,
+   "states": {
+    "clean": {
+     "az": 0,
+     "best_iou": 0.949503,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.199408,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 0,
+     "best_iou": 0.949503,
+     "changed_px": 2896,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.199408,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 0,
+     "best_iou": 0.949503,
+     "changed_px": 323705,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.199408,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53739,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 0,
+     "best_iou": 0.949503,
+     "changed_px": 323705,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.199408,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.810191,
+     "changed_px": 13607,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.00024,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      2
+     ],
+     "wall": null
+    }
+   },
+   "view": "p1 lower short"
+  },
+  {
+   "album": "V3",
+   "gt_az": 180,
+   "states": {
+    "clean": {
+     "az": 180,
+     "best_iou": 0.948998,
+     "changed_px": 0,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.197435,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "inner": {
+     "az": 180,
+     "best_iou": 0.948998,
+     "changed_px": 2490,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.197435,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "outer"
+    },
+    "mirrored": {
+     "az": 180,
+     "best_iou": 0.948998,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.197435,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "outer"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53994,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 180,
+     "best_iou": 0.948998,
+     "changed_px": 291962,
+     "depth_m": 0.0,
+     "line": true,
+     "margin": 0.197435,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "outer"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.808326,
+     "changed_px": 13732,
+     "depth_m": null,
+     "line": true,
+     "margin": 0.000265,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 lower short"
+  },
+  {
+   "album": "V3",
+   "gt_az": 90,
+   "states": {
+    "clean": {
+     "az": 90,
+     "best_iou": 0.947144,
+     "changed_px": 0,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.187297,
+     "outcome": "correct",
+     "reversal_parity": true,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "inner": {
+     "az": 90,
+     "best_iou": 0.947144,
+     "changed_px": 2848,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.187297,
+     "outcome": "wrong_wall",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      0
+     ],
+     "wall": "inner"
+    },
+    "mirrored": {
+     "az": 90,
+     "best_iou": 0.947144,
+     "changed_px": 174225,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.187297,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      0
+     ],
+     "wall": "inner"
+    },
+    "no_icon": {
+     "az": null,
+     "best_iou": null,
+     "changed_px": 53772,
+     "depth_m": null,
+     "line": null,
+     "margin": null,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "no_icon",
+     "transform": null,
+     "wall": null
+    },
+    "rotated": {
+     "az": 90,
+     "best_iou": 0.947144,
+     "changed_px": 174225,
+     "depth_m": 3.5,
+     "line": true,
+     "margin": 0.187297,
+     "outcome": "correct",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      false,
+      3
+     ],
+     "wall": "inner"
+    },
+    "symmetric": {
+     "az": null,
+     "best_iou": 0.808313,
+     "changed_px": 13585,
+     "depth_m": null,
+     "line": true,
+     "margin": 1.3e-05,
+     "outcome": "abstain_ok",
+     "reversal_parity": null,
+     "status": "read",
+     "transform": [
+      true,
+      2
+     ],
+     "wall": null
+    }
+   },
+   "view": "p2 upper long"
+  }
+ ],
+ "runs": [
+  {
+   "digest": "d793851988326d5bfb5febb8191697405527333e91a5c8b778564113d462e307",
+   "wall_s": 105.708
+  },
+  {
+   "digest": "d793851988326d5bfb5febb8191697405527333e91a5c8b778564113d462e307",
+   "wall_s": 105.851
+  },
+  {
+   "digest": "d793851988326d5bfb5febb8191697405527333e91a5c8b778564113d462e307",
+   "wall_s": 105.622
+  }
+ ],
+ "schema": "view-face-arrow-receipt/1",
+ "spread_s": 0.229,
+ "status": "finished",
+ "tally": {
+  "clean": {
+   "correct": 16
+  },
+  "clean_wall": {
+   "inner": 4,
+   "outer": 12
+  },
+  "inner": {
+   "not_exercised": 4,
+   "wrong_wall": 12
+  },
+  "mirrored": {
+   "correct": 16
+  },
+  "no_icon": {
+   "abstain_ok": 16
+  },
+  "rotated": {
+   "correct": 16
+  },
+  "symmetric": {
+   "abstain_ok": 16
+  }
+ },
+ "verdict": {
+  "clean_correct_ge14": true,
+  "clean_outer_ge14": false,
+  "clean_wrong_0": true,
+  "control_abstain_4": true,
+  "inner_wall_ge75": false,
+  "inner_wrong_az_0": true,
+  "mirrored_correct_ge14": true,
+  "mirrored_wrong_0": true,
+  "no_icon_abstain_16": true,
+  "rotated_correct_ge14": true,
+  "rotated_wrong_0": true,
+  "symmetric_wrong_0": true,
+  "witness_B3_p1_upper": true
+ }
+}
