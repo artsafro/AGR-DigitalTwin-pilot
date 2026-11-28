@@ -39,11 +39,42 @@ def _build(tmp_path, name, data, *extra):
 
 
 def _readback(tmp_path, fbx, name, data, *extra):
-    src, rep = tmp_path / f'{name}.src.json', tmp_path / f'{name}.readback.json'
-    src.write_text(json.dumps(data))
-    run = _blender('readback', fbx, src, rep, *extra)
+    run, rep = _readback_run(tmp_path, fbx, name, data, *extra)
     assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
     return json.loads(rep.read_text())
+
+
+def _readback_run(tmp_path, fbx, name, data, *extra):
+    src, rep = tmp_path / f'{name}.src.json', tmp_path / f'{name}.readback.json'
+    src.write_text(json.dumps(data))
+    return _blender('readback', fbx, src, rep, *extra), rep
+
+
+def _mutate(fbx, dst, body, *, placement=True):
+    """Synthetic fault injection only: import <fbx>, run <body> on the scene, export <dst>, and bind the VPM
+    profile record of <fbx> to the mutated bytes (and copy its placement record unless placement=False)."""
+    script = dst.with_suffix('.mutate.py')
+    script.write_text(f'import bpy\nbpy.ops.import_scene.fbx(filepath={str(fbx)!r})\n{body}\n'
+                      f'bpy.ops.export_scene.fbx(filepath={str(dst)!r})\n', encoding='utf-8')
+    run = subprocess.run([str(BLENDER), '--background', '--factory-startup', '--threads', '1',
+                          '--python-exit-code', '1', '--python-expr',
+                          f'import bpy; bpy.ops.wm.read_factory_settings(use_empty=True); '
+                          f'exec(open({str(script)!r}).read())'], capture_output=True, text=True)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+    meta = json.loads(Path(str(fbx) + '.export_meta.json').read_text(encoding='utf-8'))
+    meta.update(exported_files=[dst.name], exported_sha256={dst.name: hashlib.sha256(dst.read_bytes()).hexdigest()})
+    Path(str(dst) + '.export_meta.json').write_text(json.dumps(meta), encoding='utf-8')
+    if placement:
+        Path(str(dst) + '.placement.json').write_bytes(Path(str(fbx) + '.placement.json').read_bytes())
+    return dst
+
+
+def _add_ucx(n, *, rename_ground=None):
+    body = ''.join(f'bpy.ops.mesh.primitive_cube_add(size=1, location=(0, 0, {150 + i}))\n'
+                   f'bpy.context.active_object.name = "UCX_SM_Synthetic_Ground_{i:03d}"\n' for i in range(1, n + 1))
+    if rename_ground:
+        body += f'bpy.data.objects["SM_Synthetic_Ground"].name = {rename_ground!r}\n'
+    return body
 
 
 @pytest.fixture(scope='module')
@@ -226,3 +257,72 @@ def test_readback_report_cannot_alias_source(tile_exports):
         run = _blender('readback', fbx, src, dst)
         assert run.returncode != 0
         assert src.read_bytes() == alias.read_bytes() == original
+
+
+# #1921: one Ground surface selected by name, independent of UCX; placement record; opt-in strict UDIM exit.
+@pytest.mark.parametrize('n_ucx', [0, 1, 3])
+@pytest.mark.parametrize('which,status', [('matched', 'pass'), ('swapped', 'fail')])
+def test_vpm_readback_selects_ground_beside_ucx(tile_exports, tmp_path, n_ucx, which, status):
+    _, data, fbx, swapped = tile_exports
+    src = swapped if which == 'swapped' else fbx
+    dst = _mutate(src, tmp_path / src.name, _add_ucx(n_ucx))
+    report = _readback(tmp_path, dst, f'{which}{n_ucx}', data)
+    ucx = [f'UCX_SM_Synthetic_Ground_{i:03d}' for i in range(1, n_ucx + 1)]
+    sel = report['ground_selection']
+    assert (sel['status'], sel['selected']) == ('selected', 'SM_Synthetic_Ground'), sel
+    assert sorted(e['name'] for e in sel['excluded']) == ucx
+    assert report['centre_match']['complete'] is True and report['faces_expected'] == 2
+    assignment = report['uv_tiles']['udim_assignment']
+    assert assignment['status'] == status, assignment  # the per-material negative control is preserved
+    assert 'strict_udim' not in report  # legacy invocation: unchanged, exit 0
+
+
+@pytest.mark.parametrize('case,result,code', [
+    ('matched', 'measured_pass', 0), ('swapped', 'measured_fail', 1), ('missing', 'insufficient_evidence', 2),
+    ('no_ground', 'insufficient_evidence', 2), ('npm', 'insufficient_evidence', 2)])
+def test_strict_udim_exit_after_writing_the_report(tile_exports, tmp_path, case, result, code):
+    _, data, fbx, swapped = tile_exports
+    expected = {k: v for k, v in data.items() if not (case == 'missing' and k == 'uv')}
+    target = {'swapped': swapped}.get(case, fbx)
+    if case == 'no_ground':
+        target = _mutate(fbx, tmp_path / fbx.name, _add_ucx(1, rename_ground='UCX_SM_Synthetic_Ground_002'))
+    elif case == 'npm':
+        target = _build(tmp_path, 'SM_Synthetic_Ground', data, '--profile', 'npm')
+    run, rep = _readback_run(tmp_path, target, case, expected, '--strict-udim')
+    assert run.returncode == code, run.stdout[-2000:] + run.stderr[-2000:]
+    report = json.loads(rep.read_text())  # written and retained before the strict nonzero exit
+    assert (report['strict_udim']['result'], report['strict_udim']['exit']) == (result, code)
+    if case == 'no_ground':
+        assert report['ground_selection']['status'] == 'missing'
+        assert report['uv_tiles']['udim_assignment']['status'] == 'not_measured'
+        legacy, legacy_rep = _readback_run(tmp_path, target, 'no_ground_legacy', expected)
+        assert legacy.returncode == 1 and json.loads(legacy_rep.read_text())['ground_selection']['status'] == 'missing'
+
+
+def test_legacy_readback_exit_zero_on_measured_mismatch(tile_exports, tmp_path):
+    _, data, _, swapped = tile_exports
+    run, rep = _readback_run(tmp_path, swapped, 'legacy', data)
+    report = json.loads(rep.read_text())
+    assert run.returncode == 0 and report['uv_tiles']['udim_assignment']['status'] == 'fail'
+    assert 'strict_udim' not in report
+
+
+@pytest.mark.parametrize('placement', ['missing', 'zero', 'invalid'])
+def test_missing_placement_is_not_a_zero_offset(tile_exports, tmp_path, placement):
+    _, data, fbx, _ = tile_exports
+    dst = tmp_path / fbx.name
+    dst.write_bytes(fbx.read_bytes())
+    Path(str(dst) + '.export_meta.json').write_bytes(Path(str(fbx) + '.export_meta.json').read_bytes())
+    if placement != 'missing':
+        Path(str(dst) + '.placement.json').write_text(
+            '{"origin_msk77_xyz": [0, 0, 0]}' if placement == 'zero' else '{"origin_msk77_xyz": [0, 0]}')
+    report = _readback(tmp_path, dst, placement, data)
+    assert report['placement']['status'] == ('recorded' if placement == 'zero' else placement)
+    if placement == 'zero':  # a recorded zero is used as recorded: the off-origin source does not match
+        assert report['placement_offset'] == [0.0, 0.0, 0.0]
+        assert report['centre_match']['complete'] is False and report['material_by_centre'] == 'incomplete'
+    else:  # no guessed offset: the off-origin comparison is not measured
+        assert report['placement_offset'] is None and report['centre_match'] is None
+        assert report['material_by_centre'] == report['surface_normals_by_centre'] == 'not_measured'
+        assert report['world_bbox'] is None
+    assert report['uv_tiles']['udim_assignment']['status'] == 'pass'  # UV evidence does not need placement
