@@ -121,17 +121,16 @@ stages:
       - src/dt_ai/geometry/ground_site.py
       - src/dt_ai/geometry/ground_cake.py
   - id: quads
-    event_ru: "Плоский Ground: треугольники, швы и вставки (квады)"
+    event_ru: "Плоский Ground до рельефа: швы и вставки, преобладают квады, треугольники только где неизбежны; размер квадов по текселю профиля, бюджет НПМ по D097"
     actor: agent-dcc
     context: ground
     rules:
-      - D157
+      - D097
       - D129
       - D021
       - D293
     evidence:
-      - jobs/VATUTINO-SITE/ground-v015-pairing-session.md
-      - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
+      - docs/domain/areas/ground-surface.md
   - id: textures
     event_ru: "Плоский Ground: текстуры по ID, бесшовные UV-острова до проекции, тайлы UDIM подряд с 1001"
     actor: agent-dcc
@@ -258,7 +257,7 @@ stages:
       - tools/blender/ground_json_to_fbx.py
       - docs/domain/export-import.md
   - id: package
-    event_ru: "Общий маршрут упаковки: готовые файлы НПМ / ВПМ собраны в ZIP через package_core._write_zip (исторический обход ZIP Ватутино учтён в package-contexts.yaml)"
+    event_ru: "Общий маршрут упаковки: готовые файлы НПМ / ВПМ в ZIP через package_core._write_zip. Обычно GeoJSON ВПМ заполняют полностью, ZU_area в га (D223, D367); ZU_area=0 в файле заказчика Старопетровского — историческое исключение"
     actor: agent
     context: package
     commands:
@@ -268,10 +267,12 @@ stages:
       - D210
       - D224
       - D223
+      - D367
     evidence:
       - tools/derive/package_vpm.py
       - tools/derive/package_npm.py
       - docs/architecture/package-contexts.yaml
+      - docs/domain/npm-vpm.md
   - id: validate
     event_ru: "Проверки пакета agr validate (с --scene и доступным readback — сценовые проверки Ground в twinqa.scene, в т.ч. V003/GND-03 юбка) и отдельный dt qa xview выполнены, отказы записаны; валидатор не вызывает xView и СИНТЕЗ и не связывает их входы; --master проверяет рабочий FBX и/или хеш роли в манифесте, но не сравнивает поверхности FBX"
     actor: agent
@@ -290,7 +291,7 @@ stages:
       - docs/research/xview-parity-ground-v014.md
       - jobs/VATUTINO-SITE/ground-v015-final-xview-session.md
   - id: sintez
-    event_ru: "Чекер СИНТЕЗ: целевое требование — прогон на том же входе, что и validate; оба инструмента пишут независимые отчёты без взаимной сверки хешей"
+    event_ru: "Порядок сдачи по общей карте упаковки (D352): предварительный СИНТЕЗ → ручная приёмка Артёма → финальный СИНТЕЗ. Целевое требование — тот же вход, что у validate; отчёты независимые, без взаимной сверки хешей и автоматической передачи между этапами"
     actor: checker
     context: sintez
     commands:
@@ -298,9 +299,11 @@ stages:
     rules:
       - D220
       - D104
+      - D352
     evidence:
       - tools/qa/sintez_checker.py
       - docs/architecture/package-contexts.yaml
+      - docs/architecture/package-route.events.yaml
 hotspots:
   - id: legend-intake
     stage: sources
@@ -327,12 +330,12 @@ hotspots:
       - tools/ground/project_zero.py
   - id: pairing
     stage: quads
-    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Историческая agr ground v015 / dt ground v015 (build_ground_v015.py) повторяет только Ватутино v014→v015 и спаривает треугольники уже после рельефа, не закрывая общий дорельефный этап quads. Для v015: D192 заменено D157 (≤ 35 % остаточных треугольников), маршрут A с исключением texel_ready (D193)."
+    ru: "agr ground site выдаёт треугольники в OBJ, не рабочий FBX с квадами (D366). Историческая agr ground v015 / dt ground v015 (build_ground_v015.py) спаривает треугольники Ватутино v014→v015 после рельефа, не закрывая общий дорельефный этап quads. Только для Ватутино v015: D157 (≤ 35 % остаточных треугольников) и маршрут A с исключением texel_ready (D193). D192 заменено D157 и сохранено только как историческая справка."
     rules:
       - D157
-      - D192
       - D193
     evidence:
+      - jobs/VATUTINO-SITE/ground-v015-pairing-session.md
       - jobs/VATUTINO-SITE/ground-v015-route-proposal-20261104.md
       - tools/ground/build_ground_v015.py
   - id: flat-uv
