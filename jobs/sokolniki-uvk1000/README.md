@@ -346,3 +346,12 @@ uv run agr validate <zip> --profile npm --scene --json --export-meta <v013.json>
   master v002 + plans, xView / validate / self-intersection reports, before / after / diff renders, Russian summary
   `svodka-npm-package-v001.md` + `sok-npm-package-v001.png`; `SHA256SUMS.txt` 58 files, manifest `de36883e…`).
   Waiting for Artem's acceptance in 3ds Max (quads) and his answers on the body seams, V004 and UCX / GeoJSON.
+
+### Step 5 continuation — diagnostic NPM v002 delivery copy (#2098)
+
+[D438] confirms no UCX or GeoJSON requirement without a customer spec. [D439] limits the seam repair
+to the delivery FBX. The +13.50 m gap closed (8 measured pairs, max move 0.901222229 mm), but
+coincident vertices and face contacts still fail offline xView. No weld, topology repair, work FBX
+edit or change to accepted v006/v009. The [delivery report](../../docs/deliveries/sokolniki-npm-v002-2026-11-28.md)
+records V001–V006, unchanged inputs, residual defects, and why no new ZIP was built. SINTEZ and
+native xView need free Max. No delivery acceptance or merge without Artem's authorization.
