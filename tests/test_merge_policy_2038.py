@@ -19,8 +19,12 @@ def review(verdict="CLEAN", head=HEAD, extra="", reviewer: str | None = "dt-revi
                     f"P1/P2/P3 = {'0' if verdict == 'CLEAN' else '1'}/0/0.{who}{extra}\n"}
 
 
+TRACE = "## Agent trace\n- Written by: Hermes / Claude (dt-worker, t_x)\n"
+BUG_FIX = "Regression test only (bug fix): tests/test_x.py fails before, passes after.\n"  # D432 exemption (#2071)
+
+
 def pr(**kw):
-    base = {"number": 1, "title": "fix: something", "body": "## Agent trace\n- Written by: Hermes / Claude (dt-worker, t_x)\n",
+    base = {"number": 1, "title": "fix: something", "body": TRACE + BUG_FIX,
             "baseRefName": "main", "headRefName": "fix/issue-1-x", "headRefOid": HEAD, "isDraft": False,
             "mergeable": "MERGEABLE", "additions": 10, "deletions": 2, "files": [{"path": "tools/x.py"}],
             "comments": [review()], "closingIssuesReferences": []}
@@ -84,9 +88,9 @@ def test_model_text_classifier_quotes_evidence_and_ignores_negation():
     r = run(pr(body="This PR changes the delivered model of KPP1 (new UV)."))
     assert r["rule"] == "delivered_model"
     assert any("changes the delivered model" in e.lower() for x in r["reasons"] for e in x["evidence"])
-    neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model."))
+    neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model.\n" + BUG_FIX))
     assert neg["rule"] == "small_pr"
-    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".'))
+    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".\n' + BUG_FIX))
     assert quoted["rule"] == "small_pr"
 
 
@@ -165,7 +169,7 @@ def test_r1_p1_4_unknown_author_or_reviewer_fails_closed():
 
 
 def test_r1_p1_5_hygiene_queue_with_large_production_code_goes_artem():
-    p = pr(files=[{"path": "src/dt_ai/cli/agr.py"}], additions=900, body="Closes #2017")
+    p = pr(files=[{"path": "src/dt_ai/cli/agr.py"}], additions=900, body="Closes #2017\n" + BUG_FIX)
     r = run(p, hygiene_issues={2017})
     assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "production_code", False)
 
@@ -312,3 +316,50 @@ def test_policy_file_cites_consents_and_buckets():
     assert {p["id"] for p in pol["preconditions"]} >= {"main_green", "base_is_main", "mergeable",
                                                        "review_clean_on_head", "reviewer_not_author"}
     assert not Path(pol["observe_log"]).resolve().is_relative_to(ROOT)
+
+
+# ---- #2071 (review r1 of PR #2070): D432 'unmeasured process change -> artem' must be classified ----
+
+@pytest.mark.parametrize("path", ["tools/trainer/trainer.py", "tools/state/project_state.py",
+                                  "src/dt_ai/cli/agr.py", "scripts/hygiene.sh"])
+def test_2071_small_unmeasured_tool_change_goes_artem(path):
+    r = run(pr(title="feat: new tool flag", body=TRACE, files=[{"path": path}], additions=20, deletions=0))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "unmeasured_process_change", False)
+
+
+@pytest.mark.parametrize("marker", [
+    "Trainer A/B: agr trainer ab KPP1 --ab OLD NEW -> fixed (3/3 vs 1/3).",
+    "Regression test only (bug fix): tests/test_x.py fails before, passes after."])
+def test_2071_measured_or_bug_fix_marker_keeps_small_pr_auto(marker):
+    r = run(pr(body=TRACE + marker + "\n"))
+    assert (r["bucket"], r["rule"]) == ("auto", "small_pr")
+
+
+def test_2071_negated_marker_does_not_exempt():
+    r = run(pr(body=TRACE + "No trainer A/B was run.\n"))
+    assert r["rule"] == "unmeasured_process_change"
+
+
+# review r2 P1-1: only a labelled receipt line with a real value lifts the rule
+@pytest.mark.parametrize("body", [
+    "Trainer A/B: none",
+    "Trainer A/B: not run",
+    "Trainer A/B: n/a",
+    "Trainer A/B: -",
+    "Trainer A/B: skipped (no time)",
+    "Trainer A/B:",
+    "Regression test only (bug fix): no",
+    "We should run agr trainer ab later.",
+    "Per D432 obvious fixes need a regression test only.",
+    "See the Trainer A/B: section below."])
+def test_2071_empty_negated_or_free_mention_does_not_exempt(body):
+    r = run(pr(body=TRACE + body + "\n"))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "unmeasured_process_change", False)
+
+
+@pytest.mark.parametrize("line", [
+    "- Trainer A/B: agr trainer ab KPP1 --ab OLD NEW -> fixed (3/3 vs 1/3).",
+    "| Regression test only (bug fix): tests/test_x.py fails before, passes after. |"])
+def test_2071_receipt_line_in_list_or_table_still_exempts(line):
+    r = run(pr(body=TRACE + line + "\n"))
+    assert (r["bucket"], r["rule"]) == ("auto", "small_pr")
