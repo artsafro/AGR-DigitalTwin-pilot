@@ -48,8 +48,8 @@ def _row(case, w, nontrivial=False, w0=None):
 
 
 def _verdict(rows):
-    nt = (lambda r: bool(r['nontrivial']))
-    return WL.verdict(rows, WL.summarize(rows, 'W1'), WL.summarize(rows, 'W1', nt))
+    nt = [r for r in rows if r['nontrivial']]
+    return WL.verdict(rows, WL.summarize(rows, 'W1'), WL.summarize(nt, 'W1'))
 
 
 def _base():
