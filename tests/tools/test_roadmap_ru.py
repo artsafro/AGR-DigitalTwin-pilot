@@ -1,4 +1,7 @@
-"""#2100: the Russian roadmap page renders from a fixture readiness JSON + a fixture GitHub snapshot."""
+"""#2100: the Russian roadmap page renders from a fixture readiness JSON + a fixture GitHub snapshot.
+
+new-case: tests/tools/test_roadmap_ru.py - fixture tests of the generated Russian roadmap page.
+"""
 from __future__ import annotations
 
 import json
