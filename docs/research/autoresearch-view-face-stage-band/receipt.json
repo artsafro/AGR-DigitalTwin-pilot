@@ -1,0 +1,172 @@
+{
+  "A": {
+    "ambiguous": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "clean": {
+      "abstain": 2,
+      "answered_accuracy": 1.0,
+      "correct": 2,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "interior": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "masked": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "opposite_only": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    }
+  },
+  "A_parity": true,
+  "B": {
+    "ambiguous": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "clean": {
+      "abstain": 2,
+      "answered_accuracy": 1.0,
+      "correct": 2,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "interior": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "masked": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    },
+    "opposite_only": {
+      "abstain": 4,
+      "answered_accuracy": null,
+      "correct": 0,
+      "not_exercised": 0,
+      "wrong": 0
+    }
+  },
+  "baseline_rev": "1369c97893e4d38c5e6b2c96f1a070bbc969b0e7",
+  "bounds": {
+    "clean_correct_ge3": false,
+    "gain_p7_or_p8": false,
+    "keep_p5_p6": true,
+    "negative_abstains": true,
+    "zero_wrong": true
+  },
+  "clips": {
+    "5": {
+      "after": 29145,
+      "before": 29145,
+      "dropped": 0,
+      "exercised": false,
+      "trimmed": 0
+    },
+    "6": {
+      "after": 28500,
+      "before": 32845,
+      "dropped": 4345,
+      "exercised": true,
+      "trimmed": 124
+    },
+    "7": {
+      "after": 11572,
+      "before": 12405,
+      "dropped": 833,
+      "exercised": true,
+      "trimmed": 123
+    },
+    "8": {
+      "after": 22568,
+      "before": 24185,
+      "dropped": 1617,
+      "exercised": true,
+      "trimmed": 219
+    }
+  },
+  "controls": {
+    "clipping_exercises": true,
+    "mark_parity": true,
+    "p5_exact": true
+  },
+  "elapsed_s": 40.14033,
+  "hypothesis": "refuted",
+  "input_parity": true,
+  "median_s": 13.22937,
+  "pair_sha256": [
+    "708071005c48a5db7aa98fb7011753fca610578e0e4e0b5059a12879dcff9c5b",
+    "708071005c48a5db7aa98fb7011753fca610578e0e4e0b5059a12879dcff9c5b",
+    "708071005c48a5db7aa98fb7011753fca610578e0e4e0b5059a12879dcff9c5b"
+  ],
+  "parent_blobs": {
+    "key_fixture.json": [
+      "1045328d5585137af697d5991cde293dc31c8325",
+      "keyplan/fixture.json"
+    ],
+    "key_receipt.json": [
+      "1045328d5585137af697d5991cde293dc31c8325",
+      "keyplan/receipt.json"
+    ],
+    "keyplan.py": [
+      "1045328d5585137af697d5991cde293dc31c8325",
+      "keyplan/run_keyplan.py"
+    ],
+    "linework.py": [
+      "640b3678fb18ac2e5811742116a92e96ef236ab6",
+      "elv/run.py"
+    ],
+    "views.json": [
+      "4a6c6b776ea4c16bf9b33b16be82465521f88d34",
+      "transfer/fixture.json"
+    ]
+  },
+  "pins": {
+    "C:\\Users\\artsafro\\agr-pilot\\AGR-DigitalTwin\\.worktrees\\t_4bab9389\\docs\\research\\autoresearch-view-face-stage-band\\run.py": "9970560fa0a1a1b7252a6abc0376bbb5cb8dfd3c180a36b6f4bcb8b64561289c",
+    "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\151-view-face-transfer\\inputs\\\u0410\u0420.2_ \u0424\u0430\u0441\u0430\u0434\u044b_29.07.2026.pdf": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0",
+    "G:\\\u041c\u043e\u0439 \u0434\u0438\u0441\u043a\\AGR-evidence\\151-view-face-transfer\\r1\\types-1.npz": "66105de78c7b5ecdaed5015a47ca4937ab35e130485c50de6a467cc580630a7a",
+    "tmp\\ar156-run2\\baseline-receipt.json": "ef8eec5f09d3fa0d72eb8ff73bb45c10b60485b2d236257f9a9548c6ef37f288",
+    "tmp\\ar156-run2\\baseline.py": "2f8d4ff71d90246f749c52281349e276ba5a8270549d7cf770839ecb7f0e6448",
+    "tmp\\ar156-run2\\key_fixture.json": "69203d21612ae3eb69879402b3d2c01536aadd5e52bac41a66de291a3fc7dcbc",
+    "tmp\\ar156-run2\\key_receipt.json": "df864b184879e9e013a2a8471c5c68cf762c00f43c0e68afb7d4c8f82d7ecd8a",
+    "tmp\\ar156-run2\\keyplan.py": "7e684ffa4eb1251819c4685eb849afc5dbadd12960f46189eef26b0769cd6672",
+    "tmp\\ar156-run2\\linework.py": "49d852790d062298766882449948e3adf4c708dd6b82e774caa5f8efc399e2f0",
+    "tmp\\ar156-run2\\views.json": "8d4689d2dcdd7ec72d9e965b8e552c8fc4fe6656999205a2ff9abf2a66252518",
+    "uv.lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+  },
+  "revision": "f831baf08df3e4fea3b612d289c7203581a0776a",
+  "run_status": "complete",
+  "spread_s": 0.96566,
+  "wall_s": [
+    13.9383,
+    13.22937,
+    12.97264
+  ]
+}
