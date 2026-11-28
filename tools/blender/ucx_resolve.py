@@ -120,7 +120,7 @@ def main():
             bpy.ops.wm.open_mainfile(filepath=str(src))
         else:
             bpy.ops.wm.read_factory_settings(use_empty=True)
-            bpy.ops.import_scene.fbx(filepath=str(src))
+            bpy.ops.import_scene.fbx(filepath=str(src), use_image_search=False)
         meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
         ucx = [o for o in meshes if o.name.upper().startswith("UCX")]
         model = [o for o in meshes if o not in ucx]

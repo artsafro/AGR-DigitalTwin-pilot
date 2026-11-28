@@ -422,6 +422,12 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
 | research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
 | research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
+| research/autoresearch-view-face-material | [research/autoresearch-view-face-material.md](../research/autoresearch-view-face-material.md) |  |
+| research/autoresearch-view-face-material/rays-type-py | [research/autoresearch-view-face-material/rays_type.py](../research/autoresearch-view-face-material/rays_type.py) |  |
+| research/autoresearch-view-face-material/receipt-json | [research/autoresearch-view-face-material/receipt.json](../research/autoresearch-view-face-material/receipt.json) |  |
+| research/autoresearch-view-face-material/run-py | [research/autoresearch-view-face-material/run.py](../research/autoresearch-view-face-material/run.py) |  |
+| research/autoresearch-view-face-material/score-py | [research/autoresearch-view-face-material/score.py](../research/autoresearch-view-face-material/score.py) |  |
+| research/autoresearch-view-face-material/test-score-py | [research/autoresearch-view-face-material/test_score.py](../research/autoresearch-view-face-material/test_score.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
@@ -451,6 +457,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/guard-vs-dcg-2026-11 | [research/guard-vs-dcg-2026-11.md](../research/guard-vs-dcg-2026-11.md) |  |
 | research/ifc-intake-src-contract | [research/ifc-intake-src-contract.md](../research/ifc-intake-src-contract.md) |  |
 | research/job-artifact-name-contract | [research/job-artifact-name-contract.md](../research/job-artifact-name-contract.md) |  |
+| research/job-retro-moskovsky-sosh1200-pr1979 | [research/job-retro-moskovsky-sosh1200-pr1979.md](../research/job-retro-moskovsky-sosh1200-pr1979.md) |  |
 | research/job-retro-tec26-oks-pr570 | [research/job-retro-tec26-oks-pr570.md](../research/job-retro-tec26-oks-pr570.md) |  |
 | research/job-retro-tec26-oks-pr574 | [research/job-retro-tec26-oks-pr574.md](../research/job-retro-tec26-oks-pr574.md) |  |
 | research/job-retro-vyatskaya-tow02-pr392 | [research/job-retro-vyatskaya-tow02-pr392.md](../research/job-retro-vyatskaya-tow02-pr392.md) |  |
@@ -523,6 +530,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/ucx-cases-codex-2042 | [research/ucx-cases-codex-2042.md](../research/ucx-cases-codex-2042.md) |  |
 | research/ucx-etalon-analysis | [research/ucx-etalon-analysis.md](../research/ucx-etalon-analysis.md) |  |
 | research/ucx-etalon-audit-2026-10-15-json | [research/ucx-etalon-audit-2026-10-15.json](../research/ucx-etalon-audit-2026-10-15.json) |  |
+| research/ucx-variants-2053 | [research/ucx-variants-2053.md](../research/ucx-variants-2053.md) |  |
 | research/vatutino-ground-80deg-step-source | [research/vatutino-ground-80deg-step-source.md](../research/vatutino-ground-80deg-step-source.md) |  |
 | research/vatutino-ground-v015-outer-skirt-gap-20-edges | [research/vatutino-ground-v015-outer-skirt-gap-20-edges.md](../research/vatutino-ground-v015-outer-skirt-gap-20-edges.md) |  |
 | research/vpm-course-grid-1314 | [research/vpm-course-grid-1314.md](../research/vpm-course-grid-1314.md) |  |

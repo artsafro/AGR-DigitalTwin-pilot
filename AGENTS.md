@@ -18,6 +18,7 @@ regulation, later IFC — for buildings (OKS), Ground, MAF (GroundEl), Flora and
 collisions, plus the interactive Unreal experience. Priorities, in order:
 1. Architectural accuracy 2. Correct scale and transforms 3. Material correctness
 4. Performance 5. Visual fidelity.
+Eval-driven [D432]: a new or changed instruction, skill, tool, memory or architecture lands only after a trainer A/B vs the baseline (dev set, holdout before default); obvious bug fixes need only a regression test.
 
 ## Where things are
 

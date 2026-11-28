@@ -3,7 +3,7 @@
 Pattern: n/a | new-case: Ground master JSON to FBX with GND-11 names and GND-12 pivot (issue #295).
 
   blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- build <mesh.json> <out.fbx> <Address> [<crs> [<source_id>]] [--profile npm|vpm]
-  blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- readback <in.fbx> <mesh.json> <report.json> [<tex_px> <lo> <hi>]
+  blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- readback <in.fbx> <mesh.json> <report.json> [<tex_px> <lo> <hi>] [--strict-udim]
   blender --background --factory-startup --python tools/blender/ground_json_to_fbx.py -- render <in.fbx> <out_dir> <report.json>
 
 build: object SM_<Address>_Ground, materials M_<Address>_Ground_<Slot> in the JSON slot order, one UV set,
@@ -26,6 +26,14 @@ surface face (non-Skirt material) measured on the imported mesh.
 For an explicit, hash-bound VPM export record, compares tiles by exact material name against the supplied
 source mesh JSON (its original slots and UVs), independently of the optional density measurement. Missing
 evidence is not_measured. Readback reports must be written to a new path.
+Ground selection (#1921): the measured object is the single SM_<Address>_Ground (the exact name from an explicit
+export record, else the SM_<Address>_Ground mask); UCX, GroundGlass and other objects are listed in
+ground_selection.excluded with a reason, independent of import order. No single Ground (missing / ambiguous) writes
+the report without surface measurements and exits 1. A missing or invalid <in.fbx>.placement.json is reported as
+placement.status and the MSK-77 centre comparison is not_measured (never a zero offset); a recorded zero is used.
+--strict-udim (opt-in): after writing the report, `strict_udim` and the exit code give the VPM UDIM verdict from
+ground_selection and udim_assignment.status only: measured_pass 0, measured_fail 1, insufficient_evidence 2 (no
+single Ground, not_measured, NPM, unknown status). Without it the legacy diagnostic exits 0 on every measured status.
 render: Face Orientation equivalent (Cycles emission: front green, back red via the Backfacing attribute) from fixed
 cameras (top orthographic + four 45 degree obliques around the bounding box); counts red pixels per PNG.
 """
@@ -174,7 +182,7 @@ def _expected_tiles(d, address):
     return {name: sorted(tiles) for name, tiles in sorted(by_material.items())}, None
 
 
-def _readback_uv(o, d, meta, profile_reason, tex, mesh_count):
+def _readback_uv(o, d, meta, profile_reason, tex, unexpected):
     me = o.data
     npm = meta.get('profile') == 'npm'
     if npm and not tex:
@@ -241,8 +249,8 @@ def _readback_uv(o, d, meta, profile_reason, tex, mesh_count):
         differences = {name: {'expected': expected.get(name, []), 'observed': observed.get(name, [])}
                        for name in sorted(expected.keys() | observed.keys()) if expected.get(name) != observed.get(name)}
         status = 'fail' if differences or invalid else 'pass'
-    if meta.get('profile') == 'vpm' and mesh_count != 1:
-        status, reason = 'fail', f'expected one Ground mesh, imported {mesh_count}'
+    if meta.get('profile') == 'vpm' and unexpected:  # UCX and GroundGlass are not counted (#1921)
+        status, reason = 'fail', f'expected one Ground mesh, also imported {unexpected}'
     if status == 'not_measured' and reason is None:
         reason = 'source mesh JSON has no applicable UV evidence'
     uv_report['by_material'] = observed
@@ -251,15 +259,10 @@ def _readback_uv(o, d, meta, profile_reason, tex, mesh_count):
     return out
 
 
-def readback(fbx, src, rep, *tex):
-    import os
-    pl = fbx + '.placement.json'
-    meta_path = fbx + '.export_meta.json'
-    if os.path.lexists(rep) or any(Path(rep).resolve() == Path(path).resolve()
-                                    for path in (fbx, src, pl, meta_path)):
-        raise ValueError(f'readback report must be a new path: {rep}')
+def _readback_facts(fbx, src, pl, meta_path, tex):
     d = json.load(open(src, encoding="utf-8"))
-    off = Vector(json.load(open(pl, encoding="utf-8"))["origin_msk77_xyz"]) if os.path.exists(pl) else Vector((0, 0, 0))
+    # #1921: a missing or invalid placement record is reported, never replaced by a zero offset.
+    placement = _match.load_placement(pl)
     clean()
     meta, profile_reason = _readback_profile(fbx, meta_path)
     bpy.ops.import_scene.fbx(filepath=fbx)
@@ -267,25 +270,42 @@ def readback(fbx, src, rep, *tex):
         from adapters.max.agr_tools.export_meta import _sha256
         if meta['exported_sha256'][Path(fbx).name] != _sha256(fbx):
             raise ValueError(f'FBX changed during Ground readback: {fbx}')
-    obs = [o for o in bpy.context.scene.objects if o.type == "MESH"]
+    scene = list(bpy.context.scene.objects)
+    obs = [o for o in scene if o.type == "MESH"]
     out = {"fbx": fbx, "objects": [o.name for o in obs], "unit_scale_length": bpy.context.scene.unit_settings.scale_length}
-    o = obs[0]
+    # #1921: one Ground surface by name (UCX, GroundGlass and other objects excluded with a reason), never obs[0].
+    selection = _match.select_ground([(o.name, o.type) for o in scene], meta.get('address'))
+    out["ground_selection"] = selection
+    out["placement"] = placement
+    out["faces_expected"] = len(d["faces"])
+    if selection['status'] != 'selected':
+        out["uv_tiles"] = {'udim_assignment': {'status': 'not_measured',
+                                               'reason': f"Ground selection {selection['status']}: "
+                                                         f"{selection['candidates'] or 'no ' + selection['expected_name']}"}}
+        return out
+    o = bpy.data.objects[selection['selected']]
     out["object_scale"] = list(o.scale)
     out["object_location"] = [round(c, 4) for c in o.location]
     out["object_rotation"] = [round(c, 6) for c in o.rotation_euler]
     me = o.data
     from mathutils import Matrix
-    mw = Matrix.Translation(off) @ o.matrix_world  # back to MSK-77 for the comparison with the master JSON
-    out["placement_offset"] = list(off)
+    off = placement['offset']
+    # back to MSK-77 for the comparison with the master JSON; without a recorded offset that comparison is not made
+    mw = Matrix.Translation(Vector(off)) @ o.matrix_world if off is not None else None
+    out["placement_offset"] = off
     out["materials"] = [m.name for m in me.materials]
     out["triangles"] = sum(len(p.vertices) - 2 for p in me.polygons)
-    out["faces_expected"] = len(d["faces"])
     # raw material index per face -> slot name; compare against the JSON by face centre (FBX may reorder).
     # #1837: the source centre divides by the face's own degree (quad /4); coverage is reported, not inferred.
-    imported = [(tuple(round(v, _match.NDIGITS) for v in (mw @ p.center)),
-                 me.materials[p.material_index].name.split("_Ground_", 1)[-1], (mw.to_3x3() @ p.normal).z)
-                for p in me.polygons]
-    out.update(_match.match_by_centre(d, imported))
+    if mw is not None:
+        imported = [(tuple(round(v, _match.NDIGITS) for v in (mw @ p.center)),
+                     me.materials[p.material_index].name.split("_Ground_", 1)[-1], (mw.to_3x3() @ p.normal).z)
+                    for p in me.polygons]
+        out.update(_match.match_by_centre(d, imported))
+    else:
+        out.update({"centre_match": None, "material_by_centre": "not_measured",
+                    "surface_normals_by_centre": "not_measured",
+                    "centre_match_reason": f"placement {placement['status']}: {placement['reason']}"})
     # by face order (the FBX importer keeps polygon order): raw material_index -> slot name vs JSON
     names = [m.name.split("_Ground_", 1)[-1] for m in me.materials]
     idx = [0] * len(me.polygons)
@@ -297,14 +317,34 @@ def readback(fbx, src, rep, *tex):
     out["open_edges"] = sum(1 for e in bm.edges if e.is_boundary)
     out["nonmanifold_edges"] = sum(1 for e in bm.edges if not e.is_manifold)
     bm.free()
-    zs = [(mw @ v.co).z for v in me.vertices]
-    xs = [(mw @ v.co).x for v in me.vertices]
-    out["world_bbox"] = {"x": [min(xs), max(xs)], "z": [min(zs), max(zs)]}
+    zs = [(mw @ v.co).z for v in me.vertices] if mw is not None else []
+    xs = [(mw @ v.co).x for v in me.vertices] if mw is not None else []
+    out["world_bbox"] = {"x": [min(xs), max(xs)], "z": [min(zs), max(zs)]} if xs else None
     out["uv_layers"] = [u.name for u in me.uv_layers]
-    out.update(_readback_uv(o, d, meta, profile_reason, tex, len(obs)))
+    out.update(_readback_uv(o, d, meta, profile_reason, tex, selection['unexpected_surface_meshes']))
+    return out
+
+
+def readback(fbx, src, rep, *tex, strict_udim=False):
+    import os
+    pl = fbx + '.placement.json'
+    meta_path = fbx + '.export_meta.json'
+    if os.path.lexists(rep) or any(Path(rep).resolve() == Path(path).resolve()
+                                    for path in (fbx, src, pl, meta_path)):
+        raise ValueError(f'readback report must be a new path: {rep}')
+    out = _readback_facts(fbx, src, pl, meta_path, tex)
+    if strict_udim:  # #1921: opt-in verdict from udim_assignment.status and the Ground selection only
+        out["strict_udim"] = _match.strict_udim_result(out)
     with open(rep, 'x', encoding='utf-8') as stream:
         json.dump(out, stream, indent=1)
     print(json.dumps(out))
+    # The report is written and kept before any nonzero exit.
+    if strict_udim and out["strict_udim"]["exit"]:
+        print(f"strict UDIM: {out['strict_udim']['result']}: {out['strict_udim']['reason']}", file=sys.stderr)
+        raise SystemExit(out["strict_udim"]["exit"])
+    if out["ground_selection"]["status"] != "selected":
+        print(f"no single Ground surface: {out['ground_selection']['status']}", file=sys.stderr)
+        raise SystemExit(1)
 
 
 def render(fbx, out_dir, rep):
@@ -389,8 +429,8 @@ if args[0] == "build":
         raise SystemExit(f"refused: {exc}")
     build(*_rest, profile=_profile)
 elif args[0] == "readback":
-    readback(*args[1:])
+    readback(*[a for a in args[1:] if a != "--strict-udim"], strict_udim="--strict-udim" in args[1:])
 elif args[0] == "render":
     render(*args[1:4])
 else:
-    raise SystemExit("usage: build <json> <fbx> <Address> | readback <fbx> <json> <report> [px lo hi] | render <fbx> <dir> <report>")
+    raise SystemExit("usage: build <json> <fbx> <Address> | readback <fbx> <json> <report> [px lo hi] [--strict-udim] | render <fbx> <dir> <report>")
