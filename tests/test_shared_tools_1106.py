@@ -298,7 +298,8 @@ def test_package_keeps_matching_staged_png_and_non_png_member(tmp_path, malforme
     (tex / decoy).write_bytes(b'different address with a common prefix')
     if malformed:
         (tex / malformed).write_bytes(b'local malformed map name')
-    staged = 'T_Nku_1_Diffuse_1.1002.png'
+    # Use a distinct UDIM so the name-case probe doesn't alias this file on Windows.
+    staged = 'T_Nku_1_Diffuse_1.1003.png'
     (pkg / staged).write_bytes(b'local staged map')
     non_png = 'T_Other_Diffuse_1.1002.txt'
     (pkg / non_png).write_bytes(b'unrelated non-PNG member')
