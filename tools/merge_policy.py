@@ -150,6 +150,11 @@ def _rule_hits(rule: dict, pr: dict, files: list[str], text: str, ctx: dict) -> 
         if lines <= ctx["max_lines"] or not any(e.startswith("paths: ") for e in ev):
             return []
         ev.append(f"{lines} changed lines > {ctx['max_lines']}")
+    if ev and rule.get("exempt_text"):  # D432 (#2071): a trainer A/B receipt / bug-fix marker in the PR lifts it
+        pr_text = "\n".join([pr.get("title") or "", pr.get("body") or ""])
+        if _text_hits(rule["exempt_text"], pr_text):
+            return []
+        ev.append("no trainer A/B receipt or 'regression test only' marker in the PR title/body")
     return ev
 
 
