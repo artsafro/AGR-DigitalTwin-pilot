@@ -511,11 +511,17 @@ _END = r"""(?=[/\s"')|;&]|$)"""
 _BANK = f"{_KEYS_PARENT}/bank{_END}"
 _EVIDENCE_BANK = f"agr-evidence/{_BANK}"
 # Anchor drive aliases at token start, not inside paths such as C:/g/notes.txt.
+_PATH_START = r"""(?:^|[\s"'(,=;|&])(?:-[\w-]+:)?"""
+_FILESYSTEM_PROVIDER = r"(?:(?:microsoft\.powershell\.core/)?filesystem::)?"
+# Preserve the network/device introducer before _norm folds doubled backslashes.
+_NETWORK_PREFIX = re.compile(
+    rf"({_PATH_START}(?:(?:microsoft\.powershell\.core[/\\]+)?filesystem::)?)[/\\]{{2,}}", re.IGNORECASE
+)
 # Windows g: also matches drive-relative paths; only the rooted bank path is known safe.
 _DRIVE_ROOT = (
-    r"""(?:^|[\s"'(,=;|&])(?:-[\w-]+:)?"""
-    r"(?:(?:(?:microsoft\.powershell\.core/)?filesystem::)?(?://?\?/)?g:"
-    rf"|/(?:cygdrive/|mnt/)?g{_END})"
+    rf"{_PATH_START}(?:{_FILESYSTEM_PROVIDER}(?:"
+    rf"(?://[?.]/|/\?/)?g:|//(?:[?.]/unc/)?[\w.-]+/g\${_END})"
+    rf"|/(?:(?:proc/)?cygdrive/|mnt/)?g{_END})"
 )
 _PARENT_NOT_BANK = re.compile(
     rf"{_DRIVE_ROOT}(?!/мой диск/{_EVIDENCE_BANK})"
@@ -527,7 +533,7 @@ _DOTDOT = re.compile(r"(?:agr-evidence|1855-trainer-v0)/[^\s\"']*(?:^|/)\.\.(?:/
 
 
 def _reads_key(cmd, marks):
-    c = _norm(cmd)
+    c = _norm(_NETWORK_PREFIX.sub(r"\1//", cmd))
     if any(m in c for m in marks):
         return True
     if _PARENT_NOT_BANK.search(c) or _DOTDOT.search(c):
