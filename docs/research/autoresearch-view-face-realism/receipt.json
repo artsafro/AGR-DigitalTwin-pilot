@@ -1,0 +1,72 @@
+{
+ "card": "t_1ad521cd (#159)",
+ "full_views": 11,
+ "invariance_reverse_changed": 0,
+ "metric1_inside_envelope": 1,
+ "metric1_inside_truth": 0,
+ "metric2": {
+  "A_all": {
+   "0.95": {
+    "abstain": 13,
+    "correct": 0,
+    "wrong": 0
+   },
+   "1.0": {
+    "abstain": 13,
+    "correct": 0,
+    "wrong": 0
+   },
+   "1.05": {
+    "abstain": 13,
+    "correct": 0,
+    "wrong": 0
+   }
+  },
+  "A_ground": {
+   "0.95": {
+    "abstain": 13,
+    "correct": 0,
+    "wrong": 0
+   },
+   "1.0": {
+    "abstain": 13,
+    "correct": 0,
+    "wrong": 0
+   },
+   "1.05": {
+    "abstain": 13,
+    "correct": 0,
+    "wrong": 0
+   }
+  }
+ },
+ "pins": {
+  "elv_fixture.json": "b1b892b914d034beda0b28c00da733403af2c5c516410bf4745062cf60f75940",
+  "elv_pdf": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+  "elv_walls": "ac816566965b9ed863a0e82cec65e07e3c6575eb957869947aa7557e8215dca8",
+  "olimpijsky_fixture.json": "8d4689d2dcdd7ec72d9e965b8e552c8fc4fe6656999205a2ff9abf2a66252518",
+  "olimpijsky_pdf": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0",
+  "olimpijsky_walls": "3d9e8b9224c774e4ea6643861ef62ed00153e9e43b8307dbf912e978cddc93c6",
+  "r145_run.py": "49d852790d062298766882449948e3adf4c708dd6b82e774caa5f8efc399e2f0",
+  "r157_score.py": "42d08c6af2a0d53655e0c89475782966a1f93b25fce7625f754b60cbff826b89"
+ },
+ "scored_views": 13,
+ "verdict": "REFUTED",
+ "walls_with_windows": {
+  "elv": 16,
+  "olimpijsky": 33
+ },
+ "window_counts_from_views": "not_measured",
+ "witness_ground_self": {
+  "elv": {
+   "abstain": 0,
+   "correct_self": 1,
+   "wrong": 0
+  },
+  "olimpijsky": {
+   "abstain": 0,
+   "correct_self": 1,
+   "wrong": 0
+  }
+ }
+}

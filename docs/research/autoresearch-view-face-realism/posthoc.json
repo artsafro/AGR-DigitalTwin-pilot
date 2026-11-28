@@ -1,0 +1,245 @@
+{
+ "pins": {
+  "elv": "111818b894a73ad34c562b72efe470660db669207b6071c5d1e392a2cf25c9ab",
+  "olimpijsky": "66105de78c7b5ecdaed5015a47ca4937ab35e130485c50de6a467cc580630a7a"
+ },
+ "extents": {
+  "elv": {
+   "0": [
+    55.3,
+    19.4
+   ],
+   "90": [
+    88.7,
+    19.4
+   ],
+   "180": [
+    55.3,
+    19.4
+   ],
+   "270": [
+    88.7,
+    19.4
+   ]
+  },
+  "olimpijsky": {
+   "0": [
+    60.8,
+    50.8
+   ],
+   "90": [
+    147.2,
+    50.8
+   ],
+   "180": [
+    60.8,
+    50.8
+   ],
+   "270": [
+    147.2,
+    50.8
+   ]
+  }
+ },
+ "inside": {
+  "full": 0,
+  "full_n": 11
+ },
+ "rows": [
+  {
+   "view": "elv p18 I-A",
+   "kind": "full",
+   "drawn": [
+    54.423,
+    17.523
+   ],
+   "silhouette": [
+    55.3,
+    19.4
+   ],
+   "dW": -0.88,
+   "dH": -1.88,
+   "inside": false
+  },
+  {
+   "view": "elv p18 1-10",
+   "kind": "full",
+   "drawn": [
+    88.515,
+    16.623
+   ],
+   "silhouette": [
+    88.7,
+    19.4
+   ],
+   "dW": -0.19,
+   "dH": -2.78,
+   "inside": false
+  },
+  {
+   "view": "elv p19 10-1",
+   "kind": "full",
+   "drawn": [
+    88.502,
+    16.42
+   ],
+   "silhouette": [
+    88.7,
+    19.4
+   ],
+   "dW": -0.2,
+   "dH": -2.98,
+   "inside": false
+  },
+  {
+   "view": "elv p19 A-I",
+   "kind": "full",
+   "drawn": [
+    54.713,
+    17.141
+   ],
+   "silhouette": [
+    55.3,
+    19.4
+   ],
+   "dW": -0.59,
+   "dH": -2.26,
+   "inside": false
+  },
+  {
+   "view": "elv p19 6-1",
+   "kind": "full",
+   "drawn": [
+    52.156,
+    15.588
+   ],
+   "silhouette": [
+    88.7,
+    19.4
+   ],
+   "dW": -36.54,
+   "dH": -3.81,
+   "inside": false
+  },
+  {
+   "view": "elv p21 I-A",
+   "kind": "full",
+   "drawn": [
+    54.423,
+    17.091
+   ],
+   "silhouette": [
+    55.3,
+    19.4
+   ],
+   "dW": -0.88,
+   "dH": -2.31,
+   "inside": false
+  },
+  {
+   "view": "elv p21 1-12",
+   "kind": "full",
+   "drawn": [
+    88.097,
+    16.055
+   ],
+   "silhouette": [
+    88.7,
+    19.4
+   ],
+   "dW": -0.6,
+   "dH": -3.34,
+   "inside": false
+  },
+  {
+   "view": "elv p23 frag D-G",
+   "kind": "fragment",
+   "drawn": [
+    20.175,
+    15.95
+   ],
+   "silhouette": [
+    55.3,
+    19.4
+   ],
+   "dW": -35.12,
+   "dH": -3.45,
+   "inside": false
+  },
+  {
+   "view": "elv p24 frag 8-9",
+   "kind": "fragment",
+   "drawn": [
+    14.802,
+    16.038
+   ],
+   "silhouette": [
+    88.7,
+    19.4
+   ],
+   "dW": -73.9,
+   "dH": -3.36,
+   "inside": false
+  },
+  {
+   "view": "olimpijsky p5 228.8-86.8",
+   "kind": "full",
+   "drawn": [
+    151.258,
+    43.305
+   ],
+   "silhouette": [
+    147.2,
+    50.8
+   ],
+   "dW": 4.06,
+   "dH": -7.49,
+   "inside": false
+  },
+  {
+   "view": "olimpijsky p6 86.8-228.8",
+   "kind": "full",
+   "drawn": [
+    156.758,
+    47.655
+   ],
+   "silhouette": [
+    147.2,
+    50.8
+   ],
+   "dW": 9.56,
+   "dH": -3.14,
+   "inside": false
+  },
+  {
+   "view": "olimpijsky p7 952.9-890",
+   "kind": "full",
+   "drawn": [
+    72.873,
+    45.375
+   ],
+   "silhouette": [
+    60.8,
+    50.8
+   ],
+   "dW": 12.07,
+   "dH": -5.42,
+   "inside": false
+  },
+  {
+   "view": "olimpijsky p8 890-952.9",
+   "kind": "full",
+   "drawn": [
+    69.812,
+    47.229
+   ],
+   "silhouette": [
+    60.8,
+    50.8
+   ],
+   "dW": 9.01,
+   "dH": -3.57,
+   "inside": false
+  }
+ ]
+}
