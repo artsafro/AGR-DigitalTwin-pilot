@@ -2,7 +2,22 @@
 
 ## Кратко для Артёма
 
-_(заполняется после измерения)_
+**H169: ОПРОВЕРГНУТА по замороженному критерию 2** (прогон завершён, OBSERVE, в продакшн ничего не внесено).
+
+Отказ от опоры на одну подпись чертежа (`pv.size < 2`) сделал то, ради чего вводился, и лучше прогноза:
+- ложный ответ на зеркальном фрагменте `p20 frag 9-10` (`W12`) исчез — теперь «не знаю»; уверенно-неверных 2 → 1;
+- чистые виды: 0 неверных, все 10 пустых видов — «не знаю», `p18 I-A` по-прежнему `W08`;
+- из 1020 оценок «вид×стена×состояние» изменились ровно 3, все три были 1.0 от опоры с одной подписью;
+- покрытие полных видов **не упало** (3/7; я предсказывал 2/7): `p19 6-1` по-прежнему верно отвечает `W16`,
+  теперь с честной оценкой 0.891 от опоры с ≥2 подписями.
+
+Почему всё же «опровергнута»: замороженная проверка 2 требовала, чтобы победитель `p19 6-1` имел опору ≥2 подписей
+в старой оценке D или исчез; победа сохранилась, а опора в D — одна подпись. Задним числом критерий не меняю.
+Остаток: зеркало `p24 frag 8-9` → `W16` (5 подписей) — это вопрос «лево/право», а не опоры; ожидался.
+
+Рекомендация для шага «вид↔фасад»: отказ от одноподписной опоры в D — кандидат в обязательную защиту (без
+порогов, трогает только вырожденные оценки), но только после отдельного подтверждающего прогона с заранее
+записанным правильным критерием (победитель D' с опорой ≥2 или «не знаю»). Следующая цель — проверка зеркала для `p24`.
 
 ## Frozen contract (written before the runner and before any score)
 
@@ -55,12 +70,38 @@ deselecting tests; opening Sokolniki outputs; rescoring the #168 dump as stabili
 
 ```
 git fetch origin research/autoresearch-standing-161 research/autoresearch-standing-162 research/autoresearch-standing-163 research/autoresearch-standing-165 research/autoresearch-standing-166 research/autoresearch-standing-167 research/autoresearch-standing-168
-uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-support/run.py C:/x/ar169/<fresh>
+uv run --offline --locked --extra pdf-review python docs/research/autoresearch-view-face-support/run.py tmp/ar169-NEW
 ```
+
+The output directory must sit two levels below the repo root (`tmp/<name>`): the pinned #161–#168 modules derive
+`REPO` from it (setup failures R1/R2 below).
 
 Pinned blobs: #168 `run.py` (71fe3bd5, SHA-256 `1aa51f79…01ef`), `label_tail.py` (`800f8de0…9cfb`), #149
 `score.py` (ef84ca41, `4a125268…ed24`). Replay is limited to a host with the #145 named-folder inputs and Blender 4.4.
 
 ## Result
 
-_(after measurement)_
+Run R4 (R1/R2: setup failures, output dir outside `tmp/`; R3: Blender stalled during the board pause, 1500 s
+timeout, no output). `measured_head` 61dce544 (the runner is unchanged by the result commit), three fresh pairs,
+wall 469.161 / 501.543 / 408.538 s, median 469.161 s, spread 93.005 s, elapsed 1380.6 s < 2100 s, status `finished`.
+Parity: A `04f67ea6…` and F `9355a8c7…` reproduced in all 3 pairs; F' payload byte-identical
+`a371dff9ad1a73a288e05817ccf6f33ce246013e62dfbd9579ba2773ec9f2923` ×3; 1020 scores logged per pair.
+Receipt: `docs/research/autoresearch-view-face-support/receipt.json` SHA-256
+`000cd2d15c6a69d0a0d5dfd23645e254124916eda71206b02246db336dbfa7c2`.
+
+| check (frozen) | result |
+|---|---|
+| 1 `p20 frag 9-10` mirror not `W12` | pass (abstain) |
+| 2 `p19 6-1` clean: degenerate win gone | **fail** — still `W16`; D' 0.891 (≥2 labels by construction), D support 1 label |
+| 3 `p18 I-A` keeps `W08` | pass |
+| 4 clean wrong 0 / blanks 10/10 abstain | pass / pass |
+| 5 primary confident-wrong F' ≤ 1 | pass (F 2 -> F' 1; residual `p24 frag 8-9` mirror `W16`) |
+| 6 changed scores only from one-label supports | pass (3 changed, all D = 1.0, 1 label) |
+
+Changed per-wall scores (D -> D'): `p19 6-1` clean W16 1.0 -> 0.891; `p19 6-1` mirror W16 1.0 -> 0.878;
+`p20 frag 9-10` mirror W12 1.0 -> 0.895. Fused tally F -> F' (correct/wrong/abstain): clean full 3/0/4 and clean
+fragments 1/0/2 unchanged; mirror full 3/0/4 unchanged; mirror fragments 1/2/0 -> 1/1/1; blanks 0/0/7 + 0/0/3 both.
+
+Outcome: **refuted** on frozen check 2. The prediction was wrong in the favourable direction (coverage kept, loss
+predicted), and check 2 was coded against D's support rather than D''s; not re-labelled post hoc. Not measured:
+any album other than ELV; independent physical-wall truth (side-level oracle only); Sokolniki (held out, #2001 open).
