@@ -1,0 +1,19 @@
+{
+ "merged_prs": [
+  {"number": 2086, "title": "Preserve verified Ground FBX placement through UCX and binding (#1922)", "mergedAt": "2026-11-27T10:00:00Z", "labels": []},
+  {"number": 2072, "title": "Trainer: user proxy and stage-task sets (#2066)", "mergedAt": "2026-11-28T02:00:00Z", "labels": []},
+  {"number": 2061, "title": "UCX method variants", "mergedAt": "2026-11-25T02:00:00Z", "labels": []},
+  {"number": 1985, "title": "MAF catalogue drafts for Moskovsky", "mergedAt": "2026-11-24T02:00:00Z", "labels": []},
+  {"number": 1500, "title": "Flora opacity readback OLD", "mergedAt": "2026-11-10T02:00:00Z", "labels": []}
+ ],
+ "open_prs": [
+  {"number": 2092, "title": "UCX: cut and validate a local passage in frozen collision (#2051)", "labels": [], "isDraft": false},
+  {"number": 2084, "title": "Ground FBX readback: select the surface independently of UCX", "labels": [], "isDraft": false}
+ ],
+ "open_issues": [
+  {"number": 1509, "title": "Manual mode: doors by opening sizes from a door library", "labels": [{"name": "roadmap"}, {"name": "waits-artem"}], "body": "x"},
+  {"number": 1948, "title": "Ground: expose conflicting UDIM seam results in the OBJ build report", "labels": [{"name": "parked"}], "body": "text\n\n## Blocked by\n- #1944\n"},
+  {"number": 1808, "title": "MAF context map: separate showcase", "labels": [{"name": "parked"}], "body": "Parked: Max is busy until the Staropetrovsky session.\n"},
+  {"number": 2094, "title": "Ground placement: measure height in scene coordinates", "labels": [{"name": "ready-for-agent"}], "body": "x"}
+ ]
+}

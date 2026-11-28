@@ -415,6 +415,8 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 | D435 | 2026-11-27 | Stair UCX: only the truncated pyramid of the requirements [R14]; Codex's sloped body per flight with railing shells (#2042 K27, case 19) is not a separate accepted form. | `docs/domain/areas/ucx.md` (R14), #2050 | Artem 2026-11-27 ~20:15 voice (#2050) «на лестницах делается только пирамида усеченная, это по требованиям, поэтому да, это так» |
 | D436 | 2026-11-27 | UCX convexity tolerance 1 mm: a body whose vertices stand at most 1 mm outside its face planes counts as convex in the checks (`twinqa` V010, `agr ucx` gap check); the builders keep their own 0.1 mm post-check. | `docs/domain/areas/ucx.md` (R06), `src/twinqa/geometry/ucx_audit.py`, `src/dt_ai/geometry/ucx_command.py`, #2050 | Artem 2026-11-27 ~20:15 voice (#2050) «Допуск выпуклости, да, можно оставить» (question Q4: «Нужен ли допуск, например 1 мм?») |
 | D437 | 2026-11-27 | UCX gap stays [D098] 2 mm - 1 cm with the [D339] gap-band report; Codex's 0.2 mm lower bound / 6 mm nominal (#2042 K4) is not adopted. | `docs/domain/areas/ucx.md` (R10), #2050 | Artem 2026-11-27 ~20:15 voice (#2050) «Да, зазор, да, также» |
+| D438 | 2026-11-28 | Sokolniki NPM delivery does not require UCX or GeoJSON without a separate customer specification. Their absence is not a package defect; Ground, placement and geometry gates are unchanged. | `jobs/sokolniki-uvk1000/README.md`, `tools/qa/validate_package.py`, #2098 | Artem 2026-11-28 ~10:20 «Принимаю рекомендации» ([pilot #2098][sokolniki-v002-source], card t_46bb341d) |
+| D439 | 2026-11-28 | Sokolniki: snap the body seam offsets only in the diagnostic delivery FBX copy (maximum vertex move 1 mm). Do not rebuild or edit the accepted body v006 or assembly v009 [D409], or treat the seam repair as approval to change the residual V001/V003/V004 issues. | `jobs/sokolniki-uvk1000/README.md`, #2098 | Artem 2026-11-28 ~10:20 «Принимаю рекомендации» ([pilot #2098][sokolniki-v002-source], card t_46bb341d) |
 
 [passport-scope-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1207#issuecomment-6783203728
 
@@ -422,3 +424,5 @@ frozen fixtures (`tests/fixtures/` and `evals/*/fixtures/`) carry no id, for Mar
 [ground-gap-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/295#issuecomment-6274902891
 [agr-tools-090-acceptance-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1506#issuecomment-6915458337
 [package-route-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/1673#issuecomment-6974056175
+
+[sokolniki-v002-source]: https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/2098

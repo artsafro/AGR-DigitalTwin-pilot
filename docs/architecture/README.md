@@ -220,6 +220,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | cases/staropetrovskiy-npm-planters-v008 | [cases/staropetrovskiy-npm-planters-v008.md](../cases/staropetrovskiy-npm-planters-v008.md) |  |
 | ci/runner-setup | [ci/runner-setup.md](../ci/runner-setup.md) |  |
 | decisions-detail | [decisions-detail.md](../decisions-detail.md) |  |
+| deliveries/sokolniki-npm-v002-2026-11-28 | [deliveries/sokolniki-npm-v002-2026-11-28.md](../deliveries/sokolniki-npm-v002-2026-11-28.md) |  |
 | deliveries/vatutino-ground-2026-10-20 | [deliveries/vatutino-ground-2026-10-20.md](../deliveries/vatutino-ground-2026-10-20.md) |  |
 | deliveries/vatutino-site-2026-11-09 | [deliveries/vatutino-site-2026-11-09.md](../deliveries/vatutino-site-2026-11-09.md) |  |
 | deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21 | [deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md](../deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md) |  |
@@ -535,6 +536,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/vatutino-ground-v015-outer-skirt-gap-20-edges | [research/vatutino-ground-v015-outer-skirt-gap-20-edges.md](../research/vatutino-ground-v015-outer-skirt-gap-20-edges.md) |  |
 | research/vpm-course-grid-1314 | [research/vpm-course-grid-1314.md](../research/vpm-course-grid-1314.md) |  |
 | research/xview-parity-ground-v014 | [research/xview-parity-ground-v014.md](../research/xview-parity-ground-v014.md) |  |
+| roadmap-ru-status-page | [ROADMAP.ru.md](../ROADMAP.ru.md) |  |
 | retros/2026-10-22-tec26-colouring-claude | [retros/2026-10-22-tec26-colouring-claude.md](../retros/2026-10-22-tec26-colouring-claude.md) |  |
 | retros/2026-11-05-elv-tc-vpm-claude | [retros/2026-11-05-elv-tc-vpm-claude.md](../retros/2026-11-05-elv-tc-vpm-claude.md) |  |
 | retros/2026-11-05-sessions-retro-04-05 | [retros/2026-11-05-sessions-retro-04-05.md](../retros/2026-11-05-sessions-retro-04-05.md) |  |

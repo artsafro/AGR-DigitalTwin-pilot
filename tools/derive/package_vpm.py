@@ -102,6 +102,12 @@ def main(argv=None):
     stem = f"SM_{A}"
     if not os.path.isfile(os.path.join(pkg, f"{stem}.fbx")):
         raise ValueError(f"{stem}.fbx missing in {pkg}")
+    pkg_names = sorted(os.listdir(pkg))
+    # Match the full package stem (including a Ground suffix), not a filename prefix.
+    for name in pkg_names:
+        if (match := package_core.VPM_TEX.fullmatch(name)) and match['stem'] != A:
+            raise ValueError(f"foreign VPM texture {name}: expected texture stem T_{A}")
+
     zpath = os.path.join(pkg, "..", f"{stem}.zip")
     rpath = zpath + ".delivery.json"  # per archive, never a parent-wide report (#1682)
     gpath = os.path.join(pkg, f"{stem}.geojson")
@@ -116,14 +122,21 @@ def main(argv=None):
     obj = load_object(a.object) if a.object else None
     heights = obj["placement"].heights(meta["h_otn_model_max_z_m"]) if not a.no_geojson else None
 
-    pngs = [f for f in sorted(os.listdir(tex)) if f.startswith(f"T_{A}_") and f.endswith(".png")]
+    pngs = []
+    for name in sorted(os.listdir(tex)):
+        match = package_core.VPM_TEX.fullmatch(name)
+        if match:
+            if match['stem'] == A:
+                pngs.append(name)
+        elif name.startswith(f'T_{A}_') and name.endswith('.png'):
+            # Preserve the legacy local candidates so V007 can diagnose malformed names.
+            pngs.append(name)
     if not pngs:
         raise ValueError(f"no T_{A}_*.png textures in {tex}")
     for target in [gpath, *(os.path.join(pkg, f) for f in pngs)]:
         if os.path.lexists(target):
             raise FileExistsError(f"output {target} already exists; choose a new version")
 
-    pkg_names = sorted(os.listdir(pkg))
     table_names = {*package_core.GROUND_UDIM_FILES, *(n + '.partial' for n in package_core.GROUND_UDIM_FILES)}
     skipped_tables = [{'item': f, 'reason': 'Ground UDIM tables are package sidecars, not ZIP members'}
                       for f in pkg_names if f.casefold() in table_names]
