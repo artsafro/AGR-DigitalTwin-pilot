@@ -36,6 +36,10 @@ def blob(rev, path):
     return subprocess.check_output(['git', 'show', f'{rev}:{path}'])
 
 
+def row_parity(live, published):
+    return json.loads(json.dumps(live, allow_nan=False)) == published
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('out', type=Path)
@@ -72,13 +76,15 @@ def main():
     rays, = (p for p in pins if p.suffix == '.npz')
     states = prev['STATES']
     walls, payloads = [], []
+    result_a, result_b, counts = [], [], {}
     started = perf_counter()
     for i in range(3):
         if i and perf_counter() - started + 1.2 * walls[0] * (3 - i) > BUDGET:
             break
         t0 = perf_counter()
         result_a = prev['measure'](args.evidence_root, rays, linework, views, key, fixture, marks)
-        if encode(result_a) != encode(reference['rows']):
+        if not row_parity(result_a, reference['rows']):
+            (args.out / 'baseline-mismatch.json').write_bytes(encode(result_a))
             raise ValueError('A row parity with #154 failed')
         counts = {}
 
