@@ -22,15 +22,15 @@
 <rect x="580" y="782.5" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="580" y="872.5" width="230" height="296.25" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="860" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
-<rect x="850" y="170" width="230" height="190.0" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="810" y1="225.0" x2="850" y2="265.0" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<rect x="850" y="170" width="230" height="168.75" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
+<line x1="810" y1="225.0" x2="850" y2="254.38" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="850" y="582.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e" stroke-dasharray="6 4"/>
 <rect x="850" y="702.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="850" y="782.5" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
 <rect x="850" y="872.5" width="230" height="312.5" rx="8" fill="#ffc9c9" stroke="#1e1e1e"/>
 <rect x="1130" y="100" width="210" height="57.5" rx="8" fill="#fff3bf" stroke="#1e1e1e"/>
 <rect x="1120" y="170" width="230" height="126.25" rx="8" fill="#ffc078" stroke="#1e1e1e"/>
-<line x1="1080" y1="265.0" x2="1120" y2="233.12" stroke="#1e1e1e" marker-end="url(#arrow)"/>
+<line x1="1080" y1="254.38" x2="1120" y2="233.13" stroke="#1e1e1e" marker-end="url(#arrow)"/>
 <rect x="1120" y="582.5" width="230" height="90" rx="8" fill="#a5d8ff" stroke="#1e1e1e"/>
 <rect x="1120" y="702.5" width="230" height="60" rx="8" fill="#d0bfff" stroke="#1e1e1e"/>
 <rect x="1120" y="782.5" width="230" height="72.5" rx="8" fill="#e9ecef" stroke="#1e1e1e"/>
@@ -226,9 +226,8 @@
 <tspan x="965.0" dy="18.75">AGR Tools</tspan>
 </text>
 <text x="965.0" y="180.0" font-size="17" text-anchor="middle" fill="#1e1e1e">
-<tspan x="965.0" dy="17">4. Плоский Ground до</tspan>
-<tspan x="965.0" dy="21.25">рельефа: швы и</tspan>
-<tspan x="965.0" dy="21.25">вставки, преобладают</tspan>
+<tspan x="965.0" dy="17">4. Плоский Ground: швы</tspan>
+<tspan x="965.0" dy="21.25">и вставки, преобладают</tspan>
 <tspan x="965.0" dy="21.25">квады, треугольники</tspan>
 <tspan x="965.0" dy="21.25">только где неизбежны;</tspan>
 <tspan x="965.0" dy="21.25">размер квадов по</tspan>
@@ -779,12 +778,12 @@
 <tspan x="3665.0" dy="21.25">предварительный СИНТЕЗ</tspan>
 <tspan x="3665.0" dy="21.25">→ ручная приёмка</tspan>
 <tspan x="3665.0" dy="21.25">Артёма → финальный</tspan>
-<tspan x="3665.0" dy="21.25">СИНТЕЗ. Целевое</tspan>
+<tspan x="3665.0" dy="21.25">СИНТЕЗ; целевое</tspan>
 <tspan x="3665.0" dy="21.25">требование — тот же</tspan>
 <tspan x="3665.0" dy="21.25">вход, что у validate;</tspan>
-<tspan x="3665.0" dy="21.25">отчёты независимые,</tspan>
-<tspan x="3665.0" dy="21.25">без взаимной сверки</tspan>
-<tspan x="3665.0" dy="21.25">хешей и автоматической</tspan>
+<tspan x="3665.0" dy="21.25">независимые отчёты без</tspan>
+<tspan x="3665.0" dy="21.25">взаимной сверки хешей</tspan>
+<tspan x="3665.0" dy="21.25">и автоматической</tspan>
 <tspan x="3665.0" dy="21.25">передачи между этапами</tspan>
 </text>
 <text x="3665.0" y="610.0" font-size="14" text-anchor="middle" fill="#1e1e1e">

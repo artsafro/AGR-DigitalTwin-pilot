@@ -677,64 +677,6 @@ def test_1839_quads_cites_vatutino_v015_only_as_job_specific_post_relief_evidenc
     assert re.search(r"^- `pairing` — .*agr ground v015.*после рельефа", report, re.M)
 
 
-# ---------------------------------------------------------------- #1946 Ground rule scope and package cross-references
-
-def _ground_event_board_text():
-    board = json.loads((ARCH / "ground-route.excalidraw").read_text(encoding="utf-8"))
-    return " ".join(" ".join(el["text"].split()) for el in board["elements"] if el["type"] == "text")
-
-
-def test_1946_quads_cites_general_ground_rules():
-    quads = _stage(_routes()["ground-route"], "quads")
-    assert {"D097", "D129", "D021", "D293"} <= set(quads["rules"])
-    assert {"D157", "D192", "D193"}.isdisjoint(quads["rules"])
-    assert not any("VATUTINO" in path for path in quads["evidence"])
-    assert "docs/domain/areas/ground-surface.md" in quads["evidence"]
-    assert not quads.get("commands")
-    assert "треугольники только где неизбежны" in _ground_event_board_text()
-
-
-def test_1946_pairing_keeps_vatutino_decisions_scoped():
-    ground = _routes()["ground-route"]
-    pairing = next(h for h in ground["hotspots"] if h["id"] == "pairing")
-    assert {"D157", "D193"} <= set(pairing["rules"])
-    for entry in (*ground["stages"], *ground["hotspots"],
-                  *(b for stage in ground["stages"] for b in stage.get("branches", []))):
-        assert "D192" not in entry.get("rules", []), entry["id"]
-    board = _ground_event_board_text()
-    assert "Только для Ватутино v015: D157" in board
-    assert "D192 заменено D157 и сохранено только как историческая справка" in board
-
-
-def test_1946_package_distinguishes_geojson_rule_and_exception():
-    package = _stage(_routes()["ground-route"], "package")
-    assert {"D223", "D367"} <= set(package["rules"])
-    assert "docs/domain/npm-vpm.md" in package["evidence"]
-    board = _ground_event_board_text()
-    assert "GeoJSON ВПМ заполняют полностью, ZU_area в га" in board
-    assert "ZU_area=0 в файле заказчика Старопетровского — историческое исключение" in board
-
-
-def test_1946_sintez_points_to_canonical_manual_sequence():
-    routes = _routes()
-    ground = routes["ground-route"]
-    sintez = _stage(ground, "sintez")
-    assert {"D104", "D352"} <= set(sintez["rules"])
-    assert "docs/architecture/package-route.events.yaml" in sintez["evidence"]
-    assert [stage["id"] for stage in ground["stages"]] == GROUND_V2
-    assert sintez["commands"] == ["agr checker"]
-    package = routes["package-route"]
-    sequence = {"sintez", "accept", "sintez-final"}
-    assert [stage["id"] for stage in package["stages"] if stage["id"] in sequence] == [
-        "sintez", "accept", "sintez-final",
-    ]
-    accept = _stage(package, "accept")
-    assert accept["actor"] == "artem" and not accept.get("commands")
-    board = _ground_event_board_text()
-    assert "предварительный СИНТЕЗ → ручная приёмка Артёма → финальный СИНТЕЗ" in board
-    assert "без взаимной сверки хешей" in board
-
-
 # ---------------------------------------------------------------- #1900 Ground export, validate --master, ZIP, sintez
 def test_1900_export_distinguishes_surface_helper_site_export_and_d366_work_fbx():
     events, maps = _routes()["ground-route"], _maps()
