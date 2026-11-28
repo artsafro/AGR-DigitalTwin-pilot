@@ -241,6 +241,46 @@ def test_classify_no_card_small_pr_goes_to_artem(monkeypatch, capsys):
     assert row["failed_preconditions"] == [{"id": "card_checked", "reason": "card not checked"}]
 
 
+def test_backtest_separates_card_unknown_from_lane_comparisons(tmp_path, monkeypatch, capsys):
+    prs = [pr(number=n) for n in (1, 2, 3)]
+    prs += [pr(number=n, headRefName=f"fix/red-main-{n}") for n in (4, 5, 6)]
+    # Both historical lanes (and missing records), with and without the card gate.
+    (tmp_path / "manual_merge_redfix_batch.json").write_text('{"merged": [2, 4]}', encoding="utf-8")
+    (tmp_path / "manual_merge_human_batch.json").write_text('{"merged": [1, 5]}', encoding="utf-8")
+    monkeypatch.setattr(mp, "KANBAN_KPI", tmp_path)
+    monkeypatch.setattr(mp, "gh_json", lambda *args: prs)
+
+    assert mp.main(["backtest", "--json"]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert (report["agreement_pct"], report["known"]) == (50, 2)
+    assert report["card_unknown"] == 3
+    assert [
+        (r["pr"], r["rule"], r["actual"], r["card_unknown"], r["agree"]) for r in report["rows"]
+    ] == [
+        (1, "small_pr", "artem", True, None),
+        (2, "small_pr", "auto", True, None),
+        (3, "small_pr", "unknown", True, None),
+        (4, "red_main_fix", "auto", False, True),
+        (5, "red_main_fix", "artem", False, False),
+        (6, "red_main_fix", "unknown", False, None),
+    ]
+
+    assert mp.main(["backtest"]) == 0
+    output = capsys.readouterr().out
+    assert "agreement: 50% of 2 comparable PRs" in output
+    assert "card-unknown: 3 PR(s) excluded from agreement" in output
+    assert sum(line.endswith("| card-unknown |") for line in output.splitlines()) == 3
+
+
+def test_backtest_reports_no_agreement_without_comparable_rows(tmp_path, monkeypatch, capsys):
+    (tmp_path / "manual_merge_human_batch.json").write_text('{"merged": [1]}', encoding="utf-8")
+    monkeypatch.setattr(mp, "KANBAN_KPI", tmp_path)
+    monkeypatch.setattr(mp, "gh_json", lambda *args: [pr()])
+
+    assert mp.main(["backtest"]) == 0
+    assert "agreement: n/a (no comparable PRs)" in capsys.readouterr().out
+
+
 def test_observe_appends_jsonl_outside_repo(tmp_path):
     log = tmp_path / "obs" / "decisions.jsonl"
     rows = mp.observe([pr(), pr(number=2, baseRefName="feat/x")], log_path=log, policy=mp.load_policy(),
