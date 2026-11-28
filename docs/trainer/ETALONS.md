@@ -255,3 +255,90 @@ moskovsky — 7. Текст задачи называет `ask.py` и не на�
 Где ломается. До геометрии не доходит ни один прогон (0 из 3): правила требуют подтвердить PartsList и первый
 модуль, а в тренировке подтверждать некому. Это первый пробел, и его закрывает режим тренажёра, а не правка модели.
 Автооценка уже отличает каждую принятую версию от каждой отклонённой (5 из 5 пар).
+
+## #2067: non-blind A/D smoke test
+
+Twelve scheduled slots (two dev tasks × A/D × three repeats). Snapshot `1c2f297b3753960d14eeb8b8bbd8c18be27e646a`, Codex CLI 0.160.1, `gpt-6.1-terra` high and a 900 s session limit; one session at a time. A used the common prompt; D added only decision-authority rules. Each run received verified source copies, a fresh scrubbed archive and the same task-specific User Proxy. Pair order was fixed within each task (G22: A then D; KPP1: D then A). The host could still expose the evaluation material. No evaluator scores, B/C runs or holdout runs.
+
+Slots 01–04 survived the host interruption. The first attempt of slot 05 had no terminal receipt and is kept separately; only 05–12 were launched after the pause. The resumed prompts explicitly forbade 3ds Max in any mode in both arms; no Max invocation was seen in the captured command log.
+
+### A vs D: scheduled slots only
+
+| Metric | A | D |
+| --- | --- | --- |
+| 1. `missing_source_data` | 3 | 3 |
+| 2. `customer_decision` | 0 | 0 |
+| 3. `irreversible_sanction` | 0 | 0 |
+| 4. `answer_in_repo` | 0 | 0 |
+| 5. `allowed_technical_choice` | 0 | 0 |
+| 6. `tool_broken` | 3 | 3 |
+| 7. `instructions_contradict` | 0 | 0 |
+| 8. `unclassified` | 0 | 0 |
+| Human interventions | 0 | 0 |
+| Proxy attempts | 3 | 3 |
+| Proxy answers | 0 | 0 |
+| Proxy unresolved | 3 | 3 |
+| Completed shell operations | 162 | 176 |
+| Repeated operations | 1 | 0 |
+| Failed operations | 38 | 35 |
+| Session error events | 0 | 0 |
+| Session wall (s) | 1,676.10 | 837.49 |
+| Timeouts | 0 | 0 |
+| Sessions with token receipt | 6 | 6 |
+| `input_tokens` (known only) | 7,683,605 | 5,599,604 |
+| `cached_input_tokens` (known only) | 7,273,344 | 5,262,976 |
+| `output_tokens` (known only) | 29,443 | 25,929 |
+| Actual billed USD | Unavailable | Unavailable |
+| Illustrative USD (known tokens, no cache discount) | 39.30 | 28.78 |
+| Slots with bank/key audit hits | 0 | 0 |
+
+### Per-run receipts
+
+| Slot | Mode | Task | Repeat | Exit | Wall (s) | Input / cached / output tokens | Stops (class:count) | Human | Proxy attempts / answered / unresolved | Repeated / failed operations / session errors | Key/bank audit |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 01-A | non-blind | `g22-k2-stage1` | 1 | 0 | 152.88 | 899,964 / 847,872 / 4,201 | 1:1 | 0 | 1 / 0 / 1 | 0 / 4 / 0 | No hits |
+| 02-D | non-blind | `g22-k2-stage1` | 1 | 0 | 120.88 | 690,042 / 633,856 / 3,784 | 1:1 | 0 | 1 / 0 / 1 | 0 / 6 / 0 | No hits |
+| 03-D | non-blind | `kpp1-ucx-v004` | 1 | 0 | 120.19 | 740,811 / 696,704 / 3,494 | 6:1 | 0 | 0 / 0 / 0 | 0 / 5 / 0 | No hits |
+| 04-A | non-blind | `kpp1-ucx-v004` | 1 | 0 | 837.67 | 2,496,763 / 2,433,792 / 5,219 | 6:1 | 0 | 0 / 0 / 0 | 0 / 9 / 0 | No hits |
+| 05-D | non-blind | `kpp1-ucx-v004` | 2 | 0 | 199.42 | 1,644,584 / 1,571,584 / 5,687 | 6:1 | 0 | 0 / 0 / 0 | 0 / 10 / 0 | No hits |
+| 06-A | non-blind | `kpp1-ucx-v004` | 2 | 0 | 276.44 | 1,692,590 / 1,635,968 / 6,900 | 6:1 | 0 | 0 / 0 / 0 | 0 / 8 / 0 | No hits |
+| 07-A | non-blind | `g22-k2-stage1` | 2 | 0 | 100.83 | 509,595 / 460,672 / 2,977 | 1:1 | 0 | 1 / 0 / 1 | 0 / 6 / 0 | No hits |
+| 08-D | non-blind | `g22-k2-stage1` | 2 | 0 | 104.28 | 622,623 / 567,808 / 3,598 | 1:1 | 0 | 1 / 0 / 1 | 0 / 4 / 0 | No hits |
+| 09-A | non-blind | `g22-k2-stage1` | 3 | 0 | 94.90 | 585,253 / 533,632 / 3,247 | 1:1 | 0 | 1 / 0 / 1 | 1 / 4 / 0 | No hits |
+| 10-D | non-blind | `g22-k2-stage1` | 3 | 0 | 101.88 | 589,758 / 540,160 / 3,260 | 1:1 | 0 | 1 / 0 / 1 | 0 / 3 / 0 | No hits |
+| 11-D | non-blind | `kpp1-ucx-v004` | 3 | 0 | 190.84 | 1,311,786 / 1,252,864 / 6,106 | 6:1 | 0 | 0 / 0 / 0 | 0 / 7 / 0 | No hits |
+| 12-A | non-blind | `kpp1-ucx-v004` | 3 | 0 | 213.38 | 1,499,440 / 1,361,408 / 6,899 | 6:1 | 0 | 0 / 0 / 0 | 0 / 7 / 0 | No hits |
+| 05-D first attempt (partial) | non-blind | `kpp1-ucx-v004` | 2 | Interrupted | Unknown | Unknown | 0 | 0 | 0 / 0 / 0 | 0 / 10 / 0 | No hits |
+
+The first attempt of slot 05 is excluded from the A/D aggregates. Its recorded operations are a lower bound. Its duration, incurred tokens and billed cost are unknown; they are not zeros. The two driver clocks recorded 1,913.34 s through slot 04 and 1,469.48 s for resumed slots 05–12, including preparation. The first clock does not include the interrupted attempt or the pause.
+
+Stops are observed proxy questions and distinct blocking reasons in `QUESTIONS.md` or the final response, excluding gate acknowledgements and duplicate notes. A proxy lookup is counted once as an intervention attempt even when it returns `UNRESOLVED`; no human answered sessions. Class 8 is an extra unclassified bucket, not an eighth stop class. Repeats are exact completed shell command strings after the first occurrence in that session; this does not imply avoidable work. Failed operations use item status/exit code; provider error events and timeouts are separate.
+
+Token usage comes from completed-turn Codex receipts. Cached input is part of input, not additional usage. ChatGPT login exposed no billing receipt. Illustrative USD uses $5 per million input and $30 per million output tokens at full input price; it is not a bill or a spend ceiling.
+
+Read audit: command/tool arguments at start and completion were matched with trainer `_reads_key` (including Drive aliases) plus known key/bank identifiers. A hit is an argument witness, not proof of a successful read; no hit is not proof of isolation. Raw transcripts and private input paths are not reproduced.
+
+<details>
+<summary>Source log SHA-256 and stop review adjustments</summary>
+
+| Slot | Codex JSONL SHA-256 | Stop review adjustments |
+| --- | --- | --- |
+| 01-A | `7e201ecab137e867ac26c704cf0e82adb44994de716dc7ece53eea62a27c5aaf` | — |
+| 02-D | `539922407799f6d84a9bc915d224715cb00d23d296971281c77a78feb4972dee` | — |
+| 03-D | `0754300e740a8d6a92f38dae7b43ea4bed98db76912f77c6a0f5dffc04c2e26d` | — |
+| 04-A | `35af434df6d63e5c37c35902a0a408349f0434115ff7e1411b51b10f6bf8ec5a` | +1 `tool_broken`: The final response reports the failed export and recovery timeout; the stop did not reach QUESTIONS.md. |
+| 05-D | `a054eeee71bdcb58d5cb585c43d1401ba0ab1e4baf9839df05e1dbbf84b34d93` | -1 `tool_broken`: The second note lists unverified checks; it does not record a separate tool failure or escalation. |
+| 06-A | `1eee630b0ab3b024d178579796ee9525bb1f2dc9d9143bd6c794bf0794a6a02c` | -1 `tool_broken`: The second note is a QA observation, not a separate unrecovered tool failure.; -1 `tool_broken`: The third note restates unavailable validation and lists unverified checks without a distinct operational stop. |
+| 07-A | `eda45d59f567b2214933bf693de8b3d243ed34e3f85a355c8255a293c9d5cbb0` | — |
+| 08-D | `d46ce4660b9441c5c48a2e4ed5490a1c8ef44ca2c02fed6183b8feea2839a9cd` | — |
+| 09-A | `da898ecfabed85442f43f28a627d6d2d8e59edb8b2bbb377ae2df97b78fc3f96` | — |
+| 10-D | `da7e8e6a4436648b29d3b0437ecfbd9d4b043cf932bbae2f08739a31a882d05e` | — |
+| 11-D | `ee5c3c4adbb322812167dbc4325441e05e09903a9a3aa4a83679ad6ba37c99d5` | +1 `tool_broken`: The stop is present in the final response and in a structured note with a literal backtick-n prefix. |
+| 12-A | `09e552060a4baece7c039adc905ba34261df04659c7c87bd5f173c34a476a5f1` | -1 `tool_broken`: The second note lists unverified checks and does not record a separate unrecovered operation. |
+| 05-D first attempt | `010dd852ea6d6fb7e084b75e81aa38e6b62ff7482c0bd13a4efd9c2884b13322` | Incomplete |
+
+</details>
+
+### Итог и рекомендация
+
+Остановки G22 по отсутствию исходных данных: A 3, D 3; остановки KPP1 по сбою инструмента: A 3, D 3. На один прогон 04-A пришлось 837.67 с; разницу общего времени не следует переносить на следующие задачи. Эта серия показывает, где прогоны останавливались, а не качество моделей или причинный эффект D. Перед расширением стоит проверить, что `agr ucx` запускает полный набор проверок в окружении builder, и взять для рабочего сравнения задачу с подтверждённо полными входами. Выбор B/C и запуск holdout — только после отдельного решения; для оценки качества нужна проверенная изоляция.
