@@ -3,7 +3,7 @@
     blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py -- \\
         <model.fbx|.blend> <out.fbx> <Main|Ground> [key=value ...]
 
-Keys: cell, gap, min_cell, tol, depth (metres), budget=fit|form (Main; [D427]: fit grows the cell toward the
+Keys: cell, gap, min_cell, tol, depth (metres), budget=fit|form (Main; [D433]: fit grows the cell toward the
 [D012] budget, form keeps the cell; over budget is reported, never refused), object=<target object name> (default: the one
 `SM_<Address>_Main` / `SM_<Address>_Ground` mesh), with=<extra object names, comma separated, merged into
 the Main input, e.g. the MainGlass; every name must exist, else the build fails before any export>.
@@ -93,7 +93,7 @@ def _parse(argv):
                 return None, f"{k} must be a number"
         elif k in opts:
             return None, f"option {k!r} given twice"
-        elif k == "budget":  # [D427]: fit (grow the cell toward D012, default) | form (keep the cell); Main only
+        elif k == "budget":  # [D433]: fit (grow the cell toward D012, default) | form (keep the cell); Main only
             if "budget_mode" in opts:
                 return None, "option 'budget' given twice"
             if argv[2] != "Main" or val not in ub.BUDGET_MODES:
@@ -142,7 +142,7 @@ def main():
             bpy.ops.wm.open_mainfile(filepath=str(src))
         else:
             bpy.ops.wm.read_factory_settings(use_empty=True)
-            bpy.ops.import_scene.fbx(filepath=str(src))
+            bpy.ops.import_scene.fbx(filepath=str(src), use_image_search=False)
         meshes = [o for o in bpy.context.scene.objects if o.type == "MESH"]
         all_ucx = [o for o in meshes if o.name.upper().startswith("UCX")]
         model = [o for o in meshes if o not in all_ucx]
@@ -162,7 +162,7 @@ def main():
         kept_tris = sum(len(o.data.loop_triangles) for o in kept_ucx)
         report.update({"kept_ucx": keep, "kept_ucx_triangles": kept_tris,
                        "file_ucx_limit_D012": ub.ucx_triangle_limit(model_tris)})
-        # [D012] is a whole-file limit: kept UCX are reserved; over it is reported, never refused [D427]
+        # [D012] is a whole-file limit: kept UCX are reserved; over it is reported, never refused [D433]
         for o in old_ucx:
             bpy.data.objects.remove(o, do_unlink=True)
         objs, res = build_into_scene([main_obj] + extra, address, target, model_triangles=model_tris,

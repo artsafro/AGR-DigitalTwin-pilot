@@ -126,7 +126,7 @@ def test_main_names_pass_scene_grammar():
 
 def test_budget_grows_cell_and_fails_closed():
     """SYNTHETIC: 1 300 separate 0.6 m cubes need 1 300 boxes > 1 250 (15 000 tris) at cell 0.3. Over the 999-piece
-    cap is still a refusal; over the budget alone is reported, never refused [D427] (#2050)."""
+    cap is still a refusal; over the budget alone is reported, never refused [D433] (#2050)."""
     cubes = [box_mesh((2 * i, 2 * j, 0), (2 * i + 0.6, 2 * j + 0.6, 0.6)) for i in range(26) for j in range(50)]
     v, t = union(*cubes)
     with pytest.raises(ub.UcxBuildError, match="999 pieces"):
@@ -503,7 +503,7 @@ def two_cubes():
 @pytest.mark.parametrize("reserved,ok", [(2508, False), (2487, False), (2486, True), (2485, True), (0, True)])
 def test_main_reserved_triangles_enforce_file_budget(reserved, ok):
     """Reviewer input: 50 200 model tris -> limit 2510; kept Ground+Main UCX 2508 leave no room for 24.
-    [D427] (#2050): no room is reported as over_budget_by, never refused."""
+    [D433] (#2050): no room is reported as over_budget_by, never refused."""
     v, t = two_cubes()
     assert ub.ucx_triangle_limit(50200) == 2510
     res = ub.build_main(v, t, model_triangles=50200, reserved_triangles=reserved)
@@ -518,7 +518,7 @@ def test_ground_reserved_triangles_enforce_file_budget():
     need = free.triangles
     at = ub.build_ground(v, t, model_triangles=50200, reserved_triangles=2510 - need)
     assert at.triangles == need and at.budget == need and at.over_budget_by == 0
-    over = ub.build_ground(v, t, model_triangles=50200, reserved_triangles=2510 - need + 1)  # [D427]: reported
+    over = ub.build_ground(v, t, model_triangles=50200, reserved_triangles=2510 - need + 1)  # [D433]: reported
     assert over.triangles == need and over.over_budget_by == 1
 
 
@@ -537,7 +537,7 @@ def test_file_budget_available(model, kept, avail):
 
 @pytest.mark.parametrize("model,kept", [(50200, 2499), (50200, 2510), (50200, 2511), (100, 15001)])
 def test_file_budget_no_room_is_reported_not_refused(model, kept):
-    """[D427] (#2050): no room left for a box is a number (< 12, may be negative), not a refusal."""
+    """[D433] (#2050): no room left for a box is a number (< 12, may be negative), not a refusal."""
     assert ub.file_budget_available(model, kept) == ub.ucx_triangle_limit(model) - kept
 
 
@@ -546,14 +546,14 @@ def test_file_budget_no_room_is_reported_not_refused(model, kept):
 def test_check_file_budget(model, total, ok):
     rep = ub.check_file_budget(model, total)
     assert rep["within_D012"] is ok and rep["over_by"] == max(0, total - ub.ucx_triangle_limit(model))
-    assert ("allowed by [D427]" in rep["line"]) is not ok
+    assert ("allowed by [D433]" in rep["line"]) is not ok
 
 
 @pytest.mark.parametrize("target", ["Main", "Ground"])
 @pytest.mark.parametrize("order", [1, -1])
 def test_scoped_replace_with_budget_combined(target, order):
     """Reviewer scene: 208 kept Ground boxes + 1 Main box; a Main rebuild may not discard Ground UCX
-    and is over budget (reported [D427]); a Ground rebuild keeps the Main box and reserves its 12 tris."""
+    and is over budget (reported [D433]); a Ground rebuild keeps the Main box and reserves its 12 tris."""
     model = ["SM_X_Main", "SM_X_MainGlass", "SM_X_Ground"][::order]
     ucx = ([f"UCX_SM_X_Ground_{i:03d}" for i in range(1, 209)] + ["UCX_SM_X_Main_001"])[::order]
     main, extra, _ = ub.select_inputs(model, target, with_=["SM_X_MainGlass"] if target == "Main" else None)

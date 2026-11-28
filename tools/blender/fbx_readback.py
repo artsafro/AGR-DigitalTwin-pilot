@@ -21,28 +21,40 @@ from pathlib import Path
 
 import bpy
 
+ROOT = Path(__file__).resolve().parents[2]
 _TOPOLOGY = None
+_UCX = None
+
+
+def _load_module(name, path):
+    spec = importlib.util.spec_from_file_location(name, ROOT / path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"cannot load {name} from {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def _topology_module():
     """Load the regulatory counter by path. Blender runs this file as a script, not a package."""
     global _TOPOLOGY
     if _TOPOLOGY is None:
-        path = Path(__file__).resolve().parents[2] / "src" / "twinqa" / "geometry" / "topology.py"
-        spec = importlib.util.spec_from_file_location("regulatory_topology", path)
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        _TOPOLOGY = module
+        _TOPOLOGY = _load_module("regulatory_topology", "src/twinqa/geometry/topology.py")
     return _TOPOLOGY
-ROOT = Path(__file__).resolve().parents[2]
-_spec = importlib.util.spec_from_file_location("maf_surface", ROOT / "src/twinqa/geometry/maf_surface.py")
-_maf = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_maf)
-surface_facts = _maf.surface_facts
+
+
+def _ucx_module():
+    global _UCX
+    if _UCX is None:
+        _UCX = _load_module("ucx_audit", "src/twinqa/geometry/ucx_audit.py")
+    return _UCX
+
+
+surface_facts = _load_module("maf_surface", "src/twinqa/geometry/maf_surface.py").surface_facts
 
 args = sys.argv[sys.argv.index("--") + 1:]
-if len(args) != 2:
-    raise SystemExit("usage: ... -- <model.fbx> <report.json>")
+if len(args) < 2 or args[2:] not in ([], ["--observe-passages"]):
+    raise SystemExit("usage: ... -- <model.fbx> <report.json> [--observe-passages]")
 source, out = Path(args[0]).resolve(), Path(args[1])
 if out.resolve() == source or out.exists() or out.is_symlink():
     raise FileExistsError(f"readback report path must be new and distinct from the input: {out}")
@@ -179,6 +191,7 @@ def mesh_facts(obj):
     if obj.name.upper().startswith("UCX_"):
         facts["hull"] = {"verts": [[float(p[i]) for i in range(3)] for p in world],
                          "tris": [[int(i) for i in tri.vertices] for tri in mesh.loop_triangles]}
+        facts["body_count"] = _ucx_module().body_count(facts["hull"])
     return facts
 
 
@@ -251,7 +264,7 @@ def baked_transforms(meshes, path):
         return
     bpy.ops.wm.read_factory_settings(use_empty=True)
     light_import_compat()
-    bpy.ops.import_scene.fbx(filepath=str(path), bake_space_transform=True)
+    bpy.ops.import_scene.fbx(filepath=str(path), bake_space_transform=True, use_image_search=False)
     baked = {o.name: o for o in bpy.context.scene.objects if o.type == "MESH"}
     for m in meshes:
         o = baked.get(m["name"])
@@ -263,7 +276,7 @@ report = {"source": str(source), "readback_ok": False, "blender": bpy.app.versio
 try:
     bpy.ops.wm.read_factory_settings(use_empty=True)
     report["compat"] = light_import_compat()
-    bpy.ops.import_scene.fbx(filepath=str(source))
+    bpy.ops.import_scene.fbx(filepath=str(source), use_image_search=False)
     for obj in bpy.context.scene.objects:
         if obj.type == "MESH":
             report["meshes"].append(mesh_facts(obj))
@@ -271,6 +284,12 @@ try:
             report["other_objects"].append({"name": obj.name, "type": obj.type})
     report["images"] = image_facts()
     report["materials"] = material_facts()
+    if args[2:]:
+        try:
+            passages = _load_module("ucx_passages", "tools/blender/ucx_passages.py")
+            report["passages"] = passages.observe([o for o in bpy.context.scene.objects if o.type == "MESH"])
+        except Exception as exc:
+            report["passages"] = {"status": "not_measured", "reason": f"{type(exc).__name__}: {exc}"}
     baked_transforms(report["meshes"], source)
     lights_only = (not report["meshes"] and bool(report["other_objects"])
                    and all(o["type"] in LIGHT_TYPES for o in report["other_objects"]))

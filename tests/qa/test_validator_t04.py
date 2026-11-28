@@ -224,5 +224,7 @@ def test_readback_log_goes_to_twinqa_log_dir_not_cwd(monkeypatch, tmp_path):
 def test_readback_restores_the_cycles_flag_and_accepts_lights_only_fbx():
     src = (ROOT / "tools/blender/fbx_readback.py").read_text(encoding="utf-8")
     assert "def light_import_compat" in src and "cast_shadow" in src
-    assert src.index("light_import_compat()") < src.index("bpy.ops.import_scene.fbx(filepath=str(source))")
+    assert src.index("light_import_compat()", src.index('report = {"source"')) < src.index(
+        "bpy.ops.import_scene.fbx(filepath=str(source)"
+    )
     assert "lights_only" in src

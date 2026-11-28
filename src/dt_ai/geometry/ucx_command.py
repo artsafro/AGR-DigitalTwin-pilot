@@ -28,7 +28,7 @@ the model -> UCX distance [D134] (`OUT.ucx_resolve.json`); steps 2-4 then run on
 Writes OUT (FBX), `OUT.ucx_build.json` (driver) and `OUT.agr_ucx.json` (this command). Never overwrites: OUT and
 both reports must not exist, must not alias MODEL and must differ from each other; the model is never written.
 Exit 0 every step passed; 1 built and read back but a check failed (gap, V010 fail, Ground tolerance; the V010 budget
-finding and the [D012] budget are reported as `budget_D012`, never a failure [D427]); 2 build or
+finding and the [D012] budget are reported as `budget_D012`, never a failure [D433]); 2 build or
 readback failed; 4 refused before any write.
 """
 from __future__ import annotations
@@ -46,7 +46,7 @@ TARGETS = ("Main", "Ground")
 ROLE = {"Main": "oks", "Ground": "ground"}
 RESOLVE_DRIVER = ROOT / "tools" / "blender" / "ucx_resolve.py"
 RESOLVE_GAP_M = 0.003  # the retro's working gap (elv-tc-vpm v008), inside [D098]
-# [D427]: in `agr ucx` the V010 budget finding is the reported `budget_D012` line, not a failed check; the delivery
+# [D433]: in `agr ucx` the V010 budget finding is the reported `budget_D012` line, not a failed check; the delivery
 # validator keeps it (the final file fits by raising render-mesh triangles, e.g. `dt_ai.ops.densify`).
 V010_BUDGET = "UCX triangle budget"
 USAGE = ("usage: agr ucx MODEL OUT Main|Ground [key=value ...] [--blender EXE] [--gap-m M]\n"
@@ -146,7 +146,7 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
     `gap_bands`; a band never fails the check, and a cross-family pair under gap_m is a `warnings` entry only."""
     core = _ucx10()
     opts = core.gap_options({"gap_m": gap_m})
-    from twinqa.geometry.ucx_audit import CONVEX_TOL_M  # [D430] 1 mm
+    from twinqa.geometry.ucx_audit import CONVEX_TOL_M  # [D436] 1 mm
 
     hull_core = core._hull_core()
     rows, dropped, near_convex = [], [], []
@@ -164,7 +164,7 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
         except ValueError:
             chk = None  # the core reports it as a finding below
         if chk and not chk["convex"] and chk["closed"] and not chk["zero_area"] and chk["worst"] <= CONVEX_TOL_M:
-            # [D430] (#2050): within 1 mm of its face planes the body counts as convex; the frozen AGR Tools core
+            # [D436] (#2050): within 1 mm of its face planes the body counts as convex; the frozen AGR Tools core
             # [D393] keeps 0.1 mm, so its gaps are measured on the hull of its vertices (at most 1 mm larger)
             near_convex.append({"name": m["name"], "worst_m": round(chk["worst"], 6)})
             verts, tris = (list(map(list, x)) for x in hull_core._convex_hull(verts))
@@ -190,8 +190,8 @@ def gap_check(meshes: list[dict], gap_m: float) -> dict:
             "gap_rule": "D339 observe: bands are reported, no refusal by gap size",
             "gap_reach_m": census["reach_m"], "gap_bands": census["bands"], "gap_pairs": census["pairs"],
             "warnings": census["warnings"], "gap_not_measured": census["not_measured"],
-            "convex_rule": "D430: within 1 mm of its face planes counts as convex",
-            "convex_within_D430": near_convex}
+            "convex_rule": "D436: within 1 mm of its face planes counts as convex",
+            "convex_within_D436": near_convex}
 
 
 def _v010(rb: dict, target: str) -> list[dict]:
@@ -210,7 +210,7 @@ RESOLVE_KEYS = ("gap_m", "pairs_resolved", "pairs_ambiguous", "left", "pairs", "
 
 
 def budget_d012(model_triangles, ucx_triangles) -> dict:
-    """The file's [D012] budget as a report line, never a refusal or a failed check [D427] (#2050)."""
+    """The file's [D012] budget as a report line, never a refusal or a failed check [D433] (#2050)."""
     from twinqa.geometry.ucx_audit import d012_budget_report
 
     if not all(isinstance(n, int) and not isinstance(n, bool) and n >= 0 for n in (model_triangles, ucx_triangles)):
@@ -240,7 +240,7 @@ def _resolve(a: dict, report: dict):
                                           "log": str(log)}
             return 2, None
     ok = (rep.get("ok") is True and rep.get("pairs_ambiguous") == 0 and not rep.get("left")
-          and rep.get("within_D134") is True)  # [D012] is reported, never a failure [D427]
+          and rep.get("within_D134") is True)  # [D012] is reported, never a failure [D433]
     report["steps"]["resolve"] = {"ok": ok, "exit": code, "report": str(a["build_report"]),
                                   **{k: rep.get(k) for k in RESOLVE_KEYS}}
     report["budget_D012"] = budget_d012(rep.get("model_triangles_excl_ucx"), rep.get("ucx_triangles"))
@@ -287,12 +287,16 @@ def run(a: dict) -> tuple[int, dict]:
 
 def _check(a: dict, report: dict, build: dict, readback, first: dict) -> tuple[int, dict]:
     """Steps 2-4 on OUT: a fresh readback, the ucx10_core gap check and V010."""
-    rb = readback(a["out"], a["blender"])
+    observe = a["target"] == "Main"
+    options = {"observe_passages": True} if observe else {}
+    rb = readback(a["out"], a["blender"], **options)
     if not rb.get("readback_ok"):
         report["steps"]["readback"] = {"ok": False, "error": rb.get("error", "readback failed")}
         return 2, report
     ucx = [m for m in rb["meshes"] if str(m.get("name", "")).upper().startswith("UCX_")]
     report["steps"]["readback"] = {"ok": True, "meshes": len(rb["meshes"]), "ucx": len(ucx)}
+    if observe:
+        report["steps"]["passages"] = rb.get("passages", {"status": "not_measured", "reason": "no readback data"})
     gap_m = a["gap_m"] if a["gap_m"] is not None else build.get("gap_m")
     if gap_m is None:
         report["steps"]["gap_check"] = {"ok": False, "error": "no --gap-m and no gap_m in the build report"}

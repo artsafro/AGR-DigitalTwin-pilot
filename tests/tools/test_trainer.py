@@ -25,8 +25,11 @@ def test_bank_lists_every_named_object_and_is_valid():
                  "sokolniki-body-v005", "vatutino-ground-v015", "tec26-ac08"):
         assert want in ids
     ready = [e for e in b["etalons"] if e["practice_ready"]]
-    assert {e["id"] for e in ready} == {"kpp1-v004", "g22-k2-stage1", "63a-stage1"}
-    assert all(e["split"] == "tuning" for e in ready)
+    assert {e["id"] for e in ready} == {"kpp1-v004", "g22-k2-stage1", "63a-stage1", "kpp1-ucx-v004",
+                                        "moskovsky-ground-v002"}
+    # #2066: a held_out etalon is practice-ready only as the stage set's final holdout check.
+    holdouts = {t["id"] for t in b["stage_tasks"]["tasks"] if t["set"] == "holdout"}
+    assert all(e["split"] == "tuning" or e["id"] in holdouts for e in ready)
     assert any(e["split"] == "held_out" and e["status"] == "complete" for e in b["etalons"])
 
 
@@ -700,6 +703,11 @@ def test_holdout_audit_fails_recursive_reads_above_evidence(tmp_path, cmd):
     pytest.param("gci -r G:roof", id="drive-relative"),
     pytest.param("rg roof /cygdrive/g/", id="cygwin-root"),
     pytest.param("rg roof /mnt/g", id="wsl-root"),
+    pytest.param(r"gci -r \\.\G:" + "\\", id="win32-device-root"),
+    pytest.param(r"gci -r \\localhost\G$" + "\\", id="unc-admin-share"),
+    pytest.param(r"gci -r \\?\UNC\localhost\G$" + "\\", id="extended-unc-admin-share"),
+    pytest.param("rg roof /proc/cygdrive/g/", id="proc-cygdrive-root"),
+    pytest.param(r"gci -r \\.\UNC\localhost\G$" + "\\", id="device-unc-admin-share"),
 ])
 def test_holdout_audit_fails_drive_alias_reads(tmp_path, cmd):
     _assert_holdout_read(tmp_path, cmd)
@@ -708,6 +716,7 @@ def test_holdout_audit_fails_drive_alias_reads(tmp_path, cmd):
 @pytest.mark.parametrize("alias", [
     "FileSystem::G:", "Microsoft.PowerShell.Core\\fIlEsYsTeM::g:",
     "-LiteralPath:FileSystem::G:", "G:", "/cygdrive/g", "/MNT/G",
+    r"\\.\G:", r"\\localhost\G$", r"\\?\UNC\localhost\G$", "/proc/cygdrive/g", r"\\.\UNC\localhost\G$",
 ])
 def test_holdout_audit_distinguishes_alias_reads_from_direct_bank_paths(tmp_path, alias):
     bank_path = "/Мой диск/AGR-evidence/1855-trainer-v0/bank"
@@ -715,6 +724,26 @@ def test_holdout_audit_distinguishes_alias_reads_from_direct_bank_paths(tmp_path
     clean = [f'rg roof "{alias}{suffix}"' for suffix in (bank_path, bank_path + "/README.md")]
     run = _run_dir(tmp_path, clean + refused + clean)
     assert T.key_dir_reads(run) == refused
+
+
+def test_holdout_audit_empty_transcript_has_no_drive_alias_reads(tmp_path):
+    assert T.key_dir_reads(_run_dir(tmp_path, [])) == []
+
+
+def test_holdout_audit_drive_alias_spelling_matrix(tmp_path):
+    roots = ["//./G:", "//localhost/G$", "//?/UNC/localhost/G$", "/proc/cygdrive/g", "//./UNC/localhost/G$"]
+    bank_path = "/Мой диск/AGR-evidence/1855-trainer-v0/bank/README.md"
+    commands, flagged = [], []
+    for root in roots:
+        for spell in (str.lower, str.upper):
+            for sep in ("/", "\\"):
+                for quote in ("", '"'):
+                    denied = spell(root + "/").replace("/", sep)
+                    allowed = spell(root + bank_path).replace("/", sep)
+                    flagged.append(f"rg roof {quote}{denied}{quote}")
+                    commands.extend((flagged[-1], f'rg roof "{allowed}"'))
+    assert T.key_dir_reads(_run_dir(tmp_path / "forward", commands)) == flagged
+    assert T.key_dir_reads(_run_dir(tmp_path / "reverse", commands[::-1])) == flagged[::-1]
 
 
 def _assert_holdout_read(tmp_path, cmd):
@@ -740,6 +769,9 @@ def test_holdout_audit_passes_a_clean_transcript_and_skips_a_non_run(tmp_path):
                               "rg roof C:/workspace", "rg roof docs/log:/notes.txt",
                               "gci -r FileSystem::C:\\", "rg roof C:/mnt/g/notes.txt",
                               "rg roof /mnt/c", "rg roof /cygdrive/gg", "rg roof /mnt/g-drive",
+                              "gci -r //localhost/C$/", "gci -r //localhost/G$-backup/", "gci -r /localhost/G$/",
+                              "rg roof /proc/cygdrive/gg", "rg roof C:/proc/cygdrive/g/notes.txt",
+                              "rg roof C://localhost/G$/notes.txt",
                               "git log -g", "rg -g '*.py' .",
                               "python tools/trainer/kit.py --keep-going"])
     assert T.key_dir_reads(run) == []

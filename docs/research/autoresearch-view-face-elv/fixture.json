@@ -1,0 +1,31 @@
+{
+ "schema": "view-face-elv-fixture/1",
+ "card": "t_6c816f20 (#145)",
+ "note": "Frozen before scoring. ELV TC Sreda (jobs/elv-tc-vpm): AGR booklet PDF (vector) + Revit 2023 FBX. GT = facade title convention (left axis -> right axis seen from outside) mapped to the model frame by the roof ray-cast footprint: axes 1..12 run west->east along +X (axis 12 = east wall with the rounded entrance recess, p23 plan fragment), axes A..I run north->south (I = south: p20 section B-B and p24 plan fragment put axis I on the 1-12 facade). az = outward normal azimuth, 0 = +X east, 90 = +Y north. Titles, axis bubbles, dimension chains and level marks are outside the boxes; axis-label positions are used ONLY for the drawing scale (pt per m), never for the face.",
+ "inputs": {
+  "pdf": {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/ЭЛВ_ИД_АГР_45-4-25-С_Буклет АГР от 27.01.2025 (1) (1).pdf", "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"},
+  "fbx": {"path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/00900-МСК-ЭЛВ-ГП1-Р-АР_building (1).fbx", "sha256": "7ccf502d9dc1494daa885e650dd8b2b7e261c7b90b262ee157c188ec3a78b961"}
+ },
+ "upstream": {
+  "rays.py": {"rev": "38f7d95ee54a677ac744c0148fb1fce33b06d9d3", "path": "docs/research/autoresearch-view-face-harness/rays.py"},
+  "score.py": {"rev": "ab33b7e4249f41232501d0c05534bd2793a15358", "path": "docs/research/autoresearch-view-face-2d/score.py"}
+ },
+ "rays_change": "only change to upstream rays.py: also skip mesh objects whose world max z > 30 m (one stray Revit batten at z 166 m, x 96 m; building top 16.4 m). Frozen before scoring.",
+ "res_m": 0.1,
+ "faces_az": [0, 90, 180, 270],
+ "decision": {"min_score": 0.30, "tau_margin": 0.10, "width_slack_m": 0.6, "tall_m": 2.0},
+ "segment_filter": "PDF drawing items (lines, rect edges, curve/quad chords) fully inside the box; keep only segments within 2 deg of horizontal or vertical and longer than 0.05 m (drops glass hatch, rhomb callouts, letter curves).",
+ "partials": {"synthetic": true, "fractions": [0.25, 0.4, 0.6], "positions": [0.0, 0.5, 1.0]},
+ "views": {
+  "p18 I-A":   {"page": 18, "box_pt": [362, 44, 880, 228],  "scale": ["И", "А", 52.6, [255, 280]], "gt_az": 0,   "kind": "full"},
+  "p18 1-10":  {"page": 18, "box_pt": [148, 320, 989, 480], "scale": ["1", "12", 84.0, [515, 530]], "gt_az": 270, "kind": "full"},
+  "p19 10-1":  {"page": 19, "box_pt": [204, 64, 1042, 222], "scale": ["12", "1", 84.0, [258, 272]], "gt_az": 90,  "kind": "full"},
+  "p19 A-I":   {"page": 19, "box_pt": [96, 300, 616, 466],  "scale": ["А", "И", 52.6, [498, 515]], "gt_az": 180, "kind": "full"},
+  "p19 6-1":   {"page": 19, "box_pt": [626, 316, 1122, 466], "scale": ["8", "1", 50.355, [498, 512]], "gt_az": 90, "kind": "full", "x_min_label_pt": 620},
+  "p21 I-A":   {"page": 21, "box_pt": [354, 90, 870, 254],  "scale": ["И", "А", 52.6, [300, 316]], "gt_az": 0,   "kind": "full"},
+  "p21 1-12":  {"page": 21, "box_pt": [164, 420, 998, 574], "scale": ["1", "12", 84.0, [618, 630]], "gt_az": 270, "kind": "full"},
+  "p23 frag D-G": {"page": 23, "box_pt": [98, 112, 674, 572], "scale": ["Д", "Г", 8.4, [645, 660]], "gt_az": 0, "kind": "fragment"},
+  "p24 frag 8-9": {"page": 24, "box_pt": [136, 116, 558, 574], "scale": ["8", "9", 8.4, [680, 692]], "gt_az": 270, "kind": "fragment", "x_max_label_pt": 600},
+  "p20 frag 9-10": {"page": 20, "box_pt": [300, 120, 632, 446], "scale_levels": ["+2.700", "-0.100", 2.8], "gt_az": 270, "kind": "fragment_top_cut"}
+ }
+}

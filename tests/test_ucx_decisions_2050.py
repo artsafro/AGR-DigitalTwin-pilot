@@ -1,4 +1,4 @@
-"""#2050: UCX decisions of 2026-11-27 (Artem) - budget vs form [D427], convexity tolerance [D430], decision rows,
+"""#2050: UCX decisions of 2026-11-27 (Artem) - budget vs form [D433], convexity tolerance [D436], decision rows,
 Codex etalons in the trainer bank. SYNTHETIC meshes only.
 
 Pattern: n/a | new-case: tests/test_ucx_decisions_2050.py - regressions of the #2050 UCX decisions."""
@@ -17,7 +17,7 @@ from dt_ai.geometry import ucx_command as uc
 from twinqa.geometry import ucx_audit as ua
 
 ROOT = Path(__file__).resolve().parents[1]
-LINE = re.compile(r"over D012 budget by (\d+) tris, allowed by \[D427\] when form needs it")
+LINE = re.compile(r"over D012 budget by (\d+) tris, allowed by \[D433\] when form needs it")
 
 
 def box(x0, x1, y0, y1, z0, z1):
@@ -40,7 +40,7 @@ def two_cubes():
     return np.vstack([a[0], b[0]]), np.vstack([a[1], b[1] + 8])
 
 
-# ---- [D427] budget is a reported number, never a refusal ------------------------------------------------------
+# ---- [D433] budget is a reported number, never a refusal ------------------------------------------------------
 def test_budget_report_over_and_within():
     over = ua.d012_budget_report(50200, 2520)
     assert over["limit_D012"] == 2510 and over["within_D012"] is False and over["over_by"] == 10
@@ -126,7 +126,7 @@ def test_build_report_carries_budget_line(model, tmp_path, monkeypatch):
 
 def test_v010_budget_fail_does_not_fail_agr_ucx(model, tmp_path, monkeypatch):
     """Real Polyani run (cell 0.85, budget=form): every V010 finding passed except 'UCX triangle budget'; in
-    `agr ucx` that one is the reported budget line [D427], any other V010 fail still fails the command."""
+    `agr ucx` that one is the reported budget line [D433], any other V010 fail still fails the command."""
     from dt_ai.core import blender_runner as br
     from twinqa import scene as sc
 
@@ -143,7 +143,7 @@ def test_v010_budget_fail_does_not_fail_agr_ucx(model, tmp_path, monkeypatch):
     assert code == 1
 
 
-# ---- [D430] convexity tolerance 1 mm -------------------------------------------------------------------------
+# ---- [D436] convexity tolerance 1 mm -------------------------------------------------------------------------
 def test_twinqa_convex_tolerance_is_1mm():
     assert ua.CONVEX_TOL_M == pytest.approx(1e-3)
     assert ua.is_convex(*dented_box(0.0004))
@@ -159,20 +159,20 @@ def test_gap_check_counts_within_1mm_as_convex(dent, ok):
     got = uc.gap_check(meshes, GAP)
     assert got["ok"] is ok, got
     if ok:
-        assert [r["name"] for r in got["convex_within_D430"]] == ["UCX_SM_T_Main_001"]
-        assert got["convex_within_D430"][0]["worst_m"] == pytest.approx(2 * dent, abs=2e-5)
+        assert [r["name"] for r in got["convex_within_D436"]] == ["UCX_SM_T_Main_001"]
+        assert got["convex_within_D436"][0]["worst_m"] == pytest.approx(2 * dent, abs=2e-5)
 
 
 # ---- decision rows and the etalon bank -----------------------------------------------------------------------
 def test_decision_rows_and_d012_backlink():
     text = (ROOT / "docs/decisions.md").read_text(encoding="utf-8")
     rows = {m.group(1): m.group(0) for m in re.finditer(r"^\| (D\d+) \|.*$", text, re.M)}
-    for d in ("D427", "D428", "D429", "D430", "D431"):
+    for d in ("D433", "D434", "D435", "D436", "D437"):
         assert d in rows and "2026-11-27" in rows[d]
-    assert "D012" in rows["D427"] and "partly supersede" in rows["D427"]
-    assert "D427" in rows["D012"] and "partly superseded" in rows["D012"]
-    assert "D134" in rows["D428"] and "R14" in rows["D429"] and "1 mm" in rows["D430"]
-    assert "D098" in rows["D431"] and "D339" in rows["D431"]
+    assert "D012" in rows["D433"] and "partly supersede" in rows["D433"]
+    assert "D433" in rows["D012"] and "partly superseded" in rows["D012"]
+    assert "D134" in rows["D434"] and "R14" in rows["D435"] and "1 mm" in rows["D436"]
+    assert "D098" in rows["D437"] and "D339" in rows["D437"]
 
 
 CODEX = {"ucx-codex-02-garibaldi-k2", "ucx-codex-10-polyani", "ucx-codex-06-geo019-slope",

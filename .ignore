@@ -568,6 +568,7 @@
 /docs/qa/archive-diff-1536.md
 /docs/reference/geometry-weld-contracts.md
 /docs/research/.gitattributes
+/docs/research/agent-first-audit-2068.md
 /docs/research/agent-harness-sources-2026-10-14.md
 /docs/research/agent-step-waste-1273/data/board.csv
 /docs/research/agent-step-waste-1273/data/summary.json
@@ -655,6 +656,11 @@
 /docs/research/autoresearch-trainer-artifact-first.md
 /docs/research/autoresearch-trainer-g22-adapter.md
 /docs/research/autoresearch-trainer-tower-id.md
+/docs/research/autoresearch-view-face-elv.md
+/docs/research/autoresearch-view-face-elv/fixture.json
+/docs/research/autoresearch-view-face-elv/posthoc.py
+/docs/research/autoresearch-view-face-elv/receipt.json
+/docs/research/autoresearch-view-face-elv/run.py
 /docs/research/bim-autocad-agr.md
 /docs/research/bim-revit-agr.md
 /docs/research/body-gn-duplicate-introduction-stage.md
@@ -734,7 +740,9 @@
 /docs/research/trainer-tower-id-r87/result.json
 /docs/research/trainer-tower-id-r87/score.py
 /docs/research/trainer-tower-id-r87/series.sh
+/docs/research/ucx-cases-codex-2042.md
 /docs/research/ucx-distance-endpoint-cancellation.md
+/docs/research/ucx-variants-2053.md
 /docs/research/vatutino-ground-footprint-overshoot-6m2.md
 /docs/research/xview-fast-core-production-handoff.md
 /docs/research/zip-member-error-report-boundary.md

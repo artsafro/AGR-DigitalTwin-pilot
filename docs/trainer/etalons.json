@@ -174,6 +174,66 @@
    "evidence": "G:/Мой диск/AGR-evidence/559-tec26-oks-ac08-pilot-v007/, -v010/"
   },
   {
+   "id": "kpp1-ucx-v004",
+   "object": "KPP1 (КПП-1), OKS - UCX of one body",
+   "scenario": "oks-vpm",
+   "status": "complete",
+   "practice_ready": true,
+   "split": "tuning",
+   "target": "ucx",
+   "profile": "vpm",
+   "task": "Object KPP1 (checkpoint building, OKS). The input FBX is the accepted quad master of the building: final geometry, do not change its shape. Build its UCX collision set per the regulation (docs/domain/areas/ucx.md, reg p.36-37) and export the VPM main FBX of the building: the triangulated body meshes plus the UCX_ meshes, same pivot and frame as the master.",
+   "deliverable": "one VPM main FBX (body meshes + UCX_ meshes)",
+   "built_fbx_glob": "*.fbx",
+   "sources": [
+    {"path": "G:/Мой диск/AGR-evidence/1609-kpp1-package-v004/draft-b25/master/SM_Kpp_1.v004-lattice.fbx", "sha256": "f9705f7487b4e89131ae932224e86bc82952a768aeb6b508ee33e5938d1adbb8", "role": "accepted quad master v004 [D379] (input body)"}
+   ],
+   "key": {"path": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/kpp1-ucx-v004/SM_Kpp_1.vpm-ucx-key.fbx", "sha256": "46c6cc0449c004ea4481cb1cf92d13d2b1738506ebc2d38c84a324d85fc5ad23", "accepted": "Artem 2026-11-24 «Принимаю рекомендации» (#1817, [D382]): VPM package draft-b25-r1, its main FBX member extracted byte-equal (bank/kpp1-ucx-v004/PROVENANCE.txt)"},
+   "rejected": [],
+   "dcc_only_steps": ["UCX review in Max 2026 (manual)"],
+   "hidden_repo_paths": ["jobs/KPP1", "docs/methods/ucx-collisions"],
+   "evidence": "G:/Мой диск/AGR-evidence/1855-trainer-v0/bank/kpp1-ucx-v004/ (SHA256SUMS.txt in bank/)",
+   "proxy_answers": [
+    {"id": "K1", "match": [["ucx", "budget"], ["ucx", "triangle*", "limit*"], ["how many", "ucx", "triangle*"]], "answer": "UCX budget by the checker formula (< 50 000 -> 15 000, else min(ceil 5 %, 100 000))", "source": "D012", "source_kind": "d_row", "stop_class": "answer_in_repo"},
+    {"id": "K2", "match": [["ucx", "gap*"], ["collision", "gap*"]], "answer": "project rule: collision-piece gap 2 mm - 1 cm inclusive (reg p.36 §13.4 is a typo); a check reports gaps outside the band", "source": "D098", "source_kind": "d_row", "stop_class": "answer_in_repo"},
+    {"id": "K3", "match": [["ucx", "distance*"], ["ucx", "how close"], ["ucx", "offset*"], ["collision", "distance*"]], "answer": "UCX R11-R13 distance limits are one-sided, model surface -> UCX: Ground <= 10 cm, pedestrian-reachable OKS <= 30 cm, remaining OKS <= 1 m", "source": "D134", "source_kind": "d_row", "stop_class": "answer_in_repo"}
+   ]
+  },
+  {
+   "id": "moskovsky-ground-v002",
+   "object": "School 1200, pos. Moskovsky - Ground geometry of the GPZU plot",
+   "scenario": "ground-npm",
+   "status": "complete",
+   "practice_ready": true,
+   "split": "held_out",
+   "target": "ground",
+   "task": "Object: school 1200 in pos. Moskovsky, site (Ground, NPM). From the SPOZU DWG and the rubber-zones DWG below build the Ground geometry of the GPZU plot: the cover surface with one material ID per cover and the markings, in metres in the drawing's own frame. Textures and the delivery package are out of scope.",
+   "deliverable": "one FBX of the Ground geometry (covers + markings)",
+   "built_fbx_glob": "*.fbx",
+   "sources": [
+    {"path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/33_п.Московский Школа 1200_13.11.26.dwg", "sha256": "ed87f7f9e49f257c2914e0d0dfef3bf679447869509d4fad59d94de87e501b9d", "role": "SPOZU DWG (MSK-77, m): GPZU boundary, covers"},
+    {"path": "G:/Мой диск/AGR-assets/moskovsky-sosh1200/source/_ резинаV1_1.dwg", "sha256": "bbf22dce52f1cdee1daac2ce76d829a9a4698ef287afd80705763ab5a7b81133", "role": "rubber zones DWG (colours)"}
+   ],
+   "key": {"path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/outputs/ground-npm-v003/review/gpzu/SM_MoskovskySosh1200_Ground_review_quad.fbx", "sha256": "4e1eb47fbe7cf65cb05d8bf0f70adc6bfd594f56d37cad1290db5564e94d5edf", "accepted": "Artem 2026-11-26: v002 geometry accepted (frozen); this v003 review FBX has the v002 vertices and faces (geometry-compare-v002.json)"},
+   "key_aliases": [
+    {"path": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200"}
+   ],
+   "rejected": [],
+   "dcc_only_steps": ["Max 2026 QUAD review copy (manual)"],
+   "hidden_repo_paths": ["jobs/moskovsky-sosh1200", "docs/research/job-retro-moskovsky-sosh1200-pr1979.md", "docs/research/ground-site-moskovsky-gap-evidence.md"],
+   "evidence": "G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/ (SHA256SUMS.txt, 507 files)",
+   "note": "#2066 holdout: an unfamiliar project, never used for tuning; run only as the final check of a change.",
+   "proxy_answers": [
+    {"id": "M1", "match": [["building", "footprint*"], ["building", "hole*"], ["building", "cut*"]], "answer": "No building-footprint hole: footprint area capped, part of ID02 Paving (user deviation from D251 / hole practice for this job)", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M2", "match": [["lawn*", "cover*"], ["hedge*", "cover*"], ["shrub*", "cover*"], ["flower*", "bed*"], ["lawn*", "hedge*"]], "answer": "One lawn cover ID05 (lawn, rolled lawn, hedge, shrub and flower beds; plants go on top later).", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M3", "match": [["marking*", "mesh*"], ["marking*", "height*"], ["marking*", "thick*"], ["marking*", "model*"], ["marking*", "material*"]], "answer": "Markings = separate closed mesh, top +8 mm, bottom −10 mm, own white material.", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M4", "match": [["curb*", "model*"], ["kerb*", "model*"], ["бордюр*", "модел*"]], "answer": "Curbs: not modelled (user decision 2026-11-26; GND-07 practice waived for this job).", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M5", "match": [["sliver*", "triangle*"], ["sliver*", "fix*"], ["thin", "triangle*"]], "answer": "Ultra-thin slivers: the user fixes them by hand", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M6", "match": [["rubber", "colour*"], ["rubber", "color*"], ["rubber", "material*"]], "answer": "rubber zones = library 27 recoloured to the RAL layer colours", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"},
+    {"id": "M7", "match": [["shade", "canopy*"], ["canopy*", "cover*"], ["canopy*", "material*"]], "answer": "shade-canopy spots = compacted soil", "source": "jobs/moskovsky-sosh1200/STATE.md#user-decisions-2026-11-26", "source_kind": "job_decision", "stop_class": "customer_decision"}
+   ]
+  },
+  {
    "id": "ucx-codex-02-garibaldi-k2",
    "object": "Garibaldi 22 K2, OKS Main UCX (Codex case 02)",
    "scenario": "oks-vpm",
@@ -256,7 +316,17 @@
    "dcc_only_steps": ["Blender (scene readback only)"],
    "evidence": "G:/Мой диск/AGR-evidence/ucx-etalons-codex/08_Geo004_round/ (+ SHA256SUMS.txt; replay in docs/research/ucx-cases-codex-2042.md, #2042)",
    "accepted_by": "ACCEPTED-BY-CODEX",
-   "caveat": "one body UCX_V4_011 non-convex by 0.11 mm (convex under [D430] 1 mm); same defective main collision as 07 (358 parts)"
+   "caveat": "one body UCX_V4_011 non-convex by 0.11 mm (convex under [D436] 1 mm); same defective main collision as 07 (358 parts)"
   }
-]
+ ],
+ "stage_tasks": {
+  "issue": "#2066",
+  "note": "Short stage tasks for the eval-driven plan (Artem 2026-11-27): dev ~75 % (split tuning, may motivate a change) and holdout ~25 % (split held_out, an unfamiliar project never used for tuning, run once as the final check). metrics = the score steps the evaluator reports for the task; per-run columns come from `agr trainer metrics`. 3 repeats are a preliminary measurement, not statistical proof.",
+  "tasks": [
+   {"id": "g22-k2-stage1", "set": "dev", "project": "G22", "familiar": true, "stage": "body + openings of one building (stage 1)", "metrics": ["holdout", "artifact", "readback", "bounds", "topology", "form", "form_v2"]},
+   {"id": "63a-stage1", "set": "dev", "project": "POLY63", "familiar": true, "stage": "lines + openings of the typical-floor facades of one tower (stage 1)", "metrics": ["holdout", "artifact", "readback", "bounds", "topology", "form"]},
+   {"id": "kpp1-ucx-v004", "set": "dev", "project": "KPP1", "familiar": true, "stage": "UCX of one body", "metrics": ["holdout", "artifact", "readback", "bounds", "form", "ucx"]},
+   {"id": "moskovsky-ground-v002", "set": "holdout", "project": "moskovsky-sosh1200", "familiar": false, "stage": "Ground geometry of one plot (covers + markings)", "metrics": ["holdout", "artifact", "readback", "bounds", "form"]}
+  ]
+ }
 }
