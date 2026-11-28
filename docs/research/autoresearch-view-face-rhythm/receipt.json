@@ -1,0 +1,409 @@
+{
+ "blender_sha256": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5",
+ "candidate": {
+  "checks": {
+   "blanks": true,
+   "clean_exclusion": true,
+   "clean_positive": true,
+   "fragment_parity": true,
+   "native_coverage": true,
+   "shuffled_positive": true,
+   "stretch_veto": true,
+   "veto_only": true
+  },
+  "tallies": {
+   "a": {
+    "abstain": 3,
+    "correct": 2,
+    "wrong": 0
+   },
+   "b": {
+    "abstain": 3,
+    "correct": 2,
+    "wrong": 0
+   }
+  },
+  "views": {
+   "p14 1-4' (courtyard, developed)": {
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 7976,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 9906,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 11677,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     }
+    },
+    "truth": null
+   },
+   "p14 4'-1 (truss glazed block)": {
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 9756,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 10190,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 12007,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     }
+    },
+    "truth": null
+   },
+   "p15 A'-K (7 boxes)": {
+    "states": {
+     "I1_x0.85": {
+      "a": null,
+      "b": null,
+      "changed_cells": 13104,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 9924,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 0,
+      "gate_exercised": true,
+      "perturbation_exercised": false,
+      "r": 0.36132724311409864,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 8328,
+      "gate_exercised": true,
+      "perturbation_exercised": true,
+      "r": 0.07352421508518062,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 8980,
+      "gate_exercised": true,
+      "perturbation_exercised": true,
+      "r": 0.18126547573922167,
+      "relabelled": false
+     }
+    },
+    "truth": [
+     "W19"
+    ]
+   },
+   "p15 A-G": {
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 2771,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 3992,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 3473,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     }
+    },
+    "truth": null
+   },
+   "p15 K-A": {
+    "states": {
+     "I2_stretch_to_W19": {
+      "a": "W19",
+      "b": null,
+      "changed_cells": 14976,
+      "gate_exercised": true,
+      "perturbation_exercised": true,
+      "r": -0.13783664047670824,
+      "relabelled": false
+     },
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 4348,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 6362,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 5938,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     }
+    },
+    "truth": null
+   },
+   "p16 fragment 1 (box bay)": {
+    "states": {
+     "I3_label_full": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": true
+     },
+     "I4_reset": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 2067,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 1770,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": "W19",
+      "b": "W19",
+      "changed_cells": 1928,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     }
+    },
+    "truth": [
+     "W19"
+    ]
+   },
+   "p17 fragment 2 (curved stair)": {
+    "states": {
+     "blank": {
+      "a": null,
+      "b": null,
+      "changed_cells": 2233,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "clean": {
+      "a": null,
+      "b": null,
+      "changed_cells": 0,
+      "gate_exercised": false,
+      "perturbation_exercised": false,
+      "r": null,
+      "relabelled": false
+     },
+     "mirror": {
+      "a": null,
+      "b": null,
+      "changed_cells": 1958,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     },
+     "shuffle": {
+      "a": null,
+      "b": null,
+      "changed_cells": 1975,
+      "gate_exercised": false,
+      "perturbation_exercised": true,
+      "r": null,
+      "relabelled": false
+     }
+    },
+    "truth": null
+   }
+  }
+ },
+ "elapsed_s": 76.818,
+ "hypothesis": "confirmed",
+ "inputs": {
+  "model": "6ab64e6b8de3b838b352f4d4ebfb560af0648be10699fe252cf21eba3e9bea62",
+  "pdf": "785e4015993482945b704de3ab2fdbfe40307300d222abded319808e3a069131"
+ },
+ "lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+ "median_s": 25.001,
+ "pairs": [
+  {
+   "baseline_sha256": "7ac6236037f2250687d5f02e082b2c8814f8897f2d7ad1a8c0ba3217b8664d48",
+   "candidate_sha256": "7ac6236037f2250687d5f02e082b2c8814f8897f2d7ad1a8c0ba3217b8664d48",
+   "index": 1,
+   "native": {
+    "render_s": 7.93,
+    "wall_s": 14.748
+   },
+   "rhythm_sha256": "aeb94eabd9721274c778f66750bb9e23f7069471fccaf5ade3e04f097f3df5ee",
+   "wall_s": 23.171
+  },
+  {
+   "baseline_sha256": "7ac6236037f2250687d5f02e082b2c8814f8897f2d7ad1a8c0ba3217b8664d48",
+   "candidate_sha256": "7ac6236037f2250687d5f02e082b2c8814f8897f2d7ad1a8c0ba3217b8664d48",
+   "index": 2,
+   "native": {
+    "render_s": 9.031,
+    "wall_s": 16.133
+   },
+   "rhythm_sha256": "aeb94eabd9721274c778f66750bb9e23f7069471fccaf5ade3e04f097f3df5ee",
+   "wall_s": 25.001
+  },
+  {
+   "baseline_sha256": "7ac6236037f2250687d5f02e082b2c8814f8897f2d7ad1a8c0ba3217b8664d48",
+   "candidate_sha256": "7ac6236037f2250687d5f02e082b2c8814f8897f2d7ad1a8c0ba3217b8664d48",
+   "index": 3,
+   "native": {
+    "render_s": 10.976,
+    "wall_s": 18.524
+   },
+   "rhythm_sha256": "aeb94eabd9721274c778f66750bb9e23f7069471fccaf5ade3e04f097f3df5ee",
+   "wall_s": 27.128
+  }
+ ],
+ "revision165": "a38d5137c016d9086423512446c353e7d6517fc6",
+ "runner165_sha256": "6c44d165c225796b4ce036443468709ba3cfd84f6b022eedc68348e135bc1b48",
+ "runner166_sha256": "b58f0876a9cf0204c6d7f7906e0698000b9acbb7d0652a9ca17cbb4133834f98",
+ "spread_s": 3.957,
+ "stage_pins": {
+  "blender_walls.py": "a3784cff27cda3af53f097f93f729ffde81ecb5fb722cd4afc3e4987278993ef",
+  "params.json": "358579f55b2dca837c64a7b00c33caccabbd7487c7ae3323e8fa9e2441c8794d",
+  "run.py": "0a26eb893d36d7912d0991ccc7a400b9f82311dc969f874a64bd6165a9a25fa2"
+ },
+ "status": "finished"
+}
