@@ -135,3 +135,12 @@ def test_strict_udim_ignores_informational_fields():
     for noise in ({'density': {'faces_below': 99, 'faces_above': 99}}, {'material_mismatch_by_order': 5},
                   {'open_edges': 1000, 'placement': {'status': 'missing'}}):
         assert match.strict_udim_result({**base, **noise})['exit'] == 0
+
+
+def test_naming_mirror_matches_the_twinqa_owner():
+    from twinqa.naming import address_from_fbx, is_ucx
+    names = ['UCX_SM_A_Ground_001', 'ucx_x', 'Ucx_y', 'UCXSM_A', 'SM_A_Ground', 'SM_A_B_Ground', 'SM_A_GroundGlass',
+             'SM__Ground', 'SM_A_Ground.001', 'SM_Ä_Ground', 'sm_A_Ground', 'SM_A_Ground_', 'Cube', '', 'SM_Ground']
+    for name in names:
+        assert match.is_ucx(name) == is_ucx(name), name
+        assert match.is_generic_ground(name) == (address_from_fbx('vpm', 'ground', name) is not None), name
