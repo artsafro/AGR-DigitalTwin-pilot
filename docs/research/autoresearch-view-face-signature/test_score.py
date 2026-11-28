@@ -24,12 +24,14 @@ def test_tolerances_are_frozen():
 
 
 def test_twins_abstain_and_unique_answers():
-    walls = [wall(10, 12, ncol=3, nrow=3), wall(10, 12, ncol=3, nrow=3, az=180), wall(30, 12, "open", ncol=8, nrow=3)]
+    walls = [wall(10, 12, ncol=3, nrow=3), wall(10, 12, ncol=3, nrow=3, az=180), wall(20, 6, "open", ncol=8, nrow=2),
+             wall(30, 12, "open", ncol=9, nrow=3)]
     res = S.score_model(walls)
     rows = res["rows"]
-    assert [r["unique_B"] for r in rows] == [False, False, True]
+    assert [r["unique_B"] for r in rows] == [False, False, True, True]
     assert rows[0]["perturbed"][:2] == ["abstain", "abstain"]
     assert rows[2]["perturbed"][:2] == ["correct", "correct"]
+    assert rows[3]["perturbed"][:2] == ["abstain", "abstain"]  # 5 % of 30 m > 1.2 m: absolute tolerance abstains
     assert res["summary"]["inner_unique_B"] == 0.0
 
 
