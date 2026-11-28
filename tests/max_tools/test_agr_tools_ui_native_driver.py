@@ -56,14 +56,47 @@ def test_main_run_quits_even_on_unknown_steps():
     assert 'except SystemExit' in body and body.rstrip().endswith('finish()')
 
 
+# Windows STATUS_DLL_INIT_FAILED: under full-suite load the desktop heap runs out and a fresh child
+# dies before running any Python, with no stderr (docs/research/full-suite-wall-time-601s-vs-4000s.md).
+# That says nothing about the driver, so only that exit code is retried; every other exit is judged.
+WIN_LOADER_FAILURE = 0xC0000142
+
+
+def _run_fresh(cmd, run=subprocess.run, attempts=3):
+    for _ in range(attempts - 1):
+        proc = run(cmd, capture_output=True, text=True, timeout=60)
+        if (proc.returncode & 0xFFFFFFFF) != WIN_LOADER_FAILURE or proc.stderr:
+            return proc
+    return run(cmd, capture_output=True, text=True, timeout=60)
+
+
+def test_run_fresh_retries_only_the_loader_failure():
+    seen = []
+
+    def flaky(cmd, **kw):
+        seen.append(cmd)
+        if len(seen) == 1:
+            return subprocess.CompletedProcess(cmd, WIN_LOADER_FAILURE, '', '')
+        return subprocess.CompletedProcess(cmd, 2, '', 'err')
+
+    assert _run_fresh(['x'], run=flaky).returncode == 2 and len(seen) == 2
+
+    seen.clear()
+
+    def failing(cmd, **kw):
+        seen.append(cmd)
+        return subprocess.CompletedProcess(cmd, 1, '', '')
+
+    assert _run_fresh(['x'], run=failing).returncode == 1 and len(seen) == 1
+
+
 @pytest.mark.parametrize('args', [
     [],
     ['--no-bundle', '--bundle', 'x.zip'],
 ])
 def test_driver_rejects_bundle_flag_mix_before_any_side_effect(tmp_path, args):
     out = tmp_path / 'out'
-    proc = subprocess.run([sys.executable, str(DRIVER), '--out', str(out)] + args,
-                          capture_output=True, text=True, timeout=60)
-    assert proc.returncode == 2, proc.stderr
+    proc = _run_fresh([sys.executable, str(DRIVER), '--out', str(out)] + args)
+    assert proc.returncode == 2, (hex(proc.returncode & 0xFFFFFFFF), proc.stderr)
     assert 'exactly one of --bundle and --no-bundle' in proc.stderr
     assert not out.exists()
