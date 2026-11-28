@@ -57,6 +57,9 @@ triangle arrow and a thin red line), plus each album's own Revit FBX (1.0-2.0 M 
   timing stop and hypothesis verdict are reported separately.
 - **Forbidden.** Changing params, GT, arrow keys or states after a score; opening Sokolniki outputs; editing
   source drawings, models, deliveries, production `src/` or other cards' files; weakening guards.
+- **Pre-score amendment A1** (code review of the runner, before any real run): the ground level is the 5th
+  percentile of occupied heightmap cells (`fp_ground_pct` 5), not the median of the 2 m border ring — on an FBX
+  without a site slab the building itself touches the bbox ring, so the ring median would be the roof level.
 - **Not measured (declared up front).** Real untitled **partial** views (Savelovskaya has none; `inner` is
   injected), arrow -> view association (GT per arrow, by layout), notch side walls (az 0/180 inner), rotated
   keyplans on a real sheet, other templates with arrows, Sokolniki transfer (held out).

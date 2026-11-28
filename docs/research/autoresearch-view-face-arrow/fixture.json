@@ -222,7 +222,7 @@
   "icon_max_dist_px": 600,
   "fp_res_m": 0.25,
   "fp_min_above_ground_m": 3.0,
-  "fp_ground_ring_m": 2.0,
+  "fp_ground_pct": 5,
   "reg_aspect_tol": 1.2,
   "reg_min_iou": 0.75,
   "reg_min_margin": 0.05,
