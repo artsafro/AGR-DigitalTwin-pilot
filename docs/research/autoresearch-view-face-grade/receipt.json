@@ -1,0 +1,708 @@
+{
+  "a_full_inside": 1,
+  "active_injection": 8,
+  "b_full_inside": 6,
+  "controls": {
+    "elv": {
+      "0": {
+        "below_hits": 659,
+        "changed_above": 0,
+        "injected_below": 3789
+      },
+      "90": {
+        "below_hits": 904,
+        "changed_above": 0,
+        "injected_below": 6216
+      },
+      "180": {
+        "below_hits": 648,
+        "changed_above": 0,
+        "injected_below": 3800
+      },
+      "270": {
+        "below_hits": 889,
+        "changed_above": 0,
+        "injected_below": 6231
+      }
+    },
+    "olimpijsky": {
+      "0": {
+        "below_hits": 661,
+        "changed_above": 0,
+        "injected_below": 5723
+      },
+      "90": {
+        "below_hits": 5846,
+        "changed_above": 0,
+        "injected_below": 9610
+      },
+      "180": {
+        "below_hits": 661,
+        "changed_above": 0,
+        "injected_below": 5723
+      },
+      "270": {
+        "below_hits": 5846,
+        "changed_above": 0,
+        "injected_below": 9610
+      }
+    }
+  },
+  "env": {
+    "numpy": "2.5.3",
+    "pillow": "12.3.0",
+    "pymupdf": "1.28.2",
+    "python": "3.14.7",
+    "revision": "682fef1452b4f9e4d8aebb77d54cb43f7f242179",
+    "runner": "8f0742fb5f62262a500551f3e4fc5ba7c483a104b79a9d22936bd82f96c4cb89",
+    "uv_lock": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea"
+  },
+  "full_n": 11,
+  "injected_above_changes": 0,
+  "median_s": 24.6425,
+  "models": {
+    "elv": {
+      "0": [
+        55.2,
+        16.6
+      ],
+      "90": [
+        88.8,
+        16.6
+      ],
+      "180": [
+        55.2,
+        16.6
+      ],
+      "270": [
+        88.8,
+        16.6
+      ]
+    },
+    "olimpijsky": {
+      "0": [
+        60.6,
+        46.6
+      ],
+      "90": [
+        147.0,
+        46.6
+      ],
+      "180": [
+        60.6,
+        46.6
+      ],
+      "270": [
+        147.0,
+        46.6
+      ]
+    }
+  },
+  "outcomes": {
+    "a_outcome": {
+      "abstain": 13,
+      "correct": 0,
+      "not_scored": 1,
+      "wrong": 0
+    },
+    "b_outcome": {
+      "abstain": 14,
+      "correct": 0,
+      "not_scored": 0,
+      "wrong": 0
+    }
+  },
+  "pair_hashes": [
+    "6da556953cb2e23c863b4a2a3f259316c7e7e5c4551e2595808306f560ad342d",
+    "6da556953cb2e23c863b4a2a3f259316c7e7e5c4551e2595808306f560ad342d",
+    "6da556953cb2e23c863b4a2a3f259316c7e7e5c4551e2595808306f560ad342d"
+  ],
+  "pins": {
+    "elv_fixture.json": {
+      "path": "autoresearch-view-face-elv/fixture.json",
+      "rev": "e49d791c3a52203cbf88d7bc0305ec619bf95575",
+      "sha256": "b1b892b914d034beda0b28c00da733403af2c5c516410bf4745062cf60f75940"
+    },
+    "elv_pdf": {
+      "path": "G:\\Мой диск\\AGR-evidence\\145-view-face-elv\\run1\\elv.pdf",
+      "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545"
+    },
+    "elv_rays": {
+      "path": "G:\\Мой диск\\AGR-evidence\\149-view-face-material\\r1b\\types-1.npz",
+      "sha256": "2e671c84a20af5e3704e050a164626c0f001f46d513c264ac795ce16e9140aab"
+    },
+    "elv_walls": {
+      "path": "G:/Мой диск/AGR-evidence/157-view-face-signature/elv.fwd.json",
+      "sha256": "ac816566965b9ed863a0e82cec65e07e3c6575eb957869947aa7557e8215dca8"
+    },
+    "fill.py": {
+      "path": "autoresearch-view-face-material/run.py",
+      "rev": "94b74bcaeb2e00d6cdc1d486bf59ac7420bdf854",
+      "sha256": "a6ac3463f33b3daaaed7ad259994ddbc13be3b7d8dad130d616f0eec45de60dd"
+    },
+    "fixture.json": {
+      "path": "autoresearch-view-face-realism/fixture.json",
+      "rev": "b86ae195fee0ef2ae9795ac7d23ef02ebf164735",
+      "sha256": "6f097eda39b8d77195a1ca2c2d741dd70faf978725bcf77083d24f8868d8a868"
+    },
+    "olimpijsky_fixture.json": {
+      "path": "autoresearch-view-face-transfer/fixture.json",
+      "rev": "4a6c6b776ea4c16bf9b33b16be82465521f88d34",
+      "sha256": "8d4689d2dcdd7ec72d9e965b8e552c8fc4fe6656999205a2ff9abf2a66252518"
+    },
+    "olimpijsky_pdf": {
+      "path": "G:\\Мой диск\\AGR-evidence\\151-view-face-transfer\\inputs\\АР.2_ Фасады_29.07.2026.pdf",
+      "sha256": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0"
+    },
+    "olimpijsky_rays": {
+      "path": "G:\\Мой диск\\AGR-evidence\\151-view-face-transfer\\r1\\types-1.npz",
+      "sha256": "66105de78c7b5ecdaed5015a47ca4937ab35e130485c50de6a467cc580630a7a"
+    },
+    "olimpijsky_walls": {
+      "path": "G:/Мой диск/AGR-evidence/157-view-face-signature/olimpijsky.fwd.json",
+      "sha256": "3d9e8b9224c774e4ea6643861ef62ed00153e9e43b8307dbf912e978cddc93c6"
+    },
+    "r145_run.py": {
+      "path": "autoresearch-view-face-elv/run.py",
+      "rev": "e49d791c3a52203cbf88d7bc0305ec619bf95575",
+      "sha256": "49d852790d062298766882449948e3adf4c708dd6b82e774caa5f8efc399e2f0"
+    },
+    "r157_score.py": {
+      "path": "autoresearch-view-face-signature/score.py",
+      "rev": "9acdeb0d2f9fabcb578ebe3088823d0b1068c20a",
+      "sha256": "42d08c6af2a0d53655e0c89475782966a1f93b25fce7625f754b60cbff826b89"
+    },
+    "r159.py": {
+      "path": "autoresearch-view-face-realism/run.py",
+      "rev": "b86ae195fee0ef2ae9795ac7d23ef02ebf164735",
+      "sha256": "71b702f501be4dcfdfda1906522245c797f33d85b0aad3e5b11bb4cb688d82fd"
+    },
+    "score.py": {
+      "path": "autoresearch-view-face-material/score.py",
+      "rev": "94b74bcaeb2e00d6cdc1d486bf59ac7420bdf854",
+      "sha256": "4a125268b8c495f15680efe9e8ecf34ae1733de1354403f32f5887d140e2ed24"
+    }
+  },
+  "rows": [
+    {
+      "a_drawn": [
+        88.515,
+        16.623
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 19.385,
+        "W": 86.184
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -0.2,
+        0.2
+      ],
+      "b_drawn": [
+        88.6,
+        16.8
+      ],
+      "b_inside": true,
+      "b_model": [
+        88.8,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 270,
+      "kind": "full",
+      "near": [
+        90,
+        270
+      ],
+      "strict": [
+        90,
+        270
+      ],
+      "view": "p18 1-10"
+    },
+    {
+      "a_drawn": [
+        54.423,
+        17.523
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 11.596,
+        "W": 53.47
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -0.8,
+        0.8
+      ],
+      "b_drawn": [
+        54.4,
+        17.4
+      ],
+      "b_inside": true,
+      "b_model": [
+        55.2,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 0,
+      "kind": "full",
+      "near": [
+        0,
+        180
+      ],
+      "strict": [
+        0,
+        180
+      ],
+      "view": "p18 I-A"
+    },
+    {
+      "a_drawn": [
+        88.502,
+        16.42
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 16.818,
+        "W": 85.41
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -0.2,
+        0.0
+      ],
+      "b_drawn": [
+        88.6,
+        16.6
+      ],
+      "b_inside": true,
+      "b_model": [
+        88.8,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 90,
+      "kind": "full",
+      "near": [
+        90,
+        270
+      ],
+      "strict": [
+        90,
+        270
+      ],
+      "view": "p19 10-1"
+    },
+    {
+      "a_drawn": [
+        52.156,
+        15.588
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 16.818,
+        "W": 85.41
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -36.6,
+        -1.2
+      ],
+      "b_drawn": [
+        52.2,
+        15.4
+      ],
+      "b_inside": false,
+      "b_model": [
+        88.8,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": false,
+      "gt_az": 90,
+      "kind": "full",
+      "near": [],
+      "strict": [],
+      "view": "p19 6-1"
+    },
+    {
+      "a_drawn": [
+        54.713,
+        17.141
+      ],
+      "a_inside": true,
+      "a_model": {
+        "H": 17.879,
+        "W": 53.962
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -0.4,
+        0.6
+      ],
+      "b_drawn": [
+        54.8,
+        17.2
+      ],
+      "b_inside": true,
+      "b_model": [
+        55.2,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 180,
+      "kind": "full",
+      "near": [
+        0,
+        180
+      ],
+      "strict": [
+        0,
+        180
+      ],
+      "view": "p19 A-I"
+    },
+    {
+      "a_drawn": [
+        3.639,
+        3.641
+      ],
+      "a_inside": null,
+      "a_model": {
+        "H": 19.385,
+        "W": 86.184
+      },
+      "a_outcome": "not_scored",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -85.2,
+        -13.0
+      ],
+      "b_drawn": [
+        3.6,
+        3.6
+      ],
+      "b_inside": false,
+      "b_model": [
+        88.8,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": false,
+      "gt_az": 270,
+      "kind": "fragment_top_cut",
+      "near": [],
+      "strict": [],
+      "view": "p20 frag 9-10"
+    },
+    {
+      "a_drawn": [
+        88.097,
+        16.055
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 19.385,
+        "W": 86.184
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -0.6,
+        -0.4
+      ],
+      "b_drawn": [
+        88.2,
+        16.2
+      ],
+      "b_inside": true,
+      "b_model": [
+        88.8,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 270,
+      "kind": "full",
+      "near": [
+        90,
+        270
+      ],
+      "strict": [
+        90,
+        270
+      ],
+      "view": "p21 1-12"
+    },
+    {
+      "a_drawn": [
+        54.423,
+        17.091
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 11.596,
+        "W": 53.47
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -0.6,
+        0.0
+      ],
+      "b_drawn": [
+        54.6,
+        16.6
+      ],
+      "b_inside": true,
+      "b_model": [
+        55.2,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 0,
+      "kind": "full",
+      "near": [
+        0,
+        180
+      ],
+      "strict": [
+        0,
+        180
+      ],
+      "view": "p21 I-A"
+    },
+    {
+      "a_drawn": [
+        20.175,
+        15.95
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 11.596,
+        "W": 53.47
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -35.0,
+        -0.6
+      ],
+      "b_drawn": [
+        20.2,
+        16.0
+      ],
+      "b_inside": false,
+      "b_model": [
+        55.2,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": false,
+      "gt_az": 0,
+      "kind": "fragment",
+      "near": [],
+      "strict": [],
+      "view": "p23 frag D-G"
+    },
+    {
+      "a_drawn": [
+        14.802,
+        16.038
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 19.385,
+        "W": 86.184
+      },
+      "a_outcome": "abstain",
+      "album": "elv",
+      "answer": null,
+      "b_delta": [
+        -74.0,
+        -0.4
+      ],
+      "b_drawn": [
+        14.8,
+        16.2
+      ],
+      "b_inside": false,
+      "b_model": [
+        88.8,
+        16.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": false,
+      "gt_az": 270,
+      "kind": "fragment",
+      "near": [],
+      "strict": [],
+      "view": "p24 frag 8-9"
+    },
+    {
+      "a_drawn": [
+        151.258,
+        43.305
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 33.775,
+        "W": 146.357
+      },
+      "a_outcome": "abstain",
+      "album": "olimpijsky",
+      "answer": null,
+      "b_delta": [
+        -1.2,
+        -4.4
+      ],
+      "b_drawn": [
+        145.8,
+        42.2
+      ],
+      "b_inside": false,
+      "b_model": [
+        147.0,
+        46.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 90,
+      "kind": "full",
+      "near": [],
+      "strict": [],
+      "view": "p5 228.8-86.8"
+    },
+    {
+      "a_drawn": [
+        156.758,
+        47.655
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 32.75,
+        "W": 146.407
+      },
+      "a_outcome": "abstain",
+      "album": "olimpijsky",
+      "answer": null,
+      "b_delta": [
+        5.8,
+        0.0
+      ],
+      "b_drawn": [
+        152.8,
+        46.6
+      ],
+      "b_inside": false,
+      "b_model": [
+        147.0,
+        46.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 270,
+      "kind": "full",
+      "near": [],
+      "strict": [],
+      "view": "p6 86.8-228.8"
+    },
+    {
+      "a_drawn": [
+        72.873,
+        45.375
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 31.776,
+        "W": 58.649
+      },
+      "a_outcome": "abstain",
+      "album": "olimpijsky",
+      "answer": null,
+      "b_delta": [
+        -0.8,
+        -7.0
+      ],
+      "b_drawn": [
+        59.8,
+        39.6
+      ],
+      "b_inside": false,
+      "b_model": [
+        60.6,
+        46.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 180,
+      "kind": "full",
+      "near": [],
+      "strict": [],
+      "view": "p7 952.9-890"
+    },
+    {
+      "a_drawn": [
+        69.812,
+        47.229
+      ],
+      "a_inside": false,
+      "a_model": {
+        "H": 31.16,
+        "W": 58.577
+      },
+      "a_outcome": "abstain",
+      "album": "olimpijsky",
+      "answer": null,
+      "b_delta": [
+        4.2,
+        -1.0
+      ],
+      "b_drawn": [
+        64.8,
+        45.6
+      ],
+      "b_inside": false,
+      "b_model": [
+        60.6,
+        46.6
+      ],
+      "b_outcome": "abstain",
+      "eligible": true,
+      "gt_az": 0,
+      "kind": "full",
+      "near": [],
+      "strict": [],
+      "view": "p8 890-952.9"
+    }
+  ],
+  "spread_s": 3.8135,
+  "status": "finished",
+  "times_s": [
+    24.6425,
+    21.7334,
+    25.5469
+  ],
+  "verdict": "confirmed"
+}
