@@ -2,7 +2,24 @@
 
 ## Кратко для Артёма
 
-(заполняется после измерения — см. раздел «Result»)
+Проверили, переносится ли признак #149 (цветовые заливки отделки на листе против имён типов Revit) без
+перенастройки на второй объект — ФОК «Олимпийский» (лист АР.2 «Фасадные решения», 4 фасада + Revit FBX, 116 типов).
+**Гипотеза опровергнута: признак не переносится.** 3 свежих прогона дали одинаковый результат.
+
+- Полные фасады: 0 верно / **1 уверенная ошибка** / 3 воздержания. Фасад в осях 890ф-952.9ф (восточный) отдан
+  южному фасаду с большим запасом (0,77 против 0,21).
+- Причина 1 (видна ещё до подсчёта): на листах нарисованы соседние этапы (Котельная, Водный комплекс), поэтому вид
+  шире своей грани модели (70 м против 60,6 м; 157 м против 147 м). Метод не может положить вид на свою грань и
+  кладёт его на более длинную чужую — так и возникает уверенная ошибка.
+- Причина 2: даже если резать вид окнами по ширине грани (диагностика G), разбиение «цвет ↔ тип Revit» почти
+  одинаково хорошо совпадает со всеми гранями (0,7–0,94): здесь типы Revit (импосты, ламели, кассеты, окна)
+  одинаковы на всех фасадах. G: полные 1/0/3, вырезки 9/2/25, зеркала 1/3/0 — тоже не годится.
+- Вырезки 25–60 %: D 10 верно / 1 ошибка / 25 воздержаний (на ELV было 40/0/23).
+
+Рекомендация для шага OKS «view<->face map sheet»: признак D нельзя ставить первым; это только подсказка. До
+сравнения обязательно (1) обрезать вид по границе этапа / контуру модели и (2) проверять, что ширина вида
+совпадает с шириной грани (±1 м); иначе — вопрос, не ответ. Противоположные фасады всё так же требуют вопроса,
+если подпись/ось не разрешает. Код в продукт не вносился (OBSERVE).
 
 ## Frozen contract (committed before any score was computed)
 
@@ -59,6 +76,55 @@ copies + `SHA256SUMS.txt` in `G:/Мой диск/AGR-evidence/151-view-face-tran
 - **Forbidden.** Threshold/label/box/GT changes after seeing scores, fixture substitution, reading Sokolniki
   outputs, editing source drawings, models, deliveries, production `src/` or other cards' files, weakening guards.
 
-## Result
+## Result — H151 REFUTED (D does not transfer); G diagnostic refuted (OBSERVE, nothing applied)
 
-(after measurement)
+Measured at contract commit `afb974f862885bf681c0aa143bc5459aa60edd5c` (runner unchanged after it), CPython via
+`uv run --offline --locked`, Blender 4.4 `fd21f4b9...`. Status `finished`; three fresh runs (import + ray cast +
+scoring each), row JSON byte-identical (`4305f98d...2636` x3); wall 240.965 / 205.637 / 198.174 s (run 1 includes
+the invariance re-score), median 205.637 s, total 645.9 s; loaded workstation. Model: 1 667 525 tris, 116 types,
+38-61 labels visible per face. Receipt: [`receipt.json`](autoresearch-view-face-transfer/receipt.json) (SHA-256
+`dba5d8784ad25421e751b20c6d0f84c7700761eee437802b379872283a7fcca2`); evidence
+`G:/Мой диск/AGR-evidence/151-view-face-transfer/` + `SHA256SUMS.txt` (inputs, run JSON, label npz, Blender logs,
+probe scripts).
+
+Correct / wrong / abstain (44 rows):
+
+| Class | ELV #149 D (ref.) | **D, this pair** | G (diagnostic) |
+|---|---|---|---|
+| full (4) | 6/0/1 of 7 | **0/1/3** | 1/0/3 |
+| synthetic crops (36) | 40/0/23 of 63 | **10/1/25** | 9/2/25 |
+| mirror, injected (4; all exercised) | 2/1/4 of 7 | 0/2/2 | 1/3/0 |
+
+Checks (frozen): full wrong 0 ✘ (1); full correct ≥ 3 ✘ (0); crop wrong ≤ 1 ✔ (1); crop correct ≥ 15 ✘ (10);
+witness `p5 full` ✘ (abstain, all −1). Invariance: reversed palette relabelling changed 0 of 44 rows ✔. G: full
+wrong 0 ✔, full correct ≥ 3 ✘ (1), crop wrong ≤ 1 ✘ (2), G = D on all non-windowed rows ✔.
+
+What happened (not hidden):
+- **Width hazard, confident wrong.** `p8 890-952.9 full` (GT az 0, view 69.9 m) cannot fit its own 60.6 m face
+  (−1) and is assigned to the 147 m south face az 270 (0.768 vs 0.214). Same mechanism on `p7 full` (only long
+  faces score, 0.962 vs 0.871 → abstain by margin) and on both short-view mirrors (wrong). p5/p6 full score −1 on
+  every face. The preflight predicted this before scoring.
+- **Saturation, low specificity.** Once the width is removed (G), the true face often wins but other faces score
+  almost as high: p5 full G 0.905 (az 0) / 0.869 (GT az 90); p6 full 0.872 (GT) / 0.784; p8 full G correct 0.940
+  vs 0.768. Revit types here (imposts, lamellas, cassettes, windows) repeat on all facades, so U(V|M) is high for
+  any face; on ELV the finish types differed per facade.
+- **Crops** answer mainly where elimination does the work: 40/60 % crops of the long views (61-94 m) are wider than
+  the short faces, so D picks between the two long faces; p6 crops 6/0/3 with margins 0.62-0.85, p7 crops 0/0/9,
+  p8 1/0/8. Wrong crop `p5 partial25@0.0` (37.8 m, the «Спортивный комплекс» end) → az 0 (0.885 vs 0.741).
+- Palettes 7-10 colours per view; fills fully inside the boxes only.
+
+Not measured: real untitled partial views (none in this set), inner-corner/footprint-edge candidates, line-based
+A/C on this pair, other cohort projects, Sokolniki (held out, #2001 OPEN), within-face localisation.
+
+Recommendation for the shared OKS-trail step 'view<->face map sheet' (measured, OBSERVE): D is **not** a primary
+assigner across projects. Before any content score, the step must (1) clip the view to the model's own stage
+(stage-boundary lines «Граница этапов» / the model outline at the same scale) and (2) gate candidates by physical
+width (|view width − face width| ≤ 1-2 m at the level-mark scale) — abstain-and-ask when no face passes; this gate
+alone would have turned the one confident full-view wrong into an abstain. Use D only as a tie-breaker among
+width-compatible candidates whose type sets differ per facade (measure "type-set distinctness" per model first);
+keep opposite-face pairs and every abstain as a 2-candidate question. Sheet title + situation-plan red line was
+an exact, cheap GT source on this booklet (4/4 views): reading that keyplan mark is the first cue to measure next.
+
+Replay: `git fetch origin research/autoresearch-standing-149` (the #145 commit `640b3678` is in `main` via
+PR #2055), then the command in the contract. Replay is limited to the pilot host (inputs on the owner's PC;
+copies with hashes in the evidence folder above).
