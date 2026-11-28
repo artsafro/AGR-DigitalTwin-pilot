@@ -1,4 +1,7 @@
-"""Unit checks for the #155 keyplan-arrow reader (synthetic, no fixture inputs)."""
+"""Unit checks for the #155 keyplan-arrow reader (synthetic, no fixture inputs).
+
+new-case: docs/research/autoresearch-view-face-arrow/test_run.py - #155 keyplan-arrow reader unit controls
+"""
 import importlib.util
 from pathlib import Path
 

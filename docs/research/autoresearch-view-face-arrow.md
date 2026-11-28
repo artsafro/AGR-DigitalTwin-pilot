@@ -83,7 +83,7 @@ triangle arrow and a thin red line), plus each album's own Revit FBX (1.0-2.0 M 
 ## Result (frozen series, head 6a44665b, runner unchanged)
 
 Receipt: [`receipt.json`](autoresearch-view-face-arrow/receipt.json) (SHA-256
-`61355e34f8af56cf859abe15f768e0ae3b201a49eac54c1b697fb3a321f1ccdb`), `status: finished`. Runner SHA-256
+`61355e34f8af56cf859abe15f768e0ae3b201a49eac54c1b697fb3a321f1ccdb` as written, Git LF `06cbb9b68bca8f2a59b683f390779f810520309a2587874d0513e79cc43e5b05`), `status: finished`. Runner SHA-256
 `e0462948…a9fb`, fixture `81df3a65…c697`, all 8 PDF/FBX inputs and Blender pinned in `receipt.pins`.
 Evidence (GT orthographic renders az 0/90/180/270 per album, keyplan crop, receipt):
 `G:/Мой диск/AGR-evidence/155-view-face-arrow/` + `SHA256SUMS.txt` (18 files).
