@@ -220,6 +220,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | cases/staropetrovskiy-npm-planters-v008 | [cases/staropetrovskiy-npm-planters-v008.md](../cases/staropetrovskiy-npm-planters-v008.md) |  |
 | ci/runner-setup | [ci/runner-setup.md](../ci/runner-setup.md) |  |
 | decisions-detail | [decisions-detail.md](../decisions-detail.md) |  |
+| deliveries/sokolniki-npm-v002-2026-11-28 | [deliveries/sokolniki-npm-v002-2026-11-28.md](../deliveries/sokolniki-npm-v002-2026-11-28.md) |  |
 | deliveries/vatutino-ground-2026-10-20 | [deliveries/vatutino-ground-2026-10-20.md](../deliveries/vatutino-ground-2026-10-20.md) |  |
 | deliveries/vatutino-site-2026-11-09 | [deliveries/vatutino-site-2026-11-09.md](../deliveries/vatutino-site-2026-11-09.md) |  |
 | deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21 | [deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md](../deliveries/vyatskaya-tow02-npm-user-v05-2026-10-21.md) |  |
