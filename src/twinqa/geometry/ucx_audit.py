@@ -25,7 +25,9 @@ OVERLAP_EPS_M = 1e-5
 DEGENERATE_VOLUME_M3 = 1e-9  # absolute enclosed volume at or below this is not a volumetric hull
 DEGENERATE_AREA_M2 = 1e-10  # zero-area / sliver triangle area at or below this is degenerate (issue #460)
 NEIGHBOUR_M = 0.10  # pairs closer than this are "neighbours" in the gap report
-CONVEX_TOL_M = 1e-4  # float32 FBX coordinates around 100 m carry ~1e-5 noise
+# [D436] (#2050): a body within 1 mm of its face planes counts as convex (float32 FBX noise is ~1e-5 at 100 m;
+# hand-made bodies read back up to ~1.7 mm, #2042 case 11). The builders keep their own 0.1 mm post-check.
+CONVEX_TOL_M = 1e-3
 REQ_COLLISION = "2.13.4"  # no intersections; neighbour gap 2 mm - 1 cm [D098], plus SINTEZ too-close [D162]
 # [D012] whole-file UCX budget; single owner (#1962): stdlib, so Blender and the Max bundle slice load it.
 # twinqa.scene, dt_ai.geometry.ucx_build, dt_ai.ops.densify and tools/blender/ucx_audit.py use these; the
@@ -39,6 +41,17 @@ def ucx_triangle_limit(model_triangles: int) -> int:
     if model_triangles < UCX_SMALL_MODEL:
         return UCX_SMALL_LIMIT
     return min(math.ceil(model_triangles * UCX_SHARE), UCX_CAP)
+
+
+def d012_budget_report(model_triangles: int, ucx_triangles: int) -> dict:
+    """[D012] budget as a reported number, never a refusal [D433] (#2050): UCX may exceed the limit when the form
+    needs it; the file then fits by raising render-mesh triangles (e.g. `dt_ai.ops.densify`, VPM)."""
+    limit = ucx_triangle_limit(int(model_triangles))
+    over = max(0, int(ucx_triangles) - limit)
+    line = (f"over D012 budget by {over} tris, allowed by [D433] when form needs it" if over
+            else f"within D012 budget ({int(ucx_triangles)} / {limit} tris)")
+    return {"model_triangles": int(model_triangles), "ucx_triangles": int(ucx_triangles), "limit_D012": limit,
+            "within_D012": over == 0, "over_by": over, "line": line}
 
 
 def _sub(a, b):

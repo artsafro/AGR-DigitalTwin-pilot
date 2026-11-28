@@ -3,7 +3,8 @@
     blender --background --factory-startup --python-exit-code 1 --python tools/blender/ucx_build.py -- \\
         <model.fbx|.blend> <out.fbx> <Main|Ground> [key=value ...]
 
-Keys: cell, gap, min_cell, tol, depth (metres), object=<target object name> (default: the one
+Keys: cell, gap, min_cell, tol, depth (metres), budget=fit|form (Main; [D433]: fit grows the cell toward the
+[D012] budget, form keeps the cell; over budget is reported, never refused), object=<target object name> (default: the one
 `SM_<Address>_Main` / `SM_<Address>_Ground` mesh), with=<extra object names, comma separated, merged into
 the Main input, e.g. the MainGlass; every name must exist, else the build fails before any export>.
 Existing UCX of the input objects (`UCX_<input object>_NNN`) are replaced; UCX of other model objects (e.g.
@@ -92,6 +93,12 @@ def _parse(argv):
                 return None, f"{k} must be a number"
         elif k in opts:
             return None, f"option {k!r} given twice"
+        elif k == "budget":  # [D433]: fit (grow the cell toward D012, default) | form (keep the cell); Main only
+            if "budget_mode" in opts:
+                return None, "option 'budget' given twice"
+            if argv[2] != "Main" or val not in ub.BUDGET_MODES:
+                return None, f"budget= is for Main and must be one of {ub.BUDGET_MODES}"
+            opts["budget_mode"] = val
         elif k == "object":
             if not val:
                 return None, "object= needs a name"
@@ -155,8 +162,7 @@ def main():
         kept_tris = sum(len(o.data.loop_triangles) for o in kept_ucx)
         report.update({"kept_ucx": keep, "kept_ucx_triangles": kept_tris,
                        "file_ucx_limit_D012": ub.ucx_triangle_limit(model_tris)})
-        # [D012] is a whole-file limit: kept UCX are reserved; fail before anything is removed or written
-        ub.file_budget_available(model_tris, kept_tris)
+        # [D012] is a whole-file limit: kept UCX are reserved; over it is reported, never refused [D433]
         for o in old_ucx:
             bpy.data.objects.remove(o, do_unlink=True)
         objs, res = build_into_scene([main_obj] + extra, address, target, model_triangles=model_tris,
@@ -165,8 +171,11 @@ def main():
         for o in objs:
             o.data.calc_loop_triangles()
             new_tris += len(o.data.loop_triangles)
-        ub.check_file_budget(model_tris, kept_tris + new_tris)  # scene readback, before export
+        budget = ub.check_file_budget(model_tris, kept_tris + new_tris)  # scene readback, before export
         report["file_ucx_triangles"] = kept_tris + new_tris
+        report.update({"within_D012": budget["within_D012"], "over_D012_by": budget["over_by"],
+                       "budget_line": budget["line"]})
+        print("UCX_BUILD budget:", budget["line"])
         report.update({
             "inputs": [o.name for o in [main_obj] + extra], "dropped_ucx": replace, "kept_ucx": keep,
             "model_triangles_excl_ucx": model_tris, "pieces": len(objs), "triangles": res.triangles,
