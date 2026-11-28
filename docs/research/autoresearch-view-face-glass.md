@@ -2,7 +2,25 @@
 
 ## Кратко для Артёма
 
-(заполняется после замера; контракт ниже заморожен до первого счёта)
+Нашёл в твоих проектах новую пару «альбом + модель» с настоящими видами внутреннего угла: Силикатный, учебный
+корпус УК350/ДО150 (Моспроект-4). Альбом АГР на 35 листов: 5 схем фасадов и 2 реальных фрагмента 1:20 (один — зона
+изогнутой лестницы со стороны двора), модель Revit из DWFx (R23) по категориям, план V-образный, с вогнутым двором.
+Ни один раунд #139-#160 эту пару не использовал. Сокольники не открывал: #2001 ещё открыт.
+
+Проверил один способ: маска остекления с листа (цвета, которых нет в легенде) против окон и витражей модели в
+ортопроекции с 8 направлений стен. Порог ответа и запас взял из #140 без подстройки.
+
+- **Гипотеза H161 опровергнута:** 0 верных, 1 неверный, 4 отказа из 5 видов с известным ответом. Фасад А'-К
+  (7 эркеров) отнесён к направлению 0° вместо 330°: это та же стена, видимая под углом 30°. По замороженному
+  правилу это ошибка.
+- Оба вида внутреннего угла (развёртка 1-4' и фрагмент 2) — отказ. Верное направление в обоих случаях на первом
+  месте, но два соседних верных направления 240°/270° отличаются меньше чем на 0.10.
+- Правильное направление всегда входит в два лучших (5 из 5). Путаются только соседние направления, отстоящие на
+  30°: ортопроекция с соседнего направления показывает ту же стену, сжатую в 0.87 раза. Дополнительно масштаб вида
+  завышен примерно на 8 % (в рамку попадает линия земли), а это сжатие подыгрывает соседу.
+- Для шага «карта вид↔грань»: сравнивать вид надо с фронтальным рендером каждой стены отдельно (стена = отрезок
+  плана, а не направление камеры), с проверкой ширины. Ответ давать только при запасе над несоседними стенами. По
+  одному направлению камеры отвечать нельзя.
 
 ## Frozen contract (committed before any score was computed)
 
@@ -71,6 +89,65 @@ F1/F2 boxes touch their clips (the 1:20 sheets carry dimension chains inside the
 
 ## Round log
 
-(after scoring)
+**H161 refuted.** Contract `a5b2ca7e` (frozen before any score). Runner SHA-256 `978ad7d4…`, fixture `9ce8c9eb…`.
+Three fresh runs, each a new Blender render plus a new PDF read: rows byte-identical (`f1209644…6b6d`). Wall time
+10.321 / 10.115 / 10.677 s, median 10.321 s, spread 0.562 s, `finished`. Input hashes were checked before and after
+each run. Receipt: [`receipt.json`](autoresearch-view-face-glass/receipt.json). Evidence (renders, masks, 3 results,
+sheet previews): `G:/Мой диск/AGR-evidence/161-view-face-glass/` + `SHA256SUMS.txt` (20 files, verified).
+
+| View (GT az) | Top az (score) | Runner-up | Margin | Outcome |
+|---|---|---|---:|---|
+| A'-K, 7 boxes ({330}) | 0 (0.735) | 330 (0.522) | 0.213 | **wrong** |
+| 4'-1, truss block ({90}) | 90 (0.632) | 60 (0.560) | 0.072 | abstain |
+| 1-4', courtyard, developed ({240,270}) | 240 (0.394) | 270 (0.380) | 0.014 | abstain |
+| fragment 1, box bay ({330}) | 0 (0.681) | 330 (0.677) | 0.003 | abstain |
+| fragment 2, curved stair ({240,270}) | 240 (0.355) | 270 (0.353) | 0.002 | abstain |
+| K-A (no GT) | 180 (0.610) | 90 (0.362) | 0.249 | diagnostic |
+| A-G (no GT) | 270 (0.525) | 60 (0.468) | 0.058 | diagnostic |
+
+Primary: correct 0 / wrong 1 / abstain 4 of 5. Answered accuracy is 0/1, abstain rate 4/5. Inner views: 0 correct,
+2 abstain. Fragments: 0 correct, 2 abstain. Acceptance fails on all three counts (wrong 1, correct < 3, no inner view
+correct). The positive witness, A'-K, answered, but in the preregistered hard-negative direction 0.
+
+**Perturbations (exercised; the receipt has per-row changed cells).** `blank` changed 2 067-9 810 cells per view and
+abstained on 7 of 7, so the abstention witness passes. `mirror` changed 1 768-10 108 cells per view and abstained on 6
+of 7. Near-symmetric A'-K kept 0; the true direction was not answered on any mirrored row.
+
+**Failure analysis.** These are reported, not fixed, and the verdict does not change.
+(1) The true direction is in the top two on 5 of 5 views. Every confusion is with a direction 30 deg away. An
+orthographic render along a neighbouring direction shows the same wall compressed by cos 30 = 0.87. A direction-level
+candidate set therefore holds near-duplicates, so a margin over "best other az" cannot separate them, and on the
+inner views it also penalises the second correct direction.
+(2) Scale bias: the view box includes the ground line, so the box spans about 370 px against about 340 px for
+0.000-12.900 from the p15 level marks. That makes the view about 8 % too short, which favours the compressed
+neighbour; A'-K reads 73.4 m against about 80 m.
+(3) Drift: the album (04.2025) shows a wider glazed stair zone on 1-4' than the R23 model.
+
+**Post-hoc D1 (diagnostic, NOT a keep, computed from the same frozen scores).** This takes the margin against the
+best direction more than 30 deg away. 4'-1 gives correct 90 with margin 0.252. A'-K is still wrong (0, margin 0.361).
+1-4', F1 and F2 abstain (margins 0.087 / 0.054 / 0.089). Result: 1 / 1 / 3 — still refuted, and the direction-cluster
+cue alone does not resolve inner views.
+
+**Not measured:** wall identity and bay interval (a fragment's offset is recorded, not scored); K-A and A-G identity;
+fresh Revit re-export; rejected deliveries (none exist for this object); Sokolniki transfer (#2001 open).
+
+## Recommendation for the shared OKS step 'view<->face map sheet' (OBSERVE, not built here)
+
+1. Make candidates per wall, not per camera direction. Render each footprint wall segment frontally (camera along
+   its own normal, clipped to the segment) and score the view against each wall. Width compatibility should come
+   from level-mark scale (0.000 / parapet ticks), not from the box height. The opposite wall and the 30 deg neighbour
+   stay hard negatives.
+2. Do not answer from a direction-level glass NCC. On this fixture it gives 1 wrong out of 1 answer, and the wrong
+   answer is the neighbour direction.
+3. Inner-corner views need a wall-level answer or a question. Both real inner views here abstained, which is the
+   behaviour STOP 04 should keep until (1) is measured.
+
+## Next measured steps
+
+1. Re-run on the same frozen Silikatny fixture with per-wall frontal renders and a level-mark scale. GT walls come
+   from this contract; the score is wall-level correct / wrong / abstain.
+2. Add GT for K-A and A-G from the album's p6 axis bubbles registered to the model footprint, which brings the
+   fixture to 7 scored views.
+3. Blind Sokolniki transfer only after #2001 closes.
 
 Full suite: deferred to merge batch (rule 68).

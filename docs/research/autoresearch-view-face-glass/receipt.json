@@ -1,0 +1,526 @@
+{
+ "fixture_sha256": "9ce8c9eba842de0d299ccc098a80ccee625fe7d68991f68f0ee64cec3630157e",
+ "inputs": {
+  "model": "6ab64e6b8de3b838b352f4d4ebfb560af0648be10699fe252cf21eba3e9bea62",
+  "pdf": "785e4015993482945b704de3ab2fdbfe40307300d222abded319808e3a069131"
+ },
+ "ortho": {
+  "H": 192,
+  "W": 1240,
+  "bbox": [
+   [
+    -2.055,
+    -19.992,
+    -0.295
+   ],
+   [
+    92.07,
+    54.485,
+    15.0
+   ]
+  ],
+  "res": 0.1,
+  "zc": 7.352413162589073
+ },
+ "posthoc_D1_not_keep": [
+  {
+   "answer": 0,
+   "margin_nonadjacent": 0.3608,
+   "outcome": "wrong",
+   "top": 0,
+   "view": "p15 A'-K (7 boxes)"
+  },
+  {
+   "answer": 90,
+   "margin_nonadjacent": 0.2523,
+   "outcome": "correct",
+   "top": 90,
+   "view": "p14 4'-1 (truss glazed block)"
+  },
+  {
+   "answer": null,
+   "margin_nonadjacent": 0.0869,
+   "outcome": "abstain",
+   "top": 240,
+   "view": "p14 1-4' (courtyard, developed)"
+  },
+  {
+   "answer": null,
+   "margin_nonadjacent": 0.054,
+   "outcome": "abstain",
+   "top": 0,
+   "view": "p16 fragment 1 (box bay)"
+  },
+  {
+   "answer": null,
+   "margin_nonadjacent": 0.0894,
+   "outcome": "abstain",
+   "top": 240,
+   "view": "p17 fragment 2 (curved stair)"
+  },
+  {
+   "answer": 180,
+   "margin_nonadjacent": 0.2485,
+   "outcome": "diagnostic",
+   "top": 180,
+   "view": "p15 K-A"
+  },
+  {
+   "answer": null,
+   "margin_nonadjacent": 0.0578,
+   "outcome": "diagnostic",
+   "top": 270,
+   "view": "p15 A-G"
+  }
+ ],
+ "rows": [
+  {
+   "answer": 0,
+   "box_px": [
+    34,
+    38,
+    2138,
+    408
+   ],
+   "glass_frac": 0.488,
+   "gt_az": [
+    330
+   ],
+   "inner": false,
+   "kind": "full",
+   "margin": 0.2128,
+   "offsets": {
+    "0": -16,
+    "150": 8,
+    "180": 30,
+    "240": 68,
+    "270": 118,
+    "330": 50,
+    "60": 66,
+    "90": 63
+   },
+   "opposite_score": 0.3107,
+   "outcome": "wrong",
+   "scores": {
+    "0": 0.7352,
+    "150": 0.2166,
+    "180": 0.3107,
+    "240": 0.2556,
+    "270": 0.343,
+    "330": 0.5224,
+    "60": 0.3233,
+    "90": 0.3744
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 9810,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": 0,
+     "changed_cells": 8158,
+     "margin": 0.2154,
+     "top": 0,
+     "top_score": 0.7346,
+     "true_az_answered": false
+    }
+   },
+   "top": 0,
+   "top_score": 0.7352,
+   "view": "p15 A'-K (7 boxes)",
+   "width_m": 73.36
+  },
+  {
+   "answer": null,
+   "box_px": [
+    27,
+    23,
+    2655,
+    393
+   ],
+   "glass_frac": 0.283,
+   "gt_az": [
+    90
+   ],
+   "inner": false,
+   "kind": "full",
+   "margin": 0.072,
+   "offsets": {
+    "0": -85,
+    "150": -98,
+    "180": -74,
+    "240": 59,
+    "270": -20,
+    "330": -11,
+    "60": 20,
+    "90": 3
+   },
+   "opposite_score": 0.2695,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.2601,
+    "150": 0.3342,
+    "180": 0.1769,
+    "240": 0.3799,
+    "270": 0.2695,
+    "330": 0.284,
+    "60": 0.5602,
+    "90": 0.6322
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 9575,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": null,
+     "changed_cells": 10108,
+     "margin": 0.0424,
+     "top": 60,
+     "top_score": 0.5029,
+     "true_az_answered": false
+    }
+   },
+   "top": 90,
+   "top_score": 0.6322,
+   "view": "p14 4'-1 (truss glazed block)",
+   "width_m": 91.62
+  },
+  {
+   "answer": null,
+   "box_px": [
+    30,
+    42,
+    2423,
+    412
+   ],
+   "glass_frac": 0.2547,
+   "gt_az": [
+    240,
+    270
+   ],
+   "inner": true,
+   "kind": "full",
+   "margin": 0.014,
+   "offsets": {
+    "0": -60,
+    "150": 66,
+    "180": -69,
+    "240": 23,
+    "270": -58,
+    "330": -4,
+    "60": -23,
+    "90": -44
+   },
+   "opposite_score": 0.3005,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.197,
+    "150": 0.123,
+    "180": 0.3071,
+    "240": 0.394,
+    "270": 0.3799,
+    "330": 0.1999,
+    "60": 0.3005,
+    "90": 0.2752
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 7824,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": null,
+     "changed_cells": 9824,
+     "margin": 0.0668,
+     "top": 240,
+     "top_score": 0.3446,
+     "true_az_answered": false
+    }
+   },
+   "top": 240,
+   "top_score": 0.394,
+   "view": "p14 1-4' (courtyard, developed)",
+   "width_m": 83.43
+  },
+  {
+   "answer": null,
+   "box_px": [
+    23,
+    24,
+    876,
+    1050
+   ],
+   "glass_frac": 0.5797,
+   "gt_az": [
+    330
+   ],
+   "inner": false,
+   "kind": "fragment",
+   "margin": 0.0033,
+   "offsets": {
+    "0": -5,
+    "150": 100,
+    "180": 74,
+    "240": 146,
+    "270": 329,
+    "330": 233,
+    "60": 100,
+    "90": 76
+   },
+   "opposite_score": 0.4075,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.6805,
+    "150": 0.377,
+    "180": 0.4075,
+    "240": 0.3695,
+    "270": 0.6265,
+    "330": 0.6772,
+    "60": 0.5152,
+    "90": 0.4318
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 2067,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": null,
+     "changed_cells": 1768,
+     "margin": 0.0241,
+     "top": 0,
+     "top_score": 0.6914,
+     "true_az_answered": false
+    }
+   },
+   "top": 0,
+   "top_score": 0.6805,
+   "view": "p16 fragment 1 (box bay)",
+   "width_m": 10.72
+  },
+  {
+   "answer": null,
+   "box_px": [
+    14,
+    16,
+    883,
+    1043
+   ],
+   "glass_frac": 0.7918,
+   "gt_az": [
+    240,
+    270
+   ],
+   "inner": true,
+   "kind": "fragment",
+   "margin": 0.0017,
+   "offsets": {
+    "0": 207,
+    "150": 217,
+    "180": 92,
+    "240": 238,
+    "270": 149,
+    "330": 282,
+    "60": 219,
+    "90": 209
+   },
+   "opposite_score": 0.2222,
+   "outcome": "abstain",
+   "scores": {
+    "0": 0.2453,
+    "150": 0.2623,
+    "180": 0.2651,
+    "240": 0.3545,
+    "270": 0.3528,
+    "330": 0.2498,
+    "60": 0.2222,
+    "90": 0.2452
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 2232,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": null,
+     "changed_cells": 1938,
+     "margin": 0.0364,
+     "top": 270,
+     "top_score": 0.3824,
+     "true_az_answered": false
+    }
+   },
+   "top": 240,
+   "top_score": 0.3545,
+   "view": "p17 fragment 2 (curved stair)",
+   "width_m": 10.92
+  },
+  {
+   "answer": 180,
+   "box_px": [
+    34,
+    33,
+    1609,
+    403
+   ],
+   "glass_frac": 0.2194,
+   "gt_az": null,
+   "inner": false,
+   "kind": "full",
+   "margin": 0.2485,
+   "offsets": {
+    "0": 55,
+    "150": 82,
+    "180": -1,
+    "240": 144,
+    "270": 189,
+    "330": 145,
+    "60": -39,
+    "90": 186
+   },
+   "opposite_score": 0.2966,
+   "outcome": "diagnostic",
+   "scores": {
+    "0": 0.2966,
+    "150": 0.3322,
+    "180": 0.6103,
+    "240": 0.1503,
+    "270": 0.353,
+    "330": 0.3235,
+    "60": 0.2458,
+    "90": 0.3618
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 4495,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": null,
+     "changed_cells": 6270,
+     "margin": 0.0304,
+     "top": 180,
+     "top_score": 0.3951,
+     "true_az_answered": false
+    }
+   },
+   "top": 180,
+   "top_score": 0.6103,
+   "view": "p15 K-A",
+   "width_m": 54.91
+  },
+  {
+   "answer": null,
+   "box_px": [
+    22,
+    33,
+    799,
+    402
+   ],
+   "glass_frac": 0.3233,
+   "gt_az": null,
+   "inner": false,
+   "kind": "full",
+   "margin": 0.0578,
+   "offsets": {
+    "0": 193,
+    "150": 189,
+    "180": 204,
+    "240": 64,
+    "270": 61,
+    "330": 47,
+    "60": 69,
+    "90": 71
+   },
+   "opposite_score": 0.4445,
+   "outcome": "diagnostic",
+   "scores": {
+    "0": 0.4473,
+    "150": 0.2515,
+    "180": 0.357,
+    "240": 0.3442,
+    "270": 0.5254,
+    "330": 0.372,
+    "60": 0.4676,
+    "90": 0.4445
+   },
+   "states": {
+    "blank": {
+     "answer": null,
+     "changed_cells": 2733,
+     "margin": 0.0,
+     "top": 0,
+     "top_score": 0.0,
+     "true_az_answered": false
+    },
+    "mirror": {
+     "answer": null,
+     "changed_cells": 3908,
+     "margin": 0.0045,
+     "top": 90,
+     "top_score": 0.5045,
+     "true_az_answered": false
+    }
+   },
+   "top": 270,
+   "top_score": 0.5254,
+   "view": "p15 A-G",
+   "width_m": 27.16
+  }
+ ],
+ "rows_sha256": "f12096449b2fd7c0e25c308b646b7acd19b79576813b82cd4fb778528c863b6d",
+ "runner_sha256": "978ad7d4ccffa01e90d726b56533ab3a914578ebd84f449265c16dd67bb9c5bf",
+ "series": {
+  "contract_commit": "a5b2ca7e09e1c48fcb82882bdb2b276bbb09b4a9",
+  "evidence": "G:/Мой диск/AGR-evidence/161-view-face-glass/ + SHA256SUMS.txt (20 files)",
+  "identical": true,
+  "median_wall_s": 10.321,
+  "runs": {
+   "r1": {
+    "rows_sha256": "f12096449b2fd7c0e25c308b646b7acd19b79576813b82cd4fb778528c863b6d",
+    "wall_s": 10.321
+   },
+   "r2": {
+    "rows_sha256": "f12096449b2fd7c0e25c308b646b7acd19b79576813b82cd4fb778528c863b6d",
+    "wall_s": 10.115
+   },
+   "r3": {
+    "rows_sha256": "f12096449b2fd7c0e25c308b646b7acd19b79576813b82cd4fb778528c863b6d",
+    "wall_s": 10.677
+   }
+  },
+  "spread_s": 0.562
+ },
+ "status": "finished",
+ "tally": {
+  "abstain": 4,
+  "diagnostic": 2,
+  "wrong": 1
+ },
+ "wall_s": 10.321
+}
