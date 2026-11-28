@@ -205,7 +205,7 @@ def _cap_corners(points, n, tol=1e-3):
     return [flat[k] for k in lower[:-1] + upper[:-1]]
 
 
-def _clip(p, n, c, clean=False):
+def _clip(p, n, c, clean=False, hull=None):
     """Convex piece cut by the half-space n.x <= c (a plane shift when p has a face with normal n).
 
     clean=True (resolve, #1540) keeps only the corners of the cap polygon on the cut plane."""
@@ -233,6 +233,8 @@ def _clip(p, n, c, clean=False):
     if clean:
         on = [v for v in snapped if abs(_dot(n, v) - c) < 1e-9]
         snapped = [v for v in snapped if abs(_dot(n, v) - c) >= 1e-9] + _cap_corners(on, n)
+    if hull is not None:
+        return hull(snapped)
     verts, tris = uc._convex_hull(snapped)
     return piece([list(v) for v in verts], [list(t) for t in tris])
 
@@ -597,6 +599,266 @@ def resolve(pieces, opts):
     summary['ok'] = bool(order) and not (amb or left or not_convex or skipped)
     return {'pieces': out, 'pairs': pairs, 'findings': found, 'skipped': skipped, 'ambiguous': ambiguous,
             'summary': summary}
+
+
+# ---- local passage insertion (#2051) ---------------------------------------------------------------------
+_PASSAGE_EPS = 1e-8  # numerical contact, not a clearance allowance
+_PASSAGE_PAD = 1e-4  # construction margin for the Blender float32 round-trip; verify after storage
+
+
+class _FlatPassageHull(ValueError):
+    """The complete input point cloud does not enclose a volume."""
+
+
+def _passage_hull_arrays(verts):
+    """Hull with exact visibility predicates on binary-float inputs.
+
+    Passage cuts repeatedly create almost coplanar points. Approximate facet merging can open a
+    seam between adjacent faces, and float32 hull predicates can keep an inverted sliver. Use one
+    binary integer lattice for orientation tests; leave the resulting closed triangulation intact.
+    """
+    points = list(dict.fromkeys(tuple(float(v) for v in p) for p in verts))
+    if len(points) < 4:
+        raise _FlatPassageHull('flat passage hull')
+    ratios = [[v.as_integer_ratio() for v in p] for p in points]
+    denominator = max(d for p in ratios for _, d in p)
+    xyz = [tuple(n * (denominator // d) for n, d in p) for p in ratios]
+    a = min(range(len(xyz)), key=xyz.__getitem__)
+    b = max(range(len(xyz)), key=lambda i: sum(v*v for v in _sub(xyz[i], xyz[a])))
+    ab = _sub(xyz[b], xyz[a])
+    c = max(range(len(xyz)), key=lambda i: sum(v*v for v in _cross(ab, _sub(xyz[i], xyz[a]))))
+
+    def orient(face, i):
+        s, t, u = (xyz[j] for j in face)
+        return _dot(_cross(_sub(t, s), _sub(u, s)), _sub(xyz[i], s))
+
+    d = max(range(len(xyz)), key=lambda i: abs(orient((a, b, c), i)))
+    if orient((a, b, c), d) == 0:
+        raise _FlatPassageHull('flat passage hull')
+    faces = [f if orient(f, i) < 0 else f[::-1]
+             for f, i in [((a, b, c), d), ((b, c, d), a), ((c, d, a), b), ((d, a, b), c)]]
+    for i in range(len(xyz)):
+        visible = {face for face in faces if orient(face, i) > 0}
+        if not visible:
+            continue
+        edges = {edge for s, t, u in visible for edge in ((s, t), (t, u), (u, s))}
+        faces = [face for face in faces if face not in visible]
+        faces.extend((s, t, i) for s, t in sorted(edges) if (t, s) not in edges)
+    used = sorted({i for face in faces for i in face})
+    remap = {i: j for j, i in enumerate(used)}
+    return [points[i] for i in used], [tuple(remap[i] for i in face) for face in faces]
+
+
+def _passage_hull(verts):
+    return piece(*_passage_hull_arrays(verts))
+
+
+def _passage_envelope(verts):
+    """Conservative exclusion proxy only; never deliver it as a replacement."""
+    try:
+        return _passage_hull(verts)
+    except ValueError:
+        # Flat or untriangulable piece: bound all its vertices (and therefore every face).
+        lo, hi = _aabb({'verts': verts})
+        return _passage_hull([(x, y, z) for x in (lo[0] - _PASSAGE_PAD, hi[0] + _PASSAGE_PAD)
+                              for y in (lo[1] - _PASSAGE_PAD, hi[1] + _PASSAGE_PAD)
+                              for z in (lo[2] - _PASSAGE_PAD, hi[2] + _PASSAGE_PAD)])
+
+
+def _passage_partition(row):
+    """Check a convex partition on original indices, cancelling only opposite interior faces."""
+    from collections import Counter
+    from itertools import combinations
+
+    if not row.get('partition'):
+        raise ValueError(f"frozen body {row['handle']} needs a closed convex partition")
+    verts = row['verts']
+
+    def residual(triangles):
+        counts = Counter()
+        for a, b, c in triangles:
+            key = tuple(sorted((a, b, c)))
+            if len(set(key)) != 3 or not 0 <= key[0] <= key[-1] < len(verts):
+                raise ValueError('invalid partition triangle')
+            counts[key] += 1 if (a, b, c) in (key, key[1:] + key[:1], key[2:] + key[:2]) else -1
+        return {key: count for key, count in counts.items() if count}
+
+    groups = row['partition']
+    if residual(row['tris']) != residual(t for group in groups for t in group):
+        raise ValueError(f"partition of {row['handle']} changes its oriented boundary")
+    seeds = []
+    for group in groups:
+        indices = sorted({i for tri in group for i in tri})
+        remap = {old: i for i, old in enumerate(indices)}
+        seeds.append(piece([verts[i] for i in indices], [tuple(remap[i] for i in t) for t in group]))
+    if any(separation(a, b)[0] < -_PASSAGE_EPS for a, b in combinations(seeds, 2)):
+        raise ValueError(f"partition of {row['handle']} has overlapping cells")
+    return seeds
+
+
+def _keep_halfspace(p, n, c):
+    lo, hi = _span(p, n)
+    if hi <= c:
+        return p
+    if c - lo <= _PASSAGE_EPS:
+        return None
+    try:
+        return _clip(p, n, c, hull=_passage_storage_hull)
+    except _FlatPassageHull:
+        # All retained points, after bounded quantization, enclose no 3D cell.
+        return None
+
+
+def _passage_storage_hull(points):
+    stored = _float32(points)
+    budget = _PASSAGE_PAD / 4 - max(math.dist(a, b) for a, b in zip(points, stored))
+    if budget < 0:
+        raise ValueError('passage float32 world storage exceeds the precision budget')
+    while True:
+        verts, tris = _passage_hull_arrays(stored)
+        chk = _hull_core().convexity(verts, tris)
+        if chk['ok'] or not chk['zero_area'] or not chk['closed']:
+            return piece(verts, tris)
+        a, b, c = tris[chk['zero_area'][0]]
+        # Remove the corner nearest its opposite segment. Every support point lost is within
+        # the charged distance of two surviving points; summing costs bounds repeated removals.
+        def cost(i, j, k):
+            edge = _sub(verts[k], verts[j])
+            t = min(1.0, max(0.0, _dot(_sub(verts[i], verts[j]), edge) / _dot(edge, edge)))
+            return math.dist(verts[i], [verts[j][s] + t * edge[s] for s in range(3)]), i
+
+        loss, index = min(cost(a, b, c), cost(b, c, a), cost(c, a, b))
+        if loss > budget:
+            raise ValueError('passage hull sliver exceeds the precision budget')
+        budget -= loss
+        stored = [p for i, p in enumerate(verts) if i != index]
+
+
+def _subtract_passage_obstacle(p, obstacle, clearance, sibling_gap):
+    """Disjoint convex half-space cells of p outside obstacle, with clearance on split planes.
+
+    Each emitted cell is beyond one outward obstacle face; each later cell is on the opposite side of
+    that split. No restart from the original hull (which would overlap the earlier emitted cells).
+    """
+    if _aabb_far(p, obstacle, clearance):
+        return [p]
+    distance, axis = separation(obstacle, p)
+    if distance >= clearance:
+        return [p]
+    if distance >= -clearance:
+        # For contact or shallow penetration, shave <= two construction gaps along a SAT axis.
+        # This avoids splitting unrelated faces to remove a narrow overlap.
+        outside = _keep_halfspace(p, tuple(-x for x in axis), -(_span(obstacle, axis)[1] + clearance))
+        return [] if outside is None else [outside]
+    result = []
+    for n in obstacle['normals']:
+        c = _span(obstacle, n)[1] + clearance
+        # No outside cell: don't needlessly trim the active remainder along this plane.
+        if _span(p, n)[1] - c <= _PASSAGE_EPS:
+            continue
+        outside = _keep_halfspace(p, tuple(-x for x in n), -c)
+        if outside is not None:
+            result.append(outside)
+        p = _keep_halfspace(p, n, c - sibling_gap)
+        if p is None:
+            break
+    return result
+
+
+def _passage_pair_report(immutable, new):
+    """Measure only pairs involving generated bodies. AABB only prunes against the current minimum."""
+    best, closest, hits = None, None, 0
+    previous = list(immutable)
+    for p in new:
+        for q in previous:
+            if best is not None and _aabb_far(p, q, max(0.0, best)):
+                continue
+            gap, _ = separation(p, q)
+            hits += gap < -_PASSAGE_EPS
+            if best is None or gap < best:
+                best, closest = gap, [p['handle'], q['handle']]
+        previous.append(p)
+    return {'min_gap_m': best, 'closest': closest, 'intersections': hits}
+
+
+def cut_passage(frozen, clearance, fill=(), gap_m=GAP_DEFAULT_M):
+    """Plan a local passage cut, in world metres, without mutating any input mesh.
+
+    ``clearance`` is the complete convex volume that must be free, not a ray or a render mesh. ``frozen`` is a
+    sequence of mesh rows (handle, verts, tris); ``fill`` is the optional pre-decomposed convex frame to insert.
+    For a nonconvex blocking body, provide an exact boundary-preserving ``partition`` on its source indices.
+    Invalid *retained* bodies are bounded conservatively for collision checks, never changed. Changed bodies have
+    source IDs and deterministic new IDs; pieces are not moved around obstacles. Raises if the cut cannot
+    be certified at float32 storage precision.
+    """
+    gap_m = _number(gap_m, 'gap_m')
+    if not GAP_MIN_M <= gap_m <= GAP_MAX_M:
+        raise ValueError('gap_m must be within D098 (2–10 mm)')
+    gap = gap_m + _PASSAGE_PAD
+    cutter = piece(clearance['verts'], clearance['tris'])
+    unchanged, replaced, proxy_ids, immutable, pending = [], [], [], [], []
+    frozen, fill = list(frozen), list(fill)
+    handles = [row['handle'] for row in frozen + fill]
+    if len(handles) != len(set(handles)):
+        raise ValueError('duplicate passage input handle')
+    for row in frozen:
+        handle = row['handle']
+        try:
+            proxy, valid = piece(row['verts'], row['tris']), True
+        except ValueError:
+            proxy, valid = _passage_envelope(row['verts']), False
+        if not _aabb_far(proxy, cutter, 0.0) and separation(proxy, cutter)[0] < -_PASSAGE_EPS:
+            seeds = [proxy] if valid else _passage_partition(row)
+            if any(separation(p, cutter)[0] < -_PASSAGE_EPS for p in seeds):
+                replaced.append(handle)
+                pending.extend((handle, p) for p in seeds)
+                continue
+            # A verified partition can prove that its envelope's overlap is in empty space.
+            proxy_ids.append(handle)
+            immutable.extend(dict(p, handle=handle) for p in seeds)
+        else:
+            if not valid:
+                proxy_ids.append(handle)
+            immutable.append(dict(proxy, handle=handle))
+        unchanged.append(handle)
+
+    pending.extend((row['handle'], piece(row['verts'], row['tris'])) for row in fill)
+    new, counts, discarded = [], {}, []
+    seed_volumes = {}
+    used_ids = set(handles)
+    for handle, seed in pending:
+        seed_volumes[handle] = seed_volumes.get(handle, 0.0) + seed['volume']
+        clips = _subtract_passage_obstacle(seed, cutter, _PASSAGE_PAD, gap)
+        for obstacle in (*immutable, *new):
+            clips = [cell for p in clips for cell in _subtract_passage_obstacle(p, obstacle, gap, gap)]
+            if not clips:
+                break
+        for p in clips:
+            stored = _passage_storage_hull(p['verts'])
+            if _hull_core().accept_hull_volume(stored['volume']) == 'flat':
+                discarded.append({'source': handle, 'volume_m3': stored['volume']})
+                continue
+            counts[handle] = counts.get(handle, 0) + 1
+            label = f'{handle}:{counts[handle]}'
+            if label in used_ids:
+                raise ValueError(f'passage output handle collision: {label}')
+            used_ids.add(label)
+            new.append(dict(stored, handle=label, source=handle))
+
+    blockers = [p['handle'] for p in (*immutable, *new)
+                if not _aabb_far(p, cutter, 0.0) and separation(p, cutter)[0] < -_PASSAGE_EPS]
+    pairs = _passage_pair_report(immutable, new)
+    if blockers or pairs['intersections'] or (pairs['min_gap_m'] is not None and pairs['min_gap_m'] < gap_m):
+        raise ValueError(f'uncertified passage: blockers={blockers}; changed pairs={pairs}')
+    before = sum(len(row['tris']) for row in frozen)
+    after = before - sum(len(row['tris']) for row in frozen if row['handle'] in replaced)
+    after += sum(len(p['tris']) for p in new)
+    volumes = {key: {'seed_m3': volume, 'kept_m3': 0.0} for key, volume in seed_volumes.items()}
+    for p in new:
+        volumes[p['source']]['kept_m3'] += p['volume']
+    return {'unchanged': unchanged, 'replaced': replaced, 'new': new, 'conservative_frozen': proxy_ids,
+            'passage_blockers': blockers, 'pairs': pairs, 'tris_before': before, 'tris_after': after,
+            'discarded_slivers': discarded, 'source_volumes': volumes}
 
 
 def gap_report(edit, mode, rows, result, opts, state_hash=None, done=(), notes=(), extra=None):

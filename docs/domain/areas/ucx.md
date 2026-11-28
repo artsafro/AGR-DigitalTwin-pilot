@@ -76,6 +76,44 @@ resolve (nested) is ambiguous and not cut; a non-convex input piece is reported,
 the model -> UCX distance [D134] before/after; steps readback / gap check / V010 then run on OUT. Method source:
 retro of elv-tc-vpm v008 (`docs/cases.md`).
 
+### Insert a local Main passage (#2051)
+
+This explicit Blender operation is separate from `agr ucx` build, gap resolution and the sampled passage observation.
+Use it on a source-bound working copy, with a **convex clearance solid** covering the full opening from entry to exit
+(an arch profile can have sloped or faceted sides). No opening, floor or world placement is inferred by the driver.
+
+```bash
+blender --background --factory-startup --disable-autoexec --python-exit-code 1 \
+  --python tools/blender/ucx_cut_passage.py -- SOURCE.blend SPEC.json NEW.blend
+```
+
+The JSON inputs are `source_sha256`, `frozen_objects` (explicit scene names), `name_prefix` (`UCX_<target>_Main_`),
+`clearance` (`verts`, `tris`), optional `fill` (closed convex frame cells with unique `handle`, `verts`, `tris`),
+optional `partitions`, optional `exclude_objects` (named UCX authoring/reference inputs to omit from this copy), and
+optional `gap_m` (default 0.004 m, target between 0.002 and 0.010 m [D098]). Coordinates are world metres; use a Blender
+scene with `scale_length=1`. All conventionally named UCX objects must be in the declared scope. An input body is an
+indexed loose part; its ID is `<object>/<first loop-triangle index>`. `partitions` maps a nonconvex blocking body ID to
+lists of triangle triples on that body's original indices after local reindexing in ascending source-index order.
+Interior faces must cancel in opposite directions and convex cells must not overlap; the oriented boundary is checked.
+
+Only frozen bodies occupying the clearance volume are eligible for replacement. Cut the clearance from those convex
+cells and optional frame cells; clip generated pieces against retained bodies and earlier generated pieces, never
+shifting or trimming unrelated frozen bodies. Use a conservative enclosing proxy for a retained nonconvex body.
+Verify the complete clearance volume and all pairs involving generated cells after quantization, before publishing.
+The gap is a certified lower bound, not closest-surface distance. The numerical construction margin is 0.1 mm;
+geometry not representable within the storage precision bound is refused. `NEW.passage.json` binds input, recipe and
+output SHA-256, maps replaced IDs to new object names and records retained triangle fingerprints, scoped pair metrics,
+triangle delta inputs and per-source hull volumes. Generated slivers below the shared UCX minimum volume are counted
+and omitted. The driver writes both files only at new paths; it does not overwrite the source.
+
+The 07/08 recipe and fresh Blender readback are reproducible with `tests/blender/run_ucx_passage_2051.py`: pass
+`07|08 SOURCE.blend NEW_SPEC.json` after the Blender `--` to derive the recipe, then pass
+`07|08 SOURCE.blend SPEC.json OUTPUT.blend NEW_COMPARISON.json` to compare. The native fixture uses only hash-pinned
+copies and reads `UCX_ADD` jamb edges, minimum elevation and depth extrema; its working frame cells close only the
+bottom circuits. Reference additions and unchanged-base defects are reported separately. This is not a render-surface
+deviation check, whole-file V010/V016 pass, or an Unreal walkthrough. Complex nonconvex apertures and input scenes with
+ambiguous loose-part boundaries need separate authoring rather than automatic hull inflation.
+
 ## Current limitations
 
 [Pipeline stage #10](../../pipeline.md) is "partial" (UCX shipped inside accepted KPP1, PSU275, ELV TC and Vatutino Ground v015 models; no package passed): the shared builder
