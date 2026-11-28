@@ -1,0 +1,27 @@
+{
+  "olimpijsky": {
+    "pdf": "151-view-face-transfer/inputs/АР.2_ Фасады_29.07.2026.pdf",
+    "sha256": "cdf938e88f3333d4b7e8750f02e424bc02355479613057d48abe38d10f3e6aa0",
+    "provenance": "4a6c6b776ea4c16bf9b33b16be82465521f88d34:docs/research/autoresearch-view-face-transfer/fixture.json",
+    "frame": {"right": 0, "top": 90, "left": 180, "bottom": 270},
+    "views": [
+      ["p5 228.8-86.8", 5, 90, "full", [2571, 1422, 2986, 1587]],
+      ["p6 86.8-228.8", 6, 270, "full", [2571, 1422, 2986, 1587]],
+      ["p7 952.9-890", 7, 180, "full", [160, 1422, 576, 1587]],
+      ["p8 890-952.9", 8, 0, "full", [160, 1422, 576, 1587]]
+    ]
+  },
+  "elv": {
+    "pdf": "145-view-face-elv/run1/elv.pdf",
+    "sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+    "provenance": "e49d791c3a52203cbf88d7bc0305ec619bf95575:docs/research/autoresearch-view-face-elv/fixture.json",
+    "frame": null,
+    "views": [
+      ["p18 I-A", 18, 0, "full", null], ["p18 1-10", 18, 270, "full", null],
+      ["p19 10-1", 19, 90, "full", null], ["p19 A-I", 19, 180, "full", null],
+      ["p19 6-1", 19, 90, "full", null], ["p21 I-A", 21, 0, "full", null],
+      ["p21 1-12", 21, 270, "full", null], ["p23 frag D-G", 23, 0, "fragment", null],
+      ["p24 frag 8-9", 24, 270, "fragment", null], ["p20 frag 9-10", 20, 270, "fragment", null]
+    ]
+  }
+}
