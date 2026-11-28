@@ -1,0 +1,294 @@
+{
+  "checks": {
+    "clean": true,
+    "graft": true,
+    "invariance": true,
+    "removed_native": true,
+    "triggers_exercised": true,
+    "untouched_parity": true
+  },
+  "counts": {
+    "A": {
+      "correct": 6,
+      "n": 9,
+      "unverified": 9
+    },
+    "B": {
+      "correct": 9,
+      "n": 9,
+      "unverified": 6
+    }
+  },
+  "injections": {
+    "boundary": {
+      "changed_paths": 5,
+      "injection": "exercised",
+      "marks": [
+        [
+          "left",
+          148.0,
+          400.0
+        ]
+      ],
+      "reverse_changed_positions": 44342,
+      "reverse_equal": true,
+      "verdict": "visible_break"
+    },
+    "interior": {
+      "changed_paths": 5,
+      "injection": "exercised",
+      "marks": [],
+      "reverse_changed_positions": 44342,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "outline_only": {
+      "changed_paths": 3,
+      "injection": "exercised",
+      "marks": [],
+      "reverse_changed_positions": 44340,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p18 1-10:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 44338,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p18 I-A:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 44338,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p19 10-1:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 38952,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p19 6-1:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 38952,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p19 A-I:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 38952,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p20 frag 9-10:remove": {
+      "changed_paths": 15,
+      "injection": "exercised",
+      "marks": [],
+      "reverse_changed_positions": 2510,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p21 1-12:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 40128,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p21 I-A:remove": {
+      "changed_paths": 0,
+      "injection": "not_exercised",
+      "marks": [],
+      "reverse_changed_positions": 40128,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p23 frag D-G:remove": {
+      "changed_paths": 10,
+      "injection": "exercised",
+      "marks": [],
+      "reverse_changed_positions": 11990,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    },
+    "p24 frag 8-9:remove": {
+      "changed_paths": 10,
+      "injection": "exercised",
+      "marks": [],
+      "reverse_changed_positions": 3820,
+      "reverse_equal": true,
+      "verdict": "unverified"
+    }
+  },
+  "views": {
+    "p18 1-10": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 44338,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": "unverified"
+    },
+    "p18 I-A": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 44338,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": "unverified"
+    },
+    "p19 10-1": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 38952,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": "unverified"
+    },
+    "p19 6-1": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 38952,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": null
+    },
+    "p19 A-I": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 38952,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": "unverified"
+    },
+    "p20 frag 9-10": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [
+          [
+            "left",
+            300.48,
+            200.1
+          ],
+          [
+            "right",
+            632.04,
+            182.16
+          ],
+          [
+            "top",
+            354.72,
+            121.98
+          ]
+        ],
+        "reverse_changed_positions": 2524,
+        "reverse_equal": true,
+        "verdict": "visible_break"
+      },
+      "truth": "visible_break"
+    },
+    "p21 1-12": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 40128,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": "unverified"
+    },
+    "p21 I-A": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [],
+        "reverse_changed_positions": 40128,
+        "reverse_equal": true,
+        "verdict": "unverified"
+      },
+      "truth": "unverified"
+    },
+    "p23 frag D-G": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [
+          [
+            "left",
+            99.78,
+            375.42
+          ],
+          [
+            "right",
+            674.28,
+            381.06
+          ]
+        ],
+        "reverse_changed_positions": 12000,
+        "reverse_equal": true,
+        "verdict": "visible_break"
+      },
+      "truth": "visible_break"
+    },
+    "p24 frag 8-9": {
+      "A": "unverified",
+      "B": {
+        "changed_paths": 0,
+        "injection": "not_exercised",
+        "marks": [
+          [
+            "left",
+            136.74,
+            391.92
+          ],
+          [
+            "right",
+            556.32,
+            391.92
+          ]
+        ],
+        "reverse_changed_positions": 3830,
+        "reverse_equal": true,
+        "verdict": "visible_break"
+      },
+      "truth": "visible_break"
+    }
+  }
+}

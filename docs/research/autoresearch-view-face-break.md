@@ -1,5 +1,27 @@
 # #158 — vector break marks as a partial-view veto (OBSERVE)
 
+## Результат
+
+На векторном альбоме ЭЛВ знак обрыва у границы вида нашёл **3 из 3** настоящих фрагментов, не читая заголовки и оси, и не сработал ни на одном из **6** основных контрольных видов. Это повод **не** сопоставлять вид с целой стеной, а не способ узнать стену. Если знака нет, полнота вида всё ещё не подтверждена. Код продукта не менялся; Сокольники не открывались, #2001 всё ещё открыт.
+
+**H158 confirmed on the frozen scope cohort; run finished; OBSERVE only, no production keep, no PR.**
+
+| Arm | Correct scope routing (median) | Wrong | Unverified |
+|---|---:|---:|---:|
+| A — no break cue | 6/9 | 3/9 | 9/9 |
+| B — vector cue | 9/9 | 0/9 | 6/9 |
+
+All three fresh PDF pairs were byte-identical (accuracy range 0 pp); pair wall times 4.699 / 4.610 / 4.669 s; median 4.669 s, spread 0.089 s. Contract `d1b2b20d`; measured code `5bcd7e01`. Reader and raw hashes in [receipt](autoresearch-view-face-break/receipt.json), SHA-256 `3f73226bb4eae31a66eafd4555091528cc695b145262f6d5b32ac806714167f8`; full [per-view pair](autoresearch-view-face-break/pair-1.json), SHA-256 `d7e0ba93a1eca60775e04107e509824682bd930d26c172a4cb376ca0df9504e3`. The executable, fixture and lock are pinned by hash; the sealed PDF is readable on the pilot host as below. Replay limited to hosts with hash-identical PDF, no copied binaries needed.
+
+- **Clean:** p23 and p24: left and right; p20: left, right and top. p19 6–1: `unverified` despite a visible plotted break — the contract kept it out of the score. Do not promote `unverified` to full or claim perfect recall of break symbols. Views share one album, two fragments share a signage drawing convention, and repeated main views are not independent projects.
+- **Injected (not pooled):** removed 15/10/10 paths from p20/p23/p24 respectively: all three fell back to `unverified`. All seven untouched views were `not_exercised` by removal, with exact parity. Real p24 glyph transplanted to p18 1–10: interior +5 paths `unverified`; boundary +5 `visible_break`; boundary strokes only +3 `unverified`. Boundary injection triggers a conservative veto even on a known full view. All clean and altered views also exercised path-order reversal (per-input changed positions in pair); zero mark or verdict changes. Layer and sequence IDs indexed the injected paths only.
+- **Not measured:** no genuine held-out no-mark partials, no real partial inner-corner wall oracle, no fresh approved/rejected wall assignments, no assignment or bay accuracy, no finish transfer. The injected negatives only calibrate the cue, not a delivery-quality signal.
+- **Next:** pre-register a separate vector album with independently labelled crop boundaries and real partials (include absent/flattened glyphs); then score an independent model-wall and bay-interval oracle on those exact views. Revisit #2001 only after closure.
+
+**Recommendation for the OKS view↔face map sheet (not implemented):** show `visible_break` with drawing coordinates; skip whole-wall W/H and exact window-count matching on this view and look for independent keyplan/axis/bay evidence. If still ambiguous, show candidates and ask rather than transferring materials. For `unverified`, require separate evidence of drawing/physical-wall scope before using the whole-wall signature. Do not use this cue as a positive assignment.
+
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --locked --extra pdf-review pytest -q -p no:cacheprovider --basetemp tmp/ar158-pytest docs/research/autoresearch-view-face-break/test_break.py docs/research/autoresearch-view-face-elv/test_run.py` — 6 passed (2 deliberate red before candidate: expected a mark and got none). Pilot `bash C:/Users/artsafro/hermes_kanban/scripts/repo_guards.sh` — GREEN, 568 passed, 1 warning. Full suite: deferred to merge batch (rule 68).
+
 ## Frozen contract
 
 **Context.** #157 tested model-side signatures assuming the drawn view spans a wall. That assumption is unverified. Test a drawing-side cue before allowing any whole-wall signature: a broken outline marked in the drawing itself. No changes to the recommendation owned by open #2073/#2074, or to the wall scorer owned by #2075. #2001 OPEN: no Sokolniki source or key. Readiness 2026-11-28 04:35; atlas/form/trainer not reopened.

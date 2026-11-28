@@ -1,0 +1,42 @@
+{
+  "checks": {
+    "clean": true,
+    "graft": true,
+    "invariance": true,
+    "removed_native": true,
+    "triggers_exercised": true,
+    "untouched_parity": true
+  },
+  "counts": {
+    "A": {
+      "correct": 6,
+      "n": 9,
+      "unverified": 9
+    },
+    "B": {
+      "correct": 9,
+      "n": 9,
+      "unverified": 6
+    }
+  },
+  "fixture_sha256": "b1b892b914d034beda0b28c00da733403af2c5c516410bf4745062cf60f75940",
+  "hypothesis": "confirmed",
+  "lock_sha256": "ba1bb998b19d50e1a066042e6362a9ec581949f0fe928433af2008060df4d5ea",
+  "median_s": 4.668563200044446,
+  "pair_sha256": [
+    "d7e0ba93a1eca60775e04107e509824682bd930d26c172a4cb376ca0df9504e3",
+    "d7e0ba93a1eca60775e04107e509824682bd930d26c172a4cb376ca0df9504e3",
+    "d7e0ba93a1eca60775e04107e509824682bd930d26c172a4cb376ca0df9504e3"
+  ],
+  "pair_wall_s": [
+    4.699260899971705,
+    4.610133900016081,
+    4.668563200044446
+  ],
+  "parity": true,
+  "pdf_sha256": "49c105275ea56f16f9f281b3586876818215d99544d82644a5aab8e1cfba9545",
+  "reader": "1.28.2",
+  "run_status": "finished",
+  "runner_sha256": "64c82cd8859a63bb083073ce6f8c0f83da556c7f7655e49325ef42d886e630b9",
+  "spread_s": 0.08912699995562434
+}
