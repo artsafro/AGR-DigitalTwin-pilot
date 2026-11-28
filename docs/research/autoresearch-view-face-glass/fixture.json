@@ -1,0 +1,25 @@
+{
+ "pdf": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/Silikatniy_UVK/Задание на визы Силикатный/Альбом АГР_Силикатный_ корр. Гранель 08.04.25 (2).pdf",
+ "model": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/Silikatniy_UVK/pravki/pergolas_from_dwfx/context_full_model_by_category.obj",
+ "sha256": {
+  "pdf": "785e4015993482945b704de3ab2fdbfe40307300d222abded319808e3a069131",
+  "model": "6ab64e6b8de3b838b352f4d4ebfb560af0648be10699fe252cf21eba3e9bea62"
+ },
+ "legend_rgb": [[247, 248, 242], [78, 97, 100], [88, 88, 88], [255, 255, 255]],
+ "params": {
+  "zoom": 4, "page_white_sum": 760, "open_px": 7, "legend_dist": 45, "glass_lum": [100, 225],
+  "view_height_m": 12.9, "grid_m": 0.25, "render_res_m": 0.1,
+  "azimuths": [0, 60, 90, 150, 180, 240, 270, 330],
+  "glass_objects": ["Ctx_okna", "Ctx_paneli_vitrazha"], "hidden_objects": ["Ctx_perekrytiya"],
+  "min_overlap": 0.8, "tau": 0.30, "delta": 0.10
+ },
+ "views": [
+  {"id": "p15 A'-K (7 boxes)", "page": 15, "clip_pt": [160, 295, 700, 400], "kind": "full", "inner": false, "gt_az": [330]},
+  {"id": "p14 4'-1 (truss glazed block)", "page": 14, "clip_pt": [105, 315, 775, 420], "kind": "full", "inner": false, "gt_az": [90]},
+  {"id": "p14 1-4' (courtyard, developed)", "page": 14, "clip_pt": [140, 110, 750, 215], "kind": "full", "inner": true, "gt_az": [240, 270]},
+  {"id": "p16 fragment 1 (box bay)", "page": 16, "clip_pt": [345, 75, 565, 340], "kind": "fragment", "inner": false, "gt_az": [330]},
+  {"id": "p17 fragment 2 (curved stair)", "page": 17, "clip_pt": [300, 68, 525, 330], "kind": "fragment", "inner": true, "gt_az": [240, 270]},
+  {"id": "p15 K-A", "page": 15, "clip_pt": [110, 95, 515, 200], "kind": "full", "inner": false, "gt_az": null},
+  {"id": "p15 A-G", "page": 15, "clip_pt": [560, 95, 760, 200], "kind": "full", "inner": false, "gt_az": null}
+ ]
+}
