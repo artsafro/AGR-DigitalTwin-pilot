@@ -100,7 +100,8 @@
   Olimpijsky dW +4.1..+12.1 m, dH -3.1..-7.5 m: the segment-extent reader includes ground lines/callouts beyond the
   building, and the model bbox includes below-grade geometry. Output: [`posthoc.json`](autoresearch-view-face-realism/posthoc.json).
 - **Receipt:** [`receipt.json`](autoresearch-view-face-realism/receipt.json) = run1 `score.json` (runner SHA-256
-  `773d6240c618edc8e67ca8a05af2941841293f0fb971872d2f0bdf249374be0a`) with all pins. Evidence:
+  `773d6240c618edc8e67ca8a05af2941841293f0fb971872d2f0bdf249374be0a`; Git LF blob SHA-256
+  `1cc45539be6431589853b2e72bf396364ac59413699cf2b7ec34935d5b93b30d`) with all pins. Evidence:
   `G:/Мой диск/AGR-evidence/159-view-face-realism/` + `SHA256SUMS.txt` (11 files, manifest SHA-256
   `3e807ff95ceb86e3d9c06639b9439d32ae77a88b40a4dae5ad114ad3c6671c3d`). Replay limited to the pilot host.
 
