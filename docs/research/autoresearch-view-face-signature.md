@@ -2,7 +2,17 @@
 
 ## Резюме (по-русски)
 
-_Заполняется после замера (ниже - контракт, зафиксированный до любых расчётов)._
+Гипотеза H157 (стену частичного вида во внутреннем углу можно узнать по «подписи» стены модели: ширина, высота,
+число колонн и рядов окон): по замороженным порогам **ОПРОВЕРГНУТА**. На Савеловской уникальны 68 % «внутренних»
+стен (порог 70 %), и при ошибке масштаба 5 % 3,7 % запросов дают уверенно неверную стену (порог 3 %). Все ошибки -
+низкие полосы без окон (H 3,1-3,6 м, парапеты и уступы над кровлей) и один почти-близнец на Московском (две соседние
+стены 9,4 x 19,0 и 10,5 x 20,3 м, 4x4 окна). Объявленная до расчёта диагностика: стены внутренних углов, стоящие на
+земле (то, что показывает частичный вид), уникальны **5/5 (Савеловская) и 7/7 (Московский)**, соседа на двойном допуске
+нет; при ошибке масштаба 5 %: 14 верно / 0 неверно / 10 отказ (отказывают стены длиннее ~28 м или выше 20 м). Вид, обрезавший
+колонну окон, всегда отказ. ELV: 0 таких стен (как в #153), Олимпийский: 1. Три прогона побайтно одинаковы, 387 с.
+Для шага «view<->face map sheet»: кандидатами брать только стены на земле, отвечать при одном кандидате и без соседа
+на двойном допуске, иначе спрашивать. Сами листы (Савеловская, Московский) - растровые, частичных видов нет: точность
+по реальным видам **не измерена**. Sokolniki не открывался (#2001 открыт).
 
 ## Frozen contract (committed before any scoring)
 
@@ -61,4 +71,52 @@ _Заполняется после замера (ниже - контракт, з
 
 ## Round log
 
-_After scoring._
+- **Contract** `d021c0dd`; runner/extraction/scoring `5fecbc13`, test fix `eea720db` (frozen before the first
+  score: the ground-standing diagnostic was added to `score.py` before any run). No repair attempts were needed.
+- **Feasibility probe (before the contract, not scored):** both Weltbau FBX are Revit exports in metres
+  (Savelovskaya 166 x 62 x 17.7 m, 11108 objects; Moskovsky 115 x 66 x 21.6 m, 8846 objects) with per-instance
+  window objects (`WB_120_Окно_*`, `ADSK_ОкноВитражное*`, `ASML_АР_Витражная*`).
+- **Series:** `uv run --offline --locked python docs/research/autoresearch-view-face-signature/run.py C:/x/ar157/run{1,2,3}`
+  at `eea720db`. All 9 output files byte-identical across the 3 runs. Wall time 387.242 / 385.177 / 394.695 s
+  (median 387.242 s, spread 9.5 s); status completed, inside the 90 min budget.
+- **Invariance:** name order vs reverse order: 0 changed walls on all 4 models, window lists identical (exercised).
+
+| model | walls | inner | inner unique A / B / R | inner risk2 B | open unique B | perturbed correct / wrong / abstain | ground inner n, unique B, risk2 |
+|---|---|---|---|---|---|---|---|
+| savelovskaya (gated) | 35 | 19 | 0.58 / 0.68 / 0.74 | 0.47 | 0.94 | 26 / 3 / 53 (3.7 %) | 5, 1.00, 0.00 |
+| moskovsky (gated) | 29 | 13 | 0.77 / 0.92 / 1.00 | 0.08 | 0.81 | 23 / 1 / 48 (1.4 %) | 7, 1.00, 0.00 |
+| elv (control) | 34 | 21 | 0.29 / 0.43 / 0.62 | 0.62 | 0.77 | 23 / 0 / 52 | 0, n/a (not exercised) |
+| olimpijsky (control) | 93 | 52 | 0.21 / 0.23 / 0.29 | 0.88 | 0.27 | 26 / 8 / 168 (4.0 %) | 1, 1.00, 0.00 |
+
+- **H157: REFUTED** (Savelovskaya inner unique B 0.684 < 0.70 and perturbed wrong 3.66 % > 3 %).
+- **Where the wrongs are.** Savelovskaya walls 5 and 22: inner, 24.5 / 25.4 x 3.4 m, no windows (strips above lower
+  roofs; doubled lines on the plan PNG). Moskovsky wall 25: open, 10.46 x 20.29 m, 4 x 4 windows; at scale 0.95 its
+  height misses itself by 1.01 m and the adjacent wall 24 (9.41 x 18.99 m, 4 x 4) is the only candidate.
+- **Diagnostic (declared before scoring, not gated): ground-standing inner walls** (z0 <= lowest + 1 m, the subjects
+  of inner-corner partial elevations). Savelovskaya 1, 2, 3, 24, 28; Moskovsky 1, 2, 3, 4, 5, 6, 12. All unique under
+  A, B and R with no neighbour at 2 tau. Scale-perturbed queries 14 correct / 0 wrong / 10 abstain (abstain = walls
+  28-49 m long or 20 m high, where 5 % exceeds the tolerance); window-cut queries 0 / 0 / 7 (exact counts never
+  match a cut view).
+- **Witness check (by eye on the plan PNGs).** Savelovskaya walls 2/28/1 = the notch at the top-left of the keyplan
+  (real inner corner); Moskovsky 1 and 12 face each other across the stepped middle (real inner corners, sheet p3).
+  Spurious "inner" walls: rooftop boxes and above-roof strips (Savelovskaya 7/14/19/20/21/29 with z0 8.7-12.9 m, ELV 21 of 21);
+  they are what the ground filter removes. ELV ground inner 0 matches #153 ("one wall per side").
+- **Not measured.** Any view-side number: both new sheets are raster tiles with four full keyplan-marked views and no
+  partial views, so no measured W/H/window counts from drawn views, no real-view accuracy. Tolerance realism
+  (is a drawn partial view within 1.2 m / 1.0 m and exact window counts of its wall?) is the open item.
+- **Receipt:** [`receipt.json`](autoresearch-view-face-signature/receipt.json) = run1 `score.json`
+  (SHA-256 `cc50e3306b953656f1a6baed9a621e75cd33de4c409239c009b66380c671a21e`, identical in run2/run3) with all pins.
+  Evidence (wall tables fwd/rev, plan PNGs, score, wall time): `G:/Мой диск/AGR-evidence/157-view-face-signature/`
+  + `SHA256SUMS.txt` (14 files, manifest SHA-256 `3751f27e4ce36eb4cc51cd42d8e61bbddabcf9ce8f1dfbed2c088328fe7783ae`).
+  Replay is limited to the pilot host (customer FBX outside git).
+
+## Recommendation for the OKS step "view<->face map sheet" (measured, OBSERVE)
+
+1. Side for full views: keyplan mark (#152) or finish partition D (#149) as before; within-side interval +-1.2 m (#153).
+2. Untitled partial view that matches no main elevation: candidates = **ground-standing** exterior walls of the model
+   (all azimuths, this runner's extraction). Measure W, H at the sheet scale and window columns/rows from the view.
+   Answer only if exactly one candidate matches (+-1.2 m / +-1.0 m, exact counts) **and** no other wall lies within
+   2 tau; otherwise ask Artem with the candidate list. Measured ceiling on the two Weltbau schools: 12/12 ground
+   inner walls unique; under 5 % scale error 14/24 queries correct, 0 wrong; long or tall walls and views that cut a
+   window column fall back to asking.
+3. Not yet allowed: answering without a view-side measurement check (not measured here) - see next targets.

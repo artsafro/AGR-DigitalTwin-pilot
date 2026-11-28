@@ -422,6 +422,14 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
 | research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
 | research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
+| research/autoresearch-view-face-signature | [research/autoresearch-view-face-signature.md](../research/autoresearch-view-face-signature.md) |  |
+| research/autoresearch-view-face-signature/fixture-json | [research/autoresearch-view-face-signature/fixture.json](../research/autoresearch-view-face-signature/fixture.json) |  |
+| research/autoresearch-view-face-signature/plan-py | [research/autoresearch-view-face-signature/plan.py](../research/autoresearch-view-face-signature/plan.py) |  |
+| research/autoresearch-view-face-signature/receipt-json | [research/autoresearch-view-face-signature/receipt.json](../research/autoresearch-view-face-signature/receipt.json) |  |
+| research/autoresearch-view-face-signature/run-py | [research/autoresearch-view-face-signature/run.py](../research/autoresearch-view-face-signature/run.py) |  |
+| research/autoresearch-view-face-signature/score-py | [research/autoresearch-view-face-signature/score.py](../research/autoresearch-view-face-signature/score.py) |  |
+| research/autoresearch-view-face-signature/test-score-py | [research/autoresearch-view-face-signature/test_score.py](../research/autoresearch-view-face-signature/test_score.py) |  |
+| research/autoresearch-view-face-signature/walls-py | [research/autoresearch-view-face-signature/walls.py](../research/autoresearch-view-face-signature/walls.py) |  |
 | research/bench-npm-derivation | [research/bench-npm-derivation.md](../research/bench-npm-derivation.md) |  |
 | research/bim-3dsmax-agr | [research/bim-3dsmax-agr.md](../research/bim-3dsmax-agr.md) |  |
 | research/bim-blender-agr | [research/bim-blender-agr.md](../research/bim-blender-agr.md) |  |
