@@ -1,11 +1,11 @@
 Current run: Ground NPM v003 and diagnostic site NPM v001 (not passed).
 Source: [sources.json](sources.json) and the sealed evidence snapshot below.
-Next gate: Artem's visual review; diagnostic package issues remain open.
+Next gate: resolve the diagnostic package failures; Ground texture review is closed.
 
 # moskovsky-sosh1200 — state
 
 Cell `ground-npm`, trail `routes/site.md`. Stage: **Ground v003 built (IDs + textures on frozen geometry)**.
-**v002 geometry accepted by the user 2026-11-26** (frozen). `passed=false`, no deliverable package; texture acceptance open.
+**v002 geometry accepted by the user 2026-11-26** (frozen). `passed=false`, no deliverable package.
 
 ## Evidence location
 
@@ -45,9 +45,16 @@ These are read-only provenance, not a supported route or in-place replay. The or
   `geometry-compare-v002.json` (vertices and faces identical to v002 after the re-ID).
 - Textures: `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/materials/npm-tiled-v002/` (2K, 37.9 px/m).
 
+### Texture acceptance (2026-11-28)
+
+- **Ground NPM v003 textures accepted as is** by Artem on 2026-11-28 11:06 («Принимаю»; [#2099 decision](https://github.com/artsafro/AGR-DigitalTwin-pilot/issues/2099#issuecomment-7237675635)). The 2 m repeat on most maps and 3.6 m repeat on paving are acceptable for this job. This is not package acceptance.
+- Review sheet: `G:/Мой диск/AGR-evidence/1979-moskovsky-sosh1200/question-ground-v003-textures/moskovsky-ground-v003-textures.png`.
+  SHA-256: `45052e5e29bc08e7ac2d8094e0ce84a45163f36901a810c5ec9242d706ecc49c` (verified against the adjacent `SHA256SUMS.txt`).
+- Build notes before review: proposed library bindings 19/22/42/23; assumed periods for 22/27/42/23 = 2 m.
+
 ## Open gaps
 
-1. Material bindings 19/22/42/23 and assumed periods (22/27/42/23 = 2 m) are proposals; no soil map in the library.
+1. No dedicated soil map in the library; the accepted ID18 uses recoloured gravel.
 2. MTEXT game glyphs (74) not built; marking widths without DWG width = 0.05 m assumed.
 3. Absolute Baltic mark of ±0.000 not in the DWG; paving A00F6C read even-odd (D343 scope).
 4. MAF v002 and Flora v002 are represented in the diagnostic package below; this does not accept the library drafts or pass the package.

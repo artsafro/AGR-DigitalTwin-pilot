@@ -13,6 +13,8 @@ Manual stages (V015-V017) always need a signed review.
 --master reads the quad work FBX back (DER-03, [D021], [D198]): V003 "master quads" / "master quad size";
 with --scene and no --master that part of V003 stays not_run. An explicit `--master role=PATH` that neither the build
 manifest compared nor the quad check read is a V001 not_run `master_role_unused` naming the role and why (#1810).
+`--scene --master ground=WORK.fbx` (#1919, [D366]): V003 "ground work quads" with the D312 face rule only, apart from
+the OKS "master quads" and the delivered-FBX checks; an unread Ground is a V003 not_run `ground_work_unread`.
 Build manifest (#1423): a ZIP is checked against `<stem>.build.json` beside it (or --build-manifest FILE) in V001
 "build manifest": different master revisions, a master changed since the build (--master hash), zipped bytes or
 check-report hashes that differ, or a required check not run / not finished / not passed -> fail; no manifest ->
@@ -39,11 +41,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from adapters.max.agr_tools import build_manifest  # noqa: E402  (#1423 delivery set consistency)
+from adapters.max.agr_tools.package_core import ADDRESS  # noqa: E402  (#1919 the one package address grammar)
 
 from twinqa.bundle import BundleError, read_bundle, size_status  # noqa: E402
 from twinqa.fbx_header import check_fbx_header  # noqa: E402
 from twinqa.geojson import geojson_findings  # noqa: E402
-from twinqa.master import master_findings  # noqa: E402
+from twinqa.master import ground_work_findings, master_findings  # noqa: E402
 from twinqa.io import digest, json_bytes  # noqa: E402
 from twinqa.png import npm_texture_findings, vpm_texture_findings  # noqa: E402
 from twinqa.profiles import (DEFAULT_STANDARDS, expected_stages, load_profiles, read_snapshot,  # noqa: E402
@@ -70,19 +73,24 @@ def load_z_meta(path: Path):
     return payload
 
 
-STEM = re.compile(r"^[A-Za-z0-9_]+$")
-NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>[A-Za-z0-9_]+)$")
-VPM_STEM = re.compile(r"^SM_[A-Za-z0-9_]+$")
+# Profile hints only (lab L04, #908): which profile an archive name points at, kept as loose as before so a
+# misspelt name still gets its profile's findings. The name itself is judged in V012 against the shared
+# grammar `package_core.ADDRESS` (#1919), never against these hints.
+_NPM_HINT = re.compile(r"^[0-9]{4}_[A-Za-z0-9_]+$")
+_VPM_HINT = re.compile(r"^SM_[A-Za-z0-9_]+$")
+NPM_ARCHIVE = re.compile(r"^(?P<code>[0-9]{4})_(?P<address>" + ADDRESS + r")$")
+VPM_ARCHIVE = re.compile(r"^SM_(?P<address>" + ADDRESS + r")$")
 SCENE_NOTE = "needs the FBX scene: run tools/blender readback"
 
 
 def profile_from_name(name: str) -> str | None:
     """Profile from the archive/FBX name grammar (lab L04, #908): NPM `{code4}_{Address}[...]`, VPM `SM_{Address}[...]`.
-    None when the name matches neither; only then is the profile guessed from the content."""
+    None when the name matches neither; only then is the profile guessed from the content. Loose on purpose
+    (#1919): `0000_A__B` still selects NPM so its V012 reports the malformed address."""
     stem = Path(name).stem
-    if NPM_ARCHIVE.match(stem):
+    if _NPM_HINT.match(stem):
         return "npm"
-    if VPM_STEM.match(stem):
+    if _VPM_HINT.match(stem):
         return "vpm"
     return None
 
@@ -346,8 +354,10 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
         v1.findings.append(finding("fail", "PNG count", str(len(pngs)), f"{lo}..{hi}", pages))
 
     v12, npages = st["V012"], st["V012"].source_pdf_pages
-    if not STEM.match(stem) or not stem.startswith("SM_") or len(stem) > profile["naming"]["max_characters"]:
-        v12.findings.append(finding("fail", "archive name", stem, "SM_{Address}[_Ground], A-Z a-z 0-9 _", npages))
+    if not VPM_ARCHIVE.match(stem) or len(stem) > profile["naming"]["max_characters"]:
+        v12.findings.append(finding("fail", "archive name", stem,
+                                    "SM_{Address}[_Ground]; Address = A-Z a-z 0-9 words joined by single _ "
+                                    "(package_core.ADDRESS)", npages))
     elif ground:
         v12.findings.append(finding("pass", "archive name", stem, "SM_{Address}_Ground", npages))
     else:
@@ -380,24 +390,33 @@ def validate_vpm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict
     return {key: maps["Diffuse"].width for key, maps in sets.items() if "Diffuse" in maps}
 
 
-def validate_npm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict[str, Stage]):
+def validate_npm_zip(stem: str, files: dict[str, bytes], profile: dict, st: dict[str, Stage],
+                     require_ucx_geojson: bool = False):
     v1, pages = st["V001"], st["V001"].source_pdf_pages
     nested = [n for n in files if len(PurePosixPath(n).parts) > 1]
     if nested:
         v1.findings.append(finding("fail", "flat archive", f"{len(nested)} file(s) in folders, e.g. {nested[0]}",
                                    "files in the ZIP root", pages, data={"code": "zip_nested"}))
     fbx = {n: d for n, d in files.items() if n.lower().endswith(".fbx")}
-    other = sorted(set(files) - set(fbx))
+    # [D438]: Appendix 1 is FBX-only; a customer addendum is a separate, opt-in contract.
+    member = f"{stem}.geojson"
+    if require_ucx_geojson:
+        present = bool(files.get(member))
+        v1.findings.append(finding("pass" if present else "fail", "customer GeoJSON presence",
+                                   member if present else "missing or empty", f"nonempty {member}", [], member))
+    other = sorted(set(files) - set(fbx) - ({member} if require_ucx_geojson else set()))
     if other:
         # NPM textures are embedded in the FBX (reg p.9 §5.1); anything else is foreign
-        v1.findings.append(finding("fail", "foreign files", ", ".join(other[:5]), "FBX only (textures embedded)", pages))
+        allowed = "FBX and customer GeoJSON" if require_ucx_geojson else "FBX only (textures embedded)"
+        v1.findings.append(finding("fail", "foreign files", ", ".join(other[:5]), allowed, pages))
     count = profile["archive"]["fbx_total"]
     if not count["min"] <= len(fbx) <= count["max"]:
         v1.findings.append(finding("fail", "FBX count", str(len(fbx)), f"{count['min']}..{count['max']} (1 Ground + 1..20 OKS)", pages))
     m = NPM_ARCHIVE.match(stem)
     v12 = st["V012"]
     if not m:
-        v12.findings.append(finding("fail", "archive name", stem, "{territory_code_4}_{Address}", v12.source_pdf_pages))
+        v12.findings.append(finding("fail", "archive name", stem, "{territory_code_4}_{Address}; Address = A-Z a-z 0-9 "
+                                    "words joined by single _ (package_core.ADDRESS)", v12.source_pdf_pages))
     else:
         ground_name, part = f"{stem}_Ground.fbx", re.compile(rf"^{re.escape(stem)}_(0[1-9]|1[0-9]|20)\.fbx$")
         if ground_name not in fbx:
@@ -417,7 +436,8 @@ def fbx_role(name: str) -> str:
 
 def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, bytes], notes: list[str],
               ground_area_m2: float | None = None, footprint_holes=None, diffuse_px: dict | None = None,
-              ground_materials: list[str] | None = None, export_meta=None, npm_atlas: dict | None = None):
+              ground_materials: list[str] | None = None, export_meta=None, npm_atlas: dict | None = None,
+              require_ucx_geojson: bool = False):
     """Blender readback of each FBX; replaces the scene not_run placeholders it covers.
     npm_atlas {FBX name: npm_atlas.json dict} feeds the NPM V006 "UV atlas padding" readback (#1580); an NPM
     OKS/Ground FBX without one keeps that finding not_run.
@@ -461,6 +481,13 @@ def add_scene(st: dict[str, Stage], kind: str, profile: dict, fbx: dict[str, byt
                 # one unreadable FBX must not hide the others (team audit T04: a _Light import error ended the loop)
                 notes.append(f"scene readback skipped for {name}: {exc}")
                 continue
+            if require_ucx_geojson and rb.get("readback_ok") and isinstance(rb.get("meshes"), list):
+                stage = st["V001"]
+                stage.findings = [f for f in stage.findings
+                                  if not (f.name == "customer UCX presence" and f.evidence == name)]
+                count = sum(m["name"].upper().startswith("UCX_") for m in rb["meshes"])
+                stage.findings.append(finding("pass" if count else "fail", "customer UCX presence", str(count),
+                                              "at least one UCX_ mesh per FBX", [], name))
             height_meta = None
             if export_meta is not None:
                 unknown = set(export_meta) - set(fbx)
@@ -557,20 +584,68 @@ def _same_file(a, b) -> bool:
     return os.path.normcase(str(Path(a).resolve())) == os.path.normcase(str(Path(b).resolve()))
 
 
-def add_unused_roles(st: dict[str, Stage], master, compared: str | None, read: Path | None, oks_reason: str | None,
+GROUND_WORK = "Ground work FBX topology: quads wherever possible; triangles allowed and reported; no n-gons [D312]"
+
+
+def add_ground_work(st: dict[str, Stage], kind: str, ground, target: Path, oks: Path | None, scene: bool,
+                    notes: list[str]) -> tuple[Path | None, str | None]:
+    """#1919 ([D366], [D312]): V003 'ground work quads' from an explicit `--master ground=PATH` work FBX readback.
+
+    Separate from the delivered-FBX scene checks and from the OKS 'master quads' result; only the shared D312 face
+    rule runs (no facade checks). Returns (the file read, None) or (None, why Ground was not read); an unread Ground
+    gets a V003 not_run `ground_work_unread` naming what was not checked - never a pass, never a first-file pick.
+    No ground role: nothing is added (unnamed/OKS behaviour unchanged)."""
+    if ground is None:
+        return None, None
+    paths = ground if isinstance(ground, list) else [ground]
+    names = ", ".join(Path(p).name for p in paths)
+    path = Path(paths[0])
+    if "V003" not in st:
+        return None, f"the {str(kind).upper()} profile has no V003 work-mesh check"
+    if not scene:
+        reason = "the Ground work-mesh check runs only with --scene on a ZIP or FBX"
+    elif len(paths) != 1:
+        reason = "several Ground sources: the Ground work-mesh check takes one work FBX and never picks one [D332]"
+    elif path.suffix.lower() != ".fbx":
+        reason = f"{path.name} is not an FBX work file"
+    elif not path.is_file():
+        reason = f"{path.name} does not exist"
+    elif _same_file(path, target):
+        reason = f"{path.name} is the validated package itself, not a work FBX"
+    elif oks is not None and _same_file(path, oks):
+        reason = f"{path.name} is also the OKS master; one file is not read as two roles"
+    else:
+        try:
+            rb = readback(path)
+        except (OSError, RuntimeError) as exc:
+            reason = f"{path.name}: readback failed ({exc})"
+        else:
+            st["V003"].findings.extend(ground_work_findings(rb, path))
+            notes.append(f"ground work readback: {path.name} in Blender {rb.get('blender')}")
+            return path, None
+    st["V003"].findings.append(finding(
+        "not_run", "ground work quads", f"--master ground={names} not read: {reason}; Ground work-mesh topology "
+        "(triangles per object, n-gons) not checked", GROUND_WORK, [8, 29], "DER-03, [D366], [D312]",
+        data={"code": "ground_work_unread", "role": "ground", "reason": reason, "paths": [str(p) for p in paths]}))
+    notes.append(f"ground work not read: {reason}")
+    return None, reason
+
+
+def add_unused_roles(st: dict[str, Stage], master, compared: str | None, read: list, reasons: dict,
                      notes: list[str]):
     """#1810: one V001 not_run `master_role_unused` per explicit --master role that no check used; never fail/pass.
 
-    compared: None = the build manifest compared every given role, else why it did not; read: the file the V003 quad
-    check took (a role whose every source is that file, under any spelling, was used); oks_reason: why the oks input
-    was not read. Hashing a file is not a use. An unkeyed path is not a role and keeps its note."""
+    compared: None = the build manifest compared every given role, else why it did not; read: the files the V003
+    work-mesh checks took (OKS quad master, Ground work FBX #1919; a role whose every source is one of them, under
+    any spelling, was used); reasons: {role: why its input was not read}. Hashing a file is not a use. An unkeyed
+    path is not a role and keeps its note."""
     if compared is None or not isinstance(master, dict) or "V001" not in st:
         return
     for role in sorted(master):
         paths = master[role] if isinstance(master[role], list) else [master[role]]
-        if read is not None and all(_same_file(p, read) for p in paths):
-            continue  # the independent OKS quad check used this input
-        reason = compared + (f"; {oks_reason}" if role == "oks" and oks_reason else "")
+        if any(r is not None and all(_same_file(p, r) for p in paths) for r in read):
+            continue  # an independent V003 work-mesh check used this input
+        reason = compared + (f"; {reasons[role]}" if reasons.get(role) else "")
         names = ", ".join(Path(p).name for p in paths)
         st["V001"].findings.append(finding(
             "not_run", "master role", f"--master {role}={names} unused: {reason}",
@@ -612,7 +687,8 @@ def _resolve_npm_atlas(npm_atlas, target: Path, files: dict, kind, scene: bool, 
 def validate(target: Path, kind: str | None, profiles, scene: bool = False,
              ground_area_m2: float | None = None, footprint_holes=None,
              master: Path | dict | None = None, ground_materials: list[str] | None = None, export_meta=None,
-             manifest: Path | None = None, npm_atlas: dict | list | None = None) -> ValidationReport:
+             manifest: Path | None = None, npm_atlas: dict | list | None = None,
+             require_ucx_geojson: bool = False) -> ValidationReport:
     """npm_atlas {FBX name | None: npm_atlas.json path} or [(name | None, path)] (#1580): None = the single FBX
     target / the only OKS FBX of the ZIP; a name that is not an FBX of the target, a name given twice, or an unusable
     layout raises ValueError."""
@@ -624,6 +700,8 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         ground_materials = check_ground_materials(ground_materials)
     data = target.read_bytes()
     suffix = target.suffix.lower()
+    if require_ucx_geojson and suffix != ".zip":
+        raise ValueError("customer UCX/GeoJSON presence checks require an NPM ZIP")
     files, notes = {}, []
     compared = f"a single {suffix or 'extensionless'} file has no build manifest, so no master was compared"
     if suffix == ".geojson":
@@ -668,6 +746,10 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
             kind = "vpm" if any(n.lower().endswith((".geojson", ".png")) for n in files) else "npm"
             notes.append(f"profile auto-detected as {kind.upper()} from archive content "
                          "(the name matches neither {code4}_{Address} nor SM_{Address})")
+    if require_ucx_geojson and kind != "npm":
+        raise ValueError("customer UCX/GeoJSON presence checks require an NPM ZIP")
+    if kind is None:
+        raise ValueError(f"cannot infer profile for {target.name}; pass --profile npm|vpm")
     profile = profiles.profile(kind)
     st = build_stages(profiles, kind)
     atlases = _resolve_npm_atlas(npm_atlas, target, files, kind, scene, notes)
@@ -678,11 +760,21 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
         status, observed = size_status(len(data), limit)
         st["V001"].findings.append(finding(status, "archive size", observed, f"<= {limit} B",
                                            st["V001"].source_pdf_pages, conflicts=[]))
-        diffuse_px = (validate_vpm_zip if kind == "vpm" else validate_npm_zip)(target.stem, files, profile, st)
+        fbx = {n: d for n, d in files.items() if n.lower().endswith(".fbx")}
+        diffuse_px = None
+        if kind == "vpm":
+            diffuse_px = validate_vpm_zip(target.stem, files, profile, st)
+        else:
+            validate_npm_zip(target.stem, files, profile, st, require_ucx_geojson)
+        if require_ucx_geojson:
+            notes.append("NPM customer addendum: UCX and GeoJSON presence only; no VPM content rules applied")
+            for name in sorted(fbx):
+                st["V001"].findings.append(finding("not_run", "customer UCX presence", "no scene result",
+                                                   "at least one UCX_ mesh per FBX", [], name))
         compared = add_build_manifest(st, target, data, files, master, manifest, notes, kind)
         if scene:
-            add_scene(st, kind, profile, {n: d for n, d in files.items() if n.lower().endswith(".fbx")}, notes,
-                      ground_area_m2, footprint_holes, diffuse_px, ground_materials, export_meta, atlases)
+            add_scene(st, kind, profile, fbx, notes, ground_area_m2, footprint_holes, diffuse_px,
+                      ground_materials, export_meta, atlases, require_ucx_geojson)
     elif suffix == ".fbx":
         check_fbx_headers(st["V002"], {target.name: data})
         if scene:
@@ -719,7 +811,9 @@ def validate(target: Path, kind: str | None, profiles, scene: bool = False,
     elif quad is not None:
         notes.append(f"master {quad.name} unused: the master check runs with --scene on a ZIP or FBX")
         oks_reason = "the quad master check runs only with --scene on a ZIP or FBX"
-    add_unused_roles(st, master, compared, read, oks_reason, notes)
+    ground_read, ground_reason = add_ground_work(st, kind, master.get("ground") if isinstance(master, dict) else None,
+                                                 target, quad, scene_readback, notes)
+    add_unused_roles(st, master, compared, [read, ground_read], {"oks": oks_reason, "ground": ground_reason}, notes)
     if ground_area_m2 is not None and not scene_readback:
         notes.append(f"ground_area_m2 {ground_area_m2} unused: the VPM Ground band applies only to a VPM --scene readback")
     if footprint_holes is not None and not scene_readback:
@@ -883,6 +977,8 @@ def main(argv=None) -> int:
     ap.add_argument("--json", action="store_true", help="machine-readable report")
     ap.add_argument("--standards", type=Path, help="standards folder (default: <repo>/standards)")
     ap.add_argument("--scene", action="store_true", help="read every FBX back in background Blender")
+    ap.add_argument("--npm-require-ucx-geojson", action="store_true",
+                    help="NPM ZIP: opt into customer presence checks for UCX (needs --scene) and GeoJSON")
     ap.add_argument("--export-meta", type=Path,
                     help="exporter export_meta.json with fbx_records (#1342), or a JSON mapping exact FBX "
                          "filenames to {bounds_m, fbx_sha256}; feeds V013 Z bounds")
@@ -913,7 +1009,7 @@ def main(argv=None) -> int:
         if (args.target is not None or args.output is None or args.profile or args.scene
                 or args.ground_area_m2 is not None or args.footprint_holes is not None or args.master is not None
                 or args.ground_materials is not None or args.export_meta is not None
-                or args.build_manifest is not None or args.npm_atlas is not None):
+                or args.build_manifest is not None or args.npm_atlas is not None or args.npm_require_ucx_geojson):
             ap.error("--recheck takes only --recheck-target, --output, --standards and --json")
         return run_recheck(args.recheck, args.output, args.standards or DEFAULT_STANDARDS, args.json,
                            args.recheck_target)
@@ -955,7 +1051,8 @@ def main(argv=None) -> int:
     try:
         result = validate(args.target, args.profile, profiles, args.scene, args.ground_area_m2,
                           args.footprint_holes, args.master, ground_materials=args.ground_materials,
-                          export_meta=export_meta, manifest=args.build_manifest, npm_atlas=npm_atlas)
+                          export_meta=export_meta, manifest=args.build_manifest, npm_atlas=npm_atlas,
+                          require_ucx_geojson=args.npm_require_ucx_geojson)
     except ValueError as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

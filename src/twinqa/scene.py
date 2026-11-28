@@ -23,7 +23,7 @@ from twinqa.fbx_header import fbx_application, fbx_units
 from twinqa.maf_checks import SMOOTHING_ANGLE_DEG, maf_findings
 from twinqa.flora import FLORA_SHARE, flora_findings
 from twinqa.geometry.ucx_audit import (
-    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, bounds, is_closed, is_convex,
+    BAND_TOL_M, GAP_BAND_M, NEIGHBOUR_M, bbox_gap, body_count, bounds, is_closed, is_convex,
     sat_separation, surface_distance, weld,
 )
 from twinqa.geometry.ucx_audit import (  # noqa: F401 - [D012] re-export, owner ucx_audit (#1962)
@@ -64,11 +64,14 @@ def readback_log_dir() -> Path:
     return Path(os.environ.get("TWINQA_LOG_DIR") or Path(tempfile.gettempdir()) / "twinqa" / "blender_logs")
 
 
-def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600) -> dict:
+def readback(fbx_path: Path, blender: str | None = None, timeout: int = 600, *, observe_passages: bool = False) -> dict:
     log = readback_log_dir() / f"readback-{uuid.uuid4().hex}.log"
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "readback.json"
-        rb = run_blender(READBACK, [str(fbx_path), str(out)], executable=blender,
+        args = [str(fbx_path), str(out)]
+        if observe_passages:
+            args.append("--observe-passages")
+        rb = run_blender(READBACK, args, executable=blender,
                          output_json=out, timeout=timeout, log_path=log)
     try:
         data = Path(fbx_path).read_bytes()
@@ -347,6 +350,21 @@ def _ucx_shape_finding(ucx: list[dict], src: str) -> Finding:
     if unread:
         return _f("not_run", "UCX shape", f"{src}: readback without UCX hull data: {unread[:5]}", expected, [34, 36], src)
     return _f("pass", "UCX shape", f"{src}: {len(pieces)} closed convex piece(s)", expected, [34, 36], src)
+
+
+def _ucx_body_warning(ucx: list[dict], src: str) -> Finding | None:
+    disconnected = {}
+    for mesh in ucx:
+        count = mesh.get("body_count")
+        if count is None and (hull := mesh.get("hull")) and hull.get("verts") and hull.get("tris"):
+            count = body_count(hull)  # older readbacks still carry the triangles
+        if count is not None and count > 1:
+            disconnected[mesh["name"]] = count
+    if disconnected:
+        return _f("review", "UCX disconnected bodies (advisory)", f"{src}: {disconnected}",
+                  "one body per UCX object: Unreal may build one hull across the disconnected shells",
+                  [], src, data={"body_counts": disconnected})
+    return None
 
 
 def _neighbour_gap_kind(gap_m: float) -> str:
@@ -756,6 +774,8 @@ def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
     ]
     if unknown:
         shown = {name: sorted(t for t in tiles if t is not None) or ["outside grid"] for name, tiles in unknown.items()}
+        if low is None:
+            out = _density_bounds(src, "not_run", "no measurable Diffuse tile for the scene polygons")
         out.append(_f("not_run", "texel density coverage", f"{src}: no Diffuse PNG for tiles {shown}",
                       "a Diffuse map for every textured tile", [31, 32], src))
     return out
@@ -1944,6 +1964,8 @@ def scene_findings(rb: dict, kind: str, role: str, profile: dict, flora_schedule
                                   f"{src}: {ucx_tris} UCX for {tris} model triangles", f"<= {budget}", [36, 37], src))
             out["V010"].extend(_ucx_pair_findings(ucx, src))
             out["V010"].append(_ucx_shape_finding(ucx, src))
+            if warning := _ucx_body_warning(ucx, src):
+                out["V010"].append(warning)
             if role == "ground":
                 out["V010"].extend(_ucx_maf_flora_finding(ucx, meshes, src))
             out["V010"].append(_f("not_run", "UCX coverage and offsets", "coverage of the model, offsets",

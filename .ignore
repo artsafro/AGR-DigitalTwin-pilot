@@ -367,8 +367,6 @@
 /jobs/vyatskaya-tow02/pipeline/spec-v002.json
 /jobs/vyatskaya-tow02/pipeline/spec.report.json
 # HISTORICAL [D327] docs: unreached docs (#1614) and inactive plans (#1856); hidden from agent search
-/docs/agents/MERGE_POLICY.md
-/docs/agents/STEWARD_NOTE.md
 /docs/agents/decision-trees/ground-npm.md
 /docs/agents/decision-trees/ground-vpm.md
 /docs/agents/decision-trees/library-publish.md
@@ -384,6 +382,7 @@
 /docs/architecture/report-1380.md
 /docs/architecture/report-1425.md
 /docs/architecture/route-map-1581-evidence.md
+/docs/deliveries/sokolniki-npm-v002-2026-11-28.md
 /docs/evals/geometry_mutation_2026-10-21.md
 /docs/evidence/1365-review-textures/4bk-original.json
 /docs/evidence/1365-review-textures/4bk-preview.json
@@ -568,6 +567,7 @@
 /docs/qa/archive-diff-1536.md
 /docs/reference/geometry-weld-contracts.md
 /docs/research/.gitattributes
+/docs/research/agent-first-audit-2068.md
 /docs/research/agent-harness-sources-2026-10-14.md
 /docs/research/agent-step-waste-1273/data/board.csv
 /docs/research/agent-step-waste-1273/data/summary.json
@@ -655,6 +655,16 @@
 /docs/research/autoresearch-trainer-artifact-first.md
 /docs/research/autoresearch-trainer-g22-adapter.md
 /docs/research/autoresearch-trainer-tower-id.md
+/docs/research/autoresearch-view-face-elv.md
+/docs/research/autoresearch-view-face-elv/fixture.json
+/docs/research/autoresearch-view-face-elv/posthoc.py
+/docs/research/autoresearch-view-face-elv/receipt.json
+/docs/research/autoresearch-view-face-elv/run.py
+/docs/research/autoresearch-view-face-material.md
+/docs/research/autoresearch-view-face-material/rays_type.py
+/docs/research/autoresearch-view-face-material/receipt.json
+/docs/research/autoresearch-view-face-material/run.py
+/docs/research/autoresearch-view-face-material/score.py
 /docs/research/bim-autocad-agr.md
 /docs/research/bim-revit-agr.md
 /docs/research/body-gn-duplicate-introduction-stage.md
@@ -701,6 +711,7 @@
 /docs/research/harness2-vs-board.md
 /docs/research/issue-1089-evidence.json
 /docs/research/issue-1089-max-startup.md
+/docs/research/job-retro-moskovsky-sosh1200-pr1979.md
 /docs/research/job-retro-skug26-k5-ac-pr1008.md
 /docs/research/kpp1-cold-skeleton-1608.md
 /docs/research/merge-gate-deselect-190-vs-card-417.md
@@ -736,6 +747,7 @@
 /docs/research/trainer-tower-id-r87/series.sh
 /docs/research/ucx-cases-codex-2042.md
 /docs/research/ucx-distance-endpoint-cancellation.md
+/docs/research/ucx-variants-2053.md
 /docs/research/vatutino-ground-footprint-overshoot-6m2.md
 /docs/research/xview-fast-core-production-handoff.md
 /docs/research/zip-member-error-report-boundary.md

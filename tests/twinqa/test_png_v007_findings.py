@@ -587,13 +587,13 @@ def test_vpm_wrong_prefix_fails():
 
     findings, sets = vpm_texture_findings(pngs, SYNTHETIC_PROFILE, PREFIX)
     bad = [f for f in findings if f.status in ("fail", "review")]
-    # All 3 maps fail with texture address, but have valid sizes, format and sets
+    # All three maps fail with texture address and none supplies an accepted set.
     assert len(bad) == 3
     assert all(f.name == "texture address" and f.status == "fail" for f in bad)
     assert all(f.expected == f"{PREFIX}_..." for f in bad)
     assert all(f.source_pdf_pages == [33, 34] for f in bad)
     assert {f.evidence for f in bad} == set(pngs.keys())
-    assert (1, 1001) in sets
+    assert sets == {}
 
 
 def test_vpm_unreadable_png_fails():

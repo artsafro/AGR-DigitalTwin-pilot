@@ -19,8 +19,12 @@ def review(verdict="CLEAN", head=HEAD, extra="", reviewer: str | None = "dt-revi
                     f"P1/P2/P3 = {'0' if verdict == 'CLEAN' else '1'}/0/0.{who}{extra}\n"}
 
 
+TRACE = "## Agent trace\n- Written by: Hermes / Claude (dt-worker, t_x)\n"
+BUG_FIX = "Regression test only (bug fix): tests/test_x.py fails before, passes after.\n"  # D432 exemption (#2071)
+
+
 def pr(**kw):
-    base = {"number": 1, "title": "fix: something", "body": "## Agent trace\n- Written by: Hermes / Claude (dt-worker, t_x)\n",
+    base = {"number": 1, "title": "fix: something", "body": TRACE + BUG_FIX,
             "baseRefName": "main", "headRefName": "fix/issue-1-x", "headRefOid": HEAD, "isDraft": False,
             "mergeable": "MERGEABLE", "additions": 10, "deletions": 2, "files": [{"path": "tools/x.py"}],
             "comments": [review()], "closingIssuesReferences": []}
@@ -84,9 +88,9 @@ def test_model_text_classifier_quotes_evidence_and_ignores_negation():
     r = run(pr(body="This PR changes the delivered model of KPP1 (new UV)."))
     assert r["rule"] == "delivered_model"
     assert any("changes the delivered model" in e.lower() for x in r["reasons"] for e in x["evidence"])
-    neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model."))
+    neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model.\n" + BUG_FIX))
     assert neg["rule"] == "small_pr"
-    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".'))
+    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".\n' + BUG_FIX))
     assert quoted["rule"] == "small_pr"
 
 
@@ -165,7 +169,7 @@ def test_r1_p1_4_unknown_author_or_reviewer_fails_closed():
 
 
 def test_r1_p1_5_hygiene_queue_with_large_production_code_goes_artem():
-    p = pr(files=[{"path": "src/dt_ai/cli/agr.py"}], additions=900, body="Closes #2017")
+    p = pr(files=[{"path": "src/dt_ai/cli/agr.py"}], additions=900, body="Closes #2017\n" + BUG_FIX)
     r = run(p, hygiene_issues={2017})
     assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "production_code", False)
 
@@ -204,6 +208,83 @@ def test_gh_wrapper_is_read_only():
     assert '"merge",' not in src and "'merge'," not in src
 
 
+@pytest.mark.parametrize(
+    "cards, card_output, expected",
+    [
+        pytest.param(None, None, (False, "artem", False), id="list-unavailable"),
+        pytest.param({"fix/issue-1-x": {"id": "t_x"}}, None, (False, "artem", False), id="show-unavailable"),
+        pytest.param({}, None, (True, "auto", True), id="no-matching-card"),
+        pytest.param({"fix/issue-1-x": {"id": "t_x"}}, "Card: ready", (True, "auto", True), id="clean-card"),
+        pytest.param({"fix/issue-1-x": {"id": "t_x"}}, "Card: needs_input", (True, "artem", False), id="user-decision"),
+    ],
+)
+def test_observe_small_pr_checks_card_before_auto(tmp_path, monkeypatch, cards, card_output, expected):
+    def show(*args, **kwargs):
+        if card_output is None:
+            raise OSError("Kanban card unavailable")
+        return mp.subprocess.CompletedProcess(args[0], 0, stdout=card_output)
+
+    monkeypatch.setattr(mp.subprocess, "run", show)
+    log = tmp_path / "decisions.jsonl"
+    mp.observe([pr()], log_path=log, policy=mp.load_policy(), stop_present=False,
+               hygiene_issues=set(), cards=cards)
+    row = json.loads(log.read_text(encoding="utf-8"))
+    assert (row["card_checked"], row["bucket"], row["would_merge"]) == expected
+    if not expected[0]:
+        assert row["failed_preconditions"] == [{"id": "card_checked", "reason": "card not checked"}]
+
+
+def test_classify_no_card_small_pr_goes_to_artem(monkeypatch, capsys):
+    monkeypatch.setattr(mp, "gh_json", lambda *args: pr())
+    monkeypatch.setattr(mp, "stop_present", lambda policy: False)
+    monkeypatch.setattr(mp, "hygiene_issues", lambda policy: set())
+
+    assert mp.main(["classify", "--pr", "1", "--no-card", "--json"]) == 0
+    row = json.loads(capsys.readouterr().out)
+    assert (row["card_checked"], row["bucket"], row["would_merge"]) == (False, "artem", False)
+    assert row["failed_preconditions"] == [{"id": "card_checked", "reason": "card not checked"}]
+
+
+def test_backtest_separates_card_unknown_from_lane_comparisons(tmp_path, monkeypatch, capsys):
+    prs = [pr(number=n) for n in (1, 2, 3)]
+    prs += [pr(number=n, headRefName=f"fix/red-main-{n}") for n in (4, 5, 6)]
+    # Both historical lanes (and missing records), with and without the card gate.
+    (tmp_path / "manual_merge_redfix_batch.json").write_text('{"merged": [2, 4]}', encoding="utf-8")
+    (tmp_path / "manual_merge_human_batch.json").write_text('{"merged": [1, 5]}', encoding="utf-8")
+    monkeypatch.setattr(mp, "KANBAN_KPI", tmp_path)
+    monkeypatch.setattr(mp, "gh_json", lambda *args: prs)
+
+    assert mp.main(["backtest", "--json"]) == 0
+    report = json.loads(capsys.readouterr().out)
+    assert (report["agreement_pct"], report["known"]) == (50, 2)
+    assert report["card_unknown"] == 3
+    assert [
+        (r["pr"], r["rule"], r["actual"], r["card_unknown"], r["agree"]) for r in report["rows"]
+    ] == [
+        (1, "small_pr", "artem", True, None),
+        (2, "small_pr", "auto", True, None),
+        (3, "small_pr", "unknown", True, None),
+        (4, "red_main_fix", "auto", False, True),
+        (5, "red_main_fix", "artem", False, False),
+        (6, "red_main_fix", "unknown", False, None),
+    ]
+
+    assert mp.main(["backtest"]) == 0
+    output = capsys.readouterr().out
+    assert "agreement: 50% of 2 comparable PRs" in output
+    assert "card-unknown: 3 PR(s) excluded from agreement" in output
+    assert sum(line.endswith("| card-unknown |") for line in output.splitlines()) == 3
+
+
+def test_backtest_reports_no_agreement_without_comparable_rows(tmp_path, monkeypatch, capsys):
+    (tmp_path / "manual_merge_human_batch.json").write_text('{"merged": [1]}', encoding="utf-8")
+    monkeypatch.setattr(mp, "KANBAN_KPI", tmp_path)
+    monkeypatch.setattr(mp, "gh_json", lambda *args: [pr()])
+
+    assert mp.main(["backtest"]) == 0
+    assert "agreement: n/a (no comparable PRs)" in capsys.readouterr().out
+
+
 def test_observe_appends_jsonl_outside_repo(tmp_path):
     log = tmp_path / "obs" / "decisions.jsonl"
     rows = mp.observe([pr(), pr(number=2, baseRefName="feat/x")], log_path=log, policy=mp.load_policy(),
@@ -235,3 +316,50 @@ def test_policy_file_cites_consents_and_buckets():
     assert {p["id"] for p in pol["preconditions"]} >= {"main_green", "base_is_main", "mergeable",
                                                        "review_clean_on_head", "reviewer_not_author"}
     assert not Path(pol["observe_log"]).resolve().is_relative_to(ROOT)
+
+
+# ---- #2071 (review r1 of PR #2070): D432 'unmeasured process change -> artem' must be classified ----
+
+@pytest.mark.parametrize("path", ["tools/trainer/trainer.py", "tools/state/project_state.py",
+                                  "src/dt_ai/cli/agr.py", "scripts/hygiene.sh"])
+def test_2071_small_unmeasured_tool_change_goes_artem(path):
+    r = run(pr(title="feat: new tool flag", body=TRACE, files=[{"path": path}], additions=20, deletions=0))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "unmeasured_process_change", False)
+
+
+@pytest.mark.parametrize("marker", [
+    "Trainer A/B: agr trainer ab KPP1 --ab OLD NEW -> fixed (3/3 vs 1/3).",
+    "Regression test only (bug fix): tests/test_x.py fails before, passes after."])
+def test_2071_measured_or_bug_fix_marker_keeps_small_pr_auto(marker):
+    r = run(pr(body=TRACE + marker + "\n"))
+    assert (r["bucket"], r["rule"]) == ("auto", "small_pr")
+
+
+def test_2071_negated_marker_does_not_exempt():
+    r = run(pr(body=TRACE + "No trainer A/B was run.\n"))
+    assert r["rule"] == "unmeasured_process_change"
+
+
+# review r2 P1-1: only a labelled receipt line with a real value lifts the rule
+@pytest.mark.parametrize("body", [
+    "Trainer A/B: none",
+    "Trainer A/B: not run",
+    "Trainer A/B: n/a",
+    "Trainer A/B: -",
+    "Trainer A/B: skipped (no time)",
+    "Trainer A/B:",
+    "Regression test only (bug fix): no",
+    "We should run agr trainer ab later.",
+    "Per D432 obvious fixes need a regression test only.",
+    "See the Trainer A/B: section below."])
+def test_2071_empty_negated_or_free_mention_does_not_exempt(body):
+    r = run(pr(body=TRACE + body + "\n"))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "unmeasured_process_change", False)
+
+
+@pytest.mark.parametrize("line", [
+    "- Trainer A/B: agr trainer ab KPP1 --ab OLD NEW -> fixed (3/3 vs 1/3).",
+    "| Regression test only (bug fix): tests/test_x.py fails before, passes after. |"])
+def test_2071_receipt_line_in_list_or_table_still_exempts(line):
+    r = run(pr(body=TRACE + line + "\n"))
+    assert (r["bucket"], r["rule"]) == ("auto", "small_pr")

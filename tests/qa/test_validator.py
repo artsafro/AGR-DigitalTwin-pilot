@@ -30,6 +30,28 @@ def fbx(version=7400):
 DEFAULT_PROFILE_NOTE = "profile NPM by default (name gives no profile); pass --profile npm|vpm"
 
 
+def test_npm_zip_customer_addendum_only_requires_ucx_and_geojson_when_selected(tmp_path):
+    stem = "0000_Test"
+    target = tmp_path / f"{stem}.zip"
+    with zipfile.ZipFile(target, "w") as archive:
+        for suffix in ("01", "Ground"):
+            archive.writestr(f"{stem}_{suffix}.fbx", fbx())
+
+    args = [sys.executable, "-m", "dt_ai.cli.agr", "validate", str(target), "--json"]
+    base = subprocess.run(args, capture_output=True, encoding="utf-8")
+    assert base.returncode == 2, base.stderr  # scene and manual checks are still open
+    stages = {row["id"]: row for row in json.loads(base.stdout)["stages"]}
+    assert not any(row["status"] == "fail" for row in stages["V001"]["findings"])
+    assert not {"V010", "V011"} & stages.keys()
+
+    customer = subprocess.run([*args, "--npm-require-ucx-geojson"], capture_output=True, encoding="utf-8")
+    assert customer.returncode == 1, customer.stderr
+    checks = {row["name"]: row["status"] for stage in json.loads(customer.stdout)["stages"]
+              for row in stage["findings"]}
+    assert checks["customer GeoJSON presence"] == "fail"
+    assert checks["customer UCX presence"] == "not_run"
+
+
 @pytest.mark.parametrize("name, override, kind, note", [
     pytest.param("model.fbx", None, "npm", DEFAULT_PROFILE_NOTE, id="default"),
     pytest.param("model.fbx", "vpm", "vpm", None, id="explicit"),
@@ -127,6 +149,10 @@ def v001_without_manifest_ok(stage):
 def test_good_vpm_package_has_no_fail_but_is_not_passed(tmp_path):
     report, st = run(tmp_path, good_files())
     assert {k: st[k].status for k in ("V007", "V011")} == {"V007": "pass", "V011": "pass"}
+    assert [(f.status, f.observed) for f in st["V008"].findings if f.name == "UDIM sequence"] == [
+        ("pass", "slot 1: [1001]"),
+    ]
+    assert st["V009"].status == "not_run"
     assert v001_without_manifest_ok(st["V001"])
     assert st["V002"].status == "not_run"  # header passes, units need the scene
     assert st["V012"].status == "review"  # _001 index for free-standing buildings: conflict #20

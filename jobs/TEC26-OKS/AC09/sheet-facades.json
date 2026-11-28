@@ -1,4 +1,5 @@
 {
+ "field_width_source": "AC09/max-dump-009.json: Main handle 173, material ID 2, span along each outward facade (mm, rounded to 0.001). Independent of export UVs. Slide 53 remains the authority for finishes and rib counts [D171].",
  "facades": {
   "А-Б": {
    "size_mm": [
@@ -10,6 +11,7 @@
     "right": 100
    },
    "joints": 11,
+   "field_width_mm": 2248.817,
    "plinth": [
     {
      "bbox_mm": [
@@ -31,6 +33,7 @@
     "right": 100
    },
    "joints": 10,
+   "field_width_mm": 2248.821,
    "plinth": [
     {
      "bbox_mm": [
@@ -43,6 +46,7 @@
    ]
   },
   "1-2": {
+   "field_width_mm": 2798.137,
    "size_mm": [
     3000,
     2450
@@ -64,6 +68,7 @@
    ]
   },
   "2-1": {
+   "field_width_mm": 2798.137,
    "size_mm": [
     3000,
     2450

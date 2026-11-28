@@ -257,12 +257,16 @@ def run(a: dict) -> tuple[int, dict]:
 
 def _check(a: dict, report: dict, build: dict, readback, first: dict) -> tuple[int, dict]:
     """Steps 2-4 on OUT: a fresh readback, the ucx10_core gap check and V010."""
-    rb = readback(a["out"], a["blender"])
+    observe = a["target"] == "Main"
+    options = {"observe_passages": True} if observe else {}
+    rb = readback(a["out"], a["blender"], **options)
     if not rb.get("readback_ok"):
         report["steps"]["readback"] = {"ok": False, "error": rb.get("error", "readback failed")}
         return 2, report
     ucx = [m for m in rb["meshes"] if str(m.get("name", "")).upper().startswith("UCX_")]
     report["steps"]["readback"] = {"ok": True, "meshes": len(rb["meshes"]), "ucx": len(ucx)}
+    if observe:
+        report["steps"]["passages"] = rb.get("passages", {"status": "not_measured", "reason": "no readback data"})
     gap_m = a["gap_m"] if a["gap_m"] is not None else build.get("gap_m")
     if gap_m is None:
         report["steps"]["gap_check"] = {"ok": False, "error": "no --gap-m and no gap_m in the build report"}

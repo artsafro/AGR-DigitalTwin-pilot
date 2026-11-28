@@ -335,7 +335,9 @@
   }
  },
  "facades_doc": "Slide53 pixel strokes: A-Б=11, Б-А=10, 1-2=13, 2-1=13. A-Б last stroke is close to right field outline; nearest literal reading retained.",
- "sheet": {},
+ "sheet": {
+  "facades_json": "jobs/TEC26-OKS/AC09/sheet-facades.json"
+ },
  "presentation": {
   "authority": "Artem 2026-10-22 (top precedence, all TEC26): the presentation facade slides «Схема фасадов ... Цветовое решение» decide colours, colour bands, rib direction and rib count/step and which surfaces are blue / light grey / dark grey; the DWG/PDF only where the slide is silent [D171]",
   "deck": "C:/x/tec26-oks/pptx/deck.pptx",
