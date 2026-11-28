@@ -80,12 +80,18 @@ def pipeline(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, 'bpy', bpy)
     ucx = runpy.run_path(str(UCX))
     monkeypatch.setitem(ucx['main'].__globals__, 'build_into_scene', lambda *_, **__: ([piece], result))
-    monkeypatch.setattr(sys, 'argv', [str(BIND), '--', 'bind'])
-    binder = runpy.run_path(str(BIND))
-    material = NS(name='M_Sample_Ground_Paving')
+    socket = NS(links=[])
+    bsdf = NS(type='BSDF_PRINCIPLED', inputs={'Base Color': socket})
+
+    class Nodes(list):
+        def new(self, _):
+            return NS(outputs={'Color': object()})
+
+    material = NS(name='M_Sample_Ground_Paving', node_tree=NS(nodes=Nodes([bsdf]), links=NS(new=lambda *_: None)))
+    bpy.data.images = NS(load=lambda _: NS(colorspace_settings=NS(), pack=lambda: None))
     bpy.data.materials.append(material)
     (tmp_path / 'diffuse.png').write_bytes(b'synthetic diffuse')
-    monkeypatch.setitem(binder['bind'].__globals__, 'attach', lambda *_: None)
+
     spec = {'profile': 'vpm', 'texture_root': str(tmp_path),
             'bindings': [{'material': material.name, 'file': 'diffuse.png'}]}
 
@@ -94,7 +100,9 @@ def pipeline(tmp_path, monkeypatch):
         return ucx['main']()
 
     def bind(source, output):
-        return binder['bind'](source, write_json(tmp_path / 'plan.json', spec), output)
+        plan = write_json(tmp_path / 'plan.json', spec)
+        monkeypatch.setattr(sys, 'argv', [str(BIND), '--', 'bind', str(source), str(plan), str(output)])
+        runpy.run_path(str(BIND), run_name='__main__')
 
     return NS(source=src, placement=placement, spec=spec, state=state, collision=collision, bind=bind)
 
