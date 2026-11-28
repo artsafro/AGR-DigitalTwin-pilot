@@ -204,6 +204,43 @@ def test_gh_wrapper_is_read_only():
     assert '"merge",' not in src and "'merge'," not in src
 
 
+@pytest.mark.parametrize(
+    "cards, card_output, expected",
+    [
+        pytest.param(None, None, (False, "artem", False), id="list-unavailable"),
+        pytest.param({"fix/issue-1-x": {"id": "t_x"}}, None, (False, "artem", False), id="show-unavailable"),
+        pytest.param({}, None, (True, "auto", True), id="no-matching-card"),
+        pytest.param({"fix/issue-1-x": {"id": "t_x"}}, "Card: ready", (True, "auto", True), id="clean-card"),
+        pytest.param({"fix/issue-1-x": {"id": "t_x"}}, "Card: needs_input", (True, "artem", False), id="user-decision"),
+    ],
+)
+def test_observe_small_pr_checks_card_before_auto(tmp_path, monkeypatch, cards, card_output, expected):
+    def show(*args, **kwargs):
+        if card_output is None:
+            raise OSError("Kanban card unavailable")
+        return mp.subprocess.CompletedProcess(args[0], 0, stdout=card_output)
+
+    monkeypatch.setattr(mp.subprocess, "run", show)
+    log = tmp_path / "decisions.jsonl"
+    mp.observe([pr()], log_path=log, policy=mp.load_policy(), stop_present=False,
+               hygiene_issues=set(), cards=cards)
+    row = json.loads(log.read_text(encoding="utf-8"))
+    assert (row["card_checked"], row["bucket"], row["would_merge"]) == expected
+    if not expected[0]:
+        assert row["failed_preconditions"] == [{"id": "card_checked", "reason": "card not checked"}]
+
+
+def test_classify_no_card_small_pr_goes_to_artem(monkeypatch, capsys):
+    monkeypatch.setattr(mp, "gh_json", lambda *args: pr())
+    monkeypatch.setattr(mp, "stop_present", lambda policy: False)
+    monkeypatch.setattr(mp, "hygiene_issues", lambda policy: set())
+
+    assert mp.main(["classify", "--pr", "1", "--no-card", "--json"]) == 0
+    row = json.loads(capsys.readouterr().out)
+    assert (row["card_checked"], row["bucket"], row["would_merge"]) == (False, "artem", False)
+    assert row["failed_preconditions"] == [{"id": "card_checked", "reason": "card not checked"}]
+
+
 def test_observe_appends_jsonl_outside_repo(tmp_path):
     log = tmp_path / "obs" / "decisions.jsonl"
     rows = mp.observe([pr(), pr(number=2, baseRefName="feat/x")], log_path=log, policy=mp.load_policy(),
