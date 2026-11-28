@@ -1,4 +1,7 @@
-"""#151 unit checks for the pre-declared G diagnostic wrapper (no inputs, no Blender)."""
+"""#151 unit checks for the pre-declared G diagnostic wrapper (no inputs, no Blender).
+
+new-case: docs/research/autoresearch-view-face-transfer/test_run.py - #151 G wrapper unit controls
+"""
 import importlib.util
 import types
 from pathlib import Path
