@@ -20,6 +20,13 @@ Variants
   `gap` apart vertically, so pieces never intersect; plan vertices within 1 cm of their neighbours' chord
   are dropped (no sliver caps).
 - single-hull: one convex hull of the whole mesh (baseline: always valid, loosest fit).
+- section-boxes (#2053): level bands; per band the plan shadow on a 0.25 m grid. Elevated undersides with clearance
+  do not block the flood below them. Enclosed roofed cells fill; cells grouped by their height range form
+  greedy rectangles, exposed rectangle sides pulled to the facade samples, rectangles
+  that repeat over consecutive bands stacked into one box; boxes shrink by gap/2. No triangle budget.
+- ground-coarse-faces (#2053, Ground target): up-facing triangles of the highest surface grow into planar
+  clusters (minimax plane within `tol`) whose plan union stays convex: large prisms on flat parts, the
+  existing faces on curved slopes; each cluster is a prism over its plan shrunk by gap/2.
 """
 from __future__ import annotations
 
@@ -31,7 +38,18 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
-VARIANTS = ("kernel-boxes", "slice-prisms", "part-boxes", "part-hulls", "single-hull")
+VARIANTS = ("kernel-boxes", "slice-prisms", "part-boxes", "part-hulls", "single-hull", "section-boxes")
+GROUND_VARIANTS = ("ground-coarse-faces",)  # Ground target: not part of the Main benchmark batch
+ALL_VARIANTS = VARIANTS + GROUND_VARIANTS
+SECTION_CELL_M = 0.25  # section-boxes plan grid (K10 depth-map step)
+SECTION_Q_M = 0.5  # section-boxes: cells whose bottom / top differ by less than this share one rectangle group
+SECTION_LEVEL_SHARE = 0.2  # section-boxes: a level needs this share of the largest level's horizontal area
+SECTION_GROW = 1.25  # section-boxes: cell growth while the pieces exceed the 999 names
+SECTION_MIN_M = 0.05  # section-boxes: R04 thin-element limit, the thinnest box side
+GROUND_TOL_M = 0.08  # ground-coarse-faces: = ucx_build.build_ground default tol (max |surface z - top|)
+GROUND_MIN_NZ = 0.05  # ground-coarse-faces: steeper faces (|n_z| < this) get no own prism
+GROUND_FIX_ROUNDS = 6  # ground-coarse-faces: shrink rounds for a slope prism too close to another piece
+GROUND_SLOPE_DEG = 15.0  # ground-coarse-faces: faces steeper than this are "slope" and keep their own shape
 LEVEL_AREA_M2 = 1.0  # slice-prisms: a horizontal face area at one z of at least this starts a level
 LEVEL_MIN_M = 0.5  # slice-prisms: levels closer than this are one level
 SIMPLIFY_M = 0.01  # slice-prisms: a plan vertex closer than this to its neighbours' chord is dropped
@@ -351,10 +369,452 @@ def kernel_boxes(verts, tris, model_triangles: int, cell: float = 0.25):
                                                      "attempts": res.attempts}
 
 
+# ---- section-boxes (#2053, Codex K9-K13) ------------------------------------------------------------------------
+
+def _dilate(m: np.ndarray) -> np.ndarray:
+    d = m.copy()
+    d[1:] |= m[:-1]
+    d[:-1] |= m[1:]
+    d[:, 1:] |= m[:, :-1]
+    d[:, :-1] |= m[:, 1:]
+    return d
+
+
+def _runs(ext: np.ndarray, free: np.ndarray) -> np.ndarray:
+    """Every run of free cells along axis 1 that holds an exterior cell becomes exterior."""
+    r, c = free.shape
+    start = ~free
+    start[:, 0] = True
+    ids = np.cumsum(start.ravel()) - 1
+    hit = np.bincount(ids[ext.ravel()], minlength=int(ids[-1]) + 1) > 0
+    return (hit[ids].reshape(r, c) & free) | ext
+
+
+def flood2d(free: np.ndarray) -> np.ndarray:
+    """4-connected flood of `free` cells from the grid border (row / column run propagation)."""
+    ext = np.zeros_like(free)
+    ext[0, :] = ext[-1, :] = ext[:, 0] = ext[:, -1] = True
+    ext &= free
+    while True:
+        new = _runs(_runs(ext, free).T, free.T).T
+        if np.array_equal(new, ext):
+            return ext
+        ext = new
+
+
+def section_levels(verts, tris, share: float = SECTION_LEVEL_SHARE, min_m: float = LEVEL_MIN_M) -> list[float]:
+    """Levels whose horizontal area is at least `share` of the largest level (slabs, roofs, terraces; not
+    window sills, which would cut every window into the plan section)."""
+    v, t = _check(verts, tris)
+    n = np.cross(v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]])
+    a = np.linalg.norm(n, axis=1) / 2
+    flat = (a > 0) & (np.abs(n[:, 2]) >= 0.999 * np.linalg.norm(n, axis=1))
+    zs: dict[float, float] = {}
+    for z, ar in zip(np.round(v[t[flat]][:, :, 2].mean(axis=1), 2), a[flat]):
+        zs[float(z)] = zs.get(float(z), 0.0) + float(ar)
+    lo, hi = float(v[:, 2].min()), float(v[:, 2].max())
+    big = max(zs.values(), default=0.0)
+    cuts = [lo] + [z for z in sorted(zs) if zs[z] >= max(LEVEL_AREA_M2, share * big) and lo < z < hi] + [hi]
+    out = [cuts[0]]
+    for z in cuts[1:]:
+        if z - out[-1] >= min_m:
+            out.append(z)
+    out[-1] = hi
+    return out
+
+
+def _cell_stat(shape, ix, iy, val, fn, init):
+    out = np.full(shape, init, dtype=float)
+    fn.at(out, (ix, iy), val)
+    return out
+
+
+def _layer_rects(m, lo, hi, used, layer_pts, shape, cell, origin):
+    """Greedy rectangles of the cells `m` (one height group of one layer) with their exact extents.
+
+    `layer_pts` = (ix, iy, points) of this layer. A rectangle side with no used cell beyond it is pulled to
+    the outermost sample inside the rectangle, so only empty volume is removed."""
+    ub = _load_builder()
+    best = None
+    for order in ((0, 1, 2), (1, 0, 2)):
+        b = ub.greedy_boxes(m[:, :, None], order)
+        if best is None or len(b) < len(best):
+            best = b
+    bx, by, bp = layer_pts
+    stat = {}
+    for k, (fn, init) in enumerate(((np.minimum, np.inf), (np.maximum, -np.inf))):
+        for a in range(3):
+            stat[(k, a)] = _cell_stat(shape, bx, by, bp[:, a], fn, init)
+    has = np.zeros(shape, bool)
+    has[bx, by] = True
+    out = []
+    for (x0, y0, _), (x1, y1, _) in best:
+        sl = (slice(x0, x1), slice(y0, y1))
+        g = [origin[0] + x0 * cell, origin[1] + y0 * cell, origin[0] + x1 * cell, origin[1] + y1 * cell]
+        box_lo = [g[0], g[1], float(lo[sl][m[sl]].min())]
+        box_hi = [g[2], g[3], float(hi[sl][m[sl]].max())]
+        pin = has[sl] & m[sl]
+        pz = None
+        if pin.any():
+            pz = (float(stat[(0, 2)][sl][pin].min()), float(stat[(1, 2)][sl][pin].max()))
+            if x0 == 0 or not used[x0 - 1, y0:y1].any():
+                box_lo[0] = max(box_lo[0], float(stat[(0, 0)][sl][pin].min()))
+            if x1 >= shape[0] or not used[x1, y0:y1].any():
+                box_hi[0] = min(box_hi[0], float(stat[(1, 0)][sl][pin].max()))
+            if y0 == 0 or not used[x0:x1, y0 - 1].any():
+                box_lo[1] = max(box_lo[1], float(stat[(0, 1)][sl][pin].min()))
+            if y1 >= shape[1] or not used[x0:x1, y1].any():
+                box_hi[1] = min(box_hi[1], float(stat[(1, 1)][sl][pin].max()))
+        for k, (glo, ghi) in enumerate(((g[0], g[2]), (g[1], g[3]))):
+            if box_hi[k] - box_lo[k] < SECTION_MIN_M:  # flat sheet (glass, slab edge): keep the R04 thickness
+                mid = (box_hi[k] + box_lo[k]) / 2
+                box_lo[k] = max(glo, min(mid - SECTION_MIN_M / 2, ghi - SECTION_MIN_M))
+                box_hi[k] = min(ghi, box_lo[k] + SECTION_MIN_M)
+        out.append(((x0, y0, x1, y1), box_lo, box_hi, pz))
+    return out
+
+
+def _band_rects(pf, ix, iy, shape, z0, z1, first, colmax, q, cell, origin, undersides):
+    """Rectangles of one level band: (grid key, lo xyz, hi xyz, sample z range or None, full_bottom, full_top).
+
+    The band is split in height bins of about `q`. Per plan cell: rooms (enclosed by the band's plan shadow
+    and roofed) are full height; any other occupied cell gives layer A = its lowest run of occupied bins and
+    layer B = the rest up to its top sample, so a canopy over a pavement does not become a pillar. Cells are
+    grouped by the bins their range starts and ends in, so two rectangles of one band never overlap."""
+    eps = 1e-4
+    sel = ((pf[:, 2] >= z0 - eps) if first else (pf[:, 2] > z0 + eps)) & (pf[:, 2] <= z1 + eps)
+    if not sel.any():
+        return []
+    bx, by, bp = ix[sel], iy[sel], pf[sel]
+    nb = max(1, int(math.ceil((z1 - z0) / q - 1e-9)))
+    hq = (z1 - z0) / nb
+    bz = np.clip(np.floor((bp[:, 2] - z0) / hq).astype(np.int64), 0, nb - 1)
+    occ3 = np.zeros(shape + (nb,), bool)
+    occ3[bx, by, bz] = True
+    occ = occ3.any(axis=2)
+    # walls block the plan flood: samples above the band's floor bin and below its ceiling bin (a pavement
+    # under a canopy is no wall, a sill or lintel under / over a window is)
+    barrier = occ3[:, :, 1:-1].any(axis=2) if nb >= 3 else occ
+
+    def exterior(walls):
+        outside = flood2d(~_dilate(walls))  # closing bridges gaps of up to two plan cells
+        return outside | (_dilate(outside) & ~walls)
+
+    ux, uy, uz = undersides
+    over = (uz >= z0 + 2 * hq) & (uz <= z1 + eps)
+    head_bin = None
+    cleared = np.zeros(shape, bool)
+    if over.any():
+        # An elevated underside can be too small to split a level. In columns with a clear run below it,
+        # the underside and the wall above it (including the face at the mouth) are not plan barriers.
+        # Keep the other walls and the enclosure test: this does not turn an enclosed room into a passage.
+        ubin = np.clip(np.floor((uz[over] - z0) / hq), 0, nb - 1)
+        head_bin = _cell_stat(shape, ux[over], uy[over], ubin, np.minimum, np.inf)
+        first_above_floor = np.argmax(occ3[:, :, 1:], axis=2) + 1
+        cleared = barrier & (first_above_floor >= head_bin)
+    ext = exterior(barrier & ~cleared)
+    enclosed = ~ext
+    zmax = _cell_stat(shape, bx, by, bp[:, 2], np.maximum, -np.inf)
+    roofed = (colmax > z1 + eps) | (occ & (zmax >= z1 - hq))
+    full = enclosed & roofed
+    raised = np.zeros(shape, bool)
+    if (cleared & ext & roofed).any():
+        # Keep the previously enclosed upper solid, but start it at the underside, not the floor.
+        raised = cleared & ext & roofed & ~exterior(barrier)
+    first_bin = np.argmax(occ3, axis=2)
+    after = (np.arange(nb)[None, None, :] > first_bin[:, :, None]) & ~occ3
+    run_end = np.where(after.any(axis=2), np.argmax(after, axis=2), nb)
+    in_a = bz < run_end[bx, by]
+    raised_with_floor = raised & (first_bin == 0)
+    if head_bin is not None and raised.any():
+        in_a = np.where(raised[bx, by], ~raised_with_floor[bx, by] | (bz < head_bin[bx, by]), in_a)
+    rects = []
+    for layer in ("A", "B"):
+        pm = in_a | full[bx, by] if layer == "A" else ~in_a & ~full[bx, by]
+        lx, ly, lp = bx[pm], by[pm], bp[pm]
+        cells = np.zeros(shape, bool)
+        cells[lx, ly] = True
+        if layer == "A":
+            cells |= full
+        if not cells.any():
+            continue
+        lo = _cell_stat(shape, lx, ly, lp[:, 2], np.minimum, np.inf)
+        hi = _cell_stat(shape, lx, ly, lp[:, 2], np.maximum, -np.inf)
+        if layer == "A":
+            lo = np.where(full | (enclosed & cells), z0, lo)  # enclosed things stand on the band floor
+            hi = np.where(full, z1, hi)
+        hi = np.where(cells & (raised_with_floor if layer == "B" else raised & ~raised_with_floor), z1, hi)
+        klo = np.where(cells, np.floor((lo - z0) / hq + 1e-9), -1).astype(np.int64)
+        khi = np.where(cells, np.ceil((hi - z0) / hq - 1e-9), -1).astype(np.int64)
+        for key in sorted({(int(a), int(b)) for a, b in zip(klo[cells], khi[cells])}):
+            m = cells & (klo == key[0]) & (khi == key[1])
+            for gk, blo, bhi, pz in _layer_rects(m, lo, hi, cells, (lx, ly, lp), shape, cell, origin):
+                rects.append((gk, blo, bhi, pz, blo[2] <= z0 + eps, bhi[2] >= z1 - eps))
+    return rects
+
+
+def _section_stacks(vf, t, zs, cell, q):
+    """Box stacks of section-boxes for one plan cell size (see section_boxes)."""
+    ub = _load_builder()
+    pf = ub.sample_surface(vf, t, cell / 2)
+    origin = pf[:, :2].min(axis=0) - cell
+    shape = tuple(int(n) for n in np.ceil((pf[:, :2].max(axis=0) - origin) / cell).astype(np.int64) + 2)
+    if shape[0] * shape[1] > 20_000_000:
+        raise VariantError(f"section-boxes: plan grid {shape} too large for cell {cell} m")
+    ix = np.clip(np.floor((pf[:, 0] - origin[0]) / cell).astype(np.int64), 0, shape[0] - 1)
+    iy = np.clip(np.floor((pf[:, 1] - origin[1]) / cell).astype(np.int64), 0, shape[1] - 1)
+    normals = np.cross(vf[t[:, 1]] - vf[t[:, 0]], vf[t[:, 2]] - vf[t[:, 0]])
+    down = normals[:, 2] < -0.3 * np.linalg.norm(normals, axis=1)
+    if down.any():
+        underside = ub.sample_surface(vf, t[down], cell / 2)
+        uv = np.floor((underside[:, :2] - origin) / cell).astype(np.int64)
+        undersides = (uv[:, 0], uv[:, 1], underside[:, 2])
+    else:
+        undersides = (np.empty(0, dtype=np.int64), np.empty(0, dtype=np.int64), np.empty(0))
+    colmax = _cell_stat(shape, ix, iy, pf[:, 2], np.maximum, -np.inf)
+    stacks: list[dict] = []
+    open_by_key: dict = {}
+    for b, (z0, z1) in enumerate(zip(zs[:-1], zs[1:])):
+        nxt = {}
+        for key, lo, hi, pz, full_bottom, full_top in _band_rects(pf, ix, iy, shape, z0, z1, b == 0, colmax, q,
+                                                                 cell, origin, undersides):
+            s = open_by_key.get(key) if full_bottom else None
+            if s is not None:  # the same rectangle continues from the band below: one taller box
+                s["lo"][:2] = np.minimum(s["lo"][:2], lo[:2])
+                s["hi"] = np.array([max(s["hi"][0], hi[0]), max(s["hi"][1], hi[1]), hi[2]])
+                s["band_hi"], s["pz_top"] = z1, (pz[1] if pz else None)
+            else:
+                lo = np.array(lo)
+                if pz:  # a new bottom stands on its lowest sample (a room without a floor slab stays open)
+                    lo[2] = max(lo[2], pz[0])
+                s = {"lo": lo, "hi": np.array(hi), "band_lo": z0, "band_hi": z1, "pz_top": pz[1] if pz else None}
+                stacks.append(s)
+            if full_top:
+                nxt[key] = s
+        open_by_key = nxt
+    return stacks
+
+
+def section_boxes(verts, tris, cell: float = SECTION_CELL_M, gap: float | None = None, q: float = SECTION_Q_M,
+                  share: float = SECTION_LEVEL_SHARE):
+    ub = _load_builder()
+    v, t = _check(verts, tris)
+    gap = float(ub.GAP_M if gap is None else gap)
+    if not (cell > 2 * gap and q > 0):
+        raise VariantError("section-boxes: need cell > 2 gap and q > 0")
+    angle = ub.facade_angle(v, t)
+    vf = v @ ub._rot(-angle).T
+    zs = section_levels(vf, t, share)
+    if len(zs) < 2 or zs[-1] - zs[0] < SECTION_MIN_M:
+        raise VariantError("section-boxes: the mesh has no height")
+    attempts = []
+    while True:
+        stacks = _section_stacks(vf, t, zs, cell, q)
+        attempts.append({"cell_m": round(cell, 4), "pieces": len(stacks)})
+        if len(stacks) <= MAX_PIECES or len(attempts) >= 8:
+            break
+        cell *= SECTION_GROW  # reg p.34 §4.2: names 001..999 cap the piece count, not the triangle budget
+    back = ub._rot(angle)
+    h = gap / 2
+    pieces = []
+    for s in stacks:
+        lo, hi = s["lo"].copy(), s["hi"].copy()
+        if s["pz_top"] is not None:  # the top of a stack is its highest sample
+            hi[2] = min(hi[2], s["pz_top"])
+        if hi[2] - lo[2] < SECTION_MIN_M:
+            mid = (hi[2] + lo[2]) / 2
+            lo[2] = max(s["band_lo"], min(mid - SECTION_MIN_M / 2, s["band_hi"] - SECTION_MIN_M))
+            hi[2] = min(s["band_hi"], lo[2] + SECTION_MIN_M)
+        pieces.append(box_piece(lo + h, hi - h, back))
+    return pieces, {"angle_deg": angle, "cell_m": cell, "levels_m": [round(z, 3) for z in zs],
+                    "bands": len(zs) - 1, "gap_m": gap, "q_m": q, "attempts": attempts}
+
+
+# ---- ground-coarse-faces (#2053, Codex K16) ----------------------------------------------------------------------
+
+def _tri_plan_area(p):
+    return 0.5 * np.abs((p[:, 1, 0] - p[:, 0, 0]) * (p[:, 2, 1] - p[:, 0, 1])
+                        - (p[:, 2, 0] - p[:, 0, 0]) * (p[:, 1, 1] - p[:, 0, 1]))
+
+
+def _minimax_plane(p):
+    """Least-squares plane z = a x + b y + c through points, c shifted to the minimax; (plane, max |dev|)."""
+    a = np.column_stack([p[:, 0], p[:, 1], np.ones(len(p))])
+    sol = np.linalg.lstsq(a, p[:, 2], rcond=None)[0]
+    d = p[:, 2] - a @ sol
+    sol[2] += (d.max() + d.min()) / 2
+    return sol, float((d.max() - d.min()) / 2)
+
+
+def ground_coarse_faces(verts, tris, tol: float = GROUND_TOL_M, depth: float = 0.5, gap: float | None = None,
+                        min_nz: float = GROUND_MIN_NZ, slope_deg: float = GROUND_SLOPE_DEG,
+                        model_triangles: int | None = None):
+    """Flat part (faces up to `slope_deg`): the shared `build_ground` BSP (large planar prisms); slopes: the
+    existing faces, merged into planar clusters whose plan union stays convex."""
+    ub = _load_builder()
+    v, t = _check(verts, tris)
+    gap = float(ub.GAP_M if gap is None else gap)
+    if not (tol > 0 and depth > 0):
+        raise VariantError("ground-coarse-faces: need tol > 0 and depth > 0")
+    n = np.cross(v[t[:, 1]] - v[t[:, 0]], v[t[:, 2]] - v[t[:, 0]])
+    ln = np.linalg.norm(n, axis=1)
+    up = (ln > 1e-12) & (n[:, 2] > min_nz * ln)
+    if not up.any():
+        raise VariantError("ground-coarse-faces: no up-facing faces")
+    hf = ub.HeightField(v, t[up])
+    cen = v[t].mean(axis=1)
+    top = np.full(len(t), -np.inf)
+    top[up] = np.nan_to_num(hf.z(cen[up, :2]), nan=-np.inf)
+    keep = up & (cen[:, 2] >= top - 0.01)  # the highest surface only, as build_ground's HeightField
+    slope = keep & (n[:, 2] < math.cos(math.radians(slope_deg)) * ln)
+    flat_pieces, flat_info = [], {}
+    flat_t = t[~slope]
+    if len(flat_t) and (up & ~slope).any():
+        try:
+            res = ub.build_ground(v, flat_t, tol=tol, depth=depth, gap=gap,
+                                  model_triangles=len(t) if model_triangles is None else int(model_triangles))
+        except ub.UcxBuildError as exc:
+            raise VariantError(f"ground-coarse-faces: flat part: {exc}") from exc
+        flat_pieces = [(p.verts, p.tris) for p in res.pieces]
+        flat_info = {"flat_pieces": len(flat_pieces), "flat_max_vertical_dev_m": res.max_vertical_dev_m,
+                     "flat_uncovered_strip_m": res.uncovered_strip_m}
+    kid = np.flatnonzero(slope)
+    tp = v[t[kid]]
+    area = _tri_plan_area(tp)
+    ok = area > 1e-6
+    kid, tp, area = kid[ok], tp[ok], area[ok]
+    if not len(kid):
+        return flat_pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, "slope_faces": 0,
+                             "dropped_slivers": 0, "dropped_plan_area_m2": 0.0, **flat_info}
+    wkey = np.round(v / WELD_M).astype(np.int64)
+    _, wid = np.unique(wkey, axis=0, return_inverse=True)
+    wid = wid.reshape(-1)
+    wt = wid[t[kid]]
+    edge_tris: dict = {}
+    for i, (a, b, c) in enumerate(wt.tolist()):
+        for e in ((a, b), (b, c), (c, a)):
+            edge_tris.setdefault((min(e), max(e)), []).append(i)
+    nbr = [set() for _ in range(len(kid))]
+    for ts in edge_tris.values():
+        for i in ts:
+            nbr[i].update(j for j in ts if j != i)
+    steep_low: dict[int, float] = {}  # steep faces at a cluster vertex pull its bottom down (kerbs, walls)
+    for f in np.flatnonzero((ln > 1e-12) & (np.abs(n[:, 2]) <= min_nz * ln)):
+        zlo = float(v[t[f], 2].min())
+        for w in wid[t[f]].tolist():
+            steep_low[w] = min(steep_low.get(w, np.inf), zlo)
+    owner = np.full(len(kid), -1)
+
+    def convex_union(p, ua):
+        hull = plan_hull(p[:, :2])
+        return len(hull) >= 3 and abs(ub._poly_area(hull)) - ua <= 1e-4 + 1e-3 * ua
+
+    clusters = []  # [members, points, plan area, plane, dev]
+    for seed in np.argsort(-area, kind="stable").tolist():
+        if owner[seed] >= 0:
+            continue
+        cid = len(clusters)
+        members = [seed]
+        owner[seed] = cid
+        pts, uarea = tp[seed], float(area[seed])
+        plane, dev = _minimax_plane(pts)
+        front = sorted(nbr[seed], key=lambda j: -area[j])
+        grown = True
+        while grown:
+            grown = False
+            for j in list(front):
+                if owner[j] >= 0:
+                    front.remove(j)
+                    continue
+                cand = np.concatenate([pts, tp[j]])
+                if not convex_union(cand, uarea + float(area[j])):
+                    continue  # the plan union would not be convex
+                pl, d = _minimax_plane(cand)
+                if d > tol:
+                    continue
+                members.append(j)
+                owner[j] = cid
+                pts, uarea, plane, dev = cand, uarea + float(area[j]), pl, d
+                front.remove(j)
+                front += [k for k in nbr[j] if owner[k] < 0 and k not in front]
+                grown = True
+        clusters.append([members, pts, uarea, plane, dev])
+    # pass 2: merge whole neighbouring clusters (two convex parts can make a convex union that no single
+    # face addition reaches), largest combined area first, until no pair passes the plan / plane tests
+    merged = True
+    while merged:
+        merged = False
+        pairs = set()
+        for i in range(len(kid)):
+            for j in nbr[i]:
+                a, b = int(owner[i]), int(owner[j])
+                if a != b and clusters[a] is not None and clusters[b] is not None:
+                    pairs.add((min(a, b), max(a, b)))
+        for a, b in sorted(pairs, key=lambda p: -(clusters[p[0]][2] + clusters[p[1]][2])):
+            ca, cb = clusters[a], clusters[b]
+            if ca is None or cb is None:
+                continue
+            cand = np.concatenate([ca[1], cb[1]])
+            if not convex_union(cand, ca[2] + cb[2]):
+                continue
+            pl, d = _minimax_plane(cand)
+            if d > tol:
+                continue
+            clusters[a] = [ca[0] + cb[0], cand, ca[2] + cb[2], pl, d]
+            clusters[b] = None
+            owner[cb[0]] = a
+            merged = True
+    clusters = [c for c in clusters if c is not None]
+    specs = []  # [plan before inset, plane, bottom, extra inset]
+    for members, pts, _, plane, _ in clusters:
+        q0 = ub._simplify(plan_hull(pts[:, :2]), 0.002)
+        tops = q0 @ plane[:2] + plane[2] if len(q0) else np.zeros(1)
+        low = min([steep_low.get(w, np.inf) for w in set(wt[members].ravel().tolist())])
+        specs.append([q0, plane, min(low, float(tops.min())) - depth, 0.0])
+
+    def prism_of(sp):
+        q = ub._inset(sp[0], gap / 2 + sp[3]) if len(sp[0]) >= 3 else np.zeros((0, 2))
+        return None if len(q) < 3 else ub._prism(q, sp[1], sp[2])
+
+    # a slope prism closer than MERGE_GAP_M to another piece (a BSP piece over the slope's edge, a fold of the
+    # surface) is shrunk further in plan, at most GROUND_FIX_ROUNDS times, then dropped
+    flat_bb = [(np.asarray(fv).min(0), np.asarray(fv).max(0)) for fv, _ in flat_pieces]
+    built = [prism_of(sp) for sp in specs]
+    for rnd in range(GROUND_FIX_ROUNDS + 1):
+        boxes = flat_bb + [(pc.verts.min(0), pc.verts.max(0)) if pc else None for pc in built]
+        geo = list(flat_pieces) + [(pc.verts, pc.tris) if pc else None for pc in built]
+        need = {}
+        for i in range(len(flat_pieces), len(geo)):
+            if geo[i] is None:
+                continue
+            for k in range(len(geo)):
+                if k == i or geo[k] is None or (k >= len(flat_pieces) and k < i):
+                    continue
+                if not ((boxes[i][0] <= boxes[k][1] + MERGE_GAP_M).all() and (boxes[k][0] <= boxes[i][1] + MERGE_GAP_M).all()):
+                    continue
+                g = sat_gap(geo[i], geo[k])
+                if g < MERGE_GAP_M:
+                    j = i - len(flat_pieces)
+                    need[j] = max(need.get(j, 0.0), MERGE_GAP_M - g + 0.001)
+        if not need:
+            break
+        for j, d in need.items():
+            specs[j][3] += d
+            built[j] = prism_of(specs[j]) if rnd < GROUND_FIX_ROUNDS else None
+    pieces = [(pc.verts, pc.tris) for pc in built if pc is not None]
+    dropped_areas = [cluster[2] for cluster, pc in zip(clusters, built) if pc is None]
+    return flat_pieces + pieces, {"tol_m": tol, "gap_m": gap, "slope_deg": slope_deg, **flat_info,
+                                  "slope_faces": int(len(kid)), "clusters": len(clusters),
+                                  "dropped_slivers": len(dropped_areas), "dropped_plan_area_m2": sum(dropped_areas),
+                                  "slope_extra_inset_max_m": round(max((sp[3] for sp in specs), default=0.0), 4),
+                                  "max_vertical_dev_m": round(max(c[4] for c in clusters), 4),
+                                  "single_face_clusters": int(sum(1 for c in clusters if len(c[0]) == 1))}
+
+
 def build(variant: str, verts, tris, *, model_triangles: int, hull_fn=None, **kw):
     """Run one variant; returns (pieces, info). Raises VariantError, never returns an invalid set."""
-    if variant not in VARIANTS:
-        raise VariantError(f"unknown variant {variant!r}; expected one of {VARIANTS}")
+    if variant not in ALL_VARIANTS:
+        raise VariantError(f"unknown variant {variant!r}; expected one of {ALL_VARIANTS}")
     if variant in ("part-hulls", "single-hull") and hull_fn is None:
         raise VariantError(f"{variant} needs hull_fn")
     if variant == "kernel-boxes":
@@ -365,6 +825,10 @@ def build(variant: str, verts, tris, *, model_triangles: int, hull_fn=None, **kw
         pieces, info = part_boxes(verts, tris, **kw)
     elif variant == "part-hulls":
         pieces, info = part_hulls(verts, tris, hull_fn, **kw)
+    elif variant == "section-boxes":
+        pieces, info = section_boxes(verts, tris, **kw)
+    elif variant == "ground-coarse-faces":
+        pieces, info = ground_coarse_faces(verts, tris, model_triangles=model_triangles, **kw)
     else:
         pieces, info = single_hull(verts, tris, hull_fn)
     if not pieces:
