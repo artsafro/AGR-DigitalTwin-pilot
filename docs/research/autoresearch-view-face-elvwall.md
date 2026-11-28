@@ -2,7 +2,22 @@
 
 ## Кратко для Артёма
 
-(заполняется после замера — см. «Round log»)
+Проверил на независимом альбоме (ЭЛВ ТЦ «Среда»), без единой подстройки, тот метод, который собрали на Силикатном:
+стена-кандидат снимается фронтально, вид сравнивается с ней по остеклению, плюс две проверки — длина вида против
+длины стены (#165) и ритм остекления по ширине (#166). Сокольники не открывал (#2001 открыт).
+
+- **Ошибок нет:** 0 неверных из 10 реальных видов (и 0 неверных на зеркале, перемешивании и пустых масках).
+- **Но покрытие маленькое — гипотеза H167 опровергнута:** верно 2 из 7 полных фасадов (оба вида И-А, восточный
+  витражный фасад) и 1 из 3 фрагментов (Д-Г); остальные — честный отказ. Порог был ≥ 4 из 7 (как у #145).
+  Причина видна до счёта: у ЭЛВ стекло нарисовано почти только на восточном фасаде (41 % площади вида);
+  на остальных фасадах стекла < 1 %, сравнивать нечего.
+- **Проверка ритма перенеслась:** на настоящем И-А ритм 0,79 (на Силикатном было 0,36 — на грани), а на
+  перемешанном И-А — 0,07, и только эта проверка снимает ложный ответ, который базовый метод оставлял.
+  Проверка длины здесь ни разу не сработала и ничего не отняла.
+- **Вывод для шага «карта вид↔грань»:** сравнение по стеклу — надёжный, но узкий канал: годится для витражных
+  стен, на глухих фасадах молчит. В шаг его ставить только вместе с другим каналом (заливки отделки #149 или
+  линии #140B) на тех же стенах-кандидатах; ответ — когда хоть один канал уверен и ни один не спорит. Это
+  следующий замер.
 
 ## Frozen contract (committed before any score was computed)
 
@@ -75,4 +90,61 @@ after; staged copies in `G:/Мой диск/AGR-evidence/145-view-face-elv/`. Re
 
 ## Round log
 
-(after the run)
+**Hypothesis H167: refuted (coverage bound). Safety bound met. Run: finished. Adoption readiness: no.**
+Contract commit `4cc2cd76` (before any score); runner measured = that commit (`run.py` SHA-256 `ee621f3d…d124`,
+adapter `1fed1428…7fce`, params `220b0cb2…e1db` as read on Windows). 3 fresh runs (new Blender walls/renders +
+new PDF read each): 453.2 / 437.0 / 460.1 s, median 453.2 s, spread 23.2 s (Blender stage 416–438 s); all three
+bodies byte-identical (digest `04f67ea6…8921`); inputs re-hashed after the run: unchanged; candidate-order
+reversal reproduced every arm in every state.
+
+| Group (clean) | A #163 | B +#165 | C +#166 | #145 ref |
+|---|---:|---:|---:|---:|
+| Full views (7) | 2 / 0 / 5 | 2 / 0 / 5 | 2 / 0 / 5 | 5 / 0 / 2 |
+| Real fragments (3) | 1 / 0 / 2 | 1 / 0 / 2 | 1 / 0 / 2 | 1 / 0 / 2 (top-cut incl.) |
+
+Correct / wrong / abstain, side level (answered wall azimuth = #145 `gt_az`).
+
+Per view (clean, arm C; score / margin over the best other eligible wall):
+- p18 I-A → W08 (east, az 0) 0.767 / 0.638, rhythm 0.787 — correct. p21 I-A (faded sheet, glass 0.16) → W08
+  0.421 / 0.385, rhythm 0.762 — correct. p23 fragment D-G → W08 0.804 / 0.387 among 11 eligible — correct.
+- Abstain: p18 1-10 (top W27 0.060), p19 10-1 (W27 0.122 / 0.012), p19 A-I (W33 0.129 / 0.070), p19 6-1
+  (W16 = true side 0.190 / 0.030), p21 1-12 (no drawn glass, 0.0); p24 fragment 8-9 (W33 = true side 0.362 /
+  0.064), p20 1:20 fragment 9-10 (W33 = true side 0.914 / 0.031 among 34 eligible: a 3.75 m view fits everywhere).
+- Every full abstain is a view with < 1 % drawn glass (front-end probe, written before scoring).
+
+Clean vs injected vs not measured:
+- **Clean:** above. B and C never changed a clean answer (no coverage lost); #165 never fired.
+- **Injected (all rows exercised except p21 1-12, whose mask is empty → mirror/blank/shuffle `not_exercised`, and
+  the p20 shuffle with 0 changed cells):** blanks 10/10 abstain in all arms. Mirror: 2/0/5 full, 1/0/2 fragments in
+  all arms (I-A is near-symmetric; rhythm 0.862 / 0.842 keeps it — a diagnostic, not a bound). Shuffle (2 m blocks):
+  A/B keep W08 on p18 I-A (glass amount carries the answer), **C vetoes it (rhythm 0.071)** → full 1/0/6 → 0/0/7.
+  This is the only positive trigger of a veto on this album; it reproduces the #166 shuffle witness off-album.
+- **Diagnostic (outer wall):** the frozen 50 %-coverage rule marks W08 *not outer* (72 % of it lies behind the
+  curtain-wall planes W09/W10 at +3.1 m), although W08 is the east façade plane; the rule is too strict for a
+  façade with projecting boxes and is not a safety signal. Parapet-inner faces (W17–W21, W27) are candidates as on
+  Silikatny; W27 was the top eligible wall on 1-10 and 10-1 but far below tau.
+- **Not measured:** wall-level truth within a side, bay localisation, accepted/rejected delivery calibration,
+  blind full/fragment labels, channel combination, Sokolniki STOP 04.
+
+## Recommendation (OBSERVE)
+
+Do not build the OKS step on the glass stack alone. On ELV it was safe (0 wrong over 10 clean + 30 injected states)
+but answered only glazed walls (3/10). For the shared step «view↔face map sheet»: keep per-wall frontal candidates
+with the width eligibility and the #166 rhythm veto, and run more than one content channel on those candidates
+(glass NCC here; finish-partition D #149, which answered 6/7 full ELV views at side level; #140 B edges). Print per
+view the ranked walls, each channel's score and the reason for abstaining; answer only when one channel is confident
+and none contradicts; partial views without a confident wall stay a question to Artem. Next: freeze and measure that
+channel union on ELV + Silikatny (0 wrong as the bound), then Sokolniki blind after #2001 closes.
+
+## Replay and evidence
+
+Receipt: [receipt.json](autoresearch-view-face-elvwall/receipt.json) (runner-written SHA-256
+`9efa230895099ff94acb354d8981966c1af59c2146ed57725ebe712a90f11df2`). Evidence (3 run directories with wall renders,
+`walls.json`, bodies, probe): `G:/Мой диск/AGR-evidence/167-view-face-elvwall/` + `SHA256SUMS.txt` (117 files,
+manifest SHA-256 `88d17214b077503b8bc99937302fbd7761a439f9b73e1fa959dfaef22ef4adf7`). Replay needs the pilot host
+(owner's ELV folder, Blender 4.4 pinned).
+
+Regression: `test_run.py` (outer-wall rule, ELV glass colour rule vs white/grey fills, tally grouping) — 3 passed.
+No production change.
+Full suite: deferred to merge batch (rule 68).
+Affected tests: `env -u PYTEST_ADDOPTS uv run --offline --locked --extra pdf-review pytest -q -p no:cacheprovider --basetemp C:/x/pt_t_2dfecd45 docs/research/autoresearch-view-face-elvwall/test_run.py` — 3 passed.
