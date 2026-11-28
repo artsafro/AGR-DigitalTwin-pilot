@@ -406,6 +406,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | qa/evidence/issue-111/verification-json | [qa/evidence/issue-111/verification.json](../qa/evidence/issue-111/verification.json) |  |
 | research/3dsmax-scripting | [research/3dsmax-scripting.md](../research/3dsmax-scripting.md) |  |
 | research/ac08-kernel-ops-752 | [research/ac08-kernel-ops-752.md](../research/ac08-kernel-ops-752.md) |  |
+| research/agent-first-audit-2068 | [research/agent-first-audit-2068.md](../research/agent-first-audit-2068.md) |  |
 | research/agent-harness-practices | [research/agent-harness-practices.md](../research/agent-harness-practices.md) |  |
 | research/agent-step-waste-1273 | [research/agent-step-waste-1273.md](../research/agent-step-waste-1273.md) |  |
 | research/agent-step-waste-1273/data/sessions-csv | [research/agent-step-waste-1273/data/sessions.csv](../research/agent-step-waste-1273/data/sessions.csv) |  |
@@ -415,6 +416,12 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/autoresearch-trainer-g22-adapter | [research/autoresearch-trainer-g22-adapter.md](../research/autoresearch-trainer-g22-adapter.md) |  |
 | research/autoresearch-trainer-gate1 | [research/autoresearch-trainer-gate1.md](../research/autoresearch-trainer-gate1.md) |  |
 | research/autoresearch-trainer-tower-id | [research/autoresearch-trainer-tower-id.md](../research/autoresearch-trainer-tower-id.md) |  |
+| research/autoresearch-view-face-elv | [research/autoresearch-view-face-elv.md](../research/autoresearch-view-face-elv.md) |  |
+| research/autoresearch-view-face-elv/fixture-json | [research/autoresearch-view-face-elv/fixture.json](../research/autoresearch-view-face-elv/fixture.json) |  |
+| research/autoresearch-view-face-elv/posthoc-py | [research/autoresearch-view-face-elv/posthoc.py](../research/autoresearch-view-face-elv/posthoc.py) |  |
+| research/autoresearch-view-face-elv/receipt-json | [research/autoresearch-view-face-elv/receipt.json](../research/autoresearch-view-face-elv/receipt.json) |  |
+| research/autoresearch-view-face-elv/run-py | [research/autoresearch-view-face-elv/run.py](../research/autoresearch-view-face-elv/run.py) |  |
+| research/autoresearch-view-face-elv/test-run-py | [research/autoresearch-view-face-elv/test_run.py](../research/autoresearch-view-face-elv/test_run.py) |  |
 | research/autoresearch-view-face-veto | [research/autoresearch-view-face-veto.md](../research/autoresearch-view-face-veto.md) |  |
 | research/autoresearch-view-face-veto/receipt-json | [research/autoresearch-view-face-veto/receipt.json](../research/autoresearch-view-face-veto/receipt.json) |  |
 | research/autoresearch-view-face-veto/result | [research/autoresearch-view-face-veto/result.md](../research/autoresearch-view-face-veto/result.md) |  |
@@ -518,6 +525,7 @@ One owner per planning responsibility (#1868, #1869, #1870); the others are hist
 | research/trainer-tower-id-r87/result-json | [research/trainer-tower-id-r87/result.json](../research/trainer-tower-id-r87/result.json) |  |
 | research/trainer-tower-id-r87/score-py | [research/trainer-tower-id-r87/score.py](../research/trainer-tower-id-r87/score.py) |  |
 | research/trainer-tower-id-r87/series-sh | [research/trainer-tower-id-r87/series.sh](../research/trainer-tower-id-r87/series.sh) |  |
+| research/ucx-cases-codex-2042 | [research/ucx-cases-codex-2042.md](../research/ucx-cases-codex-2042.md) |  |
 | research/ucx-etalon-analysis | [research/ucx-etalon-analysis.md](../research/ucx-etalon-analysis.md) |  |
 | research/ucx-etalon-audit-2026-10-15-json | [research/ucx-etalon-audit-2026-10-15.json](../research/ucx-etalon-audit-2026-10-15.json) |  |
 | research/vatutino-ground-80deg-step-source | [research/vatutino-ground-80deg-step-source.md](../research/vatutino-ground-80deg-step-source.md) |  |
