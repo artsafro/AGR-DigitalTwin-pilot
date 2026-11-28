@@ -122,8 +122,15 @@ def main(argv=None):
     obj = load_object(a.object) if a.object else None
     heights = obj["placement"].heights(meta["h_otn_model_max_z_m"]) if not a.no_geojson else None
 
-    pngs = [f for f in sorted(os.listdir(tex))
-            if (match := package_core.VPM_TEX.fullmatch(f)) and match['stem'] == A]
+    pngs = []
+    for name in sorted(os.listdir(tex)):
+        match = package_core.VPM_TEX.fullmatch(name)
+        if match:
+            if match['stem'] == A:
+                pngs.append(name)
+        elif name.startswith(f'T_{A}_') and name.endswith('.png'):
+            # Preserve the legacy local candidates so V007 can diagnose malformed names.
+            pngs.append(name)
     if not pngs:
         raise ValueError(f"no T_{A}_*.png textures in {tex}")
     for target in [gpath, *(os.path.join(pkg, f) for f in pngs)]:
