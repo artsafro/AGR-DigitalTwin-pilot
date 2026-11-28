@@ -105,7 +105,8 @@
   partial views, so no measured W/H/window counts from drawn views, no real-view accuracy. Tolerance realism
   (is a drawn partial view within 1.2 m / 1.0 m and exact window counts of its wall?) is the open item.
 - **Receipt:** [`receipt.json`](autoresearch-view-face-signature/receipt.json) = run1 `score.json`
-  (SHA-256 `cc50e3306b953656f1a6baed9a621e75cd33de4c409239c009b66380c671a21e`, identical in run2/run3) with all pins.
+  (runner SHA-256 `cc50e3306b953656f1a6baed9a621e75cd33de4c409239c009b66380c671a21e`, identical in run2/run3; Git LF
+  blob SHA-256 `3cd312edbaf0eb8461bbbbff0c8834095849ad43ca6429a0e36c417d1383739e`) with all pins.
   Evidence (wall tables fwd/rev, plan PNGs, score, wall time): `G:/Мой диск/AGR-evidence/157-view-face-signature/`
   + `SHA256SUMS.txt` (14 files, manifest SHA-256 `3751f27e4ce36eb4cc51cd42d8e61bbddabcf9ce8f1dfbed2c088328fe7783ae`).
   Replay is limited to the pilot host (customer FBX outside git).
