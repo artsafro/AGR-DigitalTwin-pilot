@@ -55,6 +55,17 @@ Mashi; `G:/Мой диск/AGR-evidence/1607-ucx-gap-bands/`, SHA256SUMS.txt): s
 KPP1 48/1/6, Skolkovo 496/52/501; Mashi keeps exactly 8 overlaps. Parity: Vatutino Ground v014 rebuilt by the command has
 the delivered UCX geometry (715/715 pieces, 8 788 triangles, max vertex deviation 0 m).
 
+For `Main`, `steps.passages` is an OBSERVE metric on the exported FBX (#2052). In horizontal sections
+every 0.5 m through the first 5 m above the render mesh minimum Z, a sampled cell is a passage candidate
+when render geometry covers it from above and at least one pair of opposite horizontal rays is clear.
+Face-connected cells across sections make one candidate passage, with estimated total and UCX-blocked
+volumes in m³ and their ratio. The occupied volume uses the union of UCX objects (odd crossings within
+each object, assuming closed shells). This may miss curved or narrow passages or count openings in
+incomplete walls; it is not a walkthrough or a delivery gate. An unavailable observation stays
+`not_measured`, not zero. FBX readback also records `body_count` for each UCX object; V010 reports
+multiple disconnected shells as advisory `review` because Unreal may build one hull over them.
+The existing V010 shape check is independent and unchanged.
+
 `agr ucx MODEL OUT Main --resolve [--gap-m M]` (#1540): MODEL already holds its UCX (a delivered archive). The
 Blender driver `tools/blender/ucx_resolve.py` runs `ucx10_core.resolve`: every pair of UCX pieces under the gap
 (any family; default 3 mm, [D098] band) gets its SMALLER convex piece cut by the plane of one face of the larger
