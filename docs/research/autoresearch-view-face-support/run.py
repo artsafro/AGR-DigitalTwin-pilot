@@ -50,7 +50,7 @@ def pin(key):
 
 def module(name, source) -> Any:
     mod = types.ModuleType(name)
-    mod.__file__ = name
+    mod.__file__ = str(HERE / f'{name}.py')  # keeps REPO = HERE.parents[2] inside the pinned modules
     exec(compile(source, name, 'exec'), mod.__dict__)
     return mod
 
@@ -139,11 +139,10 @@ def main(out):
         raise ValueError('Lock or measured script bytes differ from the pinned Git revision')
     out.mkdir(parents=True, exist_ok=False)
     start = time.monotonic()
-    host = out / 'r168'
-    host.mkdir()
-    (host / 'label_tail.py').write_bytes(pin('168/label_tail.py'))
+    if sha((HERE / 'label_tail.py').read_bytes()) != PINS['168/label_tail.py']:
+        raise ValueError('label_tail.py copy differs from the pinned #168 blob')
     r168 = module('r168', pin('168/run.py'))
-    r168.HERE = host
+    r168.HERE = HERE
     m167, ctx, fill, score = r168.stage(out)
     if sha(git('show', f'{R149}:docs/research/autoresearch-view-face-material/score.py')) != PINS['149/score.py']:
         raise ValueError('Scorer pin drift')
