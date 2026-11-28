@@ -655,6 +655,10 @@
 /docs/research/autoresearch-trainer-artifact-first.md
 /docs/research/autoresearch-trainer-g22-adapter.md
 /docs/research/autoresearch-trainer-tower-id.md
+/docs/research/autoresearch-view-face-arrow.md
+/docs/research/autoresearch-view-face-arrow/fixture.json
+/docs/research/autoresearch-view-face-arrow/receipt.json
+/docs/research/autoresearch-view-face-arrow/run.py
 /docs/research/autoresearch-view-face-elv.md
 /docs/research/autoresearch-view-face-elv/fixture.json
 /docs/research/autoresearch-view-face-elv/posthoc.py
