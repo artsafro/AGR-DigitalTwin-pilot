@@ -127,6 +127,10 @@ def v001_without_manifest_ok(stage):
 def test_good_vpm_package_has_no_fail_but_is_not_passed(tmp_path):
     report, st = run(tmp_path, good_files())
     assert {k: st[k].status for k in ("V007", "V011")} == {"V007": "pass", "V011": "pass"}
+    assert [(f.status, f.observed) for f in st["V008"].findings if f.name == "UDIM sequence"] == [
+        ("pass", "slot 1: [1001]"),
+    ]
+    assert st["V009"].status == "not_run"
     assert v001_without_manifest_ok(st["V001"])
     assert st["V002"].status == "not_run"  # header passes, units need the scene
     assert st["V012"].status == "review"  # _001 index for free-standing buildings: conflict #20

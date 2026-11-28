@@ -774,6 +774,8 @@ def _tile_density_findings(geometry: list[dict], src: str, diffuse_px: dict,
     ]
     if unknown:
         shown = {name: sorted(t for t in tiles if t is not None) or ["outside grid"] for name, tiles in unknown.items()}
+        if low is None:
+            out = _density_bounds(src, "not_run", "no measurable Diffuse tile for the scene polygons")
         out.append(_f("not_run", "texel density coverage", f"{src}: no Diffuse PNG for tiles {shown}",
                       "a Diffuse map for every textured tile", [31, 32], src))
     return out

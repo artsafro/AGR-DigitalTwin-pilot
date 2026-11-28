@@ -254,6 +254,81 @@ def test_package_zip_is_byte_identical_to_the_tec26_job_script(tmp_path):
     assert "T_Other_Diffuse_1.1001.png" not in names and len(names) == 4
 
 
+@pytest.mark.parametrize('address,foreign', [
+    ('Nku_1', 'Other'), ('Nku_1', 'Nku_1_Annex'),
+    ('Nku_1_Ground', 'Nku_1'), ('Nku_1_Ground', 'Nku_1_Annex_Ground'),
+])
+def test_package_refuses_foreign_staged_png_before_writes(tmp_path, monkeypatch, address, foreign):
+    from tools.derive import package_vpm
+
+    pkg = make_pkg(tmp_path / 'p', address)
+    tex = make_tex(tmp_path / 'tex', address)
+    (pkg / f'T_{address}_Diffuse_1.1002.png').write_bytes(b'local staged map')
+    offending = f'T_{foreign}_Diffuse_1.1002.png'
+    (pkg / offending).write_bytes(b'foreign staged map')
+    before = snapshot(tmp_path)
+
+    def read_only_open(path, mode='r', **kwargs):
+        assert mode in ('r', 'rb'), f'opened output before refusal: {path}'
+        return open(path, mode, **kwargs)
+
+    monkeypatch.setattr(package_vpm, 'open', read_only_open, raising=False)
+    monkeypatch.setattr(package_vpm.package_core, '_write_zip',
+                        lambda *args, **kwargs: pytest.fail('called ZIP writer before refusal'))
+    with pytest.raises(ValueError, match=f'foreign VPM texture {offending}'):
+        package_vpm.main([str(pkg), str(tex), '--no-geojson'])
+
+    for _ in range(2):
+        r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
+        print(f'{offending}: exit={r.returncode}; {r.stderr.strip()}; '
+              f'new files={sorted(set(snapshot(tmp_path)) - set(before))}')
+        assert r.returncode == 1 and 'foreign' in r.stderr and offending in r.stderr
+        assert snapshot(tmp_path) == before
+
+
+@pytest.mark.parametrize('malformed', [
+    None, 'T_Nku_1_Diffuse_2.png', 'T_Nku_1_diffuse_1.1002.png', 'T_Nku_1_Diffuse_1.100.png',
+], ids=['clean', 'missing-udim', 'wrong-map-case', 'truncated-udim'])
+def test_package_keeps_matching_staged_png_and_non_png_member(tmp_path, malformed):
+    from twinqa.png import vpm_texture_findings
+
+    pkg = make_pkg(tmp_path / 'p')
+    tex = make_tex(tmp_path / 'tex')
+    decoy = 'T_Nku_1_Annex_Diffuse_1.1002.png'
+    (tex / decoy).write_bytes(b'different address with a common prefix')
+    if malformed:
+        (tex / malformed).write_bytes(b'local malformed map name')
+    # Use a distinct UDIM so the name-case probe doesn't alias this file on Windows.
+    staged = 'T_Nku_1_Diffuse_1.1003.png'
+    (pkg / staged).write_bytes(b'local staged map')
+    non_png = 'T_Other_Diffuse_1.1002.txt'
+    (pkg / non_png).write_bytes(b'unrelated non-PNG member')
+    before = snapshot(tmp_path)
+    r = run([sys.executable, '-m', 'dt_ai.cli.agr', 'package-vpm', pkg, tex, '--no-geojson'])
+    assert r.returncode == 0, r.stderr
+    with zipfile.ZipFile(pkg.parent / 'SM_Nku_1.zip') as archive:
+        print(f'package members: {archive.namelist()}')
+        expected = {
+            'SM_Nku_1.fbx', staged, non_png,
+            *(f'T_Nku_1_{kind}_1.1001.png' for kind in ('Diffuse', 'ERM', 'Normal')),
+        }
+        if malformed:
+            expected.add(malformed)
+        assert set(archive.namelist()) == expected
+        assert archive.read(staged) == b'local staged map'
+        assert archive.read(non_png) == b'unrelated non-PNG member'
+        if malformed:
+            assert archive.read(malformed) == b'local malformed map name'
+            pngs = {name: archive.read(name) for name in archive.namelist() if name.endswith('.png')}
+            profile = {'textures': {'allowed_square_sizes_px': [16], 'flat_placeholder': {'size_px': 32}}}
+            findings, _ = vpm_texture_findings(pngs, profile, 'T_Nku_1')
+            naming = [(f.status, f.name, f.observed) for f in findings if f.name.startswith('texture ')]
+            print(f'V007 naming findings: {naming}')
+            assert naming == [('fail', 'texture name', malformed)]
+    after = snapshot(tmp_path)
+    assert {path: after[path] for path in before} == before
+
+
 @pytest.mark.parametrize('case,diagnostic', [
     ('changed', 'file changed after export'), ('legacy', 'records no exported FBX'),
     ('no_metadata', 'export_meta.json'), ('extra', 'SM_Extra.fbx: FBX in the package is not recorded'),

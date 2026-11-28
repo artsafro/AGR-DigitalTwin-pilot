@@ -95,7 +95,8 @@ def _f(status, name, observed, expected, pages, evidence, conflicts=()):
 
 def vpm_texture_findings(pngs: dict[str, bytes], profile: dict, prefix: str | None):
     """V007 findings for VPM maps in the ZIP root. Returns (findings, sets) where
-    sets = {(slot, udim): {map: PngFacts}} for the UDIM/UV stages."""
+    sets = {(slot, udim): {map: PngFacts}} for the UDIM/UV stages, scoped to the
+    full texture stem (e.g. T_Address_Ground) when a prefix is supplied."""
     tex = profile["textures"]
     sizes = tex["allowed_square_sizes_px"]
     placeholder = tex["flat_placeholder"]["size_px"]
@@ -105,8 +106,9 @@ def vpm_texture_findings(pngs: dict[str, bytes], profile: dict, prefix: str | No
         if not m:
             out.append(_f("fail", "texture name", name, "T_{Address}_{Diffuse|ERM|Normal}_{Slot}.{UDIM}.png", [34, 35], name))
             continue
-        if prefix and not name.startswith(prefix + "_"):
+        if prefix and f"T_{m['address']}" != prefix:
             out.append(_f("fail", "texture address", name, f"{prefix}_...", [33, 34], name))
+            continue
         kind, slot, udim = m["map"], int(m["slot"]), int(m["udim"])
         key = (slot, udim, kind)
         # Numeric aliases (e.g. _1 and _01) must not replace the first map.

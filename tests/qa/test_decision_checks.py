@@ -7,8 +7,10 @@ All readbacks, meshes and packages below are SYNTHETIC fixtures, not data of a r
 """
 import copy
 import zipfile
+from io import BytesIO
 
 import pytest
+from PIL import Image
 
 import validate_package as vp
 from test_scene import mesh, rb, statuses
@@ -109,6 +111,64 @@ def test_package_scene_passes_archive_diffuse_sides(monkeypatch, tmp_path):
     monkeypatch.setattr(vp, "scene_findings", fake_scene_findings)
     vp.validate(_zip(tmp_path, good_files()), None, PROFILES, scene=True)
     assert seen["diffuse_px"] == {(1, 1001): 256}
+
+
+def _solid_diffuse(side):
+    buf = BytesIO()
+    Image.new('RGB', (side, side), (120, 110, 100)).save(buf, 'PNG')
+    return buf.getvalue()
+
+
+def _texture_archive_witness(tmp_path, monkeypatch, files, tile):
+    monkeypatch.setattr(vp, 'readback', lambda *args, **kwargs: rb(textured(tile=tile, uv_side=0.375)))
+    archive = _zip(tmp_path, files)
+    report = vp.validate(archive, None, PROFILES, scene=True)
+    st = {s.id: s for s in report.stages}
+    with zipfile.ZipFile(archive) as z:
+        print(f'validator members: {z.namelist()}')
+    for stage, names in {'V007': {'texture address', 'duplicate map'}, 'V008': {'UDIM sequence'},
+                         'V009': {'texel density', 'texel density coverage'}}.items():
+        print(stage, [(f.name, f.status, f.observed) for f in st[stage].findings if f.name in names])
+    return report, st
+
+
+def test_package_foreign_triplet_cannot_fill_local_udim_gap(tmp_path, monkeypatch):
+    files = good_files()
+    names = []
+    for kind in ('Diffuse', 'ERM', 'Normal'):
+        local = files[f'T_Test_K_1_{kind}_1.1001.png']
+        files[f'T_Test_K_1_{kind}_1.1003.png'] = local
+        foreign = f'T_Test_K_1_Annex_{kind}_1.1002.png'
+        files[foreign] = _solid_diffuse(2048) if kind == 'Diffuse' else local
+        names.append(foreign)
+    report, st = _texture_archive_witness(tmp_path, monkeypatch, files, 1002)
+    assert report.exit_code == 1
+    assert {f.evidence for f in st['V007'].findings if f.name == 'texture address' and f.status == 'fail'} == set(names)
+    assert [(f.status, f.observed) for f in st['V008'].findings if f.name == 'UDIM sequence'] == [
+        ('fail', 'slot 1: [1001, 1003]'),
+    ]
+    assert st['V009'].status == 'not_run'
+    assert any(f.name == 'texel density coverage' and f.status == 'not_run' and '1002' in f.observed
+               for f in st['V009'].findings)
+
+
+@pytest.mark.parametrize('foreign_address', ['A_Foreign', 'Z_Foreign', 'Test_K_1_Annex'])
+@pytest.mark.parametrize('foreign_slot', ['1', '01'])
+def test_package_foreign_diffuse_never_shadows_local_diffuse(tmp_path, monkeypatch, foreign_address, foreign_slot):
+    files = good_files()
+    files['T_Test_K_1_Diffuse_1.1001.png'] = _solid_diffuse(2048)
+    foreign = f'T_{foreign_address}_Diffuse_{foreign_slot}.1001.png'
+    files[foreign] = _solid_diffuse(4096)
+    report, st = _texture_archive_witness(tmp_path, monkeypatch, files, 1001)
+    assert report.exit_code == 1
+    assert [(f.name, f.status, f.evidence) for f in st['V007'].findings] == [
+        ('texture address', 'fail', foreign),
+    ]
+    assert [(f.status, f.observed) for f in st['V008'].findings if f.name == 'UDIM sequence'] == [
+        ('pass', 'slot 1: [1001]'),
+    ]
+    density = next(f for f in st['V009'].findings if f.name == 'texel density' and f.measured is not None)
+    assert density.status == 'pass' and density.measured == pytest.approx(768)
 
 
 # --- V001 PNG count 3..2100 (TEX-04, reg p.26 §1.2) ------------------------------------------------------------
