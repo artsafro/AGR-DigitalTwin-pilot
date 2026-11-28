@@ -191,18 +191,19 @@ rules:
     bucket: artem
     consent: artem_word
     # D432 (#2071): a tool / skill / memory / architecture change merges by itself only with a trainer A/B
-    # receipt or as an obvious bug fix proven by a regression test. `exempt_text` is searched in the PR
-    # title + body only (not the card); a negated marker ("no trainer A/B") does not exempt.
+    # receipt or as an obvious bug fix proven by a regression test. `exempt_receipt` labels must open a
+    # line of the PR title / body (after optional "- ", "* ", "| ") followed by ":" and a real value;
+    # an empty value or one starting with none / n/a / no / not / skipped / "-" does not exempt, nor
+    # does a free mention in prose (review r2 of PR #2070).
     why: "process change (tool, skill, memory, architecture) without a trainer baseline comparison (D432)"
     paths:
       - "tools/*"
       - "src/*"
       - "scripts/*"
       - "adapters/*"
-    exempt_text:
-      - "trainer a/b\\s*:"
-      - "agr trainer ab\\b"
-      - "regression test only"
+    exempt_receipt:
+      - "trainer a/b"
+      - "regression test only \\(bug fix\\)"
   - id: user_decision_on_card
     bucket: artem
     consent: artem_word

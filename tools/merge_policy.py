@@ -86,6 +86,23 @@ def _text_hits(patterns, text: str) -> list[str]:
     return hits
 
 
+RECEIPT_VOID = re.compile(r"(none|n/?a|no|not|skipped)\b|-", re.I)
+
+
+def _receipt_lines(labels, text: str) -> list[str]:
+    """Receipt lines `<label>: <value>` that open a line (after "- ", "* ", "| ", "**"); a free mention,
+    an empty value or a void one (none / n/a / no / not / skipped / "-") is not a receipt (#2071 r2)."""
+    hits = []
+    for label in labels or ():
+        pat = rf"^[ \t]*(?:[-*|>][ \t]*)*(?:\*\*)?(?:{label})(?:\*\*)?[ \t]*:(?:\*\*)?(.*)$"
+        for m in re.finditer(pat, text, re.I | re.M):
+            value = m.group(1).strip().strip("|*").strip()
+            if value and not RECEIPT_VOID.match(value):
+                hits.append(m.group(0).strip())
+                break
+    return hits
+
+
 def linked_issues(pr: dict) -> set[int]:
     nums = {i["number"] for i in pr.get("closingIssuesReferences") or [] if i.get("number")}
     nums |= {int(x) for x in re.findall(r"(?:Refs|Closes|Fixes|Resolves)\s+(?:[\w.-]+/[\w.-]+)?#(\d+)",
@@ -150,9 +167,9 @@ def _rule_hits(rule: dict, pr: dict, files: list[str], text: str, ctx: dict) -> 
         if lines <= ctx["max_lines"] or not any(e.startswith("paths: ") for e in ev):
             return []
         ev.append(f"{lines} changed lines > {ctx['max_lines']}")
-    if ev and rule.get("exempt_text"):  # D432 (#2071): a trainer A/B receipt / bug-fix marker in the PR lifts it
+    if ev and rule.get("exempt_receipt"):  # D432 (#2071): a labelled receipt line in the PR lifts it
         pr_text = "\n".join([pr.get("title") or "", pr.get("body") or ""])
-        if _text_hits(rule["exempt_text"], pr_text):
+        if _receipt_lines(rule["exempt_receipt"], pr_text):
             return []
         ev.append("no trainer A/B receipt or 'regression test only' marker in the PR title/body")
     return ev

@@ -88,9 +88,9 @@ def test_model_text_classifier_quotes_evidence_and_ignores_negation():
     r = run(pr(body="This PR changes the delivered model of KPP1 (new UV)."))
     assert r["rule"] == "delivered_model"
     assert any("changes the delivered model" in e.lower() for x in r["reasons"] for e in x["evidence"])
-    neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model." + BUG_FIX))
+    neg = run(pr(body="Scorer only. No accepted file changed; it never changes the delivered model.\n" + BUG_FIX))
     assert neg["rule"] == "small_pr"
-    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".' + BUG_FIX))
+    quoted = run(pr(body='Adds classifiers "changes a delivered model" / "changes how agents work".\n' + BUG_FIX))
     assert quoted["rule"] == "small_pr"
 
 
@@ -261,3 +261,28 @@ def test_2071_measured_or_bug_fix_marker_keeps_small_pr_auto(marker):
 def test_2071_negated_marker_does_not_exempt():
     r = run(pr(body=TRACE + "No trainer A/B was run.\n"))
     assert r["rule"] == "unmeasured_process_change"
+
+
+# review r2 P1-1: only a labelled receipt line with a real value lifts the rule
+@pytest.mark.parametrize("body", [
+    "Trainer A/B: none",
+    "Trainer A/B: not run",
+    "Trainer A/B: n/a",
+    "Trainer A/B: -",
+    "Trainer A/B: skipped (no time)",
+    "Trainer A/B:",
+    "Regression test only (bug fix): no",
+    "We should run agr trainer ab later.",
+    "Per D432 obvious fixes need a regression test only.",
+    "See the Trainer A/B: section below."])
+def test_2071_empty_negated_or_free_mention_does_not_exempt(body):
+    r = run(pr(body=TRACE + body + "\n"))
+    assert (r["bucket"], r["rule"], r["would_merge"]) == ("artem", "unmeasured_process_change", False)
+
+
+@pytest.mark.parametrize("line", [
+    "- Trainer A/B: agr trainer ab KPP1 --ab OLD NEW -> fixed (3/3 vs 1/3).",
+    "| Regression test only (bug fix): tests/test_x.py fails before, passes after. |"])
+def test_2071_receipt_line_in_list_or_table_still_exempts(line):
+    r = run(pr(body=TRACE + line + "\n"))
+    assert (r["bucket"], r["rule"]) == ("auto", "small_pr")
