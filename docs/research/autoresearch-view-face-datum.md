@@ -42,4 +42,6 @@ Injected controls: blank removed 2,067–9,924 cells per row and missing removed
 
 **Recommendation for the shared OKS step (not implemented):** use independently paired drawing datum marks for scale, not for identity. Do not accept a view-to-face match from direction-level NCC alone; for ambiguous/untitled views print candidate walls and the reason for abstention, and do not transfer finishes. Next, compare frontal wall-segment-clipped candidates with the same datum transform and freeze wall-identity truth from independent plan/section registration. Use the A'-K neighbour and opposite wall as hard negatives and score developed multi-wall views and bay/interval separately. Blind Sokolniki transfer remains gated by #2001.
 
+Native renders and all three row sets: `G:/Мой диск/AGR-evidence/162-view-face-datum/` (31 SHA-256-verified files on the mounted drive; `SHA256SUMS.txt` SHA-256 `9f916467d150a4851289af60de6dabb463af3525f5d4b78947cb6ecaa5edbd81`). No original assets were copied; the pinned source paths remain necessary for replay.
+
 Full suite: deferred to merge batch (rule 68).
