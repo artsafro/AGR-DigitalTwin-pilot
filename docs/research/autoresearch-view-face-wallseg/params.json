@@ -1,0 +1,23 @@
+{
+ "facade_objects": ["Ctx_steny", "Ctx_okna", "Ctx_paneli_vitrazha"],
+ "glass_objects": ["Ctx_okna", "Ctx_paneli_vitrazha"],
+ "hidden_objects": ["Ctx_perekrytiya"],
+ "azimuths": [0, 60, 90, 150, 180, 240, 270, 330],
+ "band_z": [0.0, 12.9],
+ "vertical_nz": 0.2,
+ "min_face_area": 0.05,
+ "sky_elev_deg": 45,
+ "sky_ray_m": 300,
+ "az_tol_deg": 12,
+ "plane_gap_m": 1.0,
+ "u_gap_m": 4.0,
+ "min_wall_area": 10.0,
+ "min_wall_len": 4.0,
+ "render_res_m": 0.1,
+ "lateral_margin_m": 1.0,
+ "depth_front_m": 5.0,
+ "depth_back_m": 3.0,
+ "fit_tol": 0.10,
+ "tau": 0.30,
+ "delta": 0.10
+}
