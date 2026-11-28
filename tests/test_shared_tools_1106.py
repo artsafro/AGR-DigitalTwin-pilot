@@ -286,11 +286,18 @@ def test_package_refuses_foreign_staged_png_before_writes(tmp_path, monkeypatch,
         assert snapshot(tmp_path) == before
 
 
-def test_package_keeps_matching_staged_png_and_non_png_member(tmp_path):
+@pytest.mark.parametrize('malformed', [
+    None, 'T_Nku_1_Diffuse_2.png', 'T_Nku_1_diffuse_1.1002.png', 'T_Nku_1_Diffuse_1.100.png',
+], ids=['clean', 'missing-udim', 'wrong-map-case', 'truncated-udim'])
+def test_package_keeps_matching_staged_png_and_non_png_member(tmp_path, malformed):
+    from twinqa.png import vpm_texture_findings
+
     pkg = make_pkg(tmp_path / 'p')
     tex = make_tex(tmp_path / 'tex')
     decoy = 'T_Nku_1_Annex_Diffuse_1.1002.png'
     (tex / decoy).write_bytes(b'different address with a common prefix')
+    if malformed:
+        (tex / malformed).write_bytes(b'local malformed map name')
     staged = 'T_Nku_1_Diffuse_1.1002.png'
     (pkg / staged).write_bytes(b'local staged map')
     non_png = 'T_Other_Diffuse_1.1002.txt'
@@ -300,12 +307,23 @@ def test_package_keeps_matching_staged_png_and_non_png_member(tmp_path):
     assert r.returncode == 0, r.stderr
     with zipfile.ZipFile(pkg.parent / 'SM_Nku_1.zip') as archive:
         print(f'package members: {archive.namelist()}')
-        assert set(archive.namelist()) == {
+        expected = {
             'SM_Nku_1.fbx', staged, non_png,
             *(f'T_Nku_1_{kind}_1.1001.png' for kind in ('Diffuse', 'ERM', 'Normal')),
         }
+        if malformed:
+            expected.add(malformed)
+        assert set(archive.namelist()) == expected
         assert archive.read(staged) == b'local staged map'
         assert archive.read(non_png) == b'unrelated non-PNG member'
+        if malformed:
+            assert archive.read(malformed) == b'local malformed map name'
+            pngs = {name: archive.read(name) for name in archive.namelist() if name.endswith('.png')}
+            profile = {'textures': {'allowed_square_sizes_px': [16], 'flat_placeholder': {'size_px': 32}}}
+            findings, _ = vpm_texture_findings(pngs, profile, 'T_Nku_1')
+            naming = [(f.status, f.name, f.observed) for f in findings if f.name.startswith('texture ')]
+            print(f'V007 naming findings: {naming}')
+            assert naming == [('fail', 'texture name', malformed)]
     after = snapshot(tmp_path)
     assert {path: after[path] for path in before} == before
 
