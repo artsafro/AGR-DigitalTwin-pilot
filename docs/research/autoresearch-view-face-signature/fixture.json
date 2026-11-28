@@ -1,0 +1,15 @@
+{
+  "card": "t_a450f5c6 (#157)",
+  "note": "Model-side inputs; read-only, outside git (customer sources on the pilot host). Sokolniki deliberately absent (#2001 open).",
+  "blender": {"path": "C:/Program Files/Blender Foundation/Blender 4.4/blender.exe", "sha256": "fd21f4b9f9e7ae317d5bb7f27eada83aab3952cb27e245d0e3f8ab810eb277b5"},
+  "models": {
+    "savelovskaya": {"role": "Weltbau UVK1000 (Sokolniki typology), L-notch", "path": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/8_Савеловская/new/2026-11-18 Береста/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В3.fbx", "sha256": "8787cf371d3dd4e059c05be7d088e5594f50cd08b561ae7e859863e106f180c3"},
+    "moskovsky": {"role": "Weltbau school 1200, courtyards", "path": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/9_Московский/ЛСР-МОСК-ШК1200_П_АР_Ф_R23_В3.fbx", "sha256": "97446e6a48ff6864d19c7e0a262d875c1021d5631a02d8fac423d9a49b729d9d"},
+    "elv": {"role": "control: one wall per side (#153)", "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/3_sreda/for_ai/00900-МСК-ЭЛВ-ГП1-Р-АР_building (1).fbx", "sha256": "7ccf502d9dc1494daa885e650dd8b2b7e261c7b90b262ee157c188ec3a78b961"},
+    "olimpijsky": {"role": "control: repeated types (#151)", "path": "C:/Users/artsafro/Desktop/!3D viz/Dima_Andrew/ZЦИМ01_Олимпийский02_ФОК02_АГР02_FBX.fbx", "sha256": "683a92075c8808ab0593f09c907a6e3d487e60f811383a92e3b1ec831c5d3993"}
+  },
+  "sheets_not_scored": {
+    "savelovskaya_pdf": {"path": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/8_Савеловская/new/2026-11-18 Береста/САВЕЛОВСКАЯ_ЖД_УВК1000_АР_Ф_В3.pdf", "sha256": "fc216fd1df037919f5a5dae7bd8d1d6fbb480ba9afd38d4d8e4402d3a6c31339", "why": "raster tiles, 4 full keyplan-marked views, no partial views"},
+    "moskovsky_pdf": {"path": "C:/Users/artsafro/Desktop/!3D viz/!Weltbau/9_Московский/ЛСР-МОСК-ШК1200_П_АР_В3_Книжки_Схемы фасадов.pdf", "sha256": "4c38e0a0ef24707d136f9904486366c8b9973a0e0910427341147968557b2668", "why": "raster tiles, 4 full 1:200 views by axes + keyplan, no partial views"}
+  }
+}
