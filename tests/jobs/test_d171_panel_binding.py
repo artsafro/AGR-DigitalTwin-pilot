@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 AC08 = ROOT / "jobs/TEC26-OKS/AC08"
+AC09 = AC08.with_name("AC09")
 sys.path.insert(0, str(AC08.parent / "scripts"))
 import compare_facades  # noqa: E402
 import qa_packages  # noqa: E402
@@ -98,6 +100,91 @@ def test_compare_names_no_panel_samples_without_publishing(tmp_path, monkeypatch
     err = capsys.readouterr().err
     assert f"{profile.upper()} wall, z={frac:.3f}: no panel samples" in err
     assert not out.exists()
+
+
+@pytest.fixture
+def ac09_inputs(tmp_path):
+    """Use the real recipe/sheet and source field spans with synthetic render pixels/UVs."""
+    spec = load(AC09 / "vpm_textures.json")
+    sheet = load(AC09 / "sheet-facades.json")
+    slide = np.full((540, 660, 3), 255, np.uint8)
+    views = {}
+    mesh = {"name": "SM_Sakv_1_Main", "vertices": [], "faces": [], "face_uvs": []}
+    for i, name in enumerate(spec["presentation"]["quadrants"]):
+        fc = spec["facades"][name]
+        width, height = (v // 10 for v in sheet["facades"][name]["size_mm"])
+        x, y = (i % 2) * 330 + 12, (i // 2) * 270 + 12
+        slide[y:y + height, x:x + width] = [0, 120, 180]
+        ribs = fc["ribs"]
+        for dx in [-1, width, *(round(9 + k * (width - 19) / ribs) for k in range(ribs + 1))]:
+            slide[y:y + height, x + dx] = 0
+
+        normal = fc["normal"]
+        along_y = normal.endswith("x")
+        field = fc["field_m"]
+        quad = [[s, 0, z] if not along_y else [0, s, z]
+                for s, z in [(0, 0), (field, 0), (field, 2.45), (0, 2.45)]]
+        if normal in ("+y", "-x"):
+            quad.reverse()
+        start = len(mesh["vertices"])
+        mesh["vertices"].extend(quad)
+        mesh["faces"].extend([[start, start + 1, start + 2], [start, start + 2, start + 3]])
+        udim = spec["finishes"][fc["finish"]]["udim"] - 1001
+        mesh["face_uvs"].extend([[[udim % 10 + 0.5, udim // 10 + 0.5]] * 3] * 2)
+
+        render = np.full((800, 800, 3), [0, 120, 180], np.uint8)
+        for k in range(1, ribs):
+            px = round(399.5 + 200 * (k / ribs - 0.5) * field)
+            render[:, px:px + 1] = [0, 0, 45]
+        png = f"render-{i}.png"
+        Image.fromarray(render).save(tmp_path / png)
+        views[compare_facades.VIEW[normal]] = {
+            "png": png, "center": [0, field / 2, 1.25] if along_y else [field / 2, 0, 1.25],
+            "right": [0, 1, 0] if along_y else [1, 0, 0], "up": [0, 0, 1],
+            "ortho_scale": 4, "res": [800, 800],
+        }
+    slide_path = tmp_path / "slide.png"
+    Image.fromarray(slide).save(slide_path)
+    spec["presentation"].update(image=str(slide_path), image_sha256=hashlib.sha256(slide_path.read_bytes()).hexdigest())
+    dump(tmp_path / "renders.json", {tag: {"views": views} for tag in ("vpm", "npm")})
+    return spec, mesh
+
+
+@pytest.mark.parametrize("misbound", [False, True], ids=["all-facades", "wrong-udim"])
+def test_ac09_compare_checks_source_field(tmp_path, ac09_inputs, misbound):
+    spec, mesh = ac09_inputs
+    if misbound:
+        spec["finishes"]["Panel1001_RAL5015"]["udim"] = 1003
+    out = tmp_path / "report"
+    result = subprocess.run([
+        sys.executable, "-X", "utf8", str(AC09 / "recipe_adapter.py"), "compare_facades.py",
+        dump(tmp_path / "spec.json", spec), str(AC09 / "sheet-facades.json"), str(tmp_path),
+        dump(tmp_path / "readback.json", {"objects": [mesh]}), str(out),
+    ], cwd=ROOT, capture_output=True, encoding="utf-8", timeout=30)
+    if misbound:
+        assert result.returncode == 2
+        assert result.stderr.strip() == "spec UDIM 1003 is not the panel field of А-Б: no triangles facing -y"
+        assert not out.exists()
+    else:
+        assert result.returncode == 0, result.stderr or result.stdout
+        report = load(out / "compare.json")["facades"]
+        historical = load(AC09 / "build-v001/compare.json")["facades"]
+        assert set(report) == set(historical)
+        for name, row in report.items():
+            assert row["match"] and row["ground_m"] == -0.15 and (out / row["png"]).is_file()
+            for key in ("slide_joints", "vpm_render_joints", "npm_render_joints"):
+                assert row[key] == historical[name][key]
+
+
+def test_ac09_package_gate_loads_source_field(ac09_inputs):
+    spec, mesh = ac09_inputs
+    img = np.full((16, 16, 3), 220, np.uint8)
+    report = qa_packages.facade_joint_checks(spec, mesh, mesh, {}, img, {"finishes": {}})
+    assert set(report["vpm"]) == set(spec["facades"])
+    for name in spec["facades"]:
+        assert "rows" in report["vpm"][name]  # Bound successfully; empty tiles cannot provide samples.
+        assert "no panel samples" in report["vpm"][name]["reason"]
+        assert "no triangles" in report["npm"][name]["reason"]
 
 
 @pytest.mark.job
